@@ -1,15 +1,15 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerScan : MonoBehaviour
 {
     public LayerMask GrimoireScan;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private InputAction scanAction;
+    void Awake()
     {
-        
+        GetInput();
     }
 
-    // Update is called once per frame
     void Update()
     {
         Scan();
@@ -17,7 +17,7 @@ public class PlayerScan : MonoBehaviour
 
     void Scan()
     {
-        if (Input.GetKeyDown(KeyCode.F))
+        if (scanAction.WasPressedThisFrame())
         {
             //raycast
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -31,5 +31,9 @@ public class PlayerScan : MonoBehaviour
                 Debug.Log("Scanned Nothing...");
             }
         }
+    }
+    void GetInput()
+    {
+        scanAction = InputSystem.actions.FindAction("Grimoire");
     }
 }

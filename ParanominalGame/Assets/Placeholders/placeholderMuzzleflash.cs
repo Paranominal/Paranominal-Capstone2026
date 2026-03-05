@@ -11,15 +11,12 @@ public GameObject sprite;
         sprite.GetComponent<SpriteRenderer>().enabled = false;
     }
     // Update is called once per frame
-    void Update()
+    public void MuzzleFlash()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            StartCoroutine(MuzzleFlash());
-        }
+        StartCoroutine(Flash());
     }
 
-    IEnumerator MuzzleFlash()
+    IEnumerator Flash()
     {
         sprite.GetComponent<SpriteRenderer>().enabled = true;
         yield return new WaitForSeconds(0.2f);
