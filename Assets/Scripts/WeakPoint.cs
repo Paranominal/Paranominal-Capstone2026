@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class WeakPoint : MonoBehaviour
 {
-    public WeakPointManager manager;
+    [HideInInspector] public WeakPointManager manager;
     public WeakPointType weakPointType;
     [SerializeField] private GameObject ironElement;
     [SerializeField] private GameObject silverElement;

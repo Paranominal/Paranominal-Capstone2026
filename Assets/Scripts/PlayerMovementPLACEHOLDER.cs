@@ -54,40 +54,40 @@ public class PlayerMovement : MonoBehaviour
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
 
-        bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        float curSpeedX = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical") : 0;
-        float curSpeedY = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal") : 0;
+        // bool isRunning = Input.GetKey(KeyCode.LeftShift);
+        float curSpeedX = canMove ? walkSpeed * Input.GetAxis("Vertical") : 0;
+        float curSpeedY = canMove ? walkSpeed * Input.GetAxis("Horizontal") : 0;
         float movementDirectionY = moveDirection.y;
         moveDirection = (forward * curSpeedX) + (right * curSpeedY);
 
-        if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
-        {
-            moveDirection.y = jumpPower;
-        }
-        else
-        {
-            moveDirection.y = movementDirectionY;
-        }
+        // if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
+        // {
+        //     moveDirection.y = jumpPower;
+        // }
+        // else
+        // {
+        //     moveDirection.y = movementDirectionY;
+        // }
 
-        if (!characterController.isGrounded)
-        {
-            moveDirection.y -= gravity * Time.deltaTime;
-        }
+        // if (!characterController.isGrounded)
+        // {
+        //     moveDirection.y -= gravity * Time.deltaTime;
+        // }
 
 
-        if (Input.GetKey(KeyCode.R) && canMove)
-        {
-            characterController.height = crouchHeight;
-            walkSpeed = crouchSpeed;
-            runSpeed = crouchSpeed;
+        // if (Input.GetKey(KeyCode.R) && canMove)
+        // {
+        //     characterController.height = crouchHeight;
+        //     walkSpeed = crouchSpeed;
+        //     runSpeed = crouchSpeed;
 
-        }
-        else
-        {
-            characterController.height = defaultHeight;
-            walkSpeed = 6f;
-            runSpeed = 12f;
-        }
+        // }
+        // else
+        // {
+        //     characterController.height = defaultHeight;
+        //     walkSpeed = 6f;
+        //     runSpeed = 12f;
+        // }
 
         characterController.Move(moveDirection * Time.deltaTime);
         
