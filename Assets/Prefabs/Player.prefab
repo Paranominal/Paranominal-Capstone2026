@@ -273,7 +273,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3087967561161500564
 Transform:
   m_ObjectHideFlags: 0
@@ -395,6 +395,7 @@ GameObject:
   - component: {fileID: 53653362491126861}
   - component: {fileID: 3697515957232795190}
   - component: {fileID: 5373816417711542028}
+  - component: {fileID: 5079679954012531165}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -457,17 +458,78 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   playerCamera: {fileID: 1681194576948962926}
+  linkedFovCameras:
+  - {fileID: 6177046060812425515}
+  moveAction: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  lookAction: {fileID: -5630151704836100654, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  dashAction: {fileID: -8626213423768104031, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   walkSpeed: 6
-  runSpeed: 12
-  jumpPower: 7
-  gravity: 10
-  lookSpeed: 100
+  lookSensitivity: 0.1
   lookXLimit: 60
-  defaultHeight: 2
-  crouchHeight: 1
-  crouchSpeed: 3
-  Woosh: {fileID: 0}
-  RespawnObjects: []
+  lookSmoothing: 0.03
+  dashDistance: 4
+  dashDuration: 0.1
+  dashCooldown: 2
+  dashSpeedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1.8
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  dashCameraPitchImpulse: 5
+  dashFovBoost: 2
+  dashFovRecoverSpeed: 20
+  recoilReturnTime: 0.08
+--- !u!114 &5079679954012531165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5981229937832042704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3313660c0276ed346ab30a48b4cc43f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GunController
+  ironActionName: ShootIron
+  silverActionName: ShootSilver
+  playerCamera: {fileID: 1681194576948962926}
+  playerMovement: {fileID: 5373816417711542028}
+  gunModel: {fileID: 3762549486017257809}
+  ironMuzzleFlash: {fileID: 4256719113441466821}
+  silverMuzzleFlash: {fileID: 4288977187402721326}
+  WeakPoint:
+    serializedVersion: 2
+    m_Bits: 128
+  shotCooldown: 0.5
+  magazineSize: 6
+  reloadDuration: 2
+  rayDistance: 20
+  cameraRecoilUpDegrees: 1.5
+  gunKickOffset: {x: 0, y: 0, z: -0.6}
+  gunKickUpRotationDegrees: 8
+  gunKickTime: 0.1
+  gunReturnTime: 0.5
+  muzzleFlashDuration: 0.05
 --- !u!1 &6537960064026387996
 GameObject:
   m_ObjectHideFlags: 0
@@ -629,8 +691,6 @@ GameObject:
   - component: {fileID: 5091876093161310668}
   - component: {fileID: 2028450878626905327}
   - component: {fileID: 8174483818687512212}
-  - component: {fileID: 4147969179521422442}
-  - component: {fileID: 8000227067872943909}
   m_Layer: 6
   m_Name: PlayerCam
   m_TagString: MainCamera
@@ -777,40 +837,6 @@ MonoBehaviour:
   GrimoireScan:
     serializedVersion: 2
     m_Bits: 256
---- !u!114 &4147969179521422442
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7191158712089570335}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc2c8e85e70a0e3489988413cf164375, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerShoot
-  WeakSpotLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  muzzleFlash: {fileID: 4256719113441466821}
-  shotCooldownTimer: 0.1
---- !u!114 &8000227067872943909
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7191158712089570335}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b1dd703cedbcb641830f5d95a856a33, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ShootSilver
-  WeakSpotLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  muzzleFlash: {fileID: 4288977187402721326}
-  shotCooldownTimer: 0.1
 --- !u!1001 &4382456229685066320
 PrefabInstance:
   m_ObjectHideFlags: 0
