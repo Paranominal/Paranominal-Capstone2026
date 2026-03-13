@@ -1,6 +1,9 @@
+using NUnit.Framework.Internal;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
+using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 
 public class GunController : MonoBehaviour
 {
@@ -48,6 +51,10 @@ public class GunController : MonoBehaviour
     private bool isReloading;
     private int currentAmmo;
 
+    // baseline local transform of the gun for recoil animation, captured at the start of each shot to allow for adjustments (e.g. if the gun model is moved during gameplay or by other animations, recoil should work properly from the new position)
+    private Vector3 gunRestLocalPosition;
+    private Quaternion gunRestLocalRotation;
+
     private float reloadTimeRemaining;
 
     // Coroutine handles so repeated shots can restart visuals cleanly.
@@ -82,6 +89,12 @@ public class GunController : MonoBehaviour
         // keeps flashes hidden on startup
         if (ironMuzzleFlash != null) ironMuzzleFlash.enabled = false;
         if (silverMuzzleFlash != null) silverMuzzleFlash.enabled = false;
+
+        if (gunModel != null)
+        {
+            gunRestLocalPosition = gunModel.localPosition;
+            gunRestLocalRotation = gunModel.localRotation;
+        }
     }
 
     private void Update()
@@ -107,7 +120,10 @@ public class GunController : MonoBehaviour
             return;
         }
 
+
+
         // Fire, consume ammo, and lock shot input for cooldown duration
+        onCooldown = true;
         Fire(shotType);
         currentAmmo--;
 
@@ -202,45 +218,50 @@ public class GunController : MonoBehaviour
 
     private IEnumerator GunKickRoutine()
     {
-        // capture current local transform as animation baseline
-        Vector3 startPos = gunModel.localPosition;
-        Quaternion startRot = gunModel.localRotation;
+        // just in case no model is assigned, skip recoil animation.
+        if (gunModel == null)
+            yield break;
 
-        Vector3 kickedPos = startPos + gunKickOffset;
-        Quaternion kickedRot = startRot * Quaternion.Euler(-gunKickUpRotationDegrees, 0f, 0f);
+        // capture the current visible transform
+        // this should make interrupted shots blend smoothly from wherever the model currently is,
+        // instead of snapping back to start before kicking again
+        Vector3 fromPos = gunModel.localPosition;
+        Quaternion fromRot = gunModel.localRotation;
 
-        // move/rotate into recoil pose.
+        // compute the recoil target position from a fixed "rest" pose
+        // using the fixed rest transform prevents cumulative drift over many shots (which was happening before)
+        Vector3 kickedPos = gunRestLocalPosition + gunKickOffset;
+        Quaternion kickedRot = gunRestLocalRotation * Quaternion.Euler(-gunKickUpRotationDegrees, 0f, 0f);
+
+        // Move/rotate from current visible pose to recoil target over gunKickTime.
         float t = 0f;
         while (t < gunKickTime)
         {
             t += Time.deltaTime;
             float alpha = gunKickTime <= 0f ? 1f : Mathf.Clamp01(t / gunKickTime);
-
-            gunModel.localPosition = Vector3.Lerp(startPos, kickedPos, alpha);
-            gunModel.localRotation = Quaternion.Slerp(startRot, kickedRot, alpha);
+            gunModel.localPosition = Vector3.Lerp(fromPos, kickedPos, alpha);
+            gunModel.localRotation = Quaternion.Slerp(fromRot, kickedRot, alpha);
             yield return null;
         }
 
-        // return back to baseline pose.
+        // Move / rotate from recoil target back to fixed rest pose over gunReturnTime.
         t = 0f;
         while (t < gunReturnTime)
         {
             t += Time.deltaTime;
             float alpha = gunReturnTime <= 0f ? 1f : Mathf.Clamp01(t / gunReturnTime);
-
-            gunModel.localPosition = Vector3.Lerp(kickedPos, startPos, alpha);
-            gunModel.localRotation = Quaternion.Slerp(kickedRot, startRot, alpha);
+            gunModel.localPosition = Vector3.Lerp(kickedPos, gunRestLocalPosition, alpha);
+            gunModel.localRotation = Quaternion.Slerp(kickedRot, gunRestLocalRotation, alpha);
             yield return null;
         }
 
-        gunModel.localPosition = startPos;
-        gunModel.localRotation = startRot;
+        // Final snap to exact rest values to remove tiny adjustment errors (shouldn't be visible fingers crossed)
+        gunModel.localPosition = gunRestLocalPosition;
+        gunModel.localRotation = gunRestLocalRotation;
     }
 
     private IEnumerator ShotCooldownRoutine()
     {
-        // shared cooldown for both fire types
-        onCooldown = true;
         yield return new WaitForSeconds(shotCooldown);
         onCooldown = false;
     }
