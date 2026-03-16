@@ -1,9 +1,6 @@
-using NUnit.Framework.Internal;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
-using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 
 public class GunController : MonoBehaviour
 {
