@@ -38,18 +38,18 @@ public class ALTScan : MonoBehaviour
             if (scanAction.WasReleasedThisFrame())
             {
                 //Debug.Log(scannedNow.entry);
-                grimoire.AddEntry(grimoire.ToEntry(scannedNow.entry));
+                grimoire.AddEntry(scannedNow.entry);
             }
             if (collectAction.WasReleasedThisFrame() && scannedNow.collectable)
             {
                 // item gets collected here
-                if (!grimoire.CompareEntry(grimoire.ToEntry(scannedNow.entry)))   //checks if the entry for the collected item has been scanned and adds it if not
+                if (!grimoire.CompareEntry(scannedNow.entry))   //checks if the entry for the collected item has been scanned and adds it if not
                 {
-                    grimoire.AddEntry(grimoire.ToEntry(scannedNow.entry));
+                    grimoire.AddEntry(scannedNow.entry, true);
                 }
                 else
                 {
-                    grimoire.CollectEntry(grimoire.ToEntry(scannedNow.entry));
+                    grimoire.CollectEntry(scannedNow.entry);
                 }
                 Debug.Log("Destroyed " + scannedNow.gameObject);
                 Destroy(scannedNow.gameObject);

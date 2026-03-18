@@ -17,7 +17,6 @@ public class ALTScannableObject : MonoBehaviour
         {
             outline.OutlineColor = Color.red;
         }
-        entry = GetComponent<ALTGrimoireEntry>();
     }
 
     

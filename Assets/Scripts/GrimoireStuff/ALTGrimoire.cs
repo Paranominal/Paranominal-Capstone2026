@@ -8,7 +8,7 @@ public class ALTGrimoire : MonoBehaviour
 {
     public static ALTGrimoire instance;
     // for reasons only knowable to God and the .NET development team, making the below list private prevents the AddEntry function IN THIS SCRIPT from working
-    public List<grimoireEntry> entries;    // note to future programmers: this is the only critical savable data here. current entry is nice but less necessary. the scriptable object solution is less ideal imo
+    public List<ALTGrimoireEntry> entries;    // note to future programmers: this is the only critical savable data here. current entry is nice but less necessary. the scriptable object solution is less ideal imo
     private int currentEntry;
     public TextMeshProUGUI textDisplay;
     public TextMeshProUGUI collectedDisplay;
@@ -16,15 +16,6 @@ public class ALTGrimoire : MonoBehaviour
     // my general stance is there should probably be a higher level input manager than just handling this script to script but im writing this drugged out of my mind so i will NOT be doing that now
     InputAction nextPageAction;
     InputAction lastPageAction;
-
-    public struct grimoireEntry
-    { 
-        public string entryName;
-        public string flavourText;
-        public string hintText;
-        public string completeText;
-        public bool collected;
-    }
 
 
     private void Awake()
@@ -59,40 +50,22 @@ public class ALTGrimoire : MonoBehaviour
         }
     }
 
-    public grimoireEntry ToEntry(ALTGrimoireEntry entry, bool collected)
-    {
-        grimoireEntry e = new grimoireEntry();
-        e.entryName = entry.entryName;
-        e.flavourText = entry.flavourText;
-        e.hintText = entry.hintText;
-        e.completeText = entry.completeText;
-        e.collected = collected;
-        Debug.Log(e);
-        return e;
-    }
-
-    public grimoireEntry ToEntry(ALTGrimoireEntry entry)    // you already know im overloading for a default value
-    {
-        return ToEntry(entry, false);
-    }
-
-    public grimoireEntry GetEntry(int n)    //this could be overloaded to handle several means of accessing (by name, an ID, etc)
+    public ALTGrimoireEntry GetEntry(int n)    //this could be overloaded to handle several means of accessing (by name, an ID, etc)
     {
         return entries[n];
     }
 
-    public grimoireEntry GetEntry(string name)
+    public ALTGrimoireEntry GetEntry(string name)
     {
-        foreach (grimoireEntry e in entries)
+        foreach (ALTGrimoireEntry e in entries)
         {
             if (name == e.entryName)
             {
                 return e;
             }
         }
-        Debug.LogWarning("No entry of that name could be found, returning empty entry.");
-        grimoireEntry g = new grimoireEntry();
-        return g;
+        Debug.LogWarning("No entry of that name could be found, returning null.");
+        return null;
    
     }
 
@@ -109,7 +82,7 @@ public class ALTGrimoire : MonoBehaviour
         return 0;
     }
 
-    public grimoireEntry GetCurrentEntry()
+    public ALTGrimoireEntry GetCurrentEntry()
     {
         return GetEntry(currentEntry);
     }
@@ -147,29 +120,31 @@ public class ALTGrimoire : MonoBehaviour
         }
     }
 
-    public void AddEntry(grimoireEntry entry, bool collected)
+    public void AddEntry(ALTGrimoireEntry entry, bool collected)
     {
+        ALTGrimoireEntry e = Clone(entry);
         //Debug.Log(entry);
-        if (!CompareEntry(entry))   // checks the item hasn't already been added to the grimoire
+        if (!CompareEntry(e))   // checks the item hasn't already been added to the grimoire
         {
-            entry.collected = collected;
-            entries.Add(entry);
+            e.collected = collected;
+            entries.Add(e);
             currentEntry = entries.Count - 1;   //automatically switches to new entry
             UpdateText();
         }
 
     }
 
-    public void AddEntry(grimoireEntry entry)   //overload assumes that you're not specifying bc it hasnt been collected/isnt collectable
+    public void AddEntry(ALTGrimoireEntry entry)   //overload assumes that you're not specifying bc it hasnt been collected/isnt collectable
     {
         AddEntry(entry, false);
     }
 
-    public bool CompareEntry(grimoireEntry entry) // Returns True if entry is already in the entry list, and False if not
+    public bool CompareEntry(ALTGrimoireEntry entry) // Returns True if entry is already in the entry list, and False if not
     {
-        if (entries.Count > 0)
+
+        if (entries != null)
         {
-            foreach (grimoireEntry e in entries)
+            foreach (ALTGrimoireEntry e in entries)
             {
                 if (entry.entryName == e.entryName)   // adding an ID system would allow multiple items to have the same name field although that may be confusing
                 {
@@ -180,15 +155,25 @@ public class ALTGrimoire : MonoBehaviour
         return false;
     }
 
-    public void CollectEntry(grimoireEntry entry, bool status)  //changes entry's collection status. optional bool mostly just exists in case we need to uncollect things down the track.
+    public void CollectEntry(ALTGrimoireEntry entry, bool status)  //changes entry's collection status. optional bool mostly just exists in case we need to uncollect things down the track.
     {
-        grimoireEntry e = entries[GetEntryID(entry.entryName)];
-        e.collected = status;
-        entries[GetEntryID(entry.entryName)] = e;
+        entries[GetEntryID(entry.entryName)].collected = status;
+        UpdateText();
     }
 
-    public void CollectEntry(grimoireEntry entry)   // true set as default since like. thats what collecting something is.
+    public void CollectEntry(ALTGrimoireEntry entry)   // true set as default since like. thats what collecting something is.
     {
         CollectEntry(entry, true);
+    }
+
+    public ALTGrimoireEntry Clone(ALTGrimoireEntry entry)
+    {
+        ALTGrimoireEntry e = new ALTGrimoireEntry();
+        e.entryName = entry.entryName;
+        e.flavourText = entry.flavourText;
+        e.hintText = entry.hintText;
+        e.completeText = entry.completeText;
+        e.collected = entry.collected;
+        return e;
     }
 }

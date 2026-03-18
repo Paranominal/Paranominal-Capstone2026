@@ -343,25 +343,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry: {fileID: 0}
+  entry:
+    entryName: Key
+    flavourText: 
+    hintText: 
+    completeText: 
+    collected: 0
   outline: {fileID: 171920305}
   collectable: 1
---- !u!114 &171920311
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 171920303}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e75ddb3a90e138498bc9be6f3354876, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTGrimoireEntry
-  entryName: Collectable Totem
-  flavourText: 
-  hintText: 
-  completeText: 
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -621,25 +610,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry: {fileID: 0}
+  entry:
+    entryName: Totem
+    flavourText: 
+    hintText: 
+    completeText: 
+    collected: 0
   outline: {fileID: 543367973}
   collectable: 0
---- !u!114 &543367979
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 543367972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e75ddb3a90e138498bc9be6f3354876, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTGrimoireEntry
-  entryName: Totem
-  flavourText: 
-  hintText: 
-  completeText: 
 --- !u!1 &657345082
 GameObject:
   m_ObjectHideFlags: 0
@@ -917,7 +895,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry: {fileID: 0}
+  entry:
+    entryName: Second Totem
+    flavourText: 
+    hintText: 
+    completeText: 
+    collected: 0
   outline: {fileID: 919800745}
   collectable: 0
 --- !u!114 &919800745
@@ -938,22 +921,6 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
---- !u!114 &919800750
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919800738}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e75ddb3a90e138498bc9be6f3354876, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTGrimoireEntry
-  entryName: Second Totem
-  flavourText: 
-  hintText: 
-  completeText: 
 --- !u!1001 &1048188984
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1021,9 +988,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
       insertIndex: -1
       addedObject: {fileID: 171920305}
-    - targetCorrespondingSourceObject: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 171920311}
   m_SourcePrefab: {fileID: 100100000, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
 --- !u!1001 &1147569959
 PrefabInstance:
@@ -1149,9 +1113,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
       insertIndex: -1
       addedObject: {fileID: 919800744}
-    - targetCorrespondingSourceObject: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 919800750}
   m_SourcePrefab: {fileID: 100100000, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
 --- !u!1 &1196089886
 GameObject:
@@ -1596,9 +1557,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
       insertIndex: -1
       addedObject: {fileID: 543367973}
-    - targetCorrespondingSourceObject: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 543367979}
   m_SourcePrefab: {fileID: 100100000, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
