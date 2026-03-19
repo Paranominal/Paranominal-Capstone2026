@@ -12,10 +12,14 @@ public class ALTGrimoire : MonoBehaviour
     private int currentEntry;
     public TextMeshProUGUI textDisplay;
     public TextMeshProUGUI collectedDisplay;
+    public bool grimoireActive;
+
+    public Animator grimoireAnim;
 
     // my general stance is there should probably be a higher level input manager than just handling this script to script but im writing this drugged out of my mind so i will NOT be doing that now
     InputAction nextPageAction;
     InputAction lastPageAction;
+    InputAction grimoireUIAction;
 
 
     private void Awake()
@@ -35,6 +39,8 @@ public class ALTGrimoire : MonoBehaviour
         nextPageAction = InputSystem.actions.FindAction("Next");
         lastPageAction = InputSystem.actions.FindAction("Previous");
         //scrolling through pages might work better as a scroll wheel function if we go mouse + keyboard first, but idk how you'd translate that to controller so you might need both at once
+        grimoireUIAction = InputSystem.actions.FindAction("GrimoireUI");
+
     }
 
     // Update is called once per frame
@@ -47,6 +53,19 @@ public class ALTGrimoire : MonoBehaviour
         if (lastPageAction.WasPressedThisFrame())
         {
             TurnPage(false);
+        }
+        if (grimoireUIAction.WasPressedThisFrame())
+        {
+            if (!grimoireActive)
+            {
+                grimoireAnim.Play("up");
+                grimoireActive = true;
+            }
+            else
+            {
+                grimoireAnim.Play("down");
+                grimoireActive = false;
+            }
         }
     }
 
