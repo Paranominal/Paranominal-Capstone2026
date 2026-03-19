@@ -34,6 +34,6 @@ public class PlayerScan : MonoBehaviour
     }
     void GetInput()
     {
-        scanAction = InputSystem.actions.FindAction("Grimoire");
+        scanAction = InputSystem.actions.FindAction("Scan");
     }
 }
