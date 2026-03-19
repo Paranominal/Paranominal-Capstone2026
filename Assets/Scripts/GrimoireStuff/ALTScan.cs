@@ -12,7 +12,7 @@ public class ALTScan : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        scanAction = InputSystem.actions.FindAction("Grimoire");
+        scanAction = InputSystem.actions.FindAction("Scan");
         collectAction = InputSystem.actions.FindAction("Collect");
         if (grimoire == null)
         {
