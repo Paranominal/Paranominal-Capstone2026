@@ -92,7 +92,7 @@ public class EnemyController : MonoBehaviour
 
         if (playerTransform == null)
         {
-            GameObject playerObj = GameObject.Find("Player");
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
 
             if (playerObj != null)
             {
