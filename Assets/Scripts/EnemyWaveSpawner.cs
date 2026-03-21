@@ -28,7 +28,10 @@ public class EnemyWaveSpawner : MonoBehaviour
 
     [Header("Enemy Pool")]
     [SerializeField] private List<EnemyEntry> enemyPool = new List<EnemyEntry>();
+
+    [Header("Wave Settings")]
     [SerializeField] private int startingWave = 1;
+    [SerializeField] private int maxWaves = 5;
     [SerializeField] private int budgetPerWave = 10;
     [SerializeField] private int maxEnemiesPerWave = 50;
 
@@ -82,7 +85,7 @@ public class EnemyWaveSpawner : MonoBehaviour
     // Repeats the full wave cycle of generating, spawning, waiting, and advancing.
     private IEnumerator WaveLoopRoutine()
     {
-        while (true)
+        while (currentWave < maxWaves)
         {
             yield return StartCoroutine(RunSingleWaveRoutine());
             yield return new WaitForSeconds(timeBetweenWaves);
