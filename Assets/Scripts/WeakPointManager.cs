@@ -16,18 +16,19 @@ public class WeakPointManager : MonoBehaviour
     {
         foreach (GameObject weakpoint in weakpoints)
         {
-            weakpoint.GetComponent<WeakPoint>().Hide(); // deactivate all weakpoints
-            weakpoint.GetComponent<WeakPoint>().manager = this;// names itself manager within weakpoint scripts
+            weakpoint.GetComponent<WeakPoint>().Dectivate(); // deactivate all weakpoints
+            weakpoint.GetComponent<WeakPoint>().weakPointManager = this;// names itself manager within weakpoint scripts
         }
-        weakpoints[0].GetComponent<WeakPoint>().Show(weakpoints[0].GetComponent<WeakPoint>().weakPointType); // activate the first weakpoint in the index
+        weakpoints[0].GetComponent<WeakPoint>().Activate(); // activate the first weakpoint in the index
     }
 
     public void NextWeakPoint()
     {
+        weakpoints[currentWeakpoint].GetComponent<WeakPoint>().Dectivate();
         currentWeakpoint += 1;
         if (currentWeakpoint < weakpoints.Length)
         {
-            weakpoints[currentWeakpoint].GetComponent<WeakPoint>().Show(weakpoints[0].GetComponent<WeakPoint>().weakPointType);
+            weakpoints[currentWeakpoint].GetComponent<WeakPoint>().Activate();
         }
         else
         {

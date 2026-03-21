@@ -1,40 +1,32 @@
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class WeakPoint : MonoBehaviour
 {
-    [HideInInspector] public WeakPointManager manager;
-    public WeakPointType weakPointType;
-    [SerializeField] private GameObject ironElement;
-    [SerializeField] private GameObject silverElement;
-    private GameObject currentElement;
-    void Awake()
+    [SerializeField] GameObject[] weakpoints;
+    [SerializeField] private GameObject graphic;
+    public WeakPointManager weakPointManager;
+    private int currentWeakpoint;
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
     {
-        if (weakPointType == WeakPointType.Iron) currentElement = ironElement;
-        else if (weakPointType == WeakPointType.Silver) currentElement = silverElement;
-        else Debug.Log(gameObject + " is broken!! : weakpoint type is somehow neither iron nor silver!");
+        foreach (GameObject weakpoint in weakpoints)
+        {
+        }
     }
-    public void Show(WeakPointType weakPointType)
+
+    public void Activate()
     {
-        gameObject.GetComponent<SphereCollider>().enabled = true; //activates collider   
-        SpriteRenderer[] renderers = currentElement.GetComponentsInChildren<SpriteRenderer>(); //gets renderers in the correct element
-        foreach (SpriteRenderer renderer in renderers) renderer.enabled = true; //activates the gotten renderers
+        gameObject.GetComponent<SphereCollider>().enabled = true;
+        graphic.GetComponent<SpriteRenderer>().enabled = true;
     }
-    public void Hide()
+    public void Dectivate()
     {
-        gameObject.GetComponent<SphereCollider>().enabled = false; //deactivates collider   
-        SpriteRenderer[] renderers = gameObject.GetComponentsInChildren<SpriteRenderer>(); //gets ALL renderers in children
-        foreach (SpriteRenderer renderer in renderers) renderer.enabled = false; //deactivates all the gotten renderers
+        gameObject.GetComponent<SphereCollider>().enabled = false;
+        graphic.GetComponent<SpriteRenderer>().enabled = false;
     }
     
-    public void OnHit(WeakPointType type)
+    public void OnHit()
     {
-        if (type != weakPointType) return; //don't continue if bullet type is incorrect
-
-        Hide();
-        manager.NextWeakPoint();
+        weakPointManager.NextWeakPoint();
     }
 }
