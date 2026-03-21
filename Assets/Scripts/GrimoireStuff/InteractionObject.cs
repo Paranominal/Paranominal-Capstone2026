@@ -8,6 +8,7 @@ public class InteractionObject : MonoBehaviour
     private ALTGrimoire grimoire;
     InputAction collectAction;  // this could be rebound to a different action if you prefer
     public Door door;
+    public bool consumesItem;
 
     void Start()
     {
@@ -29,7 +30,10 @@ public class InteractionObject : MonoBehaviour
                 {
                     // down the road i'd like to update this to run through a switch statement based on an enum for multiple types of interaction. for now it just unlocks doors.
                     door.Unlock();
-                    Debug.Log("The sound of a door unlocking. Woah so immersive.");
+                    if (consumesItem)
+                    {
+                        grimoire.CollectEntry(grimoire.GetCurrentEntry(), false);
+                    }
                 }
             }
 

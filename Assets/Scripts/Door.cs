@@ -39,6 +39,10 @@ public class Door : MonoBehaviour
 
     public void Unlock()
     {
-        unlocked = true;
+        if (!unlocked)
+        {
+            unlocked = true;
+            Debug.Log("The sound of a door unlocking. Woah so immersive.");
+        }
     }
 }
