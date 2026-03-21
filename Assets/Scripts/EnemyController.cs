@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.AI;
 
-public class EnemyStateMachine : MonoBehaviour
+public class EnemyController : MonoBehaviour
 {
     private enum EnemyState
     {
@@ -13,12 +13,19 @@ public class EnemyStateMachine : MonoBehaviour
     }
 
     [Header("References")]
+    [Header("References")]
     [SerializeField] private NavMeshAgent navAgent;
     [SerializeField] private Transform playerTransform;
+    [SerializeField] private Transform attackPoint;
+    [SerializeField] private Animator animator;
 
     [Header("Layers")]
     [SerializeField] private LayerMask terrainLayer;
     [SerializeField] private LayerMask playerLayerMask;
+
+    [Header("Properties")]
+    [SerializeField] private float maxHealth = 20.0f;
+    private float currentHealth;
 
     [Header("Roaming Settings")]
     [SerializeField] private float roamRadius = 10f;
@@ -30,16 +37,21 @@ public class EnemyStateMachine : MonoBehaviour
 
     [Header("Combat Settings")]
     [SerializeField] private float attackCooldown = 1f;
-    private bool isOnAttackCooldown;
     [SerializeField] private float meleeDamage = 5f;
-    [SerializeField] private float meleeRange = 10f;
+    [SerializeField] private float meleeRange = 2f;
+    [SerializeField] private float attackRadius = 1f;
+    [SerializeField] private float attackWindup = 0.3f;
 
     [Header("Detection Ranges")]
     [SerializeField] private float visionRange = 20f;
     [SerializeField] private float engagementRange = 10f;
 
+    private bool isOnAttackCooldown;
+    private bool isAttacking;
+    private bool isDying;
+
     private bool isPlayerVisible;
-    private bool isPlayerInRange;
+    private bool isPlayerInMeleeRange;
 
     private EnemyState currentState;
 
@@ -49,39 +61,165 @@ public class EnemyStateMachine : MonoBehaviour
     private float idleTimer;
     private float currentIdleDuration;
 
-    // Sets up component references when the object is first loaded.
+    private bool isCreatedBySpawner;
+    private EnemyWaveSpawner ownerSpawner;
+    private bool hasReportedDeathToSpawner;
+
+    // 
+    private void Reset()
+    {
+        navAgent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
+
+        if (attackPoint == null)
+        {
+            Transform foundAttackPoint = transform.Find("AttackPoint");
+
+            if (foundAttackPoint != null)
+            {
+                attackPoint = foundAttackPoint;
+            }
+        }
+    }
+
+    // Sets up component references and default values when the object is first loaded.
     private void Awake()
     {
+        if (navAgent == null)
+        {
+            navAgent = GetComponent<NavMeshAgent>();
+        }
+
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+        }
+
+        if (attackPoint == null)
+        {
+            foreach (Transform child in GetComponentsInChildren<Transform>())
+            {
+                if (child.name == "AttackPoint")
+                {
+                    attackPoint = child;
+                    break;
+                }
+            }
+        }
+
         if (playerTransform == null)
         {
             GameObject playerObj = GameObject.Find("Player");
+
             if (playerObj != null)
             {
                 playerTransform = playerObj.transform;
             }
         }
 
-        if (navAgent == null)
-        {
-            navAgent = GetComponent<NavMeshAgent>();
-        }
+        currentHealth = maxHealth;
     }
 
     // Places the enemy into its starting idle state when the scene begins.
     private void Start()
     {
+        if (isCreatedBySpawner)
+        {
+            // When a spawn animation is created, play it here.
+        }
+
         EnterIdleState();
     }
 
     // Updates player detection, state transitions, and current state behaviour each frame.
     private void Update()
     {
+        // If enemy is currently in the process of dying, skip normal update pass
+        if (isDying)
+        {
+            return;
+        }
+
         DetectPlayer();
         UpdateBehaviourState();
         RunCurrentState();
+
+        if (currentHealth <= 0f)
+        {
+            Die();
+        }
     }
 
-    // Draws the enemy's detection ranges and current roaming area in the Scene view.
+    // Reports this enemy's death to its owning spawner if it has one.
+    private void OnDestroy()
+    {
+        ReportDeathToSpawner();
+    }
+
+    // Stores a reference to the spawner that created this enemy.
+    public void SetOwnerSpawner(EnemyWaveSpawner spawner)
+    {
+        ownerSpawner = spawner;
+        isCreatedBySpawner = true;
+    }
+
+    // Applies damage to the enemy and checks whether it should die.
+    public void TakeDamage(float damageAmount)
+    {
+        if (isDying)
+        {
+            return;
+        }
+
+        currentHealth -= damageAmount;
+
+        if (currentHealth <= 0f)
+        {
+            Die();
+        }
+    }
+
+    // Handles the enemy's death and cleanup.
+    private void Die()
+    {
+        if (isDying)
+        {
+            return;
+        }
+
+        isDying = true;
+
+        if (navAgent != null)
+        {
+            navAgent.isStopped = true;
+        }
+
+        if (isCreatedBySpawner)
+        {
+            ReportDeathToSpawner();
+        }
+
+        // When a death animation is created, play it here before destroying the object.
+        Destroy(gameObject);
+    }
+
+    // Notifies the owning spawner that this enemy has died.
+    private void ReportDeathToSpawner()
+    {
+        if (hasReportedDeathToSpawner)
+        {
+            return;
+        }
+
+        hasReportedDeathToSpawner = true;
+
+        if (ownerSpawner != null)
+        {
+            ownerSpawner.NotifyEnemyDeath(this);
+        }
+    }
+
+    // Draws the enemy's detection ranges, roam point, and melee hit area in the Scene view.
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
@@ -93,25 +231,52 @@ public class EnemyStateMachine : MonoBehaviour
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, roamRadius);
 
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(transform.position, meleeRange);
+
         if (roamPointSet)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(currentRoamPoint, 0.3f);
             Gizmos.DrawLine(transform.position, currentRoamPoint);
         }
+
+        if (attackPoint != null)
+        {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
+        }
     }
 
-    // Checks whether the player is visible and within engagement range.
+    // Checks whether the player is visible and within melee range.
     private void DetectPlayer()
     {
         isPlayerVisible = Physics.CheckSphere(transform.position, visionRange, playerLayerMask);
-        isPlayerInRange = Physics.CheckSphere(transform.position, engagementRange, playerLayerMask);
+        isPlayerInMeleeRange = Physics.CheckSphere(transform.position, meleeRange, playerLayerMask);
     }
 
-    // Performs the enemy's melee attack behaviour.
+    // Performs the enemy's melee hit detection.
     private void MeleeAttack()
     {
-        // TO-DO: Implement basic enemy melee attack
+        if (attackPoint == null)
+        {
+            Debug.LogWarning($"{name} is missing an Attack Point reference.");
+            return;
+        }
+
+        Collider[] hitColliders = Physics.OverlapSphere(attackPoint.position, attackRadius, playerLayerMask);
+
+        foreach (Collider hitCollider in hitColliders)
+        {
+            if (playerTransform != null &&
+                (hitCollider.transform == playerTransform || hitCollider.transform.IsChildOf(playerTransform)))
+            {
+                Debug.Log($"{name} landed a melee hit on {hitCollider.name} for {meleeDamage} damage.");
+                return;
+            }
+        }
+
+        Debug.Log($"{name} melee attack missed.");
     }
 
     // Finds a valid roaming destination within the enemy's roaming radius.
@@ -137,14 +302,29 @@ public class EnemyStateMachine : MonoBehaviour
 
             if (Physics.Raycast(potentialPoint, Vector3.down, out RaycastHit hit, 10f, terrainLayer))
             {
-                NavMeshHit navHit;
-                if (NavMesh.SamplePosition(hit.point, out navHit, 2f, NavMesh.AllAreas))
+                if (NavMesh.SamplePosition(hit.point, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
                 {
                     currentRoamPoint = navHit.position;
                     roamPointSet = true;
                 }
             }
         }
+    }
+
+    // Handles the enemy's melee attack timing, hit frame, and cooldown.
+    private IEnumerator MeleeAttackRoutine()
+    {
+        isAttacking = true;
+
+        yield return new WaitForSeconds(attackWindup);
+
+        if (!isDying)
+        {
+            MeleeAttack();
+            StartCoroutine(AttackCooldownRoutine());
+        }
+
+        isAttacking = false;
     }
 
     // Handles the delay between consecutive enemy attacks.
@@ -159,7 +339,12 @@ public class EnemyStateMachine : MonoBehaviour
     private void EnterIdleState()
     {
         currentState = EnemyState.Idle;
-        navAgent.SetDestination(transform.position);
+
+        if (navAgent != null)
+        {
+            navAgent.isStopped = false;
+            navAgent.SetDestination(transform.position);
+        }
 
         idleTimer = 0f;
         currentIdleDuration = Random.Range(idleTimeMin, idleTimeMax);
@@ -171,8 +356,9 @@ public class EnemyStateMachine : MonoBehaviour
         currentState = EnemyState.Roam;
         GenerateRoamPoint();
 
-        if (roamPointSet)
+        if (roamPointSet && navAgent != null)
         {
+            navAgent.isStopped = false;
             navAgent.SetDestination(currentRoamPoint);
         }
         else
@@ -185,6 +371,11 @@ public class EnemyStateMachine : MonoBehaviour
     private void EnterChaseState()
     {
         currentState = EnemyState.Chase;
+
+        if (navAgent != null)
+        {
+            navAgent.isStopped = false;
+        }
     }
 
     // Switches the enemy into the attack state.
@@ -213,19 +404,22 @@ public class EnemyStateMachine : MonoBehaviour
             return;
         }
 
-        navAgent.SetDestination(currentRoamPoint);
-
-        if (!navAgent.pathPending && navAgent.remainingDistance <= roamPointReachedDistance)
+        if (navAgent != null)
         {
-            roamPointSet = false;
-            EnterIdleState();
+            navAgent.SetDestination(currentRoamPoint);
+
+            if (!navAgent.pathPending && navAgent.remainingDistance <= roamPointReachedDistance)
+            {
+                roamPointSet = false;
+                EnterIdleState();
+            }
         }
     }
 
     // Moves the enemy toward the player's current position.
     private void PerformChase()
     {
-        if (playerTransform != null)
+        if (playerTransform != null && navAgent != null)
         {
             navAgent.SetDestination(playerTransform.position);
         }
@@ -234,7 +428,10 @@ public class EnemyStateMachine : MonoBehaviour
     // Stops movement, faces the player, and performs attacks when off cooldown.
     private void PerformAttack()
     {
-        navAgent.SetDestination(transform.position);
+        if (navAgent != null)
+        {
+            navAgent.SetDestination(transform.position);
+        }
 
         if (playerTransform != null)
         {
@@ -247,10 +444,9 @@ public class EnemyStateMachine : MonoBehaviour
             transform.LookAt(lookTarget);
         }
 
-        if (!isOnAttackCooldown)
+        if (!isAttacking && !isOnAttackCooldown)
         {
-            MeleeAttack();
-            StartCoroutine(AttackCooldownRoutine());
+            StartCoroutine(MeleeAttackRoutine());
         }
     }
 
@@ -280,7 +476,7 @@ public class EnemyStateMachine : MonoBehaviour
     // Determines when the enemy should transition between idle, roam, chase, and attack states.
     private void UpdateBehaviourState()
     {
-        if (isPlayerVisible && isPlayerInRange)
+        if (isPlayerVisible && isPlayerInMeleeRange)
         {
             if (currentState != EnemyState.Attack)
             {
@@ -290,7 +486,7 @@ public class EnemyStateMachine : MonoBehaviour
             return;
         }
 
-        if (isPlayerVisible && !isPlayerInRange)
+        if (isPlayerVisible && !isPlayerInMeleeRange)
         {
             if (currentState != EnemyState.Chase)
             {
@@ -300,7 +496,7 @@ public class EnemyStateMachine : MonoBehaviour
             return;
         }
 
-        if (!isPlayerVisible && !isPlayerInRange)
+        if (!isPlayerVisible)
         {
             if (currentState == EnemyState.Chase || currentState == EnemyState.Attack)
             {
