@@ -65,23 +65,6 @@ public class EnemyController : MonoBehaviour
     private EnemyWaveSpawner ownerSpawner;
     private bool hasReportedDeathToSpawner;
 
-    // 
-    private void Reset()
-    {
-        navAgent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
-
-        if (attackPoint == null)
-        {
-            Transform foundAttackPoint = transform.Find("AttackPoint");
-
-            if (foundAttackPoint != null)
-            {
-                attackPoint = foundAttackPoint;
-            }
-        }
-    }
-
     // Sets up component references and default values when the object is first loaded.
     private void Awake()
     {
