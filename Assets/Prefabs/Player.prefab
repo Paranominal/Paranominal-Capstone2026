@@ -1104,7 +1104,7 @@ GameObject:
   - component: {fileID: 5373816417711542028}
   - component: {fileID: 5079679954012531165}
   m_Layer: 6
-  m_Name: Player_AIPrototype
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1224,9 +1224,9 @@ MonoBehaviour:
   silverActionName: ShootSilver
   playerCamera: {fileID: 1681194576948962926}
   playerMovement: {fileID: 5373816417711542028}
-  gunModel: {fileID: 3762549486017257809}
-  ironMuzzleFlash: {fileID: 4256719113441466821}
-  silverMuzzleFlash: {fileID: 4288977187402721326}
+  gunModel: {fileID: 2537945637242886111}
+  ironMuzzleFlash: {fileID: 3178764763177234251}
+  silverMuzzleFlash: {fileID: 3209475308861972128}
   WeakPoint:
     serializedVersion: 2
     m_Bits: 128
@@ -1649,7 +1649,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 42cdb26a8da006d47ad7de16344a69ac, type: 2}
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1729,13 +1729,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-<<<<<<< HEAD:Assets/Prefabs/Player_AIPrototype.prefab
-  - {fileID: 6697632979520130437}
-=======
   - {fileID: 6924241276329013197}
-  - {fileID: 3762549486017257809}
+  - {fileID: 2537945637242886111}
   - {fileID: 7788968810376539402}
->>>>>>> parent of 756ddc5 (Revert "Merge branch 'dev' into enemyai-prototyping-mich"):Assets/Prefabs/Player.prefab
   m_Father: {fileID: 53653362491126861}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &1681194576948962926
@@ -1858,9 +1854,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ALTScan
   scannable:
     serializedVersion: 2
-<<<<<<< HEAD:Assets/Prefabs/Player_AIPrototype.prefab
-    m_Bits: 128
-=======
     m_Bits: 256
 --- !u!1 &7209415069266540888
 GameObject:
@@ -2500,7 +2493,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5820451053879187290, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
   m_PrefabInstance: {fileID: 4382456229685066320}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &8722110752999986106
+--- !u!1001 &7927728745259181364
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -2508,81 +2501,67 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6619450886695407195}
     m_Modifications:
-    - target: {fileID: 708311207639382407, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
-      propertyPath: m_Name
-      value: SilverFlash
-      objectReference: {fileID: 0}
-    - target: {fileID: 2745210396697858090, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
+    - target: {fileID: 2745210396697858090, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
       propertyPath: m_Name
       value: Shotgun
       objectReference: {fileID: 0}
-    - target: {fileID: 4763065678442171007, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5565441257704977131, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
+    - target: {fileID: 5565441257704977131, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.30707
       objectReference: {fileID: 0}
-    - target: {fileID: 5565441257704977131, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
+    - target: {fileID: 5565441257704977131, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.96883005
+      value: -0.96883
       objectReference: {fileID: 0}
-    - target: {fileID: 5565441257704977131, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
+    - target: {fileID: 5565441257704977131, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.3946
       objectReference: {fileID: 0}
-    - target: {fileID: 5565441257704977131, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
+    - target: {fileID: 5565441257704977131, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 5565441257704977131, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
+    - target: {fileID: 5565441257704977131, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
       propertyPath: m_LocalRotation.x
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: 5565441257704977131, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
+    - target: {fileID: 5565441257704977131, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
       propertyPath: m_LocalRotation.y
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: 5565441257704977131, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
+    - target: {fileID: 5565441257704977131, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
       propertyPath: m_LocalRotation.z
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: 5565441257704977131, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
+    - target: {fileID: 5565441257704977131, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5565441257704977131, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
+    - target: {fileID: 5565441257704977131, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5565441257704977131, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
+    - target: {fileID: 5565441257704977131, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5618064011641905444, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
-      propertyPath: m_Name
-      value: IronFlash
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 416691560048733985, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
---- !u!4 &3762549486017257809 stripped
+  m_SourcePrefab: {fileID: 100100000, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
+--- !u!4 &2537945637242886111 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 5565441257704977131, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
-  m_PrefabInstance: {fileID: 8722110752999986106}
+  m_CorrespondingSourceObject: {fileID: 5565441257704977131, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
+  m_PrefabInstance: {fileID: 7927728745259181364}
   m_PrefabAsset: {fileID: 0}
---- !u!212 &4256719113441466821 stripped
+--- !u!212 &3178764763177234251 stripped
 SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 4763065678442171007, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
-  m_PrefabInstance: {fileID: 8722110752999986106}
+  m_CorrespondingSourceObject: {fileID: 4763065678442171007, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
+  m_PrefabInstance: {fileID: 7927728745259181364}
   m_PrefabAsset: {fileID: 0}
---- !u!212 &4288977187402721326 stripped
+--- !u!212 &3209475308861972128 stripped
 SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 4795959234687237012, guid: b3ad9cae872d7e2408030d67c6521c91, type: 3}
-  m_PrefabInstance: {fileID: 8722110752999986106}
+  m_CorrespondingSourceObject: {fileID: 4795959234687237012, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
+  m_PrefabInstance: {fileID: 7927728745259181364}
   m_PrefabAsset: {fileID: 0}
->>>>>>> parent of 756ddc5 (Revert "Merge branch 'dev' into enemyai-prototyping-mich"):Assets/Prefabs/Player.prefab
