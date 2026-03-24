@@ -127,6 +127,8 @@ GameObject:
   - component: {fileID: 4501345601868512818}
   - component: {fileID: 8711081308671096238}
   - component: {fileID: 4112872190407107680}
+  - component: {fileID: 7296983719775550804}
+  - component: {fileID: 8340625812644798418}
   m_Layer: 8
   m_Name: Enemy_AIPrototype
   m_TagString: Untagged
@@ -169,13 +171,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 3355846480035243032}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e445b63785ef14244a3449df0431ec78, type: 3}
+  m_Script: {fileID: 11500000, guid: 81454ed499b3e3341ba1ee5ac09e8773, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStateMachine
   navAgent: {fileID: 8711081308671096238}
   playerTransform: {fileID: 0}
   attackPoint: {fileID: 5019465572146812340}
   animator: {fileID: 0}
+  vision: {fileID: 7296983719775550804}
   terrainLayer:
     serializedVersion: 2
     m_Bits: 1024
@@ -183,17 +186,20 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   maxHealth: 20
-  roamRadius: 15
+  detectTimeToChase: 1.5
+  loseSightTimeToSearch: 2
+  roamRadius: 10
   roamPointReachedDistance: 1
   idleTimeMin: 2
   idleTimeMax: 5
+  searchDuration: 4
+  searchTurnAngle: 45
+  searchTurnSpeed: 2
   attackCooldown: 1
   meleeDamage: 5
   meleeRange: 2
-  attackRadius: 1.5
+  attackRadius: 1
   attackWindup: 0.3
-  visionRange: 20
-  engagementRange: 10
 --- !u!195 &8711081308671096238
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -230,6 +236,40 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeakPointManager
   weakpoints:
   - {fileID: 6029040104381646509}
+--- !u!114 &7296983719775550804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3355846480035243032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 875e8c249219829468c559b51fdade0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyVisionSensor
+  viewDistance: 14
+  viewAngle: 90
+  chaseDistance: 12
+  visionBlockers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  eyeHeight: 1.6
+  targetHeight: 1.2
+--- !u!114 &8340625812644798418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3355846480035243032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd5c8f72e7346b6409ee5c1f200bffee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyVisionCone
+  coneMaterial: {fileID: 0}
+  scanResolution: 30
 --- !u!1 &3378086408510095334
 GameObject:
   m_ObjectHideFlags: 0
@@ -353,6 +393,10 @@ PrefabInstance:
     - target: {fileID: 203305178815565052, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_Name
       value: WeakPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 4434378975981373331, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
+      propertyPath: weakPointType
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalPosition.x

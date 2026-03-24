@@ -127,6 +127,8 @@ GameObject:
   - component: {fileID: 7665008893649531870}
   - component: {fileID: 1298669313689453149}
   - component: {fileID: 6334293415163678260}
+  - component: {fileID: 5564032408167479828}
+  - component: {fileID: 9155771382628995581}
   m_Layer: 0
   m_Name: BigEnemy_AIPrototype
   m_TagString: Untagged
@@ -172,13 +174,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 3355846480035243032}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e445b63785ef14244a3449df0431ec78, type: 3}
+  m_Script: {fileID: 11500000, guid: 81454ed499b3e3341ba1ee5ac09e8773, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStateMachine
   navAgent: {fileID: 1298669313689453149}
   playerTransform: {fileID: 0}
   attackPoint: {fileID: 368549375333681657}
   animator: {fileID: 0}
+  vision: {fileID: 5564032408167479828}
   terrainLayer:
     serializedVersion: 2
     m_Bits: 1024
@@ -186,17 +189,20 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   maxHealth: 20
-  roamRadius: 15
+  detectTimeToChase: 1.5
+  loseSightTimeToSearch: 2
+  roamRadius: 10
   roamPointReachedDistance: 1
   idleTimeMin: 2
   idleTimeMax: 5
+  searchDuration: 4
+  searchTurnAngle: 45
+  searchTurnSpeed: 2
   attackCooldown: 1
   meleeDamage: 5
-  meleeRange: 6
-  attackRadius: 4
+  meleeRange: 2
+  attackRadius: 1
   attackWindup: 0.3
-  visionRange: 20
-  engagementRange: 10
 --- !u!195 &1298669313689453149
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -236,6 +242,40 @@ MonoBehaviour:
   - {fileID: 4445017305347637387}
   - {fileID: 264255367804523297}
   - {fileID: 3058015429002522436}
+--- !u!114 &5564032408167479828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3355846480035243032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 875e8c249219829468c559b51fdade0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyVisionSensor
+  viewDistance: 14
+  viewAngle: 90
+  chaseDistance: 12
+  visionBlockers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  eyeHeight: 1.6
+  targetHeight: 1.2
+--- !u!114 &9155771382628995581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3355846480035243032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd5c8f72e7346b6409ee5c1f200bffee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyVisionCone
+  coneMaterial: {fileID: 0}
+  scanResolution: 30
 --- !u!1 &8851202961244931369
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,7 +426,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.121
+      value: 0.19
       objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -548,7 +588,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.108
+      value: 0.57
       objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalRotation.w

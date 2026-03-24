@@ -9,15 +9,16 @@ public class EnemyController : MonoBehaviour
         Idle,
         Roam,
         Chase,
+        Search,
         Attack
     }
 
-    [Header("References")]
     [Header("References")]
     [SerializeField] private NavMeshAgent navAgent;
     [SerializeField] private Transform playerTransform;
     [SerializeField] private Transform attackPoint;
     [SerializeField] private Animator animator;
+    [SerializeField] private EnemyVisionSensor vision;
 
     [Header("Layers")]
     [SerializeField] private LayerMask terrainLayer;
@@ -27,6 +28,10 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float maxHealth = 20.0f;
     private float currentHealth;
 
+    [Header("Detection Timers")]
+    [SerializeField] private float detectTimeToChase = 1.5f;
+    [SerializeField] private float loseSightTimeToSearch = 2f;
+
     [Header("Roaming Settings")]
     [SerializeField] private float roamRadius = 10f;
     [SerializeField] private float roamPointReachedDistance = 1f;
@@ -35,16 +40,17 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float idleTimeMin = 2f;
     [SerializeField] private float idleTimeMax = 5f;
 
+    [Header("Search Settings")]
+    [SerializeField] private float searchDuration = 4f;
+    [SerializeField] private float searchTurnAngle = 45f;
+    [SerializeField] private float searchTurnSpeed = 2f;
+
     [Header("Combat Settings")]
     [SerializeField] private float attackCooldown = 1f;
     [SerializeField] private float meleeDamage = 5f;
     [SerializeField] private float meleeRange = 2f;
     [SerializeField] private float attackRadius = 1f;
     [SerializeField] private float attackWindup = 0.3f;
-
-    [Header("Detection Ranges")]
-    [SerializeField] private float visionRange = 20f;
-    [SerializeField] private float engagementRange = 10f;
 
     private bool isOnAttackCooldown;
     private bool isAttacking;
@@ -60,6 +66,11 @@ public class EnemyController : MonoBehaviour
 
     private float idleTimer;
     private float currentIdleDuration;
+
+    private float detectMeter;
+    private float lostSightTimer;
+    private float searchTimer;
+    private float searchBaseYaw;
 
     private bool isCreatedBySpawner;
     private EnemyWaveSpawner ownerSpawner;
@@ -90,6 +101,23 @@ public class EnemyController : MonoBehaviour
             }
         }
 
+        if (vision == null)
+        {
+            vision = GetComponent<EnemyVisionSensor>();
+        }
+
+        if (vision == null)
+        {
+            vision = gameObject.AddComponent<EnemyVisionSensor>();
+        }
+
+        vision.AcquirePlayerTarget();
+
+        if (playerTransform == null && vision.HasTarget)
+        {
+            playerTransform = vision.Target;
+        }
+
         if (playerTransform == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -117,10 +145,19 @@ public class EnemyController : MonoBehaviour
     // Updates player detection, state transitions, and current state behaviour each frame.
     private void Update()
     {
-        // If enemy is currently in the process of dying, skip normal update pass
         if (isDying)
         {
             return;
+        }
+
+        if (vision != null && !vision.HasTarget)
+        {
+            vision.AcquirePlayerTarget();
+        }
+
+        if (playerTransform == null && vision != null && vision.HasTarget)
+        {
+            playerTransform = vision.Target;
         }
 
         DetectPlayer();
@@ -175,6 +212,7 @@ public class EnemyController : MonoBehaviour
         if (navAgent != null)
         {
             navAgent.isStopped = true;
+            navAgent.ResetPath();
         }
 
         if (isCreatedBySpawner)
@@ -205,11 +243,14 @@ public class EnemyController : MonoBehaviour
     // Draws the enemy's detection ranges, roam point, and melee hit area in the Scene view.
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, engagementRange);
+        if (vision != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, vision.viewDistance);
 
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, visionRange);
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, vision.ChaseDistance);
+        }
 
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, roamRadius);
@@ -231,11 +272,20 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    // Checks whether the player is visible and within melee range.
+    // Checks whether the player is visible via the vision sensor and whether they are close enough for melee.
     private void DetectPlayer()
     {
-        isPlayerVisible = Physics.CheckSphere(transform.position, visionRange, playerLayerMask);
-        isPlayerInMeleeRange = Physics.CheckSphere(transform.position, meleeRange, playerLayerMask);
+        if (vision == null)
+        {
+            isPlayerVisible = false;
+            isPlayerInMeleeRange = false;
+            return;
+        }
+
+        isPlayerVisible = vision.IsTargetInVision();
+
+        float distanceToPlayer = vision.DistanceToTarget();
+        isPlayerInMeleeRange = distanceToPlayer <= meleeRange;
     }
 
     // Performs the enemy's melee hit detection.
@@ -325,8 +375,8 @@ public class EnemyController : MonoBehaviour
 
         if (navAgent != null)
         {
-            navAgent.isStopped = false;
-            navAgent.SetDestination(transform.position);
+            navAgent.isStopped = true;
+            navAgent.ResetPath();
         }
 
         idleTimer = 0f;
@@ -361,10 +411,31 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    // Switches the enemy into the search state.
+    private void EnterSearchState()
+    {
+        currentState = EnemyState.Search;
+
+        if (navAgent != null)
+        {
+            navAgent.isStopped = true;
+            navAgent.ResetPath();
+        }
+
+        searchTimer = 0f;
+        searchBaseYaw = transform.eulerAngles.y;
+    }
+
     // Switches the enemy into the attack state.
     private void EnterAttackState()
     {
         currentState = EnemyState.Attack;
+
+        if (navAgent != null)
+        {
+            navAgent.isStopped = true;
+            navAgent.ResetPath();
+        }
     }
 
     // Runs the enemy's idle behaviour and transitions to roaming when the timer ends.
@@ -404,7 +475,22 @@ public class EnemyController : MonoBehaviour
     {
         if (playerTransform != null && navAgent != null)
         {
+            navAgent.isStopped = false;
             navAgent.SetDestination(playerTransform.position);
+        }
+    }
+
+    // Rotates in place while searching for the player, then returns to idle.
+    private void PerformSearch()
+    {
+        searchTimer += Time.deltaTime;
+
+        float yawOffset = Mathf.Sin(searchTimer * searchTurnSpeed) * searchTurnAngle;
+        transform.rotation = Quaternion.Euler(0f, searchBaseYaw + yawOffset, 0f);
+
+        if (searchTimer >= searchDuration)
+        {
+            EnterIdleState();
         }
     }
 
@@ -413,7 +499,8 @@ public class EnemyController : MonoBehaviour
     {
         if (navAgent != null)
         {
-            navAgent.SetDestination(transform.position);
+            navAgent.isStopped = true;
+            navAgent.ResetPath();
         }
 
         if (playerTransform != null)
@@ -450,15 +537,42 @@ public class EnemyController : MonoBehaviour
                 PerformChase();
                 break;
 
+            case EnemyState.Search:
+                PerformSearch();
+                break;
+
             case EnemyState.Attack:
                 PerformAttack();
                 break;
         }
     }
 
-    // Determines when the enemy should transition between idle, roam, chase, and attack states.
+    // Determines when the enemy should transition between idle, roam, chase, search, and attack.
     private void UpdateBehaviourState()
     {
+        if (vision == null)
+        {
+            return;
+        }
+
+        float distanceToPlayer = vision.DistanceToTarget();
+        bool withinChaseDistance = distanceToPlayer <= vision.ChaseDistance;
+
+        if (isPlayerVisible)
+        {
+            detectMeter += Time.deltaTime;
+            lostSightTimer = 0f;
+        }
+        else
+        {
+            detectMeter = Mathf.Max(0f, detectMeter - Time.deltaTime);
+
+            if (currentState == EnemyState.Chase || currentState == EnemyState.Attack)
+            {
+                lostSightTimer += Time.deltaTime;
+            }
+        }
+
         if (isPlayerVisible && isPlayerInMeleeRange)
         {
             if (currentState != EnemyState.Attack)
@@ -469,7 +583,7 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
-        if (isPlayerVisible && !isPlayerInMeleeRange)
+        if (isPlayerVisible && (detectMeter >= detectTimeToChase || withinChaseDistance))
         {
             if (currentState != EnemyState.Chase)
             {
@@ -479,12 +593,21 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
-        if (!isPlayerVisible)
+        if ((currentState == EnemyState.Chase || currentState == EnemyState.Attack) &&
+            !isPlayerVisible &&
+            lostSightTimer >= loseSightTimeToSearch)
         {
-            if (currentState == EnemyState.Chase || currentState == EnemyState.Attack)
+            if (currentState != EnemyState.Search)
             {
-                EnterIdleState();
+                EnterSearchState();
             }
+
+            return;
+        }
+
+        if (currentState == EnemyState.Search && isPlayerVisible)
+        {
+            EnterChaseState();
         }
     }
 }
