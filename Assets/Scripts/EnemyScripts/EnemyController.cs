@@ -73,7 +73,7 @@ public class EnemyController : MonoBehaviour
     private float searchBaseYaw;
 
     private bool isCreatedBySpawner;
-    private EnemyWaveSpawner ownerSpawner;
+    private EnemyArenaSpawner ownerSpawner;
     private bool hasReportedDeathToSpawner;
 
     // Sets up component references and default values when the object is first loaded.
@@ -177,7 +177,7 @@ public class EnemyController : MonoBehaviour
     }
 
     // Stores a reference to the spawner that created this enemy.
-    public void SetOwnerSpawner(EnemyWaveSpawner spawner)
+    public void SetOwnerSpawner(EnemyArenaSpawner spawner)
     {
         ownerSpawner = spawner;
         isCreatedBySpawner = true;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyWaveSpawner : MonoBehaviour
+public class EnemyArenaSpawner : MonoBehaviour
 {
     public enum SpawnTimingMode
     {
