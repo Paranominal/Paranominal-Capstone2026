@@ -13,10 +13,13 @@ public class EnemyEncounterManager : MonoBehaviour
 
     [Header("Encounter State")]
     [SerializeField] private bool isPlayerInRoom = false;
+    [SerializeField] private float resetCounter = 5f;
 
     private int currentWave;
     private bool hasEncounterStarted;
+    private bool hasEncounterCompleted;
     private Coroutine waveLoopCoroutine;
+    private Coroutine resetCoroutine;
 
     private readonly List<EncounterEnemyController> spawnedEnemies = new List<EncounterEnemyController>();
 
@@ -55,7 +58,9 @@ public class EnemyEncounterManager : MonoBehaviour
 
         if (isPlayerInRoom)
         {
-            if (!hasEncounterStarted)
+            CancelResetCounter();
+
+            if (!hasEncounterStarted && !hasEncounterCompleted)
             {
                 StartEncounter();
             }
@@ -66,7 +71,11 @@ public class EnemyEncounterManager : MonoBehaviour
         }
         else
         {
-            PauseSpawnedEnemies();
+            if (hasEncounterStarted && !hasEncounterCompleted)
+            {
+                PauseSpawnedEnemies();
+                StartResetCounter();
+            }
         }
     }
 
@@ -87,14 +96,16 @@ public class EnemyEncounterManager : MonoBehaviour
     {
         while (currentWave < maxWaves)
         {
+            yield return StartCoroutine(WaitUntilPlayerIsInRoomRoutine());
             yield return StartCoroutine(RunSingleWaveRoutine());
 
             if (currentWave < maxWaves)
             {
-                yield return new WaitForSeconds(timeBetweenWaves);
+                yield return StartCoroutine(WaitForNextWaveRoutine());
             }
         }
 
+        hasEncounterCompleted = true;
         waveLoopCoroutine = null;
     }
 
@@ -108,6 +119,31 @@ public class EnemyEncounterManager : MonoBehaviour
         while (spawnedEnemies.Count > 0)
         {
             spawnedEnemies.RemoveAll(enemy => enemy == null);
+            yield return null;
+        }
+    }
+
+    // Waits for the player to be in the room before allowing the encounter to continue.
+    private IEnumerator WaitUntilPlayerIsInRoomRoutine()
+    {
+        while (!isPlayerInRoom)
+        {
+            yield return null;
+        }
+    }
+
+    // Waits between waves, but only counts time while the player is in the room.
+    private IEnumerator WaitForNextWaveRoutine()
+    {
+        float timer = 0f;
+
+        while (timer < timeBetweenWaves)
+        {
+            if (isPlayerInRoom)
+            {
+                timer += Time.deltaTime;
+            }
+
             yield return null;
         }
     }
@@ -170,6 +206,78 @@ public class EnemyEncounterManager : MonoBehaviour
         }
     }
 
+    // Starts the encounter reset countdown if one is not already running.
+    private void StartResetCounter()
+    {
+        if (resetCoroutine != null)
+        {
+            return;
+        }
+
+        resetCoroutine = StartCoroutine(ResetCounterRoutine());
+    }
+
+    // Cancels the encounter reset countdown if the player returns to the room.
+    private void CancelResetCounter()
+    {
+        if (resetCoroutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(resetCoroutine);
+        resetCoroutine = null;
+    }
+
+    // Counts down while the player is outside the room, then resets the encounter if the timer expires.
+    private IEnumerator ResetCounterRoutine()
+    {
+        float timer = resetCounter;
+
+        while (timer > 0f)
+        {
+            if (isPlayerInRoom)
+            {
+                resetCoroutine = null;
+                yield break;
+            }
+
+            timer -= Time.deltaTime;
+            yield return null;
+        }
+
+        ResetEncounter();
+        resetCoroutine = null;
+    }
+
+    // Fully resets the encounter back to its initial state.
+    private void ResetEncounter()
+    {
+        if (waveLoopCoroutine != null)
+        {
+            StopCoroutine(waveLoopCoroutine);
+            waveLoopCoroutine = null;
+        }
+
+        for (int i = 0; i < spawnedEnemies.Count; i++)
+        {
+            EncounterEnemyController enemy = spawnedEnemies[i];
+
+            if (enemy == null)
+            {
+                continue;
+            }
+
+            Destroy(enemy.gameObject);
+        }
+
+        spawnedEnemies.Clear();
+
+        currentWave = 0;
+        hasEncounterStarted = false;
+        hasEncounterCompleted = false;
+    }
+
     // Automatically gathers all child spawn points under this spawner in the hierarchy.
     private void GatherSpawnPoints()
     {
@@ -210,6 +318,12 @@ public class EnemyEncounterManager : MonoBehaviour
         if (maxWaves <= 0)
         {
             Debug.LogWarning("EnemyEncounterManager requires a maximum number of waves greater than 0.");
+            return false;
+        }
+
+        if (resetCounter <= 0f)
+        {
+            Debug.LogWarning("EnemyEncounterManager requires a reset counter greater than 0.");
             return false;
         }
 
