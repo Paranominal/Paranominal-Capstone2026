@@ -124,11 +124,9 @@ GameObject:
   m_Component:
   - component: {fileID: 799170587984598803}
   - component: {fileID: 6884184243121141973}
-  - component: {fileID: 7665008893649531870}
   - component: {fileID: 1298669313689453149}
   - component: {fileID: 6334293415163678260}
-  - component: {fileID: 5564032408167479828}
-  - component: {fileID: 9155771382628995581}
+  - component: {fileID: 1780915433440173083}
   m_Layer: 0
   m_Name: BigEnemy_AIPrototype
   m_TagString: Untagged
@@ -165,44 +163,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3355846480035243032}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &7665008893649531870
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3355846480035243032}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81454ed499b3e3341ba1ee5ac09e8773, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyStateMachine
-  navAgent: {fileID: 1298669313689453149}
-  playerTransform: {fileID: 0}
-  attackPoint: {fileID: 368549375333681657}
-  animator: {fileID: 0}
-  vision: {fileID: 5564032408167479828}
-  terrainLayer:
-    serializedVersion: 2
-    m_Bits: 1024
-  playerLayerMask:
-    serializedVersion: 2
-    m_Bits: 64
-  maxHealth: 20
-  detectTimeToChase: 1.5
-  loseSightTimeToSearch: 2
-  roamRadius: 10
-  roamPointReachedDistance: 1
-  idleTimeMin: 2
-  idleTimeMax: 5
-  searchDuration: 4
-  searchTurnAngle: 45
-  searchTurnSpeed: 2
-  attackCooldown: 1
-  meleeDamage: 5
-  meleeRange: 2
-  attackRadius: 1
-  attackWindup: 0.3
 --- !u!195 &1298669313689453149
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -242,7 +202,7 @@ MonoBehaviour:
   - {fileID: 4445017305347637387}
   - {fileID: 264255367804523297}
   - {fileID: 3058015429002522436}
---- !u!114 &5564032408167479828
+--- !u!114 &1780915433440173083
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -251,31 +211,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 3355846480035243032}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 875e8c249219829468c559b51fdade0d, type: 3}
+  m_Script: {fileID: 11500000, guid: 617e647f5f1424742aa69c8f229ebcda, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyVisionSensor
-  viewDistance: 14
-  viewAngle: 90
-  chaseDistance: 12
-  visionBlockers:
+  m_EditorClassIdentifier: Assembly-CSharp::EncounterEnemyController
+  navAgent: {fileID: 1298669313689453149}
+  playerTransform: {fileID: 0}
+  attackPoint: {fileID: 368549375333681657}
+  animator: {fileID: 0}
+  playerLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
-  eyeHeight: 1.6
-  targetHeight: 1.2
---- !u!114 &9155771382628995581
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3355846480035243032}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd5c8f72e7346b6409ee5c1f200bffee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyVisionCone
-  coneMaterial: {fileID: 0}
-  scanResolution: 30
+    m_Bits: 64
+  maxHealth: 20
+  attackCooldown: 1
+  meleeDamage: 5
+  meleeRange: 2
+  attackRadius: 1
+  attackWindup: 0.3
 --- !u!1 &8851202961244931369
 GameObject:
   m_ObjectHideFlags: 0
