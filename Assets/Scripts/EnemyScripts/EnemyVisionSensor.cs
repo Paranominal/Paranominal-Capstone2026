@@ -2,29 +2,50 @@ using UnityEngine;
 
 public class EnemyVisionSensor : MonoBehaviour
 {
-    //configs
+    //stores vision range, angle, and blockers
     [Header("Vision")]
     public float viewDistance = 14f;
     [Range(1f, 180f)] public float viewAngle = 90f;
     public float chaseDistance = 12f;
     public LayerMask visionBlockers = ~0;
 
-    [Header("Vision Height Offsets")]
-    public float eyeHeight = 1.6f;
-    public float targetHeight = 1.2f;
+    //sets the eye and target height offsets
+    [Header("Vision Height")]
+    public float eyeHeight = 1.6f;  
+    public float targetHeight = 1.2f; 
 
-    //activate runtime env
+    //holds the cached target and ray buffer
     private Transform target;
     private RaycastHit[] hitBuffer = new RaycastHit[16];
+    private float targetSeenSince = float.NegativeInfinity;
+    private bool targetVisibleLastFrame;
 
-    //read-only accessors
+    //cache the player when the sensor starts
+    private void Awake()
+    {
+        AcquirePlayerTarget();
+    }
+
+    //refresh the cached player when enabled
+    private void OnEnable()
+    {
+        AcquirePlayerTarget();
+    }
+
+    //read-only access to the cached target
     public Transform Target => target;
 
     public float ChaseDistance => chaseDistance;
 
     public bool HasTarget => target != null;
 
-    //have to manually tag the player object first for this section to grab the player entity
+    //treat sight or close range as detection
+    public bool IsTargetDetected()
+    {
+        return IsTargetInVision() || DistanceToTarget() <= chaseDistance;
+    }
+
+    //find the player by tag
     public void AcquirePlayerTarget()
     {
         if (target != null)
@@ -39,9 +60,11 @@ public class EnemyVisionSensor : MonoBehaviour
         }
     }
 
-    //move distance calculations
+    //measure distance to the cached target
     public float DistanceToTarget()
     {
+        AcquirePlayerTarget();
+
         if (target == null)
         {
             return float.PositiveInfinity;
@@ -50,9 +73,40 @@ public class EnemyVisionSensor : MonoBehaviour
         return Vector3.Distance(target.position, transform.position);
     }
 
-    //get vision then determine the angle to see if there is anything in sight, although haven't been tested with a wall
+    //check if the target is inside vision
     public bool IsTargetInVision()
     {
+        AcquirePlayerTarget();
+
+        bool isVisible = EvaluateTargetInVision();
+        UpdateVisibilityTimer(isVisible);
+        return isVisible;
+    }
+
+    //require vision to stay valid for a while
+    public bool IsTargetInVisionForDuration(float requiredDuration)
+    {
+        AcquirePlayerTarget();
+
+        bool isVisible = EvaluateTargetInVision();
+        UpdateVisibilityTimer(isVisible);
+
+        if (!isVisible)
+        {
+            return false;
+        }
+
+        return Time.time - targetSeenSince >= requiredDuration;
+    }
+
+    //test distance, angle, then line of sight
+    private bool EvaluateTargetInVision()
+    {
+        if (target == null)
+        {
+            AcquirePlayerTarget();
+        }
+
         if (target == null)
         {
             return false;
@@ -63,17 +117,20 @@ public class EnemyVisionSensor : MonoBehaviour
         Vector3 toTarget = targetPos - origin;
         float sqrDistance = toTarget.sqrMagnitude;
 
+        //ignore targets that are too far away
         if (sqrDistance > viewDistance * viewDistance)
         {
             return false;
         }
 
+        //ignore targets outside the view angle
         float angleToTarget = Vector3.Angle(transform.forward, toTarget.normalized);
         if (angleToTarget > viewAngle * 0.5f)
         {
             return false;
         }
 
+        //ignore targets hidden behind blockers
         float distanceToTarget = Mathf.Sqrt(sqrDistance);
         Vector3 directionToTarget = toTarget / distanceToTarget;
         int hitCount = RaycastToTarget(origin, directionToTarget, distanceToTarget);
@@ -91,13 +148,13 @@ public class EnemyVisionSensor : MonoBehaviour
                 continue;
             }
 
-            //ignore own colliders
+            //skip our own colliders
             if (hitTransform == transform || hitTransform.IsChildOf(transform))
             {
                 continue;
             }
 
-            //ignore target colliders
+            //skip the player's colliders
             if (hitTransform == target || hitTransform.IsChildOf(target))
             {
                 continue;
@@ -109,12 +166,29 @@ public class EnemyVisionSensor : MonoBehaviour
         return true;
     }
 
-    //optimisation mechanism to store hits into a bugger rather than creating a new detection array each time
+    //remember when the target was last visible
+    private void UpdateVisibilityTimer(bool isVisible)
+    {
+        if (isVisible)
+        {
+            if (!targetVisibleLastFrame)
+            {
+                targetSeenSince = Time.time;
+            }
+        }
+        else
+        {
+            targetSeenSince = float.NegativeInfinity;
+        }
+
+        targetVisibleLastFrame = isVisible;
+    }
+
+    //raycast with a reusable hit buffer
     private int RaycastToTarget(Vector3 origin, Vector3 direction, float distance)
     {
         int hitCount = Physics.RaycastNonAlloc(origin, direction, hitBuffer, distance, visionBlockers, QueryTriggerInteraction.Ignore);
 
-        //increase allocation in case there are nearby blockers that aren't supposed to be truncated
         if (hitCount == hitBuffer.Length)
         {
             hitBuffer = new RaycastHit[hitBuffer.Length * 2];
