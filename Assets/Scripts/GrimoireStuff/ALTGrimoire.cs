@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 
 public class ALTGrimoire : MonoBehaviour
@@ -11,6 +12,7 @@ public class ALTGrimoire : MonoBehaviour
     // for reasons only knowable to God and the .NET development team, making the below list private prevents the AddEntry function IN THIS SCRIPT from working
     public List<ALTGrimoireEntry> entries;    // note to future programmers: this is the only critical savable data here. current entry is nice but less necessary. the scriptable object solution is less ideal imo
     private int currentEntry;
+    private List<GameObject> entryButtons = new List<GameObject>();
     public TextMeshProUGUI entryNameDisplay;
     public TextMeshProUGUI collectedDisplay;
     public TextMeshProUGUI flavourTextDisplay;
@@ -18,12 +20,12 @@ public class ALTGrimoire : MonoBehaviour
     public GameObject listContentParent;
     public GameObject entryButtonPrefab;
     public bool grimoireActive;
+    public PlayerMovement playerScript;
 
     public Animator grimoireAnim;
 
     // my general stance is there should probably be a higher level input manager than just handling this script to script but im writing this drugged out of my mind so i will NOT be doing that now
-    InputAction nextPageAction;
-    InputAction lastPageAction;
+    InputAction scrollGrimoireAction;
     InputAction grimoireUIAction;
 
 
@@ -41,18 +43,18 @@ public class ALTGrimoire : MonoBehaviour
 
     void Start()
     {
-        nextPageAction = InputSystem.actions.FindAction("Next");
-        lastPageAction = InputSystem.actions.FindAction("Previous");
-        //scrolling through pages might work better as a scroll wheel function if we go mouse + keyboard first, but idk how you'd translate that to controller so you might need both at once
+        scrollGrimoireAction = InputSystem.actions.FindAction("ScrollGrimoire");
         grimoireUIAction = InputSystem.actions.FindAction("GrimoireUI");
 
         if (entries != null) // sanity check
         {
             for (int i = 0; i < entries.Count; i++)
             {
+                int currentIndex = i;
                 GameObject newEntryButton = Instantiate(entryButtonPrefab, listContentParent.transform);
                 newEntryButton.GetComponentInChildren<TMP_Text>().text = entries[i].entryName;
-                newEntryButton.GetComponent<Button>().onClick.AddListener(() => SelectEntry(i)); 
+                newEntryButton.GetComponent<Button>().onClick.AddListener(() => SelectEntry(currentIndex));
+                entryButtons.Add(newEntryButton);
             }
         }
         
@@ -61,14 +63,19 @@ public class ALTGrimoire : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (nextPageAction.WasPressedThisFrame())
+        Vector2 grimoireScroll = scrollGrimoireAction.ReadValue<Vector2>();
+        if (!grimoireActive)
         {
-            TurnPage(true);
+            if(grimoireScroll.y < 0)
+            {
+                TurnPage(true);
+            }
+            else if(grimoireScroll.y > 0)
+            {
+                TurnPage(false);
+            }
         }
-        if (lastPageAction.WasPressedThisFrame())
-        {
-            TurnPage(false);
-        }
+
         if (grimoireUIAction.WasPressedThisFrame())
         {
             if (!grimoireActive)
@@ -77,6 +84,7 @@ public class ALTGrimoire : MonoBehaviour
                 grimoireActive = true;
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
+                playerScript.canMove = false;
             }
             else
             {
@@ -84,6 +92,7 @@ public class ALTGrimoire : MonoBehaviour
                 grimoireActive = false;
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
+                playerScript.canMove = true;
             }
         }
     }
@@ -168,10 +177,12 @@ public class ALTGrimoire : MonoBehaviour
             e.collected = collected;
             entries.Add(e);
             currentEntry = entries.Count - 1;   // switches to new entry about to be displayed
+            int entryIndex = currentEntry;
 
             GameObject newEntryButton = Instantiate(entryButtonPrefab, listContentParent.transform);
             newEntryButton.GetComponentInChildren<TMP_Text>().text = e.entryName;
-            newEntryButton.GetComponent<Button>().onClick.AddListener(() => SelectEntry(currentEntry)); // i don't know what a lambda expression does and at this point im too afraid to ask
+            newEntryButton.GetComponent<Button>().onClick.AddListener(() => SelectEntry(entryIndex)); // i don't know what a lambda expression does and at this point im too afraid to ask
+            entryButtons.Add(newEntryButton);
 
             UpdateText();
         }
@@ -189,6 +200,10 @@ public class ALTGrimoire : MonoBehaviour
     public void SelectEntry(int index)
     {
         currentEntry = index;
+        if (entryButtons.Count > index)
+        {
+            EventSystem.current.SetSelectedGameObject(entryButtons[index]);
+        }
         UpdateText();
     }
 

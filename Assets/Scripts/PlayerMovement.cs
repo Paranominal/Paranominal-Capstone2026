@@ -64,7 +64,7 @@ public class PlayerMovement : MonoBehaviour
     // Camera local X rotation in degrees
     private float cameraPitch;
     // Global movement lock toggle (future-proofed for pause/cutscenes?)
-    private bool canMove = true;
+    public bool canMove = true;
 
     // Recoil state:
     // recoilOffsetX is additive camera pitch offset from shooting/dash effects,
