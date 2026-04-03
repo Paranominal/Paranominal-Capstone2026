@@ -10,8 +10,10 @@ public class ALTGrimoire : MonoBehaviour
     // for reasons only knowable to God and the .NET development team, making the below list private prevents the AddEntry function IN THIS SCRIPT from working
     public List<ALTGrimoireEntry> entries;    // note to future programmers: this is the only critical savable data here. current entry is nice but less necessary. the scriptable object solution is less ideal imo
     private int currentEntry;
-    public TextMeshProUGUI textDisplay;
+    public TextMeshProUGUI entryNameDisplay;
     public TextMeshProUGUI collectedDisplay;
+    public TextMeshProUGUI flavourTextDisplay;
+    public TextMeshProUGUI hintCompletedTextDisplay;
     public bool grimoireActive;
 
     public Animator grimoireAnim;
@@ -128,7 +130,7 @@ public class ALTGrimoire : MonoBehaviour
 
     public void UpdateText()    //handling this here for now while the rest of the grimoire gets written, should probably NOT ship with this functionality
     {
-        textDisplay.SetText(GetCurrentEntry().entryName);
+        entryNameDisplay.SetText(GetCurrentEntry().entryName);
         if (GetCurrentEntry().collected)
         {
             collectedDisplay.SetText("collected");
@@ -137,6 +139,8 @@ public class ALTGrimoire : MonoBehaviour
         {
             collectedDisplay.SetText("");
         }
+        flavourTextDisplay.SetText(GetCurrentEntry().flavourText);
+        hintCompletedTextDisplay.SetText(GetCurrentEntry().hintText);
     }
 
     public void AddEntry(ALTGrimoireEntry entry, bool collected)
