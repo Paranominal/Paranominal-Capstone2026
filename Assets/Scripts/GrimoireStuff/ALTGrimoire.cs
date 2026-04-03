@@ -141,7 +141,7 @@ public class ALTGrimoire : MonoBehaviour
             if (currentEntry != entries.Count - 1)
             {
                 currentEntry++;
-                UpdateText();
+                SelectEntry(currentEntry);
             }
         }
         else
@@ -149,7 +149,7 @@ public class ALTGrimoire : MonoBehaviour
             if (currentEntry != 0)
             {
                 currentEntry--;
-                UpdateText();
+                SelectEntry(currentEntry);
             }
         }
     }
@@ -184,11 +184,11 @@ public class ALTGrimoire : MonoBehaviour
             newEntryButton.GetComponent<Button>().onClick.AddListener(() => SelectEntry(entryIndex)); // i don't know what a lambda expression does and at this point im too afraid to ask
             entryButtons.Add(newEntryButton);
 
-            UpdateText();
+            SelectEntry(currentEntry);
         }
         else
         {
-            // TODO: find previously made entry and display
+            SelectEntry(GetEntryID(entry.entryName)); // opens the relevant entry when scanning something already logged
         }
     }
 
