@@ -46,6 +46,16 @@ public class ALTGrimoire : MonoBehaviour
         //scrolling through pages might work better as a scroll wheel function if we go mouse + keyboard first, but idk how you'd translate that to controller so you might need both at once
         grimoireUIAction = InputSystem.actions.FindAction("GrimoireUI");
 
+        if (entries != null) // sanity check
+        {
+            for (int i = 0; i < entries.Count; i++)
+            {
+                GameObject newEntryButton = Instantiate(entryButtonPrefab, listContentParent.transform);
+                newEntryButton.GetComponentInChildren<TMP_Text>().text = entries[i].entryName;
+                newEntryButton.GetComponent<Button>().onClick.AddListener(() => SelectEntry(i)); 
+            }
+        }
+        
     }
 
     // Update is called once per frame
@@ -65,11 +75,15 @@ public class ALTGrimoire : MonoBehaviour
             {
                 grimoireAnim.Play("up");
                 grimoireActive = true;
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
             }
             else
             {
                 grimoireAnim.Play("down");
                 grimoireActive = false;
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
             }
         }
     }
@@ -148,8 +162,6 @@ public class ALTGrimoire : MonoBehaviour
 
     public void AddEntry(ALTGrimoireEntry entry, bool collected)
     {
-        GameObject newEntryButton = Instantiate(entryButtonPrefab, listContentParent.transform);
-
         ALTGrimoireEntry e = Clone(entry);
         if (!CompareEntry(e))   // checks the item hasn't already been added to the grimoire
         {
@@ -157,10 +169,15 @@ public class ALTGrimoire : MonoBehaviour
             entries.Add(e);
             currentEntry = entries.Count - 1;   // switches to new entry about to be displayed
 
+            GameObject newEntryButton = Instantiate(entryButtonPrefab, listContentParent.transform);
             newEntryButton.GetComponentInChildren<TMP_Text>().text = e.entryName;
             newEntryButton.GetComponent<Button>().onClick.AddListener(() => SelectEntry(currentEntry)); // i don't know what a lambda expression does and at this point im too afraid to ask
 
             UpdateText();
+        }
+        else
+        {
+            // TODO: find previously made entry and display
         }
     }
 
