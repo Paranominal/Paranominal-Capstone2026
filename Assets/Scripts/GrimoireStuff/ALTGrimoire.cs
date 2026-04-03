@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 
 public class ALTGrimoire : MonoBehaviour
@@ -14,6 +15,8 @@ public class ALTGrimoire : MonoBehaviour
     public TextMeshProUGUI collectedDisplay;
     public TextMeshProUGUI flavourTextDisplay;
     public TextMeshProUGUI hintCompletedTextDisplay;
+    public GameObject listContentParent;
+    public GameObject entryButtonPrefab;
     public bool grimoireActive;
 
     public Animator grimoireAnim;
@@ -145,21 +148,31 @@ public class ALTGrimoire : MonoBehaviour
 
     public void AddEntry(ALTGrimoireEntry entry, bool collected)
     {
+        GameObject newEntryButton = Instantiate(entryButtonPrefab, listContentParent.transform);
+
         ALTGrimoireEntry e = Clone(entry);
-        //Debug.Log(entry);
         if (!CompareEntry(e))   // checks the item hasn't already been added to the grimoire
         {
             e.collected = collected;
             entries.Add(e);
-            currentEntry = entries.Count - 1;   //automatically switches to new entry
+            currentEntry = entries.Count - 1;   // switches to new entry about to be displayed
+
+            newEntryButton.GetComponentInChildren<TMP_Text>().text = e.entryName;
+            newEntryButton.GetComponent<Button>().onClick.AddListener(() => SelectEntry(currentEntry)); // i don't know what a lambda expression does and at this point im too afraid to ask
+
             UpdateText();
         }
-
     }
 
     public void AddEntry(ALTGrimoireEntry entry)   //overload assumes that you're not specifying bc it hasnt been collected/isnt collectable
     {
         AddEntry(entry, false);
+    }
+
+    public void SelectEntry(int index)
+    {
+        currentEntry = index;
+        UpdateText();
     }
 
     public bool CompareEntry(ALTGrimoireEntry entry) // Returns True if entry is already in the entry list, and False if not
