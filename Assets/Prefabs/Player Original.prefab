@@ -464,6 +464,7 @@ GameObject:
   - component: {fileID: 6697632979520130437}
   - component: {fileID: 6177046060812425515}
   - component: {fileID: 9072199141652399633}
+  - component: {fileID: 7520619540004470320}
   m_Layer: 0
   m_Name: WeakPointCam
   m_TagString: Untagged
@@ -581,6 +582,22 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &7520619540004470320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4945159873760355595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17da552f01e16064b882cfdaf79a81a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeakPointCamera
+  weakPointCamera: {fileID: 6177046060812425515}
+  maxRenderDistance: 25
+  fullAlphaDistance: 15
+  fadeSpeed: 8
 --- !u!1 &5552422914015434230
 GameObject:
   m_ObjectHideFlags: 0
