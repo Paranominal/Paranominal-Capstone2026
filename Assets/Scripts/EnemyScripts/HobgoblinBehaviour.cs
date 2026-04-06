@@ -2,18 +2,14 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class HobgoblinBehaviour : MonoBehaviour
+[RequireComponent(typeof(EnemyVisionSensor))]
+public class HobgoblinBehaviour : EnemyBehaviourBase
 {
     private enum EnemyState { Roam, Chase }
 
     //stores the vision sensor and nav agent references
     [Header("References")]
-    [SerializeField] private EnemyVisionSensor vision;
     [SerializeField] private NavMeshAgent navAgent;
-
-    //keeps chase memory after losing sight
-    [Header("Detection")]
-    [SerializeField] private float loseSightMemory = 2.0f;    // How long to chase after losing sight
 
     //patrol path settings
     [Header("Patrolling")]
@@ -21,50 +17,29 @@ public class HobgoblinBehaviour : MonoBehaviour
     [SerializeField] private float wanderRadius = 8f;
     [SerializeField] private float idleWaitTime = 2f;
 
-    //chase speed settings
-    [Header("Chasing")]
-    [SerializeField] private float chaseSpeed = 5f;
+    //follow speed settings
+    [Header("Following")]
+    [SerializeField] private float followSpeed = 5f;
 
     //current ai state
     private EnemyState currentState = EnemyState.Roam;
-    private Transform player;
     private Vector3 anchorPoint;
-    private float lastSeenTime = float.NegativeInfinity;
     private bool isWaiting;
-    private bool isPlayerVisible;
 
     //cache references before play starts
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         anchorPoint = transform.position;
-        ResolveReferences();
-        vision.AcquirePlayerTarget();
-        player = vision.Target;
+        if (navAgent == null) navAgent = GetComponent<NavMeshAgent>();
     }
 
     //update ai every frame
     private void Update()
     {
-        if (vision == null)
+        if (!HasVisionTarget)
         {
             return;
-        }
-
-        vision.AcquirePlayerTarget();
-
-        if (!vision.HasTarget)
-        {
-            return;
-        }
-
-        player = vision.Target;
-
-        //refresh player visibility
-        isPlayerVisible = IsPlayerDetected();
-
-        if (isPlayerVisible)
-        {
-            lastSeenTime = Time.time;
         }
 
         //decide whether to roam or chase
@@ -88,37 +63,17 @@ public class HobgoblinBehaviour : MonoBehaviour
         }
     }
 
-    //return to roaming
-    private void EnterRoamState()
-    {
-        currentState = EnemyState.Roam;
-    }
-
-    //switch into chase
-    private void EnterChaseState()
-    {
-        currentState = EnemyState.Chase;
-    }
-
-    //use sight memory to choose the state
+    //use sensor detection to choose the state
     private void UpdateBehaviourState()
     {
-        bool recentlySeen = (Time.time - lastSeenTime) <= loseSightMemory;
-
-        if (isPlayerVisible || recentlySeen)
+        if (IsPlayerDetected())
         {
-            if (currentState != EnemyState.Chase)
-            {
-                EnterChaseState();
-            }
+            currentState = EnemyState.Chase;
 
             return;
         }
 
-        if (currentState != EnemyState.Roam)
-        {
-            EnterRoamState();
-        }
+        currentState = EnemyState.Roam;
     }
 
     //follow the patrol path on the navmesh
@@ -140,10 +95,10 @@ public class HobgoblinBehaviour : MonoBehaviour
         if (navAgent == null) return;
 
         navAgent.isStopped = false;
-        navAgent.speed = chaseSpeed;
-        if (player != null)
+        navAgent.speed = followSpeed;
+        if (VisionTarget != null)
         {
-            navAgent.SetDestination(player.position);
+            navAgent.SetDestination(VisionTarget.position);
         }
     }
 
@@ -164,19 +119,6 @@ public class HobgoblinBehaviour : MonoBehaviour
     //check if the player is in sight or range
     private bool IsPlayerDetected()
     {
-        if (vision != null)
-        {
-            return vision.IsTargetDetected();
-        }
-
-        return false;
-    }
-
-    //find missing sensor or agent components
-    private void ResolveReferences()
-    {
-        if (vision == null) vision = GetComponent<EnemyVisionSensor>();
-        if (vision == null) vision = gameObject.AddComponent<EnemyVisionSensor>();
-        if (navAgent == null) navAgent = GetComponent<NavMeshAgent>();
+        return SensorDetectsTarget();
     }
 }

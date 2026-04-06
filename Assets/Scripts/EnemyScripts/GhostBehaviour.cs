@@ -1,17 +1,14 @@
 using System.Collections;
 using UnityEngine;
 
-public class GhostBehaviour : MonoBehaviour
+[RequireComponent(typeof(EnemyVisionSensor))]
+public class GhostBehaviour : EnemyBehaviourBase
 {
     private enum EnemyState { Roam, Chase, Search }
-    //stores the vision sensor reference
-    [Header("References")]
-    [SerializeField] private EnemyVisionSensor vision;
 
     //controls how long the ghost remembers the player
     [Header("Detection")]
-    [SerializeField] private float loseSightMemory = 2.0f;
-    [SerializeField] private float searchDuration = 5.0f;  
+    [SerializeField] private float detectionTimer = 5.0f;  
 
     //base movement tuning
     [Header("General Movement")]
@@ -20,7 +17,7 @@ public class GhostBehaviour : MonoBehaviour
     [SerializeField] private float turnSpeed = 120f;      
 
     //roam movement settings
-    [Header("Wandering")]
+    [Header("Patrolling")]
     [SerializeField] private float wanderSpeed = 1.5f;
     [SerializeField] private float wanderRadius = 7f;
     [SerializeField] private float idleWaitTime = 3f;
@@ -37,18 +34,15 @@ public class GhostBehaviour : MonoBehaviour
     private Vector3 currentTargetPoint;
     private Vector3 lastKnownPos;
 
-    private float lastSeenTime = float.NegativeInfinity;
+    private float searchTimer;
     private bool isWaiting;
-    private bool isPlayerVisible;
 
     //cache references before play starts
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         anchorPoint = transform.position;
         currentTargetPoint = anchorPoint;
-        if (vision == null) vision = GetComponent<EnemyVisionSensor>();
-        if (vision == null) vision = gameObject.AddComponent<EnemyVisionSensor>();
-        vision.AcquirePlayerTarget();
 
         //make the collider a trigger so walls are ignored
         if (TryGetComponent<Collider>(out Collider col)) col.isTrigger = true;
@@ -57,16 +51,12 @@ public class GhostBehaviour : MonoBehaviour
     //update the ghost state each frame
     private void Update()
     {
-        vision.AcquirePlayerTarget();
-        if (!vision.HasTarget) return;
+        if (!HasVisionTarget) return;
 
-        Transform player = vision.Target;
+        Transform player = VisionTarget;
 
-        //update last known player position
-        isPlayerVisible = vision.IsTargetInVision();
-        if (isPlayerVisible)
+        if (SensorHasVision())
         {
-            lastSeenTime = Time.time;
             lastKnownPos = player.position;
         }
 
@@ -95,53 +85,39 @@ public class GhostBehaviour : MonoBehaviour
         }
     }
 
-    //switch back to roaming
-    private void EnterRoamState()
-    {
-        currentState = EnemyState.Roam;
-    }
-
-    //switch into chase mode
-    private void EnterChaseState()
-    {
-        currentState = EnemyState.Chase;
-    }
-
-    //switch into search mode
-    private void EnterSearchState()
-    {
-        currentState = EnemyState.Search;
-    }
-
-    //use sight memory to decide the state
+    //use current visibility to decide the state
     private void UpdateBehaviourState()
     {
-        float timeSinceSeen = Time.time - lastSeenTime;
-
-        if (isPlayerVisible)
+        if (SensorHasVision())
         {
-            if (currentState != EnemyState.Chase)
-            {
-                EnterChaseState();
-            }
+            currentState = EnemyState.Chase;
+            searchTimer = 0f;
 
             return;
         }
 
-        if (timeSinceSeen <= searchDuration)
+        if (currentState == EnemyState.Chase)
         {
-            if (currentState != EnemyState.Search)
-            {
-                EnterSearchState();
-            }
-
+            currentState = EnemyState.Search;
+            searchTimer = 0f;
             return;
         }
 
-        if (currentState != EnemyState.Roam)
+        if (currentState == EnemyState.Search)
         {
-            EnterRoamState();
+            searchTimer += Time.deltaTime;
+
+            if (searchTimer <= detectionTimer)
+            {
+                return;
+            }
+
+            currentState = EnemyState.Roam;
+            searchTimer = 0f;
+            return;
         }
+
+        currentState = EnemyState.Roam;
     }
 
     //float around the anchor point
@@ -162,7 +138,7 @@ public class GhostBehaviour : MonoBehaviour
     //trail the player at a safe distance
     private void PerformChase()
     {
-        Transform player = vision.Target;
+        Transform player = VisionTarget;
         Vector3 dirFromPlayer = (transform.position - player.position).normalized;
         Vector3 followPos = player.position + (dirFromPlayer * keepDistance) + (Vector3.up * floatHeight);
         
