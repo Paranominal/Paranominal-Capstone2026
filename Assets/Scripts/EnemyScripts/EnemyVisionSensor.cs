@@ -11,8 +11,8 @@ public class EnemyVisionSensor : MonoBehaviour
 
     //sets the eye and target height offsets
     [Header("Vision Height")]
-    public float eyeHeight = 1.6f;  
-    public float targetHeight = 1.2f; 
+    public float eyeHeight = 1.6f;
+    public float targetHeight = 1.2f;
 
     //holds the cached target and ray buffer
     private Transform target;
@@ -57,6 +57,15 @@ public class EnemyVisionSensor : MonoBehaviour
         if (player != null)
         {
             target = player.transform;
+#if UNITY_EDITOR
+            Debug.Log($"EnemyVisionSensor: Acquired player target '{player.name}'.");
+#endif
+        }
+        else
+        {
+#if UNITY_EDITOR
+            Debug.LogWarning("EnemyVisionSensor: No GameObject found with tag 'Player'. Make sure the player is tagged correctly.");
+#endif
         }
     }
 
@@ -134,7 +143,7 @@ public class EnemyVisionSensor : MonoBehaviour
         float distanceToTarget = Mathf.Sqrt(sqrDistance);
         Vector3 directionToTarget = toTarget / distanceToTarget;
         int hitCount = RaycastToTarget(origin, directionToTarget, distanceToTarget);
-        
+
         if (hitCount == 0)
         {
             return true;
@@ -196,5 +205,21 @@ public class EnemyVisionSensor : MonoBehaviour
         }
 
         return hitCount;
+    }
+
+    // Visualize view cone in editor to help debugging
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Vector3 origin = transform.position + Vector3.up * eyeHeight;
+        Gizmos.DrawWireSphere(origin, viewDistance);
+
+        Quaternion leftRot = Quaternion.Euler(0f, -viewAngle * 0.5f, 0f) * transform.rotation;
+        Quaternion rightRot = Quaternion.Euler(0f, viewAngle * 0.5f, 0f) * transform.rotation;
+        Vector3 leftDir = leftRot * Vector3.forward * viewDistance;
+        Vector3 rightDir = rightRot * Vector3.forward * viewDistance;
+        Gizmos.color = new Color(1f, 1f, 0f, 0.25f);
+        Gizmos.DrawLine(origin, origin + leftDir);
+        Gizmos.DrawLine(origin, origin + rightDir);
     }
 }
