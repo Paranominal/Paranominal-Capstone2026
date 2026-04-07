@@ -8,15 +8,12 @@ public class GunController : MonoBehaviour
     [Header("Input Actions")]
     [SerializeField] private string ironActionName = "ShootIron";
     [SerializeField] private string silverActionName = "ShootSilver";
+    [SerializeField] private string reloadActionName = "Reload";
 
-    // core references for shooting and recoil visuals
+    // core references for shooting logic
     [Header("References")]
     [SerializeField] private Camera playerCamera;
-    [SerializeField] private PlayerMovement playerMovement;
-    [SerializeField] private Transform gunModel;
-    // seperating muzzle flashes, could allow for more in future
-    [SerializeField] private SpriteRenderer ironMuzzleFlash;
-    [SerializeField] private SpriteRenderer silverMuzzleFlash;
+    [SerializeField] private GunVisuals gunVisuals;
     // layer mask used for weakpoint-priority raycast
     [SerializeField] private LayerMask WeakPoint;
 
@@ -25,38 +22,25 @@ public class GunController : MonoBehaviour
     // - magazineSize/reloadDuration: simple magazine + auto-reload model
     // - rayDistance: max hit distance
     [Header("Shot Settings")]
+    [SerializeField] private bool autoReload = true;
+    [SerializeField] private bool silverBarrelEnabled = true;
+    [SerializeField] private bool ironBarrelEnabled = true;
     [SerializeField] private float shotCooldown = 0.2f;
     [SerializeField] private int magazineSize = 6;
     [SerializeField] private float reloadDuration = 2f;
     [SerializeField] private float rayDistance = 1000f;
 
-    // recoil feedback tuning for camera and gun viewmodel
-    [Header("Visual Recoil")]
-    [SerializeField] private float cameraRecoilUpDegrees = 1.5f;
-    [SerializeField] private Vector3 gunKickOffset = new Vector3(0f, 0.02f, -0.08f);
-    [SerializeField] private float gunKickUpRotationDegrees = 4f;
-    [SerializeField] private float gunKickTime = 0.05f;
-    [SerializeField] private float gunReturnTime = 0.1f;
-    [SerializeField] private float muzzleFlashDuration = 0.05f;
-
     // cached input actions
     private InputAction shootIronAction;
     private InputAction shootSilverAction;
+    private InputAction reloadAction;
 
     // Weapon state flags and ammo for flow control and UI
     private bool onCooldown;
     private bool isReloading;
     private int currentAmmo;
 
-    // baseline local transform of the gun for recoil animation, captured at the start of each shot to allow for adjustments (e.g. if the gun model is moved during gameplay or by other animations, recoil should work properly from the new position)
-    private Vector3 gunRestLocalPosition;
-    private Quaternion gunRestLocalRotation;
-
     private float reloadTimeRemaining;
-
-    // Coroutine handles so repeated shots can restart visuals cleanly.
-    private Coroutine muzzleFlashRoutine;
-    private Coroutine gunKickRoutine;
 
     // UI Read-Only states
     public int CurrentAmmo => currentAmmo;
@@ -75,34 +59,38 @@ public class GunController : MonoBehaviour
     {
         // Fallback camera resolution for convenience in scene setup.
         if (playerCamera == null) playerCamera = Camera.main;
+        if (gunVisuals == null) gunVisuals = GetComponent<GunVisuals>();
 
         // Resolve input actions by name one time to ensure existence
         shootIronAction = InputSystem.actions.FindAction(ironActionName);
         shootSilverAction = InputSystem.actions.FindAction(silverActionName);
+        reloadAction = InputSystem.actions.FindAction(reloadActionName);
 
         // Start with full magazine 
         currentAmmo = magazineSize;
-
-        // keeps flashes hidden on startup
-        if (ironMuzzleFlash != null) ironMuzzleFlash.enabled = false;
-        if (silverMuzzleFlash != null) silverMuzzleFlash.enabled = false;
-
-        if (gunModel != null)
-        {
-            gunRestLocalPosition = gunModel.localPosition;
-            gunRestLocalRotation = gunModel.localRotation;
-        }
     }
 
     private void Update()
     {
-        // prevents firing during cooldowns and reloads
-        if (isReloading || onCooldown)
+        // blocks all input while actively reloading
+        if (isReloading)
             return;
 
         // Read one-frame button presses from Input System
-        bool ironPressed = shootIronAction != null && shootIronAction.WasPressedThisFrame();
-        bool silverPressed = shootSilverAction != null && shootSilverAction.WasPressedThisFrame();
+        bool ironPressed = shootIronAction != null && shootIronAction.WasPressedThisFrame() && ironBarrelEnabled;
+        bool silverPressed = shootSilverAction != null && shootSilverAction.WasPressedThisFrame() && silverBarrelEnabled;
+        bool reloadPressed = reloadAction != null && reloadAction.WasPressedThisFrame();
+
+        // manual reload (only if not already full)
+        if (reloadPressed && currentAmmo < magazineSize)
+        {
+            StartCoroutine(ReloadRoutine());
+            return;
+        }
+
+        // keep existing fire cooldown behavior
+        if (onCooldown)
+            return;
 
         if (!ironPressed && !silverPressed)
             return;
@@ -110,34 +98,39 @@ public class GunController : MonoBehaviour
         // If both happen in the same frame, iron takes priority.
         WeakPointType shotType = ironPressed ? WeakPointType.Iron : WeakPointType.Silver;
 
-        // Auto-reload if empty and do not fire this frame. Manual reloading not added (yet?)
-        if (currentAmmo <= 0)
+        // Auto-reload if empty and do not fire this frame
+        if (currentAmmo <= 0 && autoReload)
         {
             StartCoroutine(ReloadRoutine());
             return;
         }
 
+        // Fire if ammo is available
+        if (currentAmmo > 0)
+        {
+            onCooldown = true;
 
+            bool rewardedShot = Fire(shotType);
 
-        // Fire, consume ammo, and lock shot input for cooldown duration
-        onCooldown = true;
-        Fire(shotType);
-        currentAmmo--;
+            // punish misses/invalid weakpoint shots by consuming ammo
+            if (!rewardedShot)
+                currentAmmo--;
 
-        StartCoroutine(ShotCooldownRoutine());
+            StartCoroutine(ShotCooldownRoutine());
 
-        // reload when magazine is depleted by this shot
-        if (currentAmmo <= 0)
-            StartCoroutine(ReloadRoutine());
+            // reload when magazine is depleted by this shot
+            if (currentAmmo <= 0 && autoReload)
+                StartCoroutine(ReloadRoutine());
+        }
     }
 
-    private void Fire(WeakPointType shotType)
+    private bool Fire(WeakPointType shotType)
     {
-        PlayMuzzleFlash(shotType);
-        PlayRecoil();
+        if (gunVisuals != null)
+            gunVisuals.PlayShotVisuals(shotType);
 
         if (playerCamera == null)
-            return;
+            return false;
 
         Vector2 mousePos = Mouse.current != null
             ? Mouse.current.position.ReadValue()
@@ -145,7 +138,7 @@ public class GunController : MonoBehaviour
 
         Ray ray = playerCamera.ScreenPointToRay(mousePos);
 
-        // Weakpoint-only pass: if aimed at a weakpoint layer collider, always treat as weakpoint hit. might need to be moved to weakpoint manager
+        // Weakpoint-only pass
         bool hasWeakHit = Physics.Raycast(ray, out RaycastHit hitWeak, rayDistance, WeakPoint, QueryTriggerInteraction.Collide);
 
         if (hasWeakHit)
@@ -156,105 +149,27 @@ public class GunController : MonoBehaviour
 
             if (weakPoint != null)
             {
+                bool correctType = weakPoint.weakPointType == shotType;
                 weakPoint.OnHit(shotType);
-                Debug.Log("Hit Weakpoint! " + hitWeak.collider.name);
-                return;
+
+                if (correctType)
+                {
+                    Debug.Log("Successful weakpoint hit (ammo preserved)! " + hitWeak.collider.name);
+                    return true;
+                }
+
+                Debug.Log("Weakpoint hit, wrong shot type (ammo consumed). " + hitWeak.collider.name);
+                return false;
             }
         }
 
-        // pass for normal world/body hits (debug purposes, could be expanded with damageable targets and hit effects)
+        // world/body hit = miss for reward purposes
         if (Physics.Raycast(ray, out RaycastHit hitAny, rayDistance, ~0, QueryTriggerInteraction.Collide))
-        {
             Debug.Log("Hit! " + hitAny.collider.name);
-        }
         else
-        {
             Debug.Log("Miss...");
-        }
-    }
 
-    private void PlayMuzzleFlash(WeakPointType shotType)
-    {
-        // Restart flash when firing quickly so visuals stay responsive (only applicable if cooldown is short enough)
-        if (muzzleFlashRoutine != null)
-            StopCoroutine(muzzleFlashRoutine);
-
-        // reset both before enabling the chosen type
-        if (ironMuzzleFlash != null) ironMuzzleFlash.enabled = false;
-        if (silverMuzzleFlash != null) silverMuzzleFlash.enabled = false;
-
-        SpriteRenderer target = shotType == WeakPointType.Iron ? ironMuzzleFlash : silverMuzzleFlash;
-        if (target == null) return;
-
-        muzzleFlashRoutine = StartCoroutine(MuzzleFlashRoutine(target));
-    }
-
-    // manages the flash duration timing and visibility toggle, separate from recoil for flexibility and to avoid coupling with shot cooldown
-    private IEnumerator MuzzleFlashRoutine(SpriteRenderer target)
-    {
-        target.enabled = true;
-        yield return new WaitForSeconds(muzzleFlashDuration);
-        target.enabled = false;
-    }
-
-    private void PlayRecoil()
-    {
-        // Camera recoil is delegated to PlayerMovement so look/recoil (essentially camera adjustments) stay in one place
-        if (playerMovement != null)
-            playerMovement.AddVerticalRecoil(cameraRecoilUpDegrees);
-
-        if (gunModel == null)
-            return;
-
-        // Restart kick animation on rapid fire instead of stacking coroutines (again, only applicable if cooldown is short enough to allow multiple shots within the animation duration)
-        if (gunKickRoutine != null)
-            StopCoroutine(gunKickRoutine);
-
-        gunKickRoutine = StartCoroutine(GunKickRoutine());
-    }
-
-    private IEnumerator GunKickRoutine()
-    {
-        // just in case no model is assigned, skip recoil animation.
-        if (gunModel == null)
-            yield break;
-
-        // capture the current visible transform
-        // this should make interrupted shots blend smoothly from wherever the model currently is,
-        // instead of snapping back to start before kicking again
-        Vector3 fromPos = gunModel.localPosition;
-        Quaternion fromRot = gunModel.localRotation;
-
-        // compute the recoil target position from a fixed "rest" pose
-        // using the fixed rest transform prevents cumulative drift over many shots (which was happening before)
-        Vector3 kickedPos = gunRestLocalPosition + gunKickOffset;
-        Quaternion kickedRot = gunRestLocalRotation * Quaternion.Euler(-gunKickUpRotationDegrees, 0f, 0f);
-
-        // Move/rotate from current visible pose to recoil target over gunKickTime.
-        float t = 0f;
-        while (t < gunKickTime)
-        {
-            t += Time.deltaTime;
-            float alpha = gunKickTime <= 0f ? 1f : Mathf.Clamp01(t / gunKickTime);
-            gunModel.localPosition = Vector3.Lerp(fromPos, kickedPos, alpha);
-            gunModel.localRotation = Quaternion.Slerp(fromRot, kickedRot, alpha);
-            yield return null;
-        }
-
-        // Move / rotate from recoil target back to fixed rest pose over gunReturnTime.
-        t = 0f;
-        while (t < gunReturnTime)
-        {
-            t += Time.deltaTime;
-            float alpha = gunReturnTime <= 0f ? 1f : Mathf.Clamp01(t / gunReturnTime);
-            gunModel.localPosition = Vector3.Lerp(kickedPos, gunRestLocalPosition, alpha);
-            gunModel.localRotation = Quaternion.Slerp(kickedRot, gunRestLocalRotation, alpha);
-            yield return null;
-        }
-
-        // Final snap to exact rest values to remove tiny adjustment errors (shouldn't be visible fingers crossed)
-        gunModel.localPosition = gunRestLocalPosition;
-        gunModel.localRotation = gunRestLocalRotation;
+        return false;
     }
 
     private IEnumerator ShotCooldownRoutine()
