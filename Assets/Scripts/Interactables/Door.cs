@@ -21,7 +21,7 @@ public class Door : MonoBehaviour, IInteractable
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, interactable))
         {
-            if (collectAction.WasReleasedThisFrame() && unlocked)
+            if (collectAction.WasReleasedThisFrame() && unlocked && GetComponentInChildren<Collider>() == hit.collider)
             {
                 if (clockwise && !open || !clockwise && open)
                 {
