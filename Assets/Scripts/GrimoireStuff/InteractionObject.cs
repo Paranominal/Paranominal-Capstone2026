@@ -7,7 +7,7 @@ public class InteractionObject : MonoBehaviour
     public LayerMask interactable;
     private ALTGrimoire grimoire;
     InputAction collectAction;  // this could be rebound to a different action if you prefer
-    public Door door;
+    public IInteractable target;
     public bool consumesItem;
 
     void Start()
@@ -28,8 +28,8 @@ public class InteractionObject : MonoBehaviour
             {
                 if (grimoire.GetCurrentEntry().entryName == keyName && grimoire.GetCurrentEntry().collected && collectAction.WasReleasedThisFrame())
                 {
-                    // down the road i'd like to update this to run through a switch statement based on an enum for multiple types of interaction. for now it just unlocks doors.
-                    door.Unlock();
+                    // can run Interact() on any class that implements the IInteractable interface
+                    target.Interact();
                     if (consumesItem)
                     {
                         grimoire.CollectEntry(grimoire.GetCurrentEntry(), false);

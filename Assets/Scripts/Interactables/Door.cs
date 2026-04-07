@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Door : MonoBehaviour
+public class Door : MonoBehaviour, IInteractable
 {
     public bool clockwise;
     public LayerMask interactable;
@@ -37,7 +37,7 @@ public class Door : MonoBehaviour
         }
     }
 
-    public void Unlock()
+    public void Interact()
     {
         if (!unlocked)
         {
