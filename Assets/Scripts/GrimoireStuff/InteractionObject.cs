@@ -17,6 +17,7 @@ public class InteractionObject : MonoBehaviour
             grimoire = FindAnyObjectByType<ALTGrimoire>();
         }
         collectAction = InputSystem.actions.FindAction("Collect");
+        target = GetComponentInChildren<IInteractable>();   // theres some glaring issues with this (namely you can't currently have more than one interaction type on one object) but it should work
     }
 
     void Update()
