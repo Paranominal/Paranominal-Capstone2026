@@ -1,7 +1,8 @@
 using UnityEngine;
+using System;
 
-[System.Serializable]
-public class ALTGrimoireEntry 
+[Serializable]
+public class ALTGrimoireEntry
 {
     public string entryName;
     public string flavourText;

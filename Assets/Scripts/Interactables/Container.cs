@@ -3,8 +3,7 @@ using System.Collections.Generic;
 public class Container : MonoBehaviour, IInteractable
 {
     private ALTGrimoire grimoire;
-    [SerializeField]
-    private List<ALTGrimoireEntry> contents;
+    public List<ALTGrimoireEntry> contents;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -24,5 +23,10 @@ public class Container : MonoBehaviour, IInteractable
     public void Interact()
     {
         contents.Add(grimoire.GetCurrentEntry());
+    }
+
+    public void Empty()
+    {
+        contents.Clear();
     }
 }
