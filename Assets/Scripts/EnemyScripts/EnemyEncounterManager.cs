@@ -12,7 +12,7 @@ public class EnemyEncounterManager : MonoBehaviour
     [SerializeField] private List<EnemySpawnPoint> spawnPoints = new List<EnemySpawnPoint>();
 
     [Header("Encounter State")]
-    [SerializeField] private bool isPlayerInRoom = false;
+    [HideInInspector] public bool isPlayerInRoom = false;
     [SerializeField] private float resetCounter = 5f;
 
     private int currentWave;
