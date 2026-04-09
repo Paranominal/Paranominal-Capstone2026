@@ -11,7 +11,7 @@ public class PhotoSnapshots : MonoBehaviour
         combinedCam.Render();
 
         RenderTexture.active = snapshotRT; // wakey wakey!!!!
-        Texture2D bakedPhoto = new Texture2D(snapshotRT.width, snapshotRT.height, TextureFormat.RGB24, false);
+        Texture2D bakedPhoto = new Texture2D(snapshotRT.width, snapshotRT.height, TextureFormat.RGB24, true, true);
         bakedPhoto.ReadPixels(new Rect(0, 0, snapshotRT.width, snapshotRT.height), 0, 0);
         bakedPhoto.Apply();
 

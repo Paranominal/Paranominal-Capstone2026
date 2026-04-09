@@ -9,27 +9,37 @@ using UnityEngine.EventSystems;
 public class ALTGrimoire : MonoBehaviour
 {
     public static ALTGrimoire instance;
+
+    [Header("Data Management")]
+    [Tooltip("Master list of all entries currently in the Grimoire")]
     // for reasons only knowable to God and the .NET development team, making the below list private prevents the AddEntry function IN THIS SCRIPT from working
     public List<ALTGrimoireEntry> entries;    // note to future programmers: this is the only critical savable data here. current entry is nice but less necessary. the scriptable object solution is less ideal imo
-    private int currentEntry;
-    private List<GameObject> entryButtons = new List<GameObject>();
-    public TextMeshProUGUI entryNameDisplay;
-    public TextMeshProUGUI collectedDisplay;
-    public TextMeshProUGUI flavourTextDisplay;
-    public TextMeshProUGUI hintCompletedTextDisplay;
-    public GameObject listContentParent;
-    public GameObject entryButtonPrefab;
-    public bool grimoireActive;
+    
+    [HideInInspector] public bool grimoireActive;
+
+    [Header("UI References: Content")]
+    [SerializeField] private TextMeshProUGUI entryNameDisplay;
+    [SerializeField] private TextMeshProUGUI collectedDisplay;
+    [SerializeField] private TextMeshProUGUI flavourTextDisplay;
+    [SerializeField] private TextMeshProUGUI hintCompletedTextDisplay;
+    [SerializeField] private RawImage displayImage;
+
+    [Header("UI References: Navigation")]
+    [SerializeField] private GameObject listContentParent;
+    [SerializeField] private GameObject entryButtonPrefab;
+    [SerializeField] private Animator grimoireAnim;
+
+    [Header("External Systems")]
+    public PhotoSnapshots snapshotHandler;
     public PlayerMovement playerScript;
 
-    public Animator grimoireAnim;
+    // Internal Navigation State
+    private int currentEntry;
+    private List<GameObject> entryButtons = new List<GameObject>();
 
-    public PhotoSnapshots snapshotHandler;
-    public RawImage displayImage;
-
-    // my general stance is there should probably be a higher level input manager than just handling this script to script but im writing this drugged out of my mind so i will NOT be doing that now
-    InputAction scrollGrimoireAction;
-    InputAction grimoireUIAction;
+    // Input Actions
+    private InputAction scrollGrimoireAction;
+    private InputAction grimoireUIAction;
 
 
     private void Awake()
