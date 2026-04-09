@@ -70,7 +70,6 @@ public class PlayerHUD : MonoBehaviour
     public void UIVisible(bool state)
     {
         reloadSlider.gameObject.SetActive(state);
-        dashSlider.gameObject.SetActive(state);
         crosshairImage.gameObject.SetActive(state);
         ammoText.gameObject.SetActive(state);
     }
