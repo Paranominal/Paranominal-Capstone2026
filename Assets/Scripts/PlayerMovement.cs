@@ -40,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
     // Camera local X rotation in degrees
     private float cameraPitch;
     // Global movement lock toggle (future-proofed for pause/cutscenes?)
-    private bool canMove = true;
+    public bool canMove = true; // hi i need to change this value from the grimoire (and likely other stuff in future) so the read-only version won't work well
     public bool CanMove => canMove;
 
     // Recoil state:
