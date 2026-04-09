@@ -24,6 +24,9 @@ public class ALTGrimoire : MonoBehaviour
 
     public Animator grimoireAnim;
 
+    public PhotoSnapshots snapshotHandler;
+    public RawImage displayImage;
+
     // my general stance is there should probably be a higher level input manager than just handling this script to script but im writing this drugged out of my mind so i will NOT be doing that now
     InputAction scrollGrimoireAction;
     InputAction grimoireUIAction;
@@ -167,6 +170,7 @@ public class ALTGrimoire : MonoBehaviour
         }
         flavourTextDisplay.SetText(GetCurrentEntry().flavourText);
         hintCompletedTextDisplay.SetText(GetCurrentEntry().hintText);
+        displayImage.texture = GetCurrentEntry().snapshotImage;
     }
 
     public void AddEntry(ALTGrimoireEntry entry, bool collected)
@@ -183,6 +187,8 @@ public class ALTGrimoire : MonoBehaviour
             newEntryButton.GetComponentInChildren<TMP_Text>().text = e.entryName;
             newEntryButton.GetComponent<Button>().onClick.AddListener(() => SelectEntry(entryIndex)); // i don't know what a lambda expression does and at this point im too afraid to ask
             entryButtons.Add(newEntryButton);
+
+            e.snapshotImage = snapshotHandler.TakeSnapshot();
 
             SelectEntry(currentEntry);
         }
@@ -242,6 +248,7 @@ public class ALTGrimoire : MonoBehaviour
         e.hintText = entry.hintText;
         e.completeText = entry.completeText;
         e.collected = entry.collected;
+        e.snapshotImage = entry.snapshotImage;
         return e;
     }
 }
