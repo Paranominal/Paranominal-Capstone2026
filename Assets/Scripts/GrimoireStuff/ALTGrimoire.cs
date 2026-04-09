@@ -32,6 +32,7 @@ public class ALTGrimoire : MonoBehaviour
     [Header("External Systems")]
     public PhotoSnapshots snapshotHandler;
     public PlayerMovement playerScript;
+    public PlayerHUD screenUI;
 
     // Internal Navigation State
     private int currentEntry;
@@ -58,6 +59,8 @@ public class ALTGrimoire : MonoBehaviour
     {
         scrollGrimoireAction = InputSystem.actions.FindAction("ScrollGrimoire");
         grimoireUIAction = InputSystem.actions.FindAction("GrimoireUI");
+
+        InputSystem.actions.FindActionMap("UI").Disable(); //this will cause issues once we need a menu/pause system but it works for now
 
         if (entries != null) // sanity check
         {
@@ -91,21 +94,36 @@ public class ALTGrimoire : MonoBehaviour
 
         if (grimoireUIAction.WasPressedThisFrame())
         {
-            if (!grimoireActive)
+            if (!grimoireActive) // GRIMOIRE ACTIVATE!
             {
                 grimoireAnim.Play("up");
                 grimoireActive = true;
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
-                playerScript.canMove = false;
+                screenUI.UIVisible(false);
+
+                //disabling player input completely
+                InputSystem.actions.FindActionMap("Player").Disable();
+                InputSystem.actions.FindActionMap("UI").Enable();
             }
-            else
+            else // GRIMOIRE AWAY!!
             {
                 grimoireAnim.Play("down");
                 grimoireActive = false;
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
-                playerScript.canMove = true;
+                screenUI.UIVisible(true);
+
+                InputSystem.actions.FindActionMap("Player").Enable();
+                InputSystem.actions.FindActionMap("UI").Disable();
+            }
+        }
+
+        if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject == null) 
+        {
+            if (entryButtons.Count > 0 && currentEntry < entryButtons.Count)
+            {
+                EventSystem.current.SetSelectedGameObject(entryButtons[currentEntry]); // grabbing the current entry selection if it drops off
             }
         }
     }

@@ -1305,6 +1305,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+--- !u!114 &4361872965908183006 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2950077288419945060, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+  m_PrefabInstance: {fileID: 1475135533878468026}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d24621299e34b70499314b8587e5ae87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHUD
 --- !u!224 &8300917968703145509 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7442887890869459871, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
@@ -1326,6 +1337,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1090110928602918560, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
+      propertyPath: screenUI
+      value: 
+      objectReference: {fileID: 4361872965908183006}
     - target: {fileID: 1090110928602918560, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: playerScript
       value: 
@@ -1506,56 +1521,8 @@ PrefabInstance:
     - {fileID: 4650866953725867256, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6535952568432753539, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 707679665426545352}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
---- !u!114 &1135437605787959639 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3679580276571241223, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
-  m_PrefabInstance: {fileID: 4382456229685066320}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!95 &6786198155548801026 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 7132848572541092434, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
-  m_PrefabInstance: {fileID: 4382456229685066320}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &7378517436039889363 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6535952568432753539, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
-  m_PrefabInstance: {fileID: 4382456229685066320}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &707679665426545352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7378517436039889363}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 919741dffe9d4e143add45e6a1989279, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTGrimoire
-  entries: []
-  grimoireActive: 0
-  entryNameDisplay: {fileID: 1135437605787959639}
-  collectedDisplay: {fileID: 0}
-  flavourTextDisplay: {fileID: 0}
-  hintCompletedTextDisplay: {fileID: 0}
-  displayImage: {fileID: 0}
-  listContentParent: {fileID: 0}
-  entryButtonPrefab: {fileID: 8592193082140125892, guid: 7b073f58fb7e42e43bb264ba6f46362f, type: 3}
-  grimoireAnim: {fileID: 6786198155548801026}
-  snapshotHandler: {fileID: 0}
-  playerScript: {fileID: 5373816417711542028}
 --- !u!4 &7788968810376539402 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5820451053879187290, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
