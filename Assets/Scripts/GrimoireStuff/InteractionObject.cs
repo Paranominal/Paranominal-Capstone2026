@@ -27,10 +27,11 @@ public class InteractionObject : MonoBehaviour
         {
             if (grimoire.entries.Count != 0)
             {
-                if (grimoire.GetCurrentEntry().entryName == keyName && grimoire.GetCurrentEntry().collected && collectAction.WasReleasedThisFrame())
+                if (grimoire.GetCurrentEntry().entryName == keyName && grimoire.GetCurrentEntry().collected && collectAction.WasReleasedThisFrame() && target.gameObject.GetComponentInChildren<Collider>() == hit.collider)
                 {
                     // can run Interact() on any class that implements the IInteractable interface
                     target.Interact();
+                    
                     if (consumesItem)
                     {
                         grimoire.CollectEntry(grimoire.GetCurrentEntry(), false);
