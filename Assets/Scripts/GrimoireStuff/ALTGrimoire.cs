@@ -2,24 +2,45 @@ using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 
 public class ALTGrimoire : MonoBehaviour
 {
     public static ALTGrimoire instance;
+
+    [Header("Data Management")]
+    [Tooltip("Master list of all entries currently in the Grimoire")]
     // for reasons only knowable to God and the .NET development team, making the below list private prevents the AddEntry function IN THIS SCRIPT from working
     public List<ALTGrimoireEntry> entries;    // note to future programmers: this is the only critical savable data here. current entry is nice but less necessary. the scriptable object solution is less ideal imo
+    
+    [HideInInspector] public bool grimoireActive;
+
+    [Header("UI References: Content")]
+    [SerializeField] private TextMeshProUGUI entryNameDisplay;
+    [SerializeField] private TextMeshProUGUI collectedDisplay;
+    [SerializeField] private TextMeshProUGUI flavourTextDisplay;
+    [SerializeField] private TextMeshProUGUI hintCompletedTextDisplay;
+    [SerializeField] private RawImage displayImage;
+
+    [Header("UI References: Navigation")]
+    [SerializeField] private GameObject listContentParent;
+    [SerializeField] private GameObject entryButtonPrefab;
+    [SerializeField] private Animator grimoireAnim;
+
+    [Header("External Systems")]
+    public PhotoSnapshots snapshotHandler;
+    public PlayerMovement playerScript;
+    public PlayerHUD screenUI;
+
+    // Internal Navigation State
     private int currentEntry;
-    public TextMeshProUGUI textDisplay;
-    public TextMeshProUGUI collectedDisplay;
-    public bool grimoireActive;
+    private List<GameObject> entryButtons = new List<GameObject>();
 
-    public Animator grimoireAnim;
-
-    // my general stance is there should probably be a higher level input manager than just handling this script to script but im writing this drugged out of my mind so i will NOT be doing that now
-    InputAction nextPageAction;
-    InputAction lastPageAction;
-    InputAction grimoireUIAction;
+    // Input Actions
+    private InputAction scrollGrimoireAction;
+    private InputAction grimoireUIAction;
 
 
     private void Awake()
@@ -36,35 +57,73 @@ public class ALTGrimoire : MonoBehaviour
 
     void Start()
     {
-        nextPageAction = InputSystem.actions.FindAction("Next");
-        lastPageAction = InputSystem.actions.FindAction("Previous");
-        //scrolling through pages might work better as a scroll wheel function if we go mouse + keyboard first, but idk how you'd translate that to controller so you might need both at once
+        scrollGrimoireAction = InputSystem.actions.FindAction("ScrollGrimoire");
         grimoireUIAction = InputSystem.actions.FindAction("GrimoireUI");
 
+        InputSystem.actions.FindActionMap("UI").Disable(); //this will cause issues once we need a menu/pause system but it works for now
+
+        if (entries != null) // sanity check
+        {
+            for (int i = 0; i < entries.Count; i++)
+            {
+                int currentIndex = i;
+                GameObject newEntryButton = Instantiate(entryButtonPrefab, listContentParent.transform);
+                newEntryButton.GetComponentInChildren<TMP_Text>().text = entries[i].entryName;
+                newEntryButton.GetComponent<Button>().onClick.AddListener(() => SelectEntry(currentIndex));
+                entryButtons.Add(newEntryButton);
+            }
+        }
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (nextPageAction.WasPressedThisFrame())
+        Vector2 grimoireScroll = scrollGrimoireAction.ReadValue<Vector2>();
+        if (!grimoireActive)
         {
-            TurnPage(true);
+            if(grimoireScroll.y < 0)
+            {
+                TurnPage(true);
+            }
+            else if(grimoireScroll.y > 0)
+            {
+                TurnPage(false);
+            }
         }
-        if (lastPageAction.WasPressedThisFrame())
-        {
-            TurnPage(false);
-        }
+
         if (grimoireUIAction.WasPressedThisFrame())
         {
-            if (!grimoireActive)
+            if (!grimoireActive) // GRIMOIRE ACTIVATE!
             {
                 grimoireAnim.Play("up");
                 grimoireActive = true;
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
+                screenUI.UIVisible(false);
+
+                //disabling player input completely
+                InputSystem.actions.FindActionMap("Player").Disable();
+                InputSystem.actions.FindActionMap("UI").Enable();
             }
-            else
+            else // GRIMOIRE AWAY!!
             {
                 grimoireAnim.Play("down");
                 grimoireActive = false;
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+                screenUI.UIVisible(true);
+
+                InputSystem.actions.FindActionMap("Player").Enable();
+                InputSystem.actions.FindActionMap("UI").Disable();
+            }
+        }
+
+        if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject == null) 
+        {
+            if (entryButtons.Count > 0 && currentEntry < entryButtons.Count)
+            {
+                EventSystem.current.SetSelectedGameObject(entryButtons[currentEntry]); // grabbing the current entry selection if it drops off
             }
         }
     }
@@ -113,7 +172,7 @@ public class ALTGrimoire : MonoBehaviour
             if (currentEntry != entries.Count - 1)
             {
                 currentEntry++;
-                UpdateText();
+                SelectEntry(currentEntry);
             }
         }
         else
@@ -121,14 +180,14 @@ public class ALTGrimoire : MonoBehaviour
             if (currentEntry != 0)
             {
                 currentEntry--;
-                UpdateText();
+                SelectEntry(currentEntry);
             }
         }
     }
 
     public void UpdateText()    //handling this here for now while the rest of the grimoire gets written, should probably NOT ship with this functionality
     {
-        textDisplay.SetText(GetCurrentEntry().entryName);
+        entryNameDisplay.SetText(GetCurrentEntry().entryName);
         if (GetCurrentEntry().collected)
         {
             collectedDisplay.SetText("collected");
@@ -137,25 +196,49 @@ public class ALTGrimoire : MonoBehaviour
         {
             collectedDisplay.SetText("");
         }
+        flavourTextDisplay.SetText(GetCurrentEntry().flavourText);
+        hintCompletedTextDisplay.SetText(GetCurrentEntry().hintText);
+        displayImage.texture = GetCurrentEntry().snapshotImage;
     }
 
     public void AddEntry(ALTGrimoireEntry entry, bool collected)
     {
         ALTGrimoireEntry e = Clone(entry);
-        //Debug.Log(entry);
         if (!CompareEntry(e))   // checks the item hasn't already been added to the grimoire
         {
             e.collected = collected;
             entries.Add(e);
-            currentEntry = entries.Count - 1;   //automatically switches to new entry
-            UpdateText();
-        }
+            currentEntry = entries.Count - 1;   // switches to new entry about to be displayed
+            int entryIndex = currentEntry;
 
+            GameObject newEntryButton = Instantiate(entryButtonPrefab, listContentParent.transform);
+            newEntryButton.GetComponentInChildren<TMP_Text>().text = e.entryName;
+            newEntryButton.GetComponent<Button>().onClick.AddListener(() => SelectEntry(entryIndex)); // i don't know what a lambda expression does and at this point im too afraid to ask
+            entryButtons.Add(newEntryButton);
+
+            e.snapshotImage = snapshotHandler.TakeSnapshot();
+
+            SelectEntry(currentEntry);
+        }
+        else
+        {
+            SelectEntry(GetEntryID(entry.entryName)); // opens the relevant entry when scanning something already logged
+        }
     }
 
     public void AddEntry(ALTGrimoireEntry entry)   //overload assumes that you're not specifying bc it hasnt been collected/isnt collectable
     {
         AddEntry(entry, false);
+    }
+
+    public void SelectEntry(int index)
+    {
+        currentEntry = index;
+        if (entryButtons.Count > index)
+        {
+            EventSystem.current.SetSelectedGameObject(entryButtons[index]);
+        }
+        UpdateText();
     }
 
     public bool CompareEntry(ALTGrimoireEntry entry) // Returns True if entry is already in the entry list, and False if not
@@ -193,6 +276,7 @@ public class ALTGrimoire : MonoBehaviour
         e.hintText = entry.hintText;
         e.completeText = entry.completeText;
         e.collected = entry.collected;
+        e.snapshotImage = entry.snapshotImage;
         return e;
     }
 }
