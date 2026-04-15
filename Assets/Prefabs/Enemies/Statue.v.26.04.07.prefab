@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyVisionSensor
   viewDistance: 14
-  viewAngle: 90
+  viewAngle: 180
   chaseDistance: 12
   visionBlockers:
     serializedVersion: 2
@@ -89,10 +89,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 1
+  m_Height: 4
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 2, z: 0}
 --- !u!114 &1378227693022400216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,7 +122,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5787369184196353134}
-  - component: {fileID: 3607379879432089048}
   - component: {fileID: 7110404303780363383}
   m_Layer: 0
   m_Name: Display
@@ -153,18 +152,6 @@ Transform:
   - {fileID: 6810723124507131923}
   m_Father: {fileID: 1271792376151176368}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3607379879432089048
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9060832233878377879}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c31a935967c3dd47b0f2fea3ec4ef49, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
 --- !u!212 &7110404303780363383
 SpriteRenderer:
   serializedVersion: 2
