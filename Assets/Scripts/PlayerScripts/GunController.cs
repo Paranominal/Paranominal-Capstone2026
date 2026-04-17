@@ -132,9 +132,9 @@ public class GunController : MonoBehaviour
         if (playerCamera == null)
             return false;
 
-        Vector2 mousePos = Mouse.current != null
-            ? Mouse.current.position.ReadValue()
-            : (Vector2)Input.mousePosition;
+        Vector2 mousePos = Pointer.current != null
+            ? Pointer.current.position.ReadValue()
+            : Vector2.zero;
 
         Ray ray = playerCamera.ScreenPointToRay(mousePos);
 

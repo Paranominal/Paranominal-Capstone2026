@@ -21,6 +21,10 @@ public class PlayerHUD : MonoBehaviour
     [Header("Dash UI")]
     [SerializeField] private Slider dashSlider;
 
+    // crosshair for aiming
+    [Header("Crosshair UI")]
+    [SerializeField] private Image crosshairImage;
+
     private void Start()
     {
         // hide conditional UI at startup so HUD begins mostly blank
@@ -61,5 +65,12 @@ public class PlayerHUD : MonoBehaviour
             if (showDashCooldown)
                 dashSlider.value = dashing.DashCooldownProgress;
         }
+    }
+
+    public void UIVisible(bool state)
+    {
+        reloadSlider.gameObject.SetActive(state);
+        crosshairImage.gameObject.SetActive(state);
+        ammoText.gameObject.SetActive(state);
     }
 }
