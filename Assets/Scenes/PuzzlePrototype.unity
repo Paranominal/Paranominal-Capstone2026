@@ -894,7 +894,7 @@ MonoBehaviour:
   keyName: Green Herbs
   interactable:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 1024
   consumesItem: 0
 --- !u!114 &878704434
 MonoBehaviour:
@@ -911,7 +911,7 @@ MonoBehaviour:
   keyName: Orange Herbs
   interactable:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 1024
   consumesItem: 0
 --- !u!114 &878704435
 MonoBehaviour:
@@ -928,7 +928,7 @@ MonoBehaviour:
   keyName: Blue Herbs
   interactable:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 1024
   consumesItem: 0
 --- !u!114 &878704436
 MonoBehaviour:
@@ -945,7 +945,7 @@ MonoBehaviour:
   keyName: Purple Herbs
   interactable:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 1024
   consumesItem: 0
 --- !u!114 &878704437
 MonoBehaviour:
@@ -962,7 +962,7 @@ MonoBehaviour:
   keyName: Red Herbs
   interactable:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 1024
   consumesItem: 0
 --- !u!114 &878704438
 MonoBehaviour:
@@ -1499,7 +1499,7 @@ MonoBehaviour:
   keyName: Key
   interactable:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 1024
   consumesItem: 0
 --- !u!4 &1313399789
 Transform:
@@ -1532,7 +1532,7 @@ MonoBehaviour:
   clockwise: 0
   interactable:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 1024
   unlocked: 1
 --- !u!1 &1419102252
 GameObject:
@@ -1786,7 +1786,7 @@ MonoBehaviour:
     snapshotImage: {fileID: 0}
   interactable:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 1024
   checkType: 2
 --- !u!1001 &6909487240951997018
 PrefabInstance:
@@ -1816,6 +1816,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2579260593497910125, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: m_Name
+      value: Player WeaponPrototype
+      objectReference: {fileID: 0}
     - target: {fileID: 7748087837823014598, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1826,26 +1830,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7748087837823014598, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8584229915469001095, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1446103740615808987, guid: 2e5af8cc9e41ec842ab47c67d874860a, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2955309060201499997, guid: 2e5af8cc9e41ec842ab47c67d874860a, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2955309060201499997, guid: 2e5af8cc9e41ec842ab47c67d874860a, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2955309060201499997, guid: 2e5af8cc9e41ec842ab47c67d874860a, type: 3}
-      propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8013496993476994936, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
@@ -1888,6 +1872,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8584229915469001095, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1446103740615808987, guid: 2e5af8cc9e41ec842ab47c67d874860a, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2955309060201499997, guid: 2e5af8cc9e41ec842ab47c67d874860a, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2955309060201499997, guid: 2e5af8cc9e41ec842ab47c67d874860a, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2955309060201499997, guid: 2e5af8cc9e41ec842ab47c67d874860a, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1446103740615808987, guid: eac5c811c5e4b4a4984ff208db594ed9, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1915,10 +1919,6 @@ PrefabInstance:
     - target: {fileID: 3870177577560205028, guid: eac5c811c5e4b4a4984ff208db594ed9, type: 3}
       propertyPath: m_Value
       value: 0.9999773
-      objectReference: {fileID: 0}
-    - target: {fileID: 2579260593497910125, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-      propertyPath: m_Name
-      value: Player WeaponPrototype
       objectReference: {fileID: 0}
     - target: {fileID: 7098041328606434997, guid: eac5c811c5e4b4a4984ff208db594ed9, type: 3}
       propertyPath: m_AnchorMax.x
