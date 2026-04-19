@@ -131,6 +131,9 @@ public class WeakPoint : MonoBehaviour
         // Ignore mismatched bullet types to enforce iron/silver behavior
         if (type != weakPointType) return;
 
+        string enemyName = manager != null ? manager.gameObject.name : transform.root.gameObject.name;
+        TelemetryTracking.RecordWeakPointDestroyed(gameObject.name, weakPointType, enemyName);
+
         // Correct hit: hide this point and advance sequence to the next one
         Hide();
         manager.NextWeakPoint();

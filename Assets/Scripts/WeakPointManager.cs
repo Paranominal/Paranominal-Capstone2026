@@ -32,6 +32,7 @@ public class WeakPointManager : MonoBehaviour
         else
         {
             Debug.Log("Enemy Killed!");
+            TelemetryTracking.RecordEnemyDestroyed(gameObject.name);
             Destroy(gameObject);
         }
     }

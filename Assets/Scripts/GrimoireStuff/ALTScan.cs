@@ -39,6 +39,8 @@ public class ALTScan : MonoBehaviour
             {
                 //Debug.Log(scannedNow.entry);
                 grimoire.AddEntry(scannedNow.entry);
+                string entryName = scannedNow.entry != null ? scannedNow.entry.entryName : "Unknown";
+                TelemetryTracking.RecordScan(scannedNow.gameObject.name, entryName);
             }
             if (collectAction.WasReleasedThisFrame() && scannedNow.collectable)
             {
@@ -52,6 +54,7 @@ public class ALTScan : MonoBehaviour
                     grimoire.CollectEntry(scannedNow.entry);
                 }
                 Debug.Log("Destroyed " + scannedNow.gameObject);
+                TelemetryTracking.RecordInteraction("Collect", scannedNow.gameObject.name, "Collected through grimoire scan flow");
                 Destroy(scannedNow.gameObject);
                 
             }
