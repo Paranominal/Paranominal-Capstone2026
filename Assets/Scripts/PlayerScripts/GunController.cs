@@ -40,6 +40,10 @@ public class GunController : MonoBehaviour
     private bool isReloading;
     private int currentAmmo;
 
+    //Ek's ammo shells UI (TEMP)
+    [Header("Ammo UI (TEMP)")]
+    [SerializeField] private AmmoUI ammoUI;
+
     private float reloadTimeRemaining;
 
     // UI Read-Only states
@@ -114,7 +118,11 @@ public class GunController : MonoBehaviour
 
             // punish misses/invalid weakpoint shots by consuming ammo
             if (!rewardedShot)
+            {
                 currentAmmo--;
+                ammoUI.StrikeAmmo(shotType);
+                
+            }
 
             StartCoroutine(ShotCooldownRoutine());
 
@@ -195,6 +203,7 @@ public class GunController : MonoBehaviour
 
         // instant refill after reload delay
         currentAmmo = magazineSize;
+        ammoUI.ResetStrikes();
         reloadTimeRemaining = 0f;
         isReloading = false;
     }
