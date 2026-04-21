@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
@@ -72,6 +73,11 @@ public class PlayerMovement : MonoBehaviour
 
         // look and camera feedback are always updated each frame
         HandleLook();
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
     }
 
     private void HandleMovement()
