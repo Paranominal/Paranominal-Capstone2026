@@ -672,7 +672,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 50075211}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cauldron
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2486,6 +2486,9 @@ GameObject:
   - component: {fileID: 149741752}
   - component: {fileID: 149741751}
   - component: {fileID: 149741755}
+  - component: {fileID: 149741758}
+  - component: {fileID: 149741757}
+  - component: {fileID: 149741756}
   m_Layer: 10
   m_Name: Cauldron
   m_TagString: Untagged
@@ -2613,7 +2616,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f88c309b4fe5244f95a8c5abab799d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractionObject
-  keyName: Cauldron
+  keyName: Orange Herb
+  interactable:
+    serializedVersion: 2
+    m_Bits: 1024
+  consumesItem: 0
+--- !u!114 &149741756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149741749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f88c309b4fe5244f95a8c5abab799d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractionObject
+  keyName: Purple Herb
+  interactable:
+    serializedVersion: 2
+    m_Bits: 1024
+  consumesItem: 0
+--- !u!114 &149741757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149741749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f88c309b4fe5244f95a8c5abab799d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractionObject
+  keyName: Green Herb
+  interactable:
+    serializedVersion: 2
+    m_Bits: 1024
+  consumesItem: 0
+--- !u!114 &149741758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149741749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f88c309b4fe5244f95a8c5abab799d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractionObject
+  keyName: Blue Herb
   interactable:
     serializedVersion: 2
     m_Bits: 1024
@@ -18707,6 +18761,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1825387915}
+    - targetCorrespondingSourceObject: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1825387916}
   m_SourcePrefab: {fileID: 100100000, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
 --- !u!43 &831735486
 Mesh:
@@ -20498,6 +20555,7 @@ GameObject:
   - component: {fileID: 867770396}
   - component: {fileID: 867770400}
   - component: {fileID: 867770401}
+  - component: {fileID: 867770402}
   m_Layer: 10
   m_Name: PurpleHerb
   m_TagString: Untagged
@@ -20593,13 +20651,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 867770394}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 51.437, y: 1.733, z: -11.805}
+  m_LocalRotation: {x: -0, y: -0.7307618, z: -0, w: 0.6826326}
+  m_LocalPosition: {x: 54.05, y: 1.733, z: 21.74}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -93.901, z: 0}
 --- !u!114 &867770400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20638,6 +20696,21 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &867770402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 867770394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d437b13d946e494cb5c886b2eaaa087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ALTScan
+  scannable:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!43 &871758416
 Mesh:
   m_ObjectHideFlags: 0
@@ -33296,6 +33369,7 @@ GameObject:
   - component: {fileID: 1315150672}
   - component: {fileID: 1315150676}
   - component: {fileID: 1315150677}
+  - component: {fileID: 1315150678}
   m_Layer: 10
   m_Name: GreenHerb
   m_TagString: Untagged
@@ -33391,13 +33465,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1315150670}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 51.404, y: 1.733, z: -11.211}
+  m_LocalRotation: {x: -0, y: 0.9943671, z: -0, w: -0.105990544}
+  m_LocalPosition: {x: 16.396, y: 1.163, z: -8.244}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 192.168, z: 0}
 --- !u!114 &1315150676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33436,6 +33510,21 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &1315150678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315150670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d437b13d946e494cb5c886b2eaaa087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ALTScan
+  scannable:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!43 &1323159466
 Mesh:
   m_ObjectHideFlags: 0
@@ -35210,6 +35299,7 @@ GameObject:
   - component: {fileID: 1375818827}
   - component: {fileID: 1375818831}
   - component: {fileID: 1375818832}
+  - component: {fileID: 1375818833}
   m_Layer: 10
   m_Name: OrangeHerb
   m_TagString: Untagged
@@ -35306,7 +35396,7 @@ Transform:
   m_GameObject: {fileID: 1375818825}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 51.416, y: 1.733, z: -11.488}
+  m_LocalPosition: {x: 65.082, y: 1.184, z: -8.47}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -35350,6 +35440,21 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &1375818833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1375818825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d437b13d946e494cb5c886b2eaaa087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ALTScan
+  scannable:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!43 &1378380443
 Mesh:
   m_ObjectHideFlags: 0
@@ -38887,7 +38992,12 @@ MonoBehaviour:
     hintText: 
     completeText: 
     snapshotImage: {fileID: 0}
-  failures: []
+  failures:
+  - entryName: Orange Herb
+    flavourText: 
+    hintText: 
+    completeText: 
+    snapshotImage: {fileID: 0}
   interactable:
     serializedVersion: 2
     m_Bits: 1024
@@ -47681,6 +47791,21 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &1825387916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1825387908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d437b13d946e494cb5c886b2eaaa087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ALTScan
+  scannable:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!43 &1832824416
 Mesh:
   m_ObjectHideFlags: 0
@@ -52989,6 +53114,7 @@ GameObject:
   - component: {fileID: 2025799865}
   - component: {fileID: 2025799869}
   - component: {fileID: 2025799870}
+  - component: {fileID: 2025799871}
   m_Layer: 10
   m_Name: BlueHerb
   m_TagString: Untagged
@@ -53129,6 +53255,21 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &2025799871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025799863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d437b13d946e494cb5c886b2eaaa087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ALTScan
+  scannable:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!43 &2036881060
 Mesh:
   m_ObjectHideFlags: 0
