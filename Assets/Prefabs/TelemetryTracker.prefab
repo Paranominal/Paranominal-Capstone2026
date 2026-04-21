@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8136418930248833329}
   - component: {fileID: 9146659867546495778}
+  - component: {fileID: 3813268506836554928}
   m_Layer: 0
   m_Name: TelemetryTracker
   m_TagString: Untagged
@@ -44,14 +45,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a328b4b52647614eac1695867a5a999, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TelemetryTracking
+  outputFolderName: TelemetryLogs
+  prettyJson: 1
+  autosaveOnQuit: 1
   playerTransform: {fileID: 8136418930248833329}
-  locationLogIntervalSeconds: 1
-  logKeyboardInput: 1
-  logMouseInput: 1
-  logKeyReleases: 1
-  uploadToBackend: 0
-  backendEndpoint: https://your-domain.example/api/telemetry/events
-  apiKey: 
-  uploadIntervalSeconds: 0.5
-  maxBatchSize: 32
-  maxQueuedEvents: 5000
+  trackInputSystemActions: 1
+--- !u!114 &3813268506836554928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6720207202917296857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abf4c8548d4c2324ba2b4a32d84686d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TelemetryUploader
+  supabaseUrl: https://ohrlcysikhnvavcxicvf.supabase.co
+  supabaseAnonKey: sb_publishable_7u4PuFWJpYO-A8z4lcxNxQ_cEz_vLoK
+  tableName: telemetry_events
+  flushIntervalSeconds: 1
+  maxBatchSize: 25
