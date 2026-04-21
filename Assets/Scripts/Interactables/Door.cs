@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Door : MonoBehaviour
+public class Door : MonoBehaviour, IInteractable
 {
     public bool clockwise;
     public LayerMask interactable;
@@ -18,10 +18,10 @@ public class Door : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(Pointer.current.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, interactable))
         {
-            if (collectAction.WasReleasedThisFrame() && unlocked)
+            if (collectAction.WasReleasedThisFrame() && unlocked && GetComponentInChildren<Collider>() == hit.collider)
             {
                 if (clockwise && !open || !clockwise && open)
                 {
@@ -37,7 +37,7 @@ public class Door : MonoBehaviour
         }
     }
 
-    public void Unlock()
+    public void Interact()
     {
         if (!unlocked)
         {
