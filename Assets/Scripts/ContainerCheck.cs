@@ -10,7 +10,7 @@ public class ContainerCheck : MonoBehaviour
         duplicatesAllowed,
         anyOrder
     }
-
+    public GameObject exitDoorTEMP;
     public Container container;
     public List<ALTGrimoireEntry> solution;
     public List<ALTGrimoireEntry> failures;
@@ -37,6 +37,7 @@ public class ContainerCheck : MonoBehaviour
                 if (CompareLists())
                 {
                     Debug.Log("Success! You solved the puzzle!");
+                    Destroy(exitDoorTEMP);
                 }
                 else
                 {
@@ -45,6 +46,7 @@ public class ContainerCheck : MonoBehaviour
                         Debug.Log("Uh oh! Something exploded! Ow!");
                     }
                     Debug.Log("You failed the puzzle :(");
+                    container.contents = new List<ALTGrimoireEntry>();
                 }
 
             }
