@@ -5,9 +5,13 @@ public class WeakPointManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] weakpoints;
     private int currentWeakpoint = 0;
+    private EnemyStagger staggerComponent;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // Cache the stagger component if it exists
+        staggerComponent = GetComponentInParent<EnemyStagger>();
         SetupWeakpoints();
     }
 
@@ -24,6 +28,13 @@ public class WeakPointManager : MonoBehaviour
 
     public void NextWeakPoint()
     {
+        //nak was here
+        //notify stagger script that weeakpoint is destroyed
+        if (staggerComponent != null)
+        {
+            staggerComponent.OnWeakPointDestroyed();
+        }
+
         currentWeakpoint += 1;
         if (currentWeakpoint < weakpoints.Length)
         {
@@ -34,5 +45,12 @@ public class WeakPointManager : MonoBehaviour
             Debug.Log("Enemy Killed!");
             Destroy(gameObject);
         }
+    }
+
+    //nak was here
+    //returns total amount of weakpoints for the enemy
+    public int GetTotalWeakpoints()
+    {
+        return weakpoints.Length;
     }
 }
