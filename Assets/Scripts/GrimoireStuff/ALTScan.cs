@@ -8,6 +8,7 @@ public class ALTScan : MonoBehaviour
     InputAction collectAction;  // i started implementing collecting as a seperate set of scripts and then realised it was going to either be so wrapped up in this as to be problematic or duplicate so much code it would be incredibly questionable. so. voila.
     private ALTGrimoire grimoire;
     private ALTScannableObject scannedNow;
+    private Hand hand;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -17,6 +18,10 @@ public class ALTScan : MonoBehaviour
         if (grimoire == null)
         {
             grimoire = FindAnyObjectByType<ALTGrimoire>();
+        }
+        if (hand == null)
+        {
+            hand = FindAnyObjectByType<Hand>();
         }
     }
 
@@ -50,17 +55,7 @@ public class ALTScan : MonoBehaviour
             }
             if (collectAction.WasReleasedThisFrame() && scannedNow.collectable)
             {
-                // item gets collected here
-                if (!grimoire.CompareEntry(scannedNow.entry))   //checks if the entry for the collected item has been scanned and adds it if not
-                {
-                    grimoire.AddEntry(scannedNow.entry, true);
-                }
-                else
-                {
-                    grimoire.CollectEntry(scannedNow.entry);
-                }
-                Debug.Log("Destroyed " + scannedNow.gameObject);
-                Destroy(scannedNow.gameObject);
+                hand.Collect(scannedNow);
                 
             }
         }
