@@ -30,12 +30,19 @@ public class ALTScan : MonoBehaviour
             // Debug.DrawLine(transform.position, hit.point, Color.cyan, 10); // can view this in gizmos mode to help with debugging
             ALTScannableObject tempScan = hit.collider.GetComponent<ALTScannableObject>();
             //Debug.Log("Hit " + tempScan);
-            if (scannedNow != tempScan && scannedNow != null)
+            if (scannedNow != tempScan && scannedNow != null && scannedNow.outline != null)
             {
                 scannedNow.outline.enabled = false;
             }
             scannedNow = tempScan;
-            scannedNow.outline.enabled = true;
+            if (scannedNow.outline != null)
+            {
+                scannedNow.outline.enabled = true;
+            }
+            else
+            {
+                Debug.LogWarning("Object " + scannedNow + " does not have an Outline.cs script connected to its ALTScannableObject.cs and it should. Put one on it and ensure it is connected in the inspector. Bitch.");
+            }
             if (scanAction.WasReleasedThisFrame())
             {
                 //Debug.Log(scannedNow.entry);
