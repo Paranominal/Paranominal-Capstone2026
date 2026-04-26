@@ -18,6 +18,7 @@ public class ContainerCheck : MonoBehaviour
     public LayerMask interactable;
     [SerializeField]
     CheckType checkType;
+    public Outline outline;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -32,22 +33,38 @@ public class ContainerCheck : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Pointer.current.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, interactable))
         {
-            if (collectAction.WasReleasedThisFrame() && GetComponentInChildren<Collider>() == hit.collider && container.contents.Count != 0)
+            if (GetComponentInChildren<Collider>() == hit.collider)
             {
-                if (CompareLists())
+                if (outline != null)
                 {
-                    Debug.Log("Success! You solved the puzzle!");
+                    outline.enabled = true;
                 }
-                else
+                if (collectAction.WasReleasedThisFrame() && container.contents.Count != 0)
                 {
-                    if (CheckFailures())
+                    if (CompareLists())
                     {
-                        Debug.Log("Uh oh! Something exploded! Ow!");
+                        Debug.Log("Success! You solved the puzzle!");
                     }
-                    Debug.Log("You failed the puzzle :(");
-                }
+                    else
+                    {
+                        if (CheckFailures())
+                        {
+                            Debug.Log("Uh oh! Something exploded! Ow!");
+                        }
+                        Debug.Log("You failed the puzzle :(");
+                    }
 
+                }
             }
+            else if (outline != null)
+            {
+                outline.enabled = false;
+            }
+
+        }
+        else if (outline != null)
+        {
+            outline.enabled = false;
         }
     }
 

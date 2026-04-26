@@ -8,6 +8,7 @@ public class Door : MonoBehaviour, IInteractable
     InputAction collectAction;  // this could be rebound to a different action if you prefer
     public bool unlocked;   // at the moment the door can theoretically be "locked" open but thats neither here nor there
     private bool open;
+    public Outline outline;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,19 +22,36 @@ public class Door : MonoBehaviour, IInteractable
         Ray ray = Camera.main.ScreenPointToRay(Pointer.current.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, interactable))
         {
-            if (collectAction.WasReleasedThisFrame() && unlocked && GetComponentInChildren<Collider>() == hit.collider)
+            if (GetComponentInChildren<Collider>() == hit.collider)
             {
-                if (clockwise && !open || !clockwise && open)
+                if (outline != null)
                 {
-                    transform.Rotate(0, 90, 0);
-                    open = !open;
+                    outline.enabled = true;
                 }
-                else
+
+                if (collectAction.WasReleasedThisFrame() && unlocked)
                 {
-                    transform.Rotate(0, -90, 0);
-                    open = !open;
+                    if (clockwise && !open || !clockwise && open)
+                    {
+                        transform.Rotate(0, 90, 0);
+                        open = !open;
+                    }
+                    else
+                    {
+                        transform.Rotate(0, -90, 0);
+                        open = !open;
+                    }
                 }
             }
+            else if (outline != null)
+            {
+                outline.enabled = false;
+            }
+            
+        }
+        else if (outline != null)
+        {
+            outline.enabled = false;
         }
     }
 

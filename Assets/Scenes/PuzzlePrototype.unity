@@ -779,6 +779,7 @@ GameObject:
   - component: {fileID: 878704435}
   - component: {fileID: 878704434}
   - component: {fileID: 878704433}
+  - component: {fileID: 878704439}
   m_Layer: 10
   m_Name: Cauldron
   m_TagString: Untagged
@@ -977,6 +978,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Container
   contents: []
+  outline: {fileID: 878704439}
+  interactable:
+    serializedVersion: 2
+    m_Bits: 1024
+--- !u!114 &878704439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 878704428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 1
+  outlineColor: {r: 0.2941177, g: 0, b: 0.509804, a: 1}
+  outlineWidth: 5
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &901085990
 GameObject:
   m_ObjectHideFlags: 0
@@ -1477,6 +1500,7 @@ GameObject:
   - component: {fileID: 1313399789}
   - component: {fileID: 1313399788}
   - component: {fileID: 1313399790}
+  - component: {fileID: 1313399791}
   m_Layer: 10
   m_Name: Door
   m_TagString: Untagged
@@ -1534,6 +1558,25 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   unlocked: 1
+  outline: {fileID: 1313399791}
+--- !u!114 &1313399791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1313399787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 1
+  outlineColor: {r: 0.2941177, g: 0, b: 0.509804, a: 1}
+  outlineWidth: 5
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &1419102252
 GameObject:
   m_ObjectHideFlags: 0
@@ -1652,6 +1695,7 @@ GameObject:
   - component: {fileID: 1968759631}
   - component: {fileID: 1968759630}
   - component: {fileID: 1968759634}
+  - component: {fileID: 1968759635}
   m_Layer: 10
   m_Name: Spoon
   m_TagString: Untagged
@@ -1788,6 +1832,25 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   checkType: 2
+  outline: {fileID: 1968759635}
+--- !u!114 &1968759635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1968759629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 1
+  outlineColor: {r: 0.2941177, g: 0, b: 0.509804, a: 1}
+  outlineWidth: 5
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1001 &6909487240951997018
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1811,6 +1874,10 @@ PrefabInstance:
     - target: {fileID: 1225896433048851612, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1921310093423408615, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2068025090037702009, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_AnchorMax.y
