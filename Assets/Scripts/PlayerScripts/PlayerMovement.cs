@@ -34,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
 
     // how long it takes for gun to return to rest visually, not tied to reload or cooldowns
     [Header("Camera Recoil")]
+    [SerializeField] private float shotRecoilUpDegrees = 1.5f;
     [SerializeField] private float recoilReturnTime = 0.08f;
 
     // required movement component for collisions
@@ -127,6 +128,11 @@ public class PlayerMovement : MonoBehaviour
     {
         // negative offset rotates camera up in this implementation, visual recoil for camera
         recoilOffsetX -= Mathf.Abs(upDegrees);
+    }
+
+    public void PlayShotCameraRecoil()
+    {
+        AddVerticalRecoil(shotRecoilUpDegrees);
     }
 
     public void AddPitchOffset(float degrees)

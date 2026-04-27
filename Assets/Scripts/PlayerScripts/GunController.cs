@@ -13,6 +13,7 @@ public class GunController : MonoBehaviour
     // core references for shooting logic
     [Header("References")]
     [SerializeField] private Camera playerCamera;
+    [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private GunVisuals gunVisuals;
     // layer mask used for weakpoint-priority raycast
     [SerializeField] private LayerMask WeakPoint;
@@ -59,6 +60,7 @@ public class GunController : MonoBehaviour
     {
         // Fallback camera resolution for convenience in scene setup.
         if (playerCamera == null) playerCamera = Camera.main;
+        if (playerMovement == null) playerMovement = GetComponent<PlayerMovement>();
         if (gunVisuals == null) gunVisuals = GetComponent<GunVisuals>();
 
         // Resolve input actions by name one time to ensure existence
@@ -126,6 +128,9 @@ public class GunController : MonoBehaviour
 
     private bool Fire(WeakPointType shotType)
     {
+        if (playerMovement != null)
+            playerMovement.PlayShotCameraRecoil();
+
         if (gunVisuals != null)
             gunVisuals.PlayShotVisuals(shotType);
 

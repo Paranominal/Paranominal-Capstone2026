@@ -29,7 +29,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 9204802162765340135}
   - {fileID: 7591752027941551005}
   - {fileID: 7915264734765875953}
   m_Father: {fileID: 1037853406379208950}
@@ -242,13 +241,14 @@ MonoBehaviour:
   moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookAction: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   walkSpeed: 6
+  canMove: 1
   lookSensitivity: 0.1
   lookXLimit: 60
   lookSmoothing: 0.03
   gravity: -25
   groundedStickForce: -2
+  shotRecoilUpDegrees: 1.5
   recoilReturnTime: 0.08
-  canMove: 1
 --- !u!114 &3781141096471752189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -265,6 +265,7 @@ MonoBehaviour:
   silverActionName: ShootSilver
   reloadActionName: Reload
   playerCamera: {fileID: 6654618607449089807}
+  playerMovement: {fileID: 0}
   gunVisuals: {fileID: 7728624040698815885}
   WeakPoint:
     serializedVersion: 2
@@ -292,7 +293,7 @@ MonoBehaviour:
   playerCamera: {fileID: 6654618607449089807}
   linkedFovCameras:
   - {fileID: 7236061146324488673}
-  - {fileID: 981391041738732969}
+  - {fileID: 0}
   - {fileID: 5940204994785997246}
   dashAction: {fileID: 6790621974129141125, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   dashDistance: 4
@@ -346,11 +347,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a4c0be63548f5845b8b5f9f1aefea9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GunVisuals
-  playerMovement: {fileID: 2923936469112367735}
   gunModel: {fileID: 4309346787823380378}
   ironMuzzleFlash: {fileID: 3812373757327482638}
   silverMuzzleFlash: {fileID: 3782778254929784549}
-  cameraRecoilUpDegrees: 1.5
   gunKickOffset: {x: 0, y: 0.05, z: -0.6}
   gunKickUpRotationDegrees: 8
   gunKickTime: 0.1
@@ -369,6 +368,7 @@ GameObject:
   - component: {fileID: 1401912404428843967}
   - component: {fileID: 7735218202545343683}
   - component: {fileID: 5847277947550880216}
+  - component: {fileID: 3501135748319477596}
   m_Layer: 6
   m_Name: PlayerCam
   m_TagString: MainCamera
@@ -471,7 +471,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras:
-  - {fileID: 981391041738732969}
+  - {fileID: 0}
   - {fileID: 5940204994785997246}
   - {fileID: 7236061146324488673}
   m_RendererIndex: -1
@@ -516,6 +516,22 @@ MonoBehaviour:
   scannable:
     serializedVersion: 2
     m_Bits: 256
+--- !u!114 &3501135748319477596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3524502881056351253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17da552f01e16064b882cfdaf79a81a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeakPointCamera
+  weakPointCamera: {fileID: 6654618607449089807}
+  maxRenderDistance: 20
+  fullAlphaDistance: 18
+  fadeSpeed: 5
 --- !u!1 &4268114859131718060
 GameObject:
   m_ObjectHideFlags: 0
@@ -969,151 +985,6 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: fee6f22823dfc4f48a137a21ae578a0f, type: 2}
---- !u!1 &6796525868497661165
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9204802162765340135}
-  - component: {fileID: 981391041738732969}
-  - component: {fileID: 7138634844386177073}
-  - component: {fileID: 7352437691373412816}
-  m_Layer: 0
-  m_Name: WeakPointCam
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &9204802162765340135
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6796525868497661165}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5852301637033899706}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!20 &981391041738732969
-Camera:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6796525868497661165}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 4
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
-  m_projectionMatrixMode: 1
-  m_GateFitMode: 2
-  m_FOVAxisMode: 0
-  m_Iso: 200
-  m_ShutterSpeed: 0.005
-  m_Aperture: 16
-  m_FocusDistance: 10
-  m_FocalLength: 50
-  m_BladeCount: 5
-  m_Curvature: {x: 2, y: 11}
-  m_BarrelClipping: 0.25
-  m_Anamorphism: 0
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.5
-  far clip plane: 1000
-  field of view: 179
-  orthographic: 0
-  orthographic size: 5
-  m_Depth: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 128
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
---- !u!114 &7138634844386177073
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6796525868497661165}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
-  m_RenderShadows: 1
-  m_RequiresDepthTextureOption: 2
-  m_RequiresOpaqueTextureOption: 2
-  m_CameraType: 1
-  m_Cameras: []
-  m_RendererIndex: -1
-  m_VolumeLayerMask:
-    serializedVersion: 2
-    m_Bits: 1
-  m_VolumeTrigger: {fileID: 0}
-  m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
-  m_Antialiasing: 0
-  m_AntialiasingQuality: 2
-  m_StopNaN: 0
-  m_Dithering: 0
-  m_ClearDepth: 1
-  m_AllowXRRendering: 1
-  m_AllowHDROutput: 1
-  m_UseScreenCoordOverride: 0
-  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
-  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
-  m_RequiresDepthTexture: 0
-  m_RequiresColorTexture: 0
-  m_TaaSettings:
-    m_Quality: 3
-    m_FrameInfluence: 0.1
-    m_JitterScale: 1
-    m_MipBias: 0
-    m_VarianceClampScale: 0.9
-    m_ContrastAdaptiveSharpening: 0
-  m_Version: 2
---- !u!114 &7352437691373412816
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6796525868497661165}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17da552f01e16064b882cfdaf79a81a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeakPointCamera
-  weakPointCamera: {fileID: 981391041738732969}
-  maxRenderDistance: 20
-  fullAlphaDistance: 18
-  fadeSpeed: 5
 --- !u!1 &7607837967758171493
 GameObject:
   m_ObjectHideFlags: 0
@@ -1253,11 +1124,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 430255705077211595, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 430255705077211595, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1090110928602918560, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: screenUI
@@ -1269,7 +1140,7 @@ PrefabInstance:
       objectReference: {fileID: 2923936469112367735}
     - target: {fileID: 1421732863531194200, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5820451053879187290, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_LocalPosition.x

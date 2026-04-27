@@ -5,14 +5,12 @@ public class GunVisuals : MonoBehaviour
 {
     // Scene references used to drive feedback from a shot
     [Header("References")]
-    [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private Transform gunModel;
     [SerializeField] private SpriteRenderer ironMuzzleFlash;
     [SerializeField] private SpriteRenderer silverMuzzleFlash;
 
     // Recoil and flash tuning values
     [Header("Weapon Model Recoil")]
-    [SerializeField] private float cameraRecoilUpDegrees = 1.5f;
     [SerializeField] private Vector3 gunKickOffset = new Vector3(0f, 0.02f, -0.08f);
     [SerializeField] private float gunKickUpRotationDegrees = 4f;
     [SerializeField] private float gunKickTime = 0.05f;
@@ -31,10 +29,6 @@ public class GunVisuals : MonoBehaviour
 
     private void Awake()
     {
-        // Auto-set movement if not assigned manually
-        if (playerMovement == null)
-            playerMovement = GetComponent<PlayerMovement>();
-
         // Ensure flash sprites begin hidden so the gun does not spawn flashing
         if (ironMuzzleFlash != null) ironMuzzleFlash.enabled = false;
         if (silverMuzzleFlash != null) silverMuzzleFlash.enabled = false;
@@ -82,11 +76,7 @@ public class GunVisuals : MonoBehaviour
 
     private void PlayRecoil()
     {
-        // Camera recoil is delegated to movement/camera system so visuals and camera stay coordinated
-        if (playerMovement != null)
-            playerMovement.AddVerticalRecoil(cameraRecoilUpDegrees);
-
-        // If no model exists for whatever reason, still allow camera recoil and exit safely
+        // If no model exists for whatever reason, exit safely
         if (gunModel == null)
             return;
 
