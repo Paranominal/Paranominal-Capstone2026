@@ -98,6 +98,7 @@ public class ShotOrchestrator : MonoBehaviour
         if (weaponEvents != null)
         {
             weaponEvents.RaiseShotFired(shotType);
+            weaponEvents.RaiseShotResolved(shotType, rewardedShot);
             weaponEvents.RaiseAmmoChanged(weaponFiringLogic.CurrentAmmo, weaponFiringLogic.MagazineSize);
         }
 
