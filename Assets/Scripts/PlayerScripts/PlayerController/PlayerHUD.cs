@@ -8,6 +8,7 @@ public class PlayerHUD : MonoBehaviour
     [Header("References")]
     [SerializeField] private WeaponFiringLogic weaponFiringLogic;
     [SerializeField] private WeaponEvents weaponEvents;
+    [SerializeField] private WeaponStateController weaponStateController;
     //[SerializeField] private Dashing dashing;
 
     // text readout for current ammo in magazine and magazine capacity

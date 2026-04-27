@@ -10,11 +10,7 @@ public class ShotOrchestrator : MonoBehaviour
     [SerializeField] private WeaponEvents weaponEvents;
     [SerializeField] private CameraRecoilController cameraRecoilController;
     [SerializeField] private GunVisuals gunVisuals;
-
-    [Header("Shot Settings")]
-    [SerializeField] private bool autoReload = true;
-    [SerializeField] private bool silverBarrelEnabled = true;
-    [SerializeField] private bool ironBarrelEnabled = true;
+    [SerializeField] private WeaponStateController weaponStateController;
 
     private bool wasReloading;
 
@@ -27,6 +23,7 @@ public class ShotOrchestrator : MonoBehaviour
         if (weaponEvents == null) weaponEvents = GetComponent<WeaponEvents>();
         if (cameraRecoilController == null) cameraRecoilController = GetComponent<CameraRecoilController>();
         if (gunVisuals == null) gunVisuals = GetComponent<GunVisuals>();
+        if (weaponStateController == null) weaponStateController = GetComponent<WeaponStateController>();
 
         if (weaponFiringLogic != null && weaponEvents != null)
             weaponEvents.RaiseAmmoChanged(weaponFiringLogic.CurrentAmmo, weaponFiringLogic.MagazineSize);
@@ -60,8 +57,11 @@ public class ShotOrchestrator : MonoBehaviour
             wasReloading = false;
         }
 
-        bool ironPressed = ironBarrelEnabled && weaponInputReader.WasIronPressedThisFrame();
-        bool silverPressed = silverBarrelEnabled && weaponInputReader.WasSilverPressedThisFrame();
+        if (weaponStateController != null && !weaponStateController.IsWeaponEnabled)
+            return;
+
+        bool ironPressed = (weaponStateController == null || weaponStateController.IsIronBarrelEnabled) && weaponInputReader.WasIronPressedThisFrame();
+        bool silverPressed = (weaponStateController == null || weaponStateController.IsSilverBarrelEnabled) && weaponInputReader.WasSilverPressedThisFrame();
         bool reloadPressed = weaponInputReader.WasReloadPressedThisFrame();
 
         if (reloadPressed && weaponFiringLogic.CanManualReload())
@@ -78,7 +78,9 @@ public class ShotOrchestrator : MonoBehaviour
 
         WeakPointType shotType = ironPressed ? WeakPointType.Iron : WeakPointType.Silver;
 
-        if (!weaponFiringLogic.HasAmmo() && autoReload)
+        bool autoReloadEnabled = weaponStateController == null || weaponStateController.AutoReloadEnabled;
+
+        if (!weaponFiringLogic.HasAmmo() && autoReloadEnabled)
         {
             weaponFiringLogic.TryStartReload();
             return;
@@ -99,7 +101,7 @@ public class ShotOrchestrator : MonoBehaviour
             weaponEvents.RaiseAmmoChanged(weaponFiringLogic.CurrentAmmo, weaponFiringLogic.MagazineSize);
         }
 
-        if (!weaponFiringLogic.HasAmmo() && autoReload)
+        if (!weaponFiringLogic.HasAmmo() && autoReloadEnabled)
             weaponFiringLogic.TryStartReload();
     }
 
