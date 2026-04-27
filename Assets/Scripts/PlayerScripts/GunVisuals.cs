@@ -127,4 +127,36 @@ public class GunVisuals : MonoBehaviour
         gunModel.localPosition = gunRestLocalPosition;
         gunModel.localRotation = gunRestLocalRotation;
     }
+
+    public void SetVisualsVisible(bool visible)
+    {
+        if (!visible)
+        {
+            if (muzzleFlashRoutine != null)
+            {
+                StopCoroutine(muzzleFlashRoutine);
+                muzzleFlashRoutine = null;
+            }
+
+            if (gunKickRoutine != null)
+            {
+                StopCoroutine(gunKickRoutine);
+                gunKickRoutine = null;
+            }
+
+            if (ironMuzzleFlash != null) ironMuzzleFlash.enabled = false;
+            if (silverMuzzleFlash != null) silverMuzzleFlash.enabled = false;
+        }
+
+        if (gunModel != null)
+        {
+            if (visible)
+            {
+                gunModel.localPosition = gunRestLocalPosition;
+                gunModel.localRotation = gunRestLocalRotation;
+            }
+
+            gunModel.gameObject.SetActive(visible);
+        }
+    }
 }

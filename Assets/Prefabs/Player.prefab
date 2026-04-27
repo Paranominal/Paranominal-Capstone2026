@@ -171,10 +171,18 @@ GameObject:
   m_Component:
   - component: {fileID: 8013496993476994936}
   - component: {fileID: 1267710674955157816}
-  - component: {fileID: 2923936469112367735}
-  - component: {fileID: 3781141096471752189}
-  - component: {fileID: 843726626796115190}
   - component: {fileID: 7728624040698815885}
+  - component: {fileID: 7488194288341063554}
+  - component: {fileID: 8240368774250594449}
+  - component: {fileID: 8956652460274281639}
+  - component: {fileID: 6226453563411988871}
+  - component: {fileID: 404796220867514065}
+  - component: {fileID: 3083668988106486512}
+  - component: {fileID: 4534623343376816712}
+  - component: {fileID: 3833990357327432590}
+  - component: {fileID: 7212527224247330429}
+  - component: {fileID: 6477322163037900572}
+  - component: {fileID: 8882670701309718443}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -225,116 +233,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &2923936469112367735
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2579260593497910125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b034643826591944b9a7f40cf665b4bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  playerCamera: {fileID: 6654618607449089807}
-  moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
-  lookAction: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
-  walkSpeed: 6
-  canMove: 1
-  lookSensitivity: 0.1
-  lookXLimit: 60
-  lookSmoothing: 0.03
-  gravity: -25
-  groundedStickForce: -2
-  shotRecoilUpDegrees: 1.5
-  recoilReturnTime: 0.08
---- !u!114 &3781141096471752189
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2579260593497910125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3313660c0276ed346ab30a48b4cc43f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GunController
-  ironActionName: ShootIron
-  silverActionName: ShootSilver
-  reloadActionName: Reload
-  playerCamera: {fileID: 6654618607449089807}
-  playerMovement: {fileID: 0}
-  gunVisuals: {fileID: 7728624040698815885}
-  WeakPoint:
-    serializedVersion: 2
-    m_Bits: 128
-  autoReload: 1
-  silverBarrelEnabled: 1
-  ironBarrelEnabled: 1
-  shotCooldown: 0.5
-  magazineSize: 2
-  reloadDuration: 1
-  rayDistance: 19
---- !u!114 &843726626796115190
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2579260593497910125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5329d9b578e97a4cb2f69707310bcfd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Dashing
-  playerMovement: {fileID: 2923936469112367735}
-  playerCamera: {fileID: 6654618607449089807}
-  linkedFovCameras:
-  - {fileID: 7236061146324488673}
-  - {fileID: 0}
-  - {fileID: 5940204994785997246}
-  dashAction: {fileID: 6790621974129141125, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
-  dashDistance: 4
-  dashDuration: 0.12
-  dashCooldown: 0.75
-  dashSpeedCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1.8
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.25
-      value: 1.1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  dashCameraPitchImpulse: 3
-  dashFovBoost: 8
-  dashFovRecoverSpeed: 20
 --- !u!114 &7728624040698815885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -355,6 +253,178 @@ MonoBehaviour:
   gunKickTime: 0.1
   gunReturnTime: 0.3
   muzzleFlashDuration: 0.05
+--- !u!114 &7488194288341063554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26610a684dd371147bda96f749b28ec2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraRecoilController
+  shotRecoilUpDegrees: 1.5
+  recoilReturnTime: 0.08
+--- !u!114 &8240368774250594449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd30b5d39a07c7b45b135c75afab90ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerGravity
+  playerMover: {fileID: 404796220867514065}
+  gravity: -25
+  groundedStickForce: -2
+--- !u!114 &8956652460274281639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 355507da6e9a0ca419d0d8d11a0ff80c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInputReader
+  moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  lookAction: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  startLockMode: 1
+  startCursorVisible: 0
+--- !u!114 &6226453563411988871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18e67ab7004eb55448b731af20e759bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLook
+  playerCamera: {fileID: 6654618607449089807}
+  inputReader: {fileID: 8956652460274281639}
+  playerMover: {fileID: 404796220867514065}
+  cameraRecoil: {fileID: 7488194288341063554}
+  lookSensitivity: 0.08
+  lookXLimit: 60
+  lookSmoothing: 0.03
+--- !u!114 &404796220867514065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b856661fc033abb429ec138fbb1d0086, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMover
+  inputReader: {fileID: 8956652460274281639}
+  walkSpeed: 6
+  canMove: 1
+--- !u!114 &3083668988106486512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6edcaaae36e1ce849ae17c0a0c321829, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShotOrchestrator
+  weaponInputReader: {fileID: 8882670701309718443}
+  weaponFiringLogic: {fileID: 3833990357327432590}
+  weaponHitscan: {fileID: 6477322163037900572}
+  weakPointResolver: {fileID: 4534623343376816712}
+  weaponEvents: {fileID: 7212527224247330429}
+  cameraRecoilController: {fileID: 7488194288341063554}
+  gunVisuals: {fileID: 7728624040698815885}
+  autoReload: 1
+  silverBarrelEnabled: 1
+  ironBarrelEnabled: 1
+--- !u!114 &4534623343376816712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c44abd8e6c282fb48a26b5f398ac2d86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeakPointResolver
+--- !u!114 &3833990357327432590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2981b2cfd676e004594b2c18e3880329, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponAmmo
+  magazineSize: 2
+  reloadDuration: 2
+  shotCooldown: 0.2
+--- !u!114 &7212527224247330429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66722f93cd366054a9aa6a2b0658429e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponEvents
+--- !u!114 &6477322163037900572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d624a85c0d73af43bba8a6690161177, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponHitscan
+  playerCamera: {fileID: 6654618607449089807}
+  weakPointLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  rayDistance: 20
+--- !u!114 &8882670701309718443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4bc96a8fbc847d40af5c1c000ee6f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponInputReader
+  ironActionName: ShootIron
+  silverActionName: ShootSilver
+  reloadActionName: Reload
 --- !u!1 &3524502881056351253
 GameObject:
   m_ObjectHideFlags: 0
@@ -1134,10 +1204,6 @@ PrefabInstance:
       propertyPath: screenUI
       value: 
       objectReference: {fileID: 6897443471252869506}
-    - target: {fileID: 1090110928602918560, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
-      propertyPath: playerScript
-      value: 
-      objectReference: {fileID: 2923936469112367735}
     - target: {fileID: 1421732863531194200, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -1344,17 +1410,21 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2950077288419945060, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
-      propertyPath: dashing
+      propertyPath: weaponAmmo
       value: 
-      objectReference: {fileID: 843726626796115190}
+      objectReference: {fileID: 3833990357327432590}
     - target: {fileID: 2950077288419945060, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
-      propertyPath: gunController
+      propertyPath: weaponEvents
       value: 
-      objectReference: {fileID: 3781141096471752189}
+      objectReference: {fileID: 7212527224247330429}
     - target: {fileID: 2950077288419945060, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: playerMovement
       value: 
       objectReference: {fileID: 5373816417711542028, guid: 2e5af8cc9e41ec842ab47c67d874860a, type: 3}
+    - target: {fileID: 6818782401789846890, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7371022240174911354, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1441,11 +1511,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7780947195705976479, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8097341916491957871, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8487211731980038411, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_LocalScale.x
