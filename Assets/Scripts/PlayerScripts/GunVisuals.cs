@@ -11,7 +11,7 @@ public class GunVisuals : MonoBehaviour
     [SerializeField] private SpriteRenderer silverMuzzleFlash;
 
     // Recoil and flash tuning values
-    [Header("Visual Recoil")]
+    [Header("Weapon Model Recoil")]
     [SerializeField] private float cameraRecoilUpDegrees = 1.5f;
     [SerializeField] private Vector3 gunKickOffset = new Vector3(0f, 0.02f, -0.08f);
     [SerializeField] private float gunKickUpRotationDegrees = 4f;

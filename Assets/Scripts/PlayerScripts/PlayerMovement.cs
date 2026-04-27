@@ -15,6 +15,9 @@ public class PlayerMovement : MonoBehaviour
     // moving and looking tuning
     [Header("Movement")]
     [SerializeField] private float walkSpeed = 6f;
+    // Global movement lock toggle (future-proofed for pause/cutscenes?)
+    public bool canMove = true; // hi i need to change this value from the grimoire (and likely other stuff in future) so the read-only version won't work well
+    public bool CanMove => canMove;
 
     [Header("Look")]
     [SerializeField] private float lookSensitivity = 0.08f;
@@ -30,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
     private float verticalVelocity;
 
     // how long it takes for gun to return to rest visually, not tied to reload or cooldowns
-    [Header("Recoil")]
+    [Header("Camera Recoil")]
     [SerializeField] private float recoilReturnTime = 0.08f;
 
     // required movement component for collisions
@@ -39,9 +42,6 @@ public class PlayerMovement : MonoBehaviour
 
     // Camera local X rotation in degrees
     private float cameraPitch;
-    // Global movement lock toggle (future-proofed for pause/cutscenes?)
-    public bool canMove = true; // hi i need to change this value from the grimoire (and likely other stuff in future) so the read-only version won't work well
-    public bool CanMove => canMove;
 
     // Recoil state:
     // recoilOffsetX is additive camera pitch offset from shooting/dash effects,
