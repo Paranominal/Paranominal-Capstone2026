@@ -34,8 +34,17 @@ public class WeakPoint : MonoBehaviour
     // currentAlpha is smoothed over time to avoid hard pop-in transitions
     private bool isShown;
     private float currentAlpha;
-    private bool isUnlocked;
     private int remainingShots;
+
+    private void OnEnable()
+    {
+        WeakPointRegistry.Register(this);
+    }
+
+    private void OnDisable()
+    {
+        WeakPointRegistry.Unregister(this);
+    }
 
     private void Awake()
     {
@@ -109,7 +118,6 @@ public class WeakPoint : MonoBehaviour
     {
         // Mark as currently active in sequence and re-enable hit detection.
         isShown = true;
-        isUnlocked = !isWarded;
         remainingShots = isTough ? Mathf.Max(1, shotsToDestroy) : 1;
 
         if (weakPointCollider != null)
@@ -154,7 +162,7 @@ public class WeakPoint : MonoBehaviour
         if (type != weakPointType) return;
 
         // Warded weakpoints cannot be destroyed until unlocked externally
-        if (isWarded && !isUnlocked) return;
+        if (isWarded) return;
 
         // Tough weakpoints require multiple successful hits
         remainingShots -= 1;
@@ -167,7 +175,7 @@ public class WeakPoint : MonoBehaviour
 
     public void UnlockWeakPoint()
     {
-        isUnlocked = true;
+        isWarded = false;
         UpdateWardedOverlay(currentAlpha);
     }
 
@@ -190,7 +198,7 @@ public class WeakPoint : MonoBehaviour
         if (wardedOverlayRenderer == null)
             return;
 
-        bool showOverlay = isShown && isWarded && !isUnlocked && alpha > 0.001f;
+        bool showOverlay = isShown && isWarded && alpha > 0.001f;
         wardedOverlayRenderer.enabled = showOverlay;
 
         if (!showOverlay)

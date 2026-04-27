@@ -11,6 +11,7 @@ public class ContainerCheck : MonoBehaviour
         anyOrder
     }
 
+    [SerializeField] private string weakPointId;
     public Container container;
     public List<ALTGrimoireEntry> solution;
     public List<ALTGrimoireEntry> failures;
@@ -37,6 +38,10 @@ public class ContainerCheck : MonoBehaviour
                 if (CompareLists())
                 {
                     Debug.Log("Success! You solved the puzzle!");
+                    if (!string.IsNullOrEmpty(weakPointId))
+                    {
+                        WeakPointRegistry.UnlockWardedWeakPointById(weakPointId);
+                    }
                 }
                 else
                 {

@@ -13,7 +13,7 @@ public class WeakPointResolver : MonoBehaviour
         bool isTough = weakPoint.IsTough;
         bool isWarded = weakPoint.IsWarded;
 
-        if (!weakPoint.IsWarded)
+        if (!isWarded)
         {
             if (correctType && isTough)
             {
