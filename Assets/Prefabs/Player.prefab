@@ -183,6 +183,7 @@ GameObject:
   - component: {fileID: 7212527224247330429}
   - component: {fileID: 6477322163037900572}
   - component: {fileID: 8882670701309718443}
+  - component: {fileID: 2358186202558148451}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -351,9 +352,7 @@ MonoBehaviour:
   weaponEvents: {fileID: 7212527224247330429}
   cameraRecoilController: {fileID: 7488194288341063554}
   gunVisuals: {fileID: 7728624040698815885}
-  autoReload: 1
-  silverBarrelEnabled: 1
-  ironBarrelEnabled: 1
+  weaponStateController: {fileID: 0}
 --- !u!114 &4534623343376816712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -425,6 +424,23 @@ MonoBehaviour:
   ironActionName: ShootIron
   silverActionName: ShootSilver
   reloadActionName: Reload
+--- !u!114 &2358186202558148451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99ba48bb0711d5745901e467d1ef3ee5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponStateController
+  gunVisuals: {fileID: 7728624040698815885}
+  weaponEnabled: 1
+  ironBarrelEnabled: 1
+  silverBarrelEnabled: 1
+  autoReloadEnabled: 1
 --- !u!1 &3524502881056351253
 GameObject:
   m_ObjectHideFlags: 0
@@ -1421,6 +1437,14 @@ PrefabInstance:
       propertyPath: playerMovement
       value: 
       objectReference: {fileID: 5373816417711542028, guid: 2e5af8cc9e41ec842ab47c67d874860a, type: 3}
+    - target: {fileID: 2950077288419945060, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: weaponFiringLogic
+      value: 
+      objectReference: {fileID: 3833990357327432590}
+    - target: {fileID: 2950077288419945060, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: weaponStateController
+      value: 
+      objectReference: {fileID: 2358186202558148451}
     - target: {fileID: 6818782401789846890, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_IsActive
       value: 0
