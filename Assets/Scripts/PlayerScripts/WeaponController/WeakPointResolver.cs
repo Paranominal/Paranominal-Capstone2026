@@ -35,8 +35,7 @@ public class WeakPointResolver : MonoBehaviour
 
         }
 
-        Debug.Log("Weakpoint hit, wrong shot type (ammo consumed). " + colliderName +
-            " | Warded: " + isWarded);
+        Debug.Log("Weakpoint hit, wrong shot type (ammo consumed). " + colliderName);
         return false;
     }
 }

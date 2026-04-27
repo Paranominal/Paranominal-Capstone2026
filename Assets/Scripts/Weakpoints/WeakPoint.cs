@@ -4,9 +4,13 @@ public class WeakPoint : MonoBehaviour
 {
     [HideInInspector] public WeakPointManager manager;
     public WeakPointType weakPointType;
+    public string PointId => pointId;
     public bool IsTough => isTough;
     public bool IsWarded => isWarded;
     public int RemainingShotsToDestroy => remainingShots;
+
+    [Header("Identity")]
+    [SerializeField] private string pointId;
 
     [Header("Extra Weakpoint Behaviors")]
     [SerializeField] private bool isWarded;
