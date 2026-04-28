@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4840613836788867929}
   - component: {fileID: 157793635272378435}
   - component: {fileID: 3977782472309977724}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Display
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,7 +124,8 @@ GameObject:
   - component: {fileID: 4048073775354982405}
   - component: {fileID: 7715542274334475992}
   - component: {fileID: 6151485535973328032}
-  m_Layer: 0
+  - component: {fileID: 6125797347773108851}
+  m_Layer: 8
   m_Name: Hobgoblin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -181,10 +182,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HobgoblinBehaviour
   vision: {fileID: 2880104385379219663}
   navAgent: {fileID: 2688743458007262411}
-  patrolSpeed: 2
+  patrolSpeed: 1
   wanderRadius: 8
   idleWaitTime: 2
-  followSpeed: 3
+  followSpeed: 2
+  stopDistance: 1.5
+  stagger: {fileID: 6125797347773108851}
 --- !u!114 &7980951876251254891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -243,8 +246,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 1.9057221, z: 1}
+  m_Center: {x: 0, y: 0.45286107, z: 0}
 --- !u!114 &7715542274334475992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -258,9 +261,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
   entry:
-    entryName: Hobgoblin
-    flavourText: A direct minion of demons and devils.
-    hintText: 
+    entryName: Imp
+    flavourText: A subordinate minion to a devilish entity.
+    hintText: These things creep me out...
     completeText: 
     snapshotImage: {fileID: 0}
   outline: {fileID: 6151485535973328032}
@@ -283,6 +286,20 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &6125797347773108851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780255270900913490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d49d50defecf244d9e2d39fcffcdd3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
+  staggerDuration: 1
+  debugMode: 0
 --- !u!1001 &1323759862332386954
 PrefabInstance:
   m_ObjectHideFlags: 0

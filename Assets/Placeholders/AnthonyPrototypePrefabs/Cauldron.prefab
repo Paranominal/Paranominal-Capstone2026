@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 6691526260147872027}
   - component: {fileID: 868802445675664923}
   - component: {fileID: 1587837287928712570}
-  - component: {fileID: 4374078922685730265}
-  - component: {fileID: 3021422146250330293}
+  - component: {fileID: 1104264099839123567}
+  - component: {fileID: 5501344799788246202}
   m_Layer: 10
   m_Name: Spoon
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.21422398, w: 0.9767846}
   m_LocalPosition: {x: 0.379, y: 1.067, z: -0.077}
-  m_LocalScale: {x: 0.2, y: 0.44851097, z: 0.2}
+  m_LocalScale: {x: 0.07272, y: 0.47653195, z: 0.07272}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4171687319207892728}
@@ -130,14 +130,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ContainerCheck
   tempDeleteObject: {fileID: 0}
+  weakPointId: 
   container: {fileID: 4533566425437573566}
   solution:
-  - entryName: Blue Herb
-    flavourText: 
-    hintText: 
-    completeText: 
-    snapshotImage: {fileID: 0}
-  - entryName: Orange Herb
+  - entryName: Green Herb
     flavourText: 
     hintText: 
     completeText: 
@@ -147,8 +143,18 @@ MonoBehaviour:
     hintText: 
     completeText: 
     snapshotImage: {fileID: 0}
+  - entryName: Purple Herb
+    flavourText: 
+    hintText: 
+    completeText: 
+    snapshotImage: {fileID: 0}
+  - entryName: Blue Herb
+    flavourText: 
+    hintText: 
+    completeText: 
+    snapshotImage: {fileID: 0}
   failures:
-  - entryName: Green Herb
+  - entryName: Orange Herb
     flavourText: 
     hintText: 
     completeText: 
@@ -157,7 +163,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   checkType: 2
---- !u!114 &4374078922685730265
+--- !u!114 &1104264099839123567
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -170,14 +176,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
   entry:
-    entryName: Cauldron Spoon
-    flavourText: Used to stir and mix items put into the cauldron.
-    hintText: 
+    entryName: Stirring Wand
+    flavourText: Used to complete a cauldron spell.
+    hintText: Why can I scan this??
     completeText: 
     snapshotImage: {fileID: 0}
-  outline: {fileID: 3021422146250330293}
+  outline: {fileID: 5501344799788246202}
   collectable: 0
---- !u!114 &3021422146250330293
+--- !u!114 &5501344799788246202
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -191,7 +197,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Outline
   outlineMode: 0
   outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 2
+  outlineWidth: 10
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
@@ -212,8 +218,6 @@ GameObject:
   - component: {fileID: 3279293335570141701}
   - component: {fileID: 1562104719685326174}
   - component: {fileID: 7524865573225832620}
-  - component: {fileID: 3047587847164506610}
-  - component: {fileID: 714689620356686781}
   m_Layer: 10
   m_Name: Cauldron
   m_TagString: Untagged
@@ -230,8 +234,8 @@ Transform:
   m_GameObject: {fileID: 3208660038995700303}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.51, z: 0}
-  m_LocalScale: {x: 1, y: 0.5, z: 1}
+  m_LocalPosition: {x: 0, y: 0.587, z: 0}
+  m_LocalScale: {x: 1, y: 0.36943, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4171687319207892728}
@@ -312,7 +316,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5000001
+  m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
@@ -397,44 +401,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   consumesItem: 0
---- !u!114 &3047587847164506610
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3208660038995700303}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Outline
-  outlineMode: 0
-  outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 2
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
---- !u!114 &714689620356686781
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3208660038995700303}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry:
-    entryName: Cauldron
-    flavourText: Strange, this cauldron remind me of the one my aunt has.
-    hintText: Seems perfect to mix some herbs.
-    completeText: 
-    snapshotImage: {fileID: 0}
-  outline: {fileID: 0}
-  collectable: 0
 --- !u!1 &6060717570375052999
 GameObject:
   m_ObjectHideFlags: 0
@@ -444,7 +410,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4171687319207892728}
-  m_Layer: 10
+  - component: {fileID: 4284477364186515950}
+  - component: {fileID: 2678921845991644565}
+  - component: {fileID: 8324914716015073802}
+  m_Layer: 8
   m_Name: Cauldron
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -466,5 +435,163 @@ Transform:
   m_Children:
   - {fileID: 4202739921481004181}
   - {fileID: 3556364008929274532}
+  - {fileID: 7394402688381071340}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4284477364186515950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6060717570375052999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
+  entry:
+    entryName: Spell Cauldron
+    flavourText: A cauldron for practicing witchcraft.
+    hintText: Strange, this cauldron reminds me of the one my aunt has.
+    completeText: 
+    snapshotImage: {fileID: 0}
+  outline: {fileID: 2678921845991644565}
+  collectable: 0
+--- !u!114 &2678921845991644565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6060717570375052999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 5
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
+--- !u!65 &8324914716015073802
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6060717570375052999}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 0.6884047, z: 1}
+  m_Center: {x: 0, y: 0.5997717, z: 0}
+--- !u!1001 &8210354873618728675
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4171687319207892728}
+    m_Modifications:
+    - target: {fileID: 1688630303797848335, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.7313
+      objectReference: {fileID: 0}
+    - target: {fileID: 1688630303797848335, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.7313
+      objectReference: {fileID: 0}
+    - target: {fileID: 1688630303797848335, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.73130006
+      objectReference: {fileID: 0}
+    - target: {fileID: 1688630303797848335, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.244
+      objectReference: {fileID: 0}
+    - target: {fileID: 1688630303797848335, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.806
+      objectReference: {fileID: 0}
+    - target: {fileID: 1688630303797848335, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.572
+      objectReference: {fileID: 0}
+    - target: {fileID: 1688630303797848335, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.93777025
+      objectReference: {fileID: 0}
+    - target: {fileID: 1688630303797848335, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.26730838
+      objectReference: {fileID: 0}
+    - target: {fileID: 1688630303797848335, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.2006797
+      objectReference: {fileID: 0}
+    - target: {fileID: 1688630303797848335, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.094132185
+      objectReference: {fileID: 0}
+    - target: {fileID: 1688630303797848335, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -27.618
+      objectReference: {fileID: 0}
+    - target: {fileID: 1688630303797848335, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 28.789
+      objectReference: {fileID: 0}
+    - target: {fileID: 1688630303797848335, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -18.683
+      objectReference: {fileID: 0}
+    - target: {fileID: 2499918054773310183, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8415094
+      objectReference: {fileID: 0}
+    - target: {fileID: 2499918054773310183, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_Color.g
+      value: 0.45568526
+      objectReference: {fileID: 0}
+    - target: {fileID: 2499918054773310183, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_Color.r
+      value: 0.70605284
+      objectReference: {fileID: 0}
+    - target: {fileID: 5100173732120776299, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_Name
+      value: Note
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806677775689557063, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: entry.hintText
+      value: The last line of the recipe is partially faded...
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806677775689557063, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: entry.entryName
+      value: Spell Recipe
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806677775689557063, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: entry.flavourText
+      value: 'A dash of Green Herb. Two dashes of Purple. One last dash of B~-- '
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+--- !u!4 &7394402688381071340 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1688630303797848335, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+  m_PrefabInstance: {fileID: 8210354873618728675}
+  m_PrefabAsset: {fileID: 0}

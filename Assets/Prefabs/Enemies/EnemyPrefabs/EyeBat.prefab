@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8521917907078320552}
   - component: {fileID: 6405095009204225256}
   - component: {fileID: 6016132784837794902}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Display
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -123,7 +123,8 @@ GameObject:
   - component: {fileID: 2522395779099145161}
   - component: {fileID: -357270100409380465}
   - component: {fileID: 697487408336731762}
-  m_Layer: 0
+  - component: {fileID: 347643690446393596}
+  m_Layer: 8
   m_Name: EyeBat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -267,8 +268,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
   entry:
     entryName: Eye Bat
-    flavourText: A creepy bat that is more eye then body. How does that work?
-    hintText: 
+    flavourText: A lesser demon from lower realms.
+    hintText: According to all known laws of aviation, there is no way that a bat
+      should be able to eye...
     completeText: 
     snapshotImage: {fileID: 0}
   outline: {fileID: 697487408336731762}
@@ -291,6 +293,20 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &347643690446393596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915909615733791053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d49d50defecf244d9e2d39fcffcdd3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
+  staggerDuration: 2
+  debugMode: 0
 --- !u!1001 &1142091917421662898
 PrefabInstance:
   m_ObjectHideFlags: 0

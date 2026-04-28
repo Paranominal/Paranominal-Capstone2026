@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4840613836788867929}
   - component: {fileID: 157793635272378435}
   - component: {fileID: 3977782472309977724}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Display
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,7 +139,9 @@ GameObject:
   - component: {fileID: 7980951876251254891}
   - component: {fileID: 2688743458007262411}
   - component: {fileID: 4048073775354982405}
-  m_Layer: 0
+  - component: {fileID: 5055002766995372007}
+  - component: {fileID: 4543373875377568041}
+  m_Layer: 8
   m_Name: Miriam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -200,6 +202,8 @@ MonoBehaviour:
   wanderRadius: 8
   idleWaitTime: 2
   followSpeed: 3
+  stopDistance: 1
+  stagger: {fileID: 0}
 --- !u!114 &7980951876251254891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -275,8 +279,46 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 1, y: 2, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5055002766995372007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780255270900913490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
+  entry:
+    entryName: Miriam?
+    flavourText: ...
+    hintText: Is that supposed to be me??
+    completeText: 
+    snapshotImage: {fileID: 0}
+  outline: {fileID: 4543373875377568041}
+  collectable: 0
+--- !u!114 &4543373875377568041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780255270900913490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1001 &477150955076855248
 PrefabInstance:
   m_ObjectHideFlags: 0
