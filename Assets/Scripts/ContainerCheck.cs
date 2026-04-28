@@ -10,7 +10,7 @@ public class ContainerCheck : MonoBehaviour
         duplicatesAllowed,
         anyOrder
     }
-    public GameObject exitDoorTEMP;
+    public GameObject tempDeleteObject; //temporary feature, deletes assigned game object on successful use.
     public Container container;
     public List<ALTGrimoireEntry> solution;
     public List<ALTGrimoireEntry> failures;
@@ -37,7 +37,7 @@ public class ContainerCheck : MonoBehaviour
                 if (CompareLists())
                 {
                     Debug.Log("Success! You solved the puzzle!");
-                    Destroy(exitDoorTEMP);
+                    Destroy(tempDeleteObject); // Destroys the object assigned for deletion
                 }
                 else
                 {
