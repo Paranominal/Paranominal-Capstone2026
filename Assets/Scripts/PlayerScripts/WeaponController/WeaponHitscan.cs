@@ -38,6 +38,28 @@ public class WeaponHitscan : MonoBehaviour
         return weakPoint != null;
     }
 
+    public bool TryGetShootableTargetHit(out ShootableTarget target, out RaycastHit targetHit)
+    {
+        target = null;
+
+        if (playerCamera == null)
+        {
+            targetHit = default;
+            return false;
+        }
+
+        Ray ray = BuildAimRay();
+        bool hasHit = Physics.Raycast(ray, out targetHit, rayDistance, ~0, QueryTriggerInteraction.Collide);
+        if (!hasHit)
+            return false;
+
+        target = targetHit.collider.GetComponent<ShootableTarget>();
+        if (target == null)
+            target = targetHit.collider.GetComponentInParent<ShootableTarget>();
+
+        return target != null;
+    }
+
     public void LogWorldHitOrMiss()
     {
         if (playerCamera == null)
