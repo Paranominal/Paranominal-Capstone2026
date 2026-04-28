@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyEncounterManager : MonoBehaviour
 {
     [Header("Wave Settings")]
-    [SerializeField] private int maxWaves = 5;
+    [SerializeField] private int maxWaves = 1;
     [SerializeField] private float timeBetweenWaves = 3f;
 
     [Header("Spawn Points")]

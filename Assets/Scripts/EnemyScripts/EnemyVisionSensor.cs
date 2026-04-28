@@ -11,7 +11,7 @@ public class EnemyVisionSensor : MonoBehaviour
 
     //sets the eye and target height offsets
     [Header("Vision Height")]
-    public float eyeHeight = 1.6f;
+    public float eyeHeight = 1.6f;  
     public float targetHeight = 1.2f;
 
     //holds the cached target and ray buffer
@@ -72,8 +72,6 @@ public class EnemyVisionSensor : MonoBehaviour
     //measure distance to the cached target
     public float DistanceToTarget()
     {
-        AcquirePlayerTarget();
-
         if (target == null)
         {
             return float.PositiveInfinity;
@@ -85,18 +83,15 @@ public class EnemyVisionSensor : MonoBehaviour
     //check if the target is inside vision
     public bool IsTargetInVision()
     {
-        AcquirePlayerTarget();
-
         bool isVisible = EvaluateTargetInVision();
         UpdateVisibilityTimer(isVisible);
+
         return isVisible;
     }
 
     //require vision to stay valid for a while
     public bool IsTargetInVisionForDuration(float requiredDuration)
     {
-        AcquirePlayerTarget();
-
         bool isVisible = EvaluateTargetInVision();
         UpdateVisibilityTimer(isVisible);
 
@@ -111,11 +106,6 @@ public class EnemyVisionSensor : MonoBehaviour
     //test distance, angle, then line of sight
     private bool EvaluateTargetInVision()
     {
-        if (target == null)
-        {
-            AcquirePlayerTarget();
-        }
-
         if (target == null)
         {
             return false;

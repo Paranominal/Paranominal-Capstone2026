@@ -1,13 +1,12 @@
 using UnityEngine;
 
-public class HauntedStatueBehaviour : MonoBehaviour
+[RequireComponent(typeof(EnemyVisionSensor))]
+public class HauntedStatueBehaviour : EnemyBehaviourBase
 {
     private enum EnemyState { Idle, Chase }
 
-    //stores the vision sensor and gaze pivot references
+    //stores the vision sensor reference
     [Header("References")]
-    [SerializeField] private EnemyVisionSensor vision;
-    [SerializeField] private Transform gazePivot;
 
     //controls how fast the statue turns
     [Header("Turn Speed")]
@@ -15,37 +14,24 @@ public class HauntedStatueBehaviour : MonoBehaviour
 
     //current idle or chase state
     private EnemyState currentState = EnemyState.Idle;
-    private bool isPlayerVisible;
 
     //cache references before play starts
-    private void Awake()
+    protected override void Awake()
     {
-        ResolveVisionReference();
-        ResolveGazePivot();
-        vision.AcquirePlayerTarget();
+        base.Awake();
     }
 
     //update the statue state each frame
     private void Update()
     {
-        if (vision == null)
+        if (!HasVisionTarget)
         {
-            EnterIdleState();
+            currentState = EnemyState.Idle;
             return;
         }
 
-        vision.AcquirePlayerTarget();
-
-        if (!vision.HasTarget)
-        {
-            EnterIdleState();
-            return;
-        }
-
-        //refresh whether the player is visible
-        isPlayerVisible = IsPlayerDetected();
-        //choose idle or chase
-        UpdateBehaviourState();
+        //room-based encounters always force active targeting when a target exists
+        currentState = EnemyState.Chase;
         //run the active state
         RunCurrentState();
     }
@@ -65,43 +51,6 @@ public class HauntedStatueBehaviour : MonoBehaviour
         }
     }
 
-    //switch back to idle
-    private void EnterIdleState()
-    {
-        currentState = EnemyState.Idle;
-    }
-
-    //switch into chase mode
-    private void EnterChaseState()
-    {
-        currentState = EnemyState.Chase;
-    }
-
-    //use sight to decide the state
-    private void UpdateBehaviourState()
-    {
-        if (isPlayerVisible)
-        {
-            if (currentState != EnemyState.Chase)
-            {
-                EnterChaseState();
-            }
-
-            return;
-        }
-
-        if (currentState != EnemyState.Idle)
-        {
-            EnterIdleState();
-        }
-    }
-
-    //check if the player is visible
-    private bool IsPlayerDetected()
-    {
-        return vision != null && vision.IsTargetInVision();
-    }
-
     //idle state
     private void PerformIdle()
     {
@@ -110,13 +59,13 @@ public class HauntedStatueBehaviour : MonoBehaviour
     //chase state
     private void PerformChase()
     {
-        if (gazePivot == null || vision == null || vision.Target == null)
+        if (VisionTarget == null)
         {
             return;
         }
 
-        Vector3 lookTarget = vision.Target.position;
-        Vector3 direction = lookTarget - gazePivot.position;
+        Vector3 lookTarget = VisionTarget.position;
+        Vector3 direction = lookTarget - transform.position;
         direction.y = 0f;
 
         if (direction.sqrMagnitude < 0.0001f)
@@ -125,29 +74,6 @@ public class HauntedStatueBehaviour : MonoBehaviour
         }
 
         Quaternion targetRotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
-        gazePivot.rotation = Quaternion.RotateTowards(gazePivot.rotation, targetRotation, turnSpeed * Time.deltaTime);
-    }
-
-    //find or add the sensor
-    private void ResolveVisionReference()
-    {
-        if (vision == null)
-        {
-            vision = GetComponent<EnemyVisionSensor>();
-        }
-
-        if (vision == null)
-        {
-            vision = gameObject.AddComponent<EnemyVisionSensor>();
-        }
-    }
-
-    //default the gaze pivot to this object
-    private void ResolveGazePivot()
-    {
-        if (gazePivot == null)
-        {
-            gazePivot = transform;
-        }
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
     }
 }
