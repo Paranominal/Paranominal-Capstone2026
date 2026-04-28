@@ -125,6 +125,11 @@ public class ShotOrchestrator : MonoBehaviour
             return false;
         }
 
+        if (weaponHitscan.TryGetShootableTargetHit(out ShootableTarget target, out RaycastHit targetHit))
+        {
+            return target.ResolveHit(shotType);
+        }
+
         weaponHitscan.LogWorldHitOrMiss();
         return false;
     }
