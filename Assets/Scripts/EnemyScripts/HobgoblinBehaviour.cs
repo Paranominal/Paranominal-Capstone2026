@@ -21,6 +21,9 @@ public class HobgoblinBehaviour : EnemyBehaviourBase
     [Header("Following")]
     [SerializeField] private float followSpeed = 5f;
 
+    [Header("Status")]
+    [SerializeField] private EnemyStagger stagger;
+
     //current ai state
     private EnemyState currentState = EnemyState.Roam;
     private Vector3 anchorPoint;
@@ -32,11 +35,22 @@ public class HobgoblinBehaviour : EnemyBehaviourBase
         base.Awake();
         anchorPoint = transform.position;
         if (navAgent == null) navAgent = GetComponent<NavMeshAgent>();
+        if (stagger == null) stagger = GetComponent<EnemyStagger>();
     }
 
     //update ai every frame
     private void Update()
     {
+        if (stagger != null && stagger.IsStaggered)
+        {
+            if (navAgent != null && navAgent.isOnNavMesh)
+            {
+                navAgent.isStopped = true;
+                navAgent.ResetPath();
+            }
+            return;
+        }
+
         if (!HasVisionTarget)
         {
             return;
@@ -79,7 +93,7 @@ public class HobgoblinBehaviour : EnemyBehaviourBase
     //follow the patrol path on the navmesh
     private void PerformRoam()
     {
-        if (isWaiting || navAgent == null) return;
+        if (isWaiting || navAgent == null || !navAgent.isOnNavMesh) return;
 
         navAgent.speed = patrolSpeed;
 
@@ -92,7 +106,7 @@ public class HobgoblinBehaviour : EnemyBehaviourBase
     //push the agent toward the player
     private void PerformChase()
     {
-        if (navAgent == null) return;
+        if (navAgent == null || !navAgent.isOnNavMesh) return;
 
         navAgent.isStopped = false;
         navAgent.speed = followSpeed;
@@ -111,7 +125,7 @@ public class HobgoblinBehaviour : EnemyBehaviourBase
         Vector2 rand = Random.insideUnitCircle * wanderRadius;
         Vector3 nextPoint = anchorPoint + new Vector3(rand.x, 0, rand.y);
         
-        if (navAgent != null) navAgent.SetDestination(nextPoint);
+        if (navAgent != null && navAgent.isOnNavMesh) navAgent.SetDestination(nextPoint);
         
         isWaiting = false;
     }
