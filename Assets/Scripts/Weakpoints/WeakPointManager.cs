@@ -53,6 +53,8 @@ public class WeakPointManager : MonoBehaviour
     {
         return weakpoints.Length;
 
+    }
+
     public bool UnlockWeakPointById(string weakPointId)
     {
         return WeakPointRegistry.UnlockWardedWeakPointById(weakPointId);
