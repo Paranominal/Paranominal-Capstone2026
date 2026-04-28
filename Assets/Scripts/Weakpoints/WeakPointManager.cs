@@ -5,6 +5,7 @@ public class WeakPointManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] weakpoints;
     private int currentWeakpoint = 0;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -34,5 +35,10 @@ public class WeakPointManager : MonoBehaviour
             Debug.Log("Enemy Killed!");
             Destroy(gameObject);
         }
+    }
+
+    public bool UnlockWeakPointById(string weakPointId)
+    {
+        return WeakPointRegistry.UnlockWardedWeakPointById(weakPointId);
     }
 }

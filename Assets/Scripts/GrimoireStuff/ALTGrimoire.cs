@@ -31,7 +31,7 @@ public class ALTGrimoire : MonoBehaviour
 
     [Header("External Systems")]
     public PhotoSnapshots snapshotHandler;
-    public PlayerMovement playerScript;
+    [SerializeField] private PlayerInputReader playerInputReader;
     public PlayerHUD screenUI;
 
     // Internal Navigation State
@@ -98,8 +98,15 @@ public class ALTGrimoire : MonoBehaviour
             {
                 grimoireAnim.Play("up");
                 grimoireActive = true;
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
+
+                if (playerInputReader != null)
+                    playerInputReader.SetCursorState(CursorLockMode.None, true);
+                else
+                {
+                    Cursor.visible = true;
+                    Cursor.lockState = CursorLockMode.None;
+                }
+
                 screenUI.UIVisible(false);
 
                 //disabling player input completely
@@ -110,8 +117,15 @@ public class ALTGrimoire : MonoBehaviour
             {
                 grimoireAnim.Play("down");
                 grimoireActive = false;
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
+
+                if (playerInputReader != null)
+                    playerInputReader.SetCursorState(CursorLockMode.Locked, false);
+                else
+                {
+                    Cursor.visible = false;
+                    Cursor.lockState = CursorLockMode.Locked;
+                }
+
                 screenUI.UIVisible(true);
 
                 InputSystem.actions.FindActionMap("Player").Enable();
