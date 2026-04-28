@@ -2551,6 +2551,7 @@ GameObject:
   - component: {fileID: 149741758}
   - component: {fileID: 149741757}
   - component: {fileID: 149741756}
+  - component: {fileID: 149741759}
   m_Layer: 10
   m_Name: Cauldron
   m_TagString: Untagged
@@ -2734,6 +2735,26 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   consumesItem: 0
+--- !u!114 &149741759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149741749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
+  entry:
+    entryName: Cauldron
+    flavourText: Strange, this cauldron remind me of the one my aunt has.
+    hintText: Seems perfect to mix some herbs.
+    completeText: 
+    snapshotImage: {fileID: 0}
+  outline: {fileID: 0}
+  collectable: 0
 --- !u!43 &152063037
 Mesh:
   m_ObjectHideFlags: 0
@@ -6664,6 +6685,8 @@ GameObject:
   - component: {fileID: 283430275}
   - component: {fileID: 283430274}
   - component: {fileID: 283430273}
+  - component: {fileID: 283430276}
+  - component: {fileID: 283430277}
   m_Layer: 10
   m_Name: Exit Door
   m_TagString: Untagged
@@ -6765,6 +6788,45 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 283430271}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &283430276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 283430271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
+  entry:
+    entryName: Mysterious Energy Door
+    flavourText: A magical energy field seems to be blocking this door.
+    hintText: Maybe I can use the skills my aunt taught me to mix an elixar to dispell
+      the magic.
+    completeText: 
+    snapshotImage: {fileID: 0}
+  outline: {fileID: 283430277}
+  collectable: 0
+--- !u!114 &283430277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 283430271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &292592036
 GameObject:
   m_ObjectHideFlags: 0
@@ -39653,6 +39715,7 @@ GameObject:
   - component: {fileID: 1518840132}
   - component: {fileID: 1518840131}
   - component: {fileID: 1518840130}
+  - component: {fileID: 1518840134}
   m_Layer: 10
   m_Name: Spoon
   m_TagString: Untagged
@@ -39795,6 +39858,26 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1518840128}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1518840134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1518840128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
+  entry:
+    entryName: Cauldron Spoon
+    flavourText: Used to stir and mix items put into the cauldron.
+    hintText: 
+    completeText: 
+    snapshotImage: {fileID: 0}
+  outline: {fileID: 0}
+  collectable: 0
 --- !u!43 &1524094950
 Mesh:
   m_ObjectHideFlags: 0
@@ -48796,6 +48879,8 @@ GameObject:
   - component: {fileID: 1848447592}
   - component: {fileID: 1848447591}
   - component: {fileID: 1848447589}
+  - component: {fileID: 1848447594}
+  - component: {fileID: 1848447595}
   m_Layer: 10
   m_Name: Staff Door
   m_TagString: Untagged
@@ -48897,6 +48982,44 @@ Transform:
   - {fileID: 1556260967}
   m_Father: {fileID: 1917263077}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &1848447594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848447588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
+  entry:
+    entryName: Staff Door
+    flavourText: Door to the staff only areas of the hotel.
+    hintText: Locked. Maybe there's a key somehwere.
+    completeText: 
+    snapshotImage: {fileID: 0}
+  outline: {fileID: 1848447595}
+  collectable: 0
+--- !u!114 &1848447595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848447588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!43 &1858843444
 Mesh:
   m_ObjectHideFlags: 0

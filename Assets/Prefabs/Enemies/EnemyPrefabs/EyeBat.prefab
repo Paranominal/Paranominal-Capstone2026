@@ -121,6 +121,8 @@ GameObject:
   - component: {fileID: 1894387095101060742}
   - component: {fileID: 7258074684030722955}
   - component: {fileID: 2522395779099145161}
+  - component: {fileID: -357270100409380465}
+  - component: {fileID: 697487408336731762}
   m_Layer: 0
   m_Name: EyeBat
   m_TagString: Untagged
@@ -251,6 +253,44 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-357270100409380465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915909615733791053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
+  entry:
+    entryName: Eye Bat
+    flavourText: A creepy bat that is more eye then body. How does that work?
+    hintText: 
+    completeText: 
+    snapshotImage: {fileID: 0}
+  outline: {fileID: 697487408336731762}
+  collectable: 0
+--- !u!114 &697487408336731762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915909615733791053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1001 &1142091917421662898
 PrefabInstance:
   m_ObjectHideFlags: 0
