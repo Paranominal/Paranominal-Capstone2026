@@ -18,8 +18,6 @@ public class EnemyStagger : MonoBehaviour
 
     private void Awake()
     {
-        EnemyCollisionLayers.ApplyEnemyBodyLayer(gameObject);
-
         //cache the main movement components
         navAgent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();

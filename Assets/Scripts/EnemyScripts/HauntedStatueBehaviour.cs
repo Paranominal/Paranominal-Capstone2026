@@ -14,7 +14,6 @@ public class HauntedStatueBehaviour : EnemyBehaviourBase
 
     //current idle or chase state
     private EnemyState currentState = EnemyState.Idle;
-    private bool isPlayerVisible;
 
     //cache references before play starts
     protected override void Awake()
@@ -31,10 +30,8 @@ public class HauntedStatueBehaviour : EnemyBehaviourBase
             return;
         }
 
-        //refresh whether the player is visible
-        isPlayerVisible = IsPlayerDetected();
-        //choose idle or chase
-        UpdateBehaviourState();
+        //room-based encounters always force active targeting when a target exists
+        currentState = EnemyState.Chase;
         //run the active state
         RunCurrentState();
     }
@@ -52,25 +49,6 @@ public class HauntedStatueBehaviour : EnemyBehaviourBase
                 PerformChase();
                 break;
         }
-    }
-
-    //use sight to decide the state
-    private void UpdateBehaviourState()
-    {
-        if (isPlayerVisible)
-        {
-            currentState = EnemyState.Chase;
-
-            return;
-        }
-
-        currentState = EnemyState.Idle;
-    }
-
-    //check if the player is visible
-    private bool IsPlayerDetected()
-    {
-        return SensorHasVision();
     }
 
     //idle state
