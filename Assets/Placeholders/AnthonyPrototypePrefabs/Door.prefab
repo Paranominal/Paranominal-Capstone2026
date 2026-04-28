@@ -363,10 +363,8 @@ GameObject:
   - component: {fileID: 4969484794035778245}
   - component: {fileID: 489041783399952933}
   - component: {fileID: 5668505664278311892}
-  - component: {fileID: 6448285959484194840}
   - component: {fileID: 5074155223037068897}
-  - component: {fileID: 299947061461231588}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -446,24 +444,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &6448285959484194840
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2563562009749514823}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Outline
-  outlineMode: 0
-  outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 5
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
 --- !u!65 &5074155223037068897
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -485,26 +465,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.0000002, y: 0.9999999, z: 1.0000002}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &299947061461231588
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2563562009749514823}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry:
-    entryName: Staff Door
-    flavourText: Door to the staff only areas of the hotel.
-    hintText: Locked. Maybe there's a key somehwere.
-    completeText: 
-    snapshotImage: {fileID: 0}
-  outline: {fileID: 6448285959484194840}
-  collectable: 0
 --- !u!1 &3112342960755021715
 GameObject:
   m_ObjectHideFlags: 0
