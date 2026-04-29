@@ -2,46 +2,39 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// Reusable telegraphed area-of-effect attack. Handles the sequence:
-///   1. Telegraph - spawn DangerZone visual at the target position
-///   2. Strike    - activate the hitbox briefly via OverlapSphere
-///   3. Recovery  - brief pause before control returns to the behaviour
+/// Choreographs a telegraphed area attack by spawning two prefabs in sequence:
+///   1. DangerZone   - visual telegraph, shown for telegraphDuration
+///   2. AoEStrike    - the actual attack with its own visual, hitbox, and damage
 ///
-/// The owning behaviour is responsible for snapshotting the target position
-/// and calling PerformAttack(snapshotPos). Once committed, the zone does
-/// not move - this is what gives the player a fair window to dodge.
+/// AoEAttack itself has no opinion about visuals, hitbox shape, or damage values -
+/// those live on the spawned prefabs. To create a new attack flavor (lightning,
+/// spikes, fire, explosion, etc), make a new AoEStrike prefab and assign it.
+///
+/// The fairness contract: the strike spawns at the snapshotted target position,
+/// not at a re-tracked one. The player's window to dodge is the telegraph duration.
 /// </summary>
 public class AoEAttack : MonoBehaviour
 {
-    [Header("Visual")]
-    [Tooltip("Prefab containing a DangerZone component and the telegraph visual/shader.")]
+    [Header("Prefabs")]
+    [Tooltip("Visual telegraph spawned at the target position during the windup.")]
     [SerializeField] private DangerZone dangerZonePrefab;
 
+    [Tooltip("The actual attack spawned at the same position after the telegraph completes. " +
+             "Swap this prefab to change the attack flavor (lightning, spikes, fire, etc).")]
+    [SerializeField] private AoEStrike strikePrefab;
+
     [Header("Timing")]
-    [Tooltip("How long the danger-zone is visible before the strike resolves. " +
-             "Main 'feel' knob - longer = easier to dodge.")]
+    [Tooltip("How long the danger zone is shown before the strike spawns. Main 'feel' knob.")]
     [SerializeField] private float telegraphDuration = 1.2f;
 
-    [Tooltip("How long the hitbox is active during the strike. Should be short.")]
-    [SerializeField] private float strikeDuration = 0.15f;
-
-    [Tooltip("Brief pause after the strike before the attack is considered finished.")]
+    [Tooltip("Brief pause after the strike spawns before the attack is considered finished. " +
+             "The strike itself manages its own lifetime independently.")]
     [SerializeField] private float recoveryDuration = 0.4f;
 
-    [Header("Hit Detection")]
-    [Tooltip("Radius of the AoE in world units.")]
-    [SerializeField] private float aoeRadius = 2f;
-
-    [Tooltip("Layers that can be hit by the strike (typically just the player layer).")]
-    [SerializeField] private LayerMask hitLayers = ~0;
-
-    [Tooltip("Vertical offset added to the snapshot position when checking hits. " +
-             "Useful if the snapshot is taken at the player's feet but their collider is centered higher.")]
-    [SerializeField] private float hitCheckYOffset = 0.5f;
-
-    [Header("Damage")]
-    [Tooltip("Damage value passed to the (future) damage system. Currently logged only.")]
-    [SerializeField] private int damage = 10;
+    [Header("Telegraph")]
+    [Tooltip("Visual radius passed to the DangerZone for sizing. Should roughly match the " +
+             "strike prefab's hitbox so the telegraph reads honestly.")]
+    [SerializeField] private float telegraphRadius = 2f;
 
     [Header("Debug")]
     [SerializeField] private bool debugMode = true;
@@ -53,7 +46,7 @@ public class AoEAttack : MonoBehaviour
     public bool IsAttacking => isAttacking;
 
     /// <summary>
-    /// Begin the telegraph -> strike -> recovery sequence at the given world position.
+    /// Begin the telegraph -> strike sequence at the given world position.
     /// The position should be snapshotted by the caller before this is invoked.
     /// </summary>
     public void PerformAttack(Vector3 targetPosition)
@@ -65,9 +58,9 @@ public class AoEAttack : MonoBehaviour
             return;
         }
 
-        if (dangerZonePrefab == null)
+        if (strikePrefab == null)
         {
-            Debug.LogError($"[AoEAttack] No DangerZone prefab assigned on {gameObject.name}.", this);
+            Debug.LogError($"[AoEAttack] No AoEStrike prefab assigned on {gameObject.name}.", this);
             return;
         }
 
@@ -75,8 +68,8 @@ public class AoEAttack : MonoBehaviour
     }
 
     /// <summary>
-    /// Cancel an in-progress attack. The danger-zone is removed and no strike is performed.
-    /// Useful for stagger interruptions.
+    /// Cancel an in-progress attack before the strike spawns. The danger zone is removed.
+    /// Strikes that have already spawned manage their own lifetime and are not cancelled.
     /// </summary>
     public void CancelAttack()
     {
@@ -104,28 +97,33 @@ public class AoEAttack : MonoBehaviour
     {
         isAttacking = true;
 
-        //commit: spawn the danger zone at the snapshotted position
-        activeZone = Instantiate(dangerZonePrefab, targetPosition, Quaternion.identity);
-        activeZone.Show(targetPosition, aoeRadius, telegraphDuration);
+        //telegraph
+        if (dangerZonePrefab != null)
+        {
+            activeZone = Instantiate(dangerZonePrefab, targetPosition, Quaternion.identity);
+            activeZone.Show(targetPosition, telegraphRadius, telegraphDuration);
+        }
+        else if (debugMode)
+        {
+            Debug.LogWarning($"[AoEAttack] No DangerZone prefab assigned - attack will have no telegraph.", this);
+        }
 
         if (debugMode)
-            Debug.Log($"[AoEAttack] Telegraph started at {targetPosition} (radius {aoeRadius}, " +
-                      $"duration {telegraphDuration}s)", this);
+            Debug.Log($"[AoEAttack] Telegraph started at {targetPosition} " +
+                      $"(duration {telegraphDuration}s).", this);
 
-        //telegraph window - player has this long to escape
         yield return new WaitForSeconds(telegraphDuration);
 
-        //strike: resolve hits at the snapshotted position
-        ResolveStrike(targetPosition);
-
-        //zone destroys itself when its lifetime ends, but null our reference now
+        //strike: spawn the AoEStrike prefab; from here it's self-managing
+        AoEStrike strike = Instantiate(strikePrefab, targetPosition, Quaternion.identity);
+        strike.SetSource(gameObject);
         activeZone = null;
 
-        //brief active hitbox window (currently a single check, but extending here
-        //would let the strike linger - e.g. for a lava pool or lingering damage)
-        yield return new WaitForSeconds(strikeDuration);
+        if (debugMode)
+            Debug.Log($"[AoEAttack] Strike spawned at {targetPosition}.", this);
 
-        //recovery
+        //recovery - lets the behaviour's cooldown start at a sensible moment.
+        //the strike's own lifetime continues independently in the scene.
         yield return new WaitForSeconds(recoveryDuration);
 
         isAttacking = false;
@@ -133,32 +131,5 @@ public class AoEAttack : MonoBehaviour
 
         if (debugMode)
             Debug.Log($"[AoEAttack] Attack complete on {gameObject.name}.", this);
-    }
-
-    private void ResolveStrike(Vector3 targetPosition)
-    {
-        Vector3 checkCenter = targetPosition + Vector3.up * hitCheckYOffset;
-        Collider[] hits = Physics.OverlapSphere(checkCenter, aoeRadius, hitLayers, QueryTriggerInteraction.Collide);
-
-        if (hits.Length == 0)
-        {
-            if (debugMode)
-                Debug.Log($"[AoEAttack] Strike resolved at {targetPosition} - no hits.", this);
-            return;
-        }
-
-        foreach (Collider hit in hits)
-        {
-            //TODO: replace with real damage call once the damage system is implemented.
-            //e.g. if (hit.TryGetComponent<IDamageable>(out var d)) d.TakeDamage(damage);
-            Debug.Log($"[AoEAttack] Hit '{hit.name}' for {damage} damage.", hit);
-        }
-    }
-
-    //visualize the AoE in the editor when the component is selected
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = new Color(1f, 0.3f, 0.3f, 0.4f);
-        Gizmos.DrawWireSphere(transform.position + Vector3.up * hitCheckYOffset, aoeRadius);
     }
 }
