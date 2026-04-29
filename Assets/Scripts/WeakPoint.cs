@@ -4,21 +4,6 @@ public class WeakPoint : MonoBehaviour
 {
     [HideInInspector] public WeakPointManager manager;
     public WeakPointType weakPointType;
-    public string PointId => pointId;
-    public bool IsTough => isTough;
-    public bool IsWarded => isWarded;
-    public int RemainingShotsToDestroy => remainingShots;
-
-    [Header("Identity")]
-    [SerializeField] private string pointId;
-
-    [Header("Extra Weakpoint Behaviors")]
-    [SerializeField] private bool isWarded;
-    [SerializeField] private bool isTough;
-    [SerializeField, Min(1)] private int shotsToDestroy = 2;
-
-    [Header("Overlay Visuals")]
-    [SerializeField] private SpriteRenderer wardedOverlayRenderer;
 
     // visuals for each weakpoint type
     [SerializeField] private GameObject ironElement;
@@ -34,17 +19,6 @@ public class WeakPoint : MonoBehaviour
     // currentAlpha is smoothed over time to avoid hard pop-in transitions
     private bool isShown;
     private float currentAlpha;
-    private int remainingShots;
-
-    private void OnEnable()
-    {
-        WeakPointRegistry.Register(this);
-    }
-
-    private void OnDisable()
-    {
-        WeakPointRegistry.Unregister(this);
-    }
 
     private void Awake()
     {
@@ -118,7 +92,6 @@ public class WeakPoint : MonoBehaviour
     {
         // Mark as currently active in sequence and re-enable hit detection.
         isShown = true;
-        remainingShots = isTough ? Mathf.Max(1, shotsToDestroy) : 1;
 
         if (weakPointCollider != null)
             weakPointCollider.enabled = true;
@@ -149,9 +122,6 @@ public class WeakPoint : MonoBehaviour
         foreach (SpriteRenderer renderer in allRenderers)
             renderer.enabled = false;
 
-        if (wardedOverlayRenderer != null)
-            wardedOverlayRenderer.enabled = false;
-
         // Keep state reset so the next show starts from a clean fade
         currentAlpha = 0f;
     }
@@ -161,22 +131,9 @@ public class WeakPoint : MonoBehaviour
         // Ignore mismatched bullet types to enforce iron/silver behavior
         if (type != weakPointType) return;
 
-        // Warded weakpoints cannot be destroyed until unlocked externally
-        if (isWarded) return;
-
-        // Tough weakpoints require multiple successful hits
-        remainingShots -= 1;
-        if (remainingShots > 0) return;
-
         // Correct hit: hide this point and advance sequence to the next one
         Hide();
         manager.NextWeakPoint();
-    }
-
-    public void UnlockWeakPoint()
-    {
-        isWarded = false;
-        UpdateWardedOverlay(currentAlpha);
     }
 
     private void ApplyAlpha(float alpha)
@@ -189,23 +146,5 @@ public class WeakPoint : MonoBehaviour
             renderer.color = c;
             renderer.enabled = alpha > 0.001f;
         }
-
-        UpdateWardedOverlay(alpha);
-    }
-
-    private void UpdateWardedOverlay(float alpha)
-    {
-        if (wardedOverlayRenderer == null)
-            return;
-
-        bool showOverlay = isShown && isWarded && alpha > 0.001f;
-        wardedOverlayRenderer.enabled = showOverlay;
-
-        if (!showOverlay)
-            return;
-
-        Color c = wardedOverlayRenderer.color;
-        c.a = alpha;
-        wardedOverlayRenderer.color = c;
     }
 }

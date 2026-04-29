@@ -1009,28 +1009,6 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
---- !u!114 &70363306 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7212527224247330429, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-  m_PrefabInstance: {fileID: 959351396}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66722f93cd366054a9aa6a2b0658429e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponEvents
---- !u!114 &70363307 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3833990357327432590, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-  m_PrefabInstance: {fileID: 959351396}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2981b2cfd676e004594b2c18e3880329, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponAmmo
 --- !u!43 &134738885
 Mesh:
   m_ObjectHideFlags: 0
@@ -4686,34 +4664,6 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1704120311507834775, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-      propertyPath: weaponEvents
-      value: 
-      objectReference: {fileID: 70363306}
-    - target: {fileID: 1704120311507834775, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-      propertyPath: elementSpacing
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 1704120311507834775, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-      propertyPath: weaponFiringLogic
-      value: 
-      objectReference: {fileID: 70363307}
-    - target: {fileID: 1704120311507834775, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-      propertyPath: ammoUiElements.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1704120311507834775, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-      propertyPath: 'ammoUiElements.Array.data[0]'
-      value: 
-      objectReference: {fileID: 1011232815}
-    - target: {fileID: 1704120311507834775, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-      propertyPath: 'ammoUiElements.Array.data[1]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1704120311507834775, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-      propertyPath: 'ammoUiElements.Array.data[2]'
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 2068025090037702009, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4721,22 +4671,6 @@ PrefabInstance:
     - target: {fileID: 2579260593497910125, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 3671576332010410021, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7748087837823014598, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7748087837823014598, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7748087837823014598, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8013496993476994936, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4783,9 +4717,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 5899892571618283629, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-    - {fileID: 3225092037197179876, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
@@ -4916,17 +4848,6 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!114 &1011232815 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6886316052428195270, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-  m_PrefabInstance: {fileID: 959351396}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &1088670361
 GameObject:
   m_ObjectHideFlags: 0
