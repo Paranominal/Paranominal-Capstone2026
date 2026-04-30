@@ -120,6 +120,7 @@ GameObject:
   - component: {fileID: 2880104385379219663}
   - component: {fileID: 8163443709998664147}
   - component: {fileID: 7980951876251254891}
+  - component: {fileID: 7256983414231218104}
   - component: {fileID: 2688743458007262411}
   - component: {fileID: 4048073775354982405}
   m_Layer: 0
@@ -183,6 +184,7 @@ MonoBehaviour:
   wanderRadius: 8
   idleWaitTime: 2
   followSpeed: 3
+  stagger: {fileID: 0}
 --- !u!114 &7980951876251254891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,6 +202,20 @@ MonoBehaviour:
   - {fileID: 9057432543407784191}
   - {fileID: 1192530790080143990}
   - {fileID: 3891542749503898057}
+--- !u!114 &7256983414231218104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780255270900913490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d49d50defecf244d9e2d39fcffcdd3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
+  staggerDuration: 2
+  debugMode: 1
 --- !u!195 &2688743458007262411
 NavMeshAgent:
   m_ObjectHideFlags: 0
