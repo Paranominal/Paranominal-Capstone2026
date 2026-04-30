@@ -51,6 +51,19 @@ public class MeleeAttack : MonoBehaviour
 
     public bool IsAttacking => isAttacking;
 
+    //feedback hooks - subscribed to by visual feedback components.
+    //the events fire in lockstep with the AttackSequence coroutine, so anything
+    //listening can drive its own visuals against the same timeline.
+    public event System.Action OnWindupStart;
+    public event System.Action OnStrikeStart;
+    public event System.Action OnStrikeEnd;
+    public event System.Action OnAttackCancelled;
+
+    /// <summary>How long the windup phase lasts. Useful for feedback components that need to scale animations to it.</summary>
+    public float WindupDuration => windupDuration;
+    /// <summary>How long the strike phase lasts.</summary>
+    public float StrikeDuration => strikeDuration;
+
     /// <summary>
     /// Begin the windup -> strike -> recovery sequence.
     /// The owner will track the target during windup at windupTurnSpeed.
@@ -90,6 +103,8 @@ public class MeleeAttack : MonoBehaviour
         if (hitbox != null) hitbox.Deactivate();
         isAttacking = false;
 
+        OnAttackCancelled?.Invoke();
+
         if (debugMode)
             Debug.Log($"[MeleeAttack] Attack cancelled on {gameObject.name}.", this);
     }
@@ -100,6 +115,8 @@ public class MeleeAttack : MonoBehaviour
 
         if (debugMode)
             Debug.Log($"[MeleeAttack] Windup started on {gameObject.name}.", this);
+
+        OnWindupStart?.Invoke();
 
         //windup: track the target while the player reads the tell
         yield return WindupPhase(target);
@@ -112,9 +129,13 @@ public class MeleeAttack : MonoBehaviour
         DamageInfo damageInfo = new DamageInfo(damage, transform.position, strikeDir, gameObject);
         hitbox.Activate(damageInfo);
 
+        OnStrikeStart?.Invoke();
+
         yield return new WaitForSeconds(strikeDuration);
 
         hitbox.Deactivate();
+
+        OnStrikeEnd?.Invoke();
 
         //recovery
         yield return new WaitForSeconds(recoveryDuration);

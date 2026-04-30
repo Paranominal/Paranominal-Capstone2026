@@ -27,8 +27,10 @@ public class AoEAttack : MonoBehaviour
     [Tooltip("How long the danger zone is shown before the strike spawns. Main 'feel' knob.")]
     [SerializeField] private float telegraphDuration = 1.2f;
 
-    [Tooltip("Brief pause after the strike spawns before the attack is considered finished. " +
-             "The strike itself manages its own lifetime independently.")]
+    [Tooltip("How long the hitbox is active during the strike.")]
+    [SerializeField] private float strikeDuration = 0.15f;
+
+    [Tooltip("Brief pause after the strike before the attack is considered finished.")]
     [SerializeField] private float recoveryDuration = 0.4f;
 
     [Header("Telegraph")]
