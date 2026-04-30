@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
+/// Summary:
 /// Reusable telegraphed melee attack. Handles the sequence:
 ///   1. Windup    - owner tracks the target at a slow turn speed (the player's read).
 ///                  This is the "rear back" phase before the swing commits.
@@ -15,7 +15,6 @@ using UnityEngine;
 ///
 /// The hitbox should be a child trigger volume positioned in front of the owner
 /// where the strike should land. Hit detection is delegated to the Hitbox component.
-/// </summary>
 public class MeleeAttack : MonoBehaviour
 {
     [Header("Hitbox")]

@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
+/// Summary:
 /// Choreographs a telegraphed area attack by spawning two prefabs in sequence:
 ///   1. DangerZone   - visual telegraph, shown for telegraphDuration
 ///   2. AoEStrike    - the actual attack with its own visual, hitbox, and damage
@@ -12,7 +12,6 @@ using UnityEngine;
 ///
 /// The fairness contract: the strike spawns at the snapshotted target position,
 /// not at a re-tracked one. The player's window to dodge is the telegraph duration.
-/// </summary>
 public class AoEAttack : MonoBehaviour
 {
     [Header("Prefabs")]

@@ -1,7 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
+/// Summary:
+/// Reusable damage-dealing trigger volume. Sits on a child GameObject of an
+/// attacker (e.g. a "HitBox" sphere on the Eye-bat). Attacks activate the
+/// hitbox for a window, supplying the damage payload; the hitbox handles
+/// trigger detection and routes hits to anything implementing IDamageable.
+///
+/// Activation patterns this supports:
+///   - One-shot strike (Statue AoE: activate, deactivate after strikeDuration)
+///   - Time-bounded (Eye-bat dive: activate during dive, deactivate at end)
+///   - Always-on contact (Ghost: activate on spawn, never deactivate)
+///   - Lingering DoT (configure allowMultipleHitsPerTarget + retriggerInterval)
 /// Reusable damage-dealing trigger volume. Sits on a child GameObject of an
 /// attacker (e.g. a "HitBox" sphere on the Eye-bat). Attacks activate the
 /// hitbox for a window, supplying the damage payload; the hitbox handles
@@ -40,6 +50,19 @@ public class Hitbox : MonoBehaviour
     private Collider triggerCollider;
 
     public bool IsActive => isActive;
+
+    /// <summary>
+    /// Fires whenever the hitbox makes contact with a collider on hitLayers, regardless of
+    /// whether damage was actually dealt. Use this when an enemy needs to react to *any*
+    /// contact - e.g. the Ghost destroying itself on touch even before PlayerStatus exists.
+    /// </summary>
+    public event System.Action<Collider> OnContact;
+
+    /// <summary>
+    /// Fires only when damage is successfully dealt to an IDamageable. Use this for hit
+    /// reactions that depend on the damage actually landing - flashes, sound effects, etc.
+    /// </summary>
+    public event System.Action<IDamageable, DamageInfo> OnHit;
 
     private void Awake()
     {
@@ -105,6 +128,10 @@ public class Hitbox : MonoBehaviour
         //layer filter
         if ((hitLayers.value & (1 << other.gameObject.layer)) == 0) return;
 
+        //fires for any layer-matching contact, even if no IDamageable is found.
+        //the Ghost uses this to die on touch regardless of player's damage system.
+        OnContact?.Invoke(other);
+
         //find an IDamageable on the hit collider or any parent.
         //GetComponentInParent walks up the hierarchy, which is what we want -
         //the player's collider is often on a child of the root that holds PlayerStatus.
@@ -142,6 +169,8 @@ public class Hitbox : MonoBehaviour
 
         damageable.TakeDamage(info);
         hitHistory[damageable] = Time.time;
+
+        OnHit?.Invoke(damageable, info);
 
         if (debugMode)
             Debug.Log($"[Hitbox] Damaged '{other.name}' for {info.amount}.", other);
