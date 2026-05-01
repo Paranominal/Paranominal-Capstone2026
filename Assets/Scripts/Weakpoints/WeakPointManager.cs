@@ -27,7 +27,7 @@ public class WeakPointManager : MonoBehaviour
             weakpoint.GetComponent<WeakPoint>().Hide(); // deactivate all weakpoints
             weakpoint.GetComponent<WeakPoint>().manager = this;// names itself manager within weakpoint scripts
         }
-        weakpoints[0].GetComponent<WeakPoint>().Show(weakpoints[0].GetComponent<WeakPoint>().weakPointType); // activate the first weakpoint in the index
+        if (staggerComponent.IsStaggered) weakpoints[0].GetComponent<WeakPoint>().Show(weakpoints[0].GetComponent<WeakPoint>().weakPointType); // activate the first weakpoint in the index
     }
 
     public void NextWeakPoint()
@@ -77,5 +77,18 @@ public class WeakPointManager : MonoBehaviour
     {
         return WeakPointRegistry.UnlockWardedWeakPointById(weakPointId);
 
+    }
+
+    public void ScanStun()
+    {
+        foreach (GameObject weakpoint in weakpoints)
+        {
+            weakpoint.GetComponent<WeakPoint>().Hide(); // hide all weakpoints
+        }
+        if (staggerComponent.IsStaggered) weakpoints[currentWeakpoint].GetComponent<WeakPoint>().Show(weakpoints[currentWeakpoint].GetComponent<WeakPoint>().weakPointType); // activate the current weakpoint in the index
+    }
+    public void HideCurrentWeakpoint()
+    {
+        weakpoints[currentWeakpoint].GetComponent<WeakPoint>().Hide(); // hide current weakpoints
     }
 }
