@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class ALTALTScan : MonoBehaviour
 {
     public LayerMask scannable;
+    public LayerMask enemyLayer;
     InputAction scanAction;
     InputAction collectAction;  // i started implementing collecting as a seperate set of scripts and then realised it was going to either be so wrapped up in this as to be problematic or duplicate so much code it would be incredibly questionable. so. voila.
     private ALTGrimoire grimoire;
@@ -63,8 +64,8 @@ public class ALTALTScan : MonoBehaviour
 
             bool alreadyScanned = grimoire.CompareEntry(currentTarget.entry);  
 
-            if (!alreadyScanned)
-            {
+            //if (!alreadyScanned)
+            //{
                 scanProgress += Time.deltaTime / scanDuration;
                 scanProgress = Mathf.Clamp01(scanProgress);
 
@@ -75,10 +76,18 @@ public class ALTALTScan : MonoBehaviour
                     grimoire.AddEntry(currentTarget.entry);
                     visuals.ApplyOutlineColor(currentTarget);
                     scanProgress = 0f;
+                    
+                    
+                    if (Physics.Raycast(ray, out RaycastHit enemy, 5f, enemyLayer))
+                    {
+                        Debug.Log("Scan hit " + enemy.collider + " with Stun");
+                        enemy.collider.GetComponent<EnemyStagger>().TriggerStagger(); //stagger enemy if its an enemy
+                    }
                 }
-            }
+            //}
 
-            reticle.SetProgress(alreadyScanned ? 0f : scanProgress);
+            //reticle.SetProgress(alreadyScanned ? 0f : scanProgress);
+            reticle.SetProgress(scanProgress);
 
             if (collectAction.WasReleasedThisFrame() && currentTarget.collectable)
             {
