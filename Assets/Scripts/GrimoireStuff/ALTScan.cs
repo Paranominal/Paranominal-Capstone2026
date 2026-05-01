@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class ALTScan : MonoBehaviour
 {
     public LayerMask scannable;
+    public LayerMask enemyLayer;
     InputAction scanAction;
     InputAction collectAction;  // i started implementing collecting as a seperate set of scripts and then realised it was going to either be so wrapped up in this as to be problematic or duplicate so much code it would be incredibly questionable. so. voila.
     private ALTGrimoire grimoire;
@@ -54,7 +55,12 @@ public class ALTScan : MonoBehaviour
                 }
                 Debug.Log("Destroyed " + scannedNow.gameObject);
                 Destroy(scannedNow.gameObject);
-                
+
+            }
+            if (Physics.Raycast(ray, out RaycastHit enemy, 5f, enemyLayer))
+            {
+                //Debug.Log("Scan hit " + enemy + " with Stun")
+                if (scanAction.WasReleasedThisFrame()) enemy.collider.GetComponent<EnemyStagger>().TriggerStagger(); //stagger enemy if its an enemy
             }
         }
         else if (scannedNow != null)

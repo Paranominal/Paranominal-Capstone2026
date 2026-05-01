@@ -74,7 +74,7 @@ public class EnemyStagger : MonoBehaviour
     }
 
     //stagger disables enemy movement for a set duration isStaggered
-    private void TriggerStagger()
+    public void TriggerStagger()
     {
         if (isStaggered)
             return;
