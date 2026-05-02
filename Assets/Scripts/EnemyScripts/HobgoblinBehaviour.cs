@@ -20,6 +20,7 @@ public class HobgoblinBehaviour : EnemyBehaviourBase
     //follow speed settings
     [Header("Following")]
     [SerializeField] private float followSpeed = 5f;
+    [SerializeField] private float stopDistance = 1f;
 
     [Header("Status")]
     [SerializeField] private EnemyStagger stagger;
@@ -110,9 +111,14 @@ public class HobgoblinBehaviour : EnemyBehaviourBase
 
         navAgent.isStopped = false;
         navAgent.speed = followSpeed;
-        if (VisionTarget != null)
+        if (VisionTarget != null && Vector3.Distance(transform.position, VisionTarget.position) > stopDistance)
         {
             navAgent.SetDestination(VisionTarget.position);
+        }
+        else if (Vector3.Distance(transform.position, VisionTarget.position) <= stopDistance)
+        {
+            
+            navAgent.SetDestination(transform.position);
         }
     }
 

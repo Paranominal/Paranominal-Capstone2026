@@ -5,6 +5,7 @@ public class ALTScan : MonoBehaviour
 {
     public LayerMask scannable;
     public LayerMask enemyLayer;
+    [SerializeField] private float interactRange = 4f; // defines the max interaction distance
     InputAction scanAction;
     InputAction collectAction;  // i started implementing collecting as a seperate set of scripts and then realised it was going to either be so wrapped up in this as to be problematic or duplicate so much code it would be incredibly questionable. so. voila.
     private ALTGrimoire grimoire;
@@ -26,7 +27,7 @@ public class ALTScan : MonoBehaviour
     {
         Vector2 mousePos = Pointer.current != null ? Pointer.current.position.ReadValue() : Vector2.zero;
         Ray ray = Camera.main.ScreenPointToRay(mousePos);
-        if (Physics.Raycast(ray, out RaycastHit hit, 1000f, scannable))
+        if (Physics.Raycast(ray, out RaycastHit hit, interactRange, scannable))
         {
             // Debug.DrawLine(transform.position, hit.point, Color.cyan, 10); // can view this in gizmos mode to help with debugging
             ALTScannableObject tempScan = hit.collider.GetComponent<ALTScannableObject>();
