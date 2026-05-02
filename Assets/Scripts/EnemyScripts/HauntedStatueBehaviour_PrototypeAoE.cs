@@ -74,6 +74,9 @@ public class HauntedStatueBehaviour_PrototypeAoE : EnemyBehaviourBase
             return;
         }
 
+        //start velocity sampling early so the first attack has history to draw from
+        if (aoeAttack != null) aoeAttack.BeginTracking(VisionTarget);
+
         Vector3 lookTarget = VisionTarget.position;
         Vector3 direction = lookTarget - transform.position;
         direction.y = 0f;
@@ -102,11 +105,10 @@ public class HauntedStatueBehaviour_PrototypeAoE : EnemyBehaviourBase
         float angle = Vector3.Angle(forward, directionToTarget.normalized);
         if (angle > aimToleranceDegrees) return;
 
-        //snapshot the player's position at the moment of commit - this is the
-        //fairness contract: the danger zone will not track the player after this point
-        Vector3 snapshotPos = VisionTarget.position;
-
-        aoeAttack.PerformAttack(snapshotPos);
+        //hand the target Transform to AoEAttack and let it apply its targeting rules
+        //(stationary offset, lead, scatter). the danger zone still locks at commit -
+        //the rules just decide *where* that committed position is.
+        aoeAttack.PerformAttack(VisionTarget);
         cooldownTimer = attackCooldown;
     }
 }

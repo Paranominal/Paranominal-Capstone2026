@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// Summary:
+    /// Summary:
 /// Reusable damage-dealing trigger volume. Sits on a child GameObject of an
 /// attacker (e.g. a "HitBox" sphere on the Eye-bat). Attacks activate the
 /// hitbox for a window, supplying the damage payload; the hitbox handles
@@ -22,7 +22,7 @@ using UnityEngine;
 ///   - Time-bounded (Eye-bat dive: activate during dive, deactivate at end)
 ///   - Always-on contact (Ghost: activate on spawn, never deactivate)
 ///   - Lingering DoT (configure allowMultipleHitsPerTarget + retriggerInterval)
-/// </summary>
+
 [RequireComponent(typeof(Collider))]
 public class Hitbox : MonoBehaviour
 {
@@ -51,17 +51,17 @@ public class Hitbox : MonoBehaviour
 
     public bool IsActive => isActive;
 
-    /// <summary>
+    /// Summary:
     /// Fires whenever the hitbox makes contact with a collider on hitLayers, regardless of
     /// whether damage was actually dealt. Use this when an enemy needs to react to *any*
     /// contact - e.g. the Ghost destroying itself on touch even before PlayerStatus exists.
-    /// </summary>
+
     public event System.Action<Collider> OnContact;
 
-    /// <summary>
+    /// Summary:
     /// Fires only when damage is successfully dealt to an IDamageable. Use this for hit
     /// reactions that depend on the damage actually landing - flashes, sound effects, etc.
-    /// </summary>
+
     public event System.Action<IDamageable, DamageInfo> OnHit;
 
     private void Awake()
@@ -78,10 +78,10 @@ public class Hitbox : MonoBehaviour
         triggerCollider.enabled = false;
     }
 
-    /// <summary>
+    /// Summary:
     /// Begin dealing damage. Targets entering or already inside the trigger
     /// will be hit (subject to the per-target hit rules).
-    /// </summary>
+
     public void Activate(DamageInfo damage)
     {
         currentDamage = damage;
@@ -93,9 +93,9 @@ public class Hitbox : MonoBehaviour
             Debug.Log($"[Hitbox] Activated on {gameObject.name} (damage: {damage.amount}).", this);
     }
 
-    /// <summary>
+    /// Summary:
     /// Stop dealing damage. The collider is disabled and hit history is cleared.
-    /// </summary>
+
     public void Deactivate()
     {
         isActive = false;
