@@ -274,6 +274,7 @@ MonoBehaviour:
     snapshotImage: {fileID: 0}
   outline: {fileID: 171920305}
   collectable: 1
+  category: 0
 --- !u!1 &206565008 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
@@ -293,6 +294,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShootableTarget
   destroyOnHit: 0
   validBulletType: 2
+  enemyHP: {fileID: 0}
 --- !u!1 &394407025 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
@@ -336,6 +338,7 @@ MonoBehaviour:
     snapshotImage: {fileID: 0}
   outline: {fileID: 394407026}
   collectable: 1
+  category: 0
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -463,63 +466,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!1001 &529479445
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1271792376151176368, guid: 27650da93f7c27043af27c3787c733e0, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -2.53
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271792376151176368, guid: 27650da93f7c27043af27c3787c733e0, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271792376151176368, guid: 27650da93f7c27043af27c3787c733e0, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -5.15
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271792376151176368, guid: 27650da93f7c27043af27c3787c733e0, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271792376151176368, guid: 27650da93f7c27043af27c3787c733e0, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271792376151176368, guid: 27650da93f7c27043af27c3787c733e0, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271792376151176368, guid: 27650da93f7c27043af27c3787c733e0, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271792376151176368, guid: 27650da93f7c27043af27c3787c733e0, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271792376151176368, guid: 27650da93f7c27043af27c3787c733e0, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271792376151176368, guid: 27650da93f7c27043af27c3787c733e0, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7585221046304408112, guid: 27650da93f7c27043af27c3787c733e0, type: 3}
-      propertyPath: m_Name
-      value: Statue.v.26.04.07
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 27650da93f7c27043af27c3787c733e0, type: 3}
 --- !u!1 &543367972 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
@@ -563,6 +509,7 @@ MonoBehaviour:
     snapshotImage: {fileID: 0}
   outline: {fileID: 543367973}
   collectable: 1
+  category: 0
 --- !u!1 &607683386 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
@@ -582,6 +529,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShootableTarget
   destroyOnHit: 0
   validBulletType: 1
+  enemyHP: {fileID: 0}
 --- !u!1001 &631397238
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -771,6 +719,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &737766364
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2243131787214766685, guid: d00128c921db7724289b95d2cd40b804, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2.53
+      objectReference: {fileID: 0}
+    - target: {fileID: 2243131787214766685, guid: d00128c921db7724289b95d2cd40b804, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2243131787214766685, guid: d00128c921db7724289b95d2cd40b804, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -5.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2243131787214766685, guid: d00128c921db7724289b95d2cd40b804, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2243131787214766685, guid: d00128c921db7724289b95d2cd40b804, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2243131787214766685, guid: d00128c921db7724289b95d2cd40b804, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2243131787214766685, guid: d00128c921db7724289b95d2cd40b804, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2243131787214766685, guid: d00128c921db7724289b95d2cd40b804, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2243131787214766685, guid: d00128c921db7724289b95d2cd40b804, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2243131787214766685, guid: d00128c921db7724289b95d2cd40b804, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3300983171920748527, guid: d00128c921db7724289b95d2cd40b804, type: 3}
+      propertyPath: m_Name
+      value: Spawn_HauntedStatue
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d00128c921db7724289b95d2cd40b804, type: 3}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1252,6 +1257,7 @@ MonoBehaviour:
     snapshotImage: {fileID: 0}
   outline: {fileID: 919800745}
   collectable: 1
+  category: 0
 --- !u!114 &919800745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1534,6 +1540,7 @@ MonoBehaviour:
     snapshotImage: {fileID: 0}
   outline: {fileID: 1172115496}
   collectable: 1
+  category: 0
 --- !u!1001 &1188532876
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1795,6 +1802,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShootableTarget
   destroyOnHit: 1
   validBulletType: 0
+  enemyHP: {fileID: 0}
 --- !u!1001 &1783044436
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1994,6 +2002,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37e83206939aa5b489f1aeb39ccf46ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ContainerCheck
+  tempDeleteObject: {fileID: 0}
   weakPointId: Statue_01_Ward
   container: {fileID: 878704438}
   solution:
@@ -2267,7 +2276,7 @@ SceneRoots:
   - {fileID: 1313399789}
   - {fileID: 878704432}
   - {fileID: 1968759633}
-  - {fileID: 529479445}
+  - {fileID: 737766364}
   - {fileID: 1262206847}
   - {fileID: 631397238}
   - {fileID: 921951222}
