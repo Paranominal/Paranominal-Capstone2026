@@ -4,8 +4,9 @@ using UnityEngine;
 public class WeakPointManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] weakpoints;
-    private int currentWeakpoint = 0;
+    [HideInInspector] public int currentWeakpoint = 0;
     private EnemyStagger staggerComponent;
+    [HideInInspector] public EnemyHP enemyHPComponent;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -36,6 +37,8 @@ public class WeakPointManager : MonoBehaviour
         }
 
         currentWeakpoint += 1;
+        enemyHPComponent.RecalculateHP();
+        enemyHPComponent.WeakpointIsShot();
         if (currentWeakpoint < weakpoints.Length)
         {
             weakpoints[currentWeakpoint].GetComponent<WeakPoint>().Show(weakpoints[0].GetComponent<WeakPoint>().weakPointType);

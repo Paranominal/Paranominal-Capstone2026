@@ -35,7 +35,11 @@ public class ALTALTScan : MonoBehaviour
     void Update()
     {
         if (grimoire.grimoireActive) return; // shouldn't be able to happen bc action maps, but that may change eventually
-        if (isOnCooldown) return;
+        if (isOnCooldown)
+        {
+            Debug.Log("isOnCooldown: " + isOnCooldown);
+            return;
+        }
 
         bool wantScanMode = scanAction.IsPressed();
         if (wantScanMode != inScanMode)
@@ -51,7 +55,6 @@ public class ALTALTScan : MonoBehaviour
         {
             // Debug.DrawLine(transform.position, hit.point, Color.cyan, 10); // can view this in gizmos mode to help with debugging
             ALTScannableObject target = hit.collider.GetComponent<ALTScannableObject>();
-            //Debug.Log("Hit " + tempScan);
             if (target != currentTarget)
             {
                 if (currentTarget != null)
@@ -79,7 +82,6 @@ public class ALTALTScan : MonoBehaviour
                 {
                     grimoire.AddEntry(currentTarget.entry);
                     visuals.ApplyOutlineColor(currentTarget);
-                    scanProgress = 0f;
                     
                     
                     if (Physics.Raycast(ray, out RaycastHit enemy, 5f, enemyLayer))
@@ -89,6 +91,7 @@ public class ALTALTScan : MonoBehaviour
 
                     StartCoroutine(ScanCooldown());
                     }
+                    scanProgress = 0f;
                 }
             //}
 

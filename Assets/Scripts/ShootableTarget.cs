@@ -12,7 +12,7 @@ public class ShootableTarget : MonoBehaviour
 {
     [SerializeField] private bool destroyOnHit = true;
     [SerializeField] private TargetBulletType validBulletType = TargetBulletType.Any;
-    [SerializeField] private EnemyHP enemyHP;
+    [SerializeField] private EnemyHP enemyHP = null;
     [Tooltip("Leave empty if target has no HP count.")]
 
     public bool ResolveHit(WeakPointType shotType)
@@ -35,11 +35,15 @@ public class ShootableTarget : MonoBehaviour
         if (isValid)
         {
             Debug.Log($"ShootableTarget hit successfully with {shotType} round! (ammo preserved)");
-            if (destroyOnHit)
+            if (enemyHP != null)
             {
                 enemyHP.IsShot();
                 isValid = true;
-                if (enemyHP.hp == 0) Destroy(gameObject);
+            }
+            else if (destroyOnHit)
+            {
+                isValid = true;
+                Destroy(gameObject);
             }
         }
         else
