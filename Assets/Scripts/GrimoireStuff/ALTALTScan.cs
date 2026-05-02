@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,6 +18,8 @@ public class ALTALTScan : MonoBehaviour
     private float scanProgress = 0f;
     public float scanDuration = 2f;
     public float scanRange = 20f;
+    public float cooldownTimer = 0.5f;
+    private bool isOnCooldown;
 
 
     void Start()
@@ -32,6 +35,7 @@ public class ALTALTScan : MonoBehaviour
     void Update()
     {
         if (grimoire.grimoireActive) return; // shouldn't be able to happen bc action maps, but that may change eventually
+        if (isOnCooldown) return;
 
         bool wantScanMode = scanAction.IsPressed();
         if (wantScanMode != inScanMode)
@@ -82,6 +86,8 @@ public class ALTALTScan : MonoBehaviour
                     {
                         Debug.Log("Scan hit " + enemy.collider + " with Stun");
                         enemy.collider.GetComponent<EnemyStagger>().TriggerStagger(); //stagger enemy if its an enemy
+
+                    StartCoroutine(ScanCooldown());
                     }
                 }
             //}
@@ -134,5 +140,12 @@ public class ALTALTScan : MonoBehaviour
             scanProgress = 0f;
             reticle.SetProgress(0f);
         }
+    }
+
+    private IEnumerator ScanCooldown()
+    {
+        isOnCooldown = true;
+        yield return new WaitForSeconds(cooldownTimer);
+        isOnCooldown = false;
     }
 }
