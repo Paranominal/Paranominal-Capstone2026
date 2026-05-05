@@ -10,6 +10,7 @@ public class ContainerCheck : MonoBehaviour
         duplicatesAllowed,
         anyOrder
     }
+    public GameObject tempDeleteObject; //temporary feature, deletes assigned game object on successful use.
 
     [SerializeField] private string weakPointId;
     public Container container;
@@ -38,6 +39,7 @@ public class ContainerCheck : MonoBehaviour
                 if (CompareLists())
                 {
                     Debug.Log("Success! You solved the puzzle!");
+                    Destroy(tempDeleteObject); // Destroys the object assigned for deletion (TEMP)
                     if (!string.IsNullOrEmpty(weakPointId))
                     {
                         WeakPointRegistry.UnlockWardedWeakPointById(weakPointId);
@@ -50,6 +52,7 @@ public class ContainerCheck : MonoBehaviour
                         Debug.Log("Uh oh! Something exploded! Ow!");
                     }
                     Debug.Log("You failed the puzzle :(");
+                    container.contents = new List<ALTGrimoireEntry>();
                 }
 
             }
