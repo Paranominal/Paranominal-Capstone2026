@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
+/// Summary:
 /// A self-contained AoE strike. Sits on a prefab that represents one flavor
 /// of attack (lightning, spikes, fire, explosion, etc) - the prefab carries
 /// the visual, the Hitbox child collider, and this component to drive the
@@ -17,7 +17,7 @@ using UnityEngine;
 ///   - Instant: short hitbox window, short lifetime (lightning, explosion)
 ///   - Lingering: long hitbox window, may allow multi-hit on Hitbox (fire)
 ///   - Delayed: optional spawn delay before the hitbox activates (spikes)
-/// </summary>
+
 public class AoEStrike : MonoBehaviour
 {
     [Header("Hitbox")]
@@ -52,10 +52,10 @@ public class AoEStrike : MonoBehaviour
         StartCoroutine(StrikeSequence());
     }
 
-    /// <summary>
+    /// Summary:
     /// Optional: AoEAttack can call this immediately after instantiating to attribute
     /// the damage to the spawning enemy rather than the strike object itself.
-    /// </summary>
+    
     public void SetSource(GameObject source)
     {
         sourceOverride = source;

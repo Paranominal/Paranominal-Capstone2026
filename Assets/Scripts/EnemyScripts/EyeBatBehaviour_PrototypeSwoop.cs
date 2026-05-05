@@ -38,6 +38,9 @@ public class EyeBatBehaviour_PrototypeSwoop : EnemyBehaviourBase
     private float nextSwoopTime;
     private bool isWaiting;
 
+    //cached rigidbody used for movement and pause freezing
+    private Rigidbody cachedRigidbody;
+
     //cache references before play starts
     protected override void Awake()
     {
@@ -45,11 +48,32 @@ public class EyeBatBehaviour_PrototypeSwoop : EnemyBehaviourBase
         anchorPoint = transform.position;
         currentTargetPoint = anchorPoint;
         if (swoopAttack == null) swoopAttack = GetComponent<SwoopAttack>();
+        cachedRigidbody = GetComponent<Rigidbody>();
+    }
+
+    //freeze rigidbody motion when paused, restore when resumed
+    protected override void OnPauseStateChanged(bool isPaused)
+    {
+        if (isPaused)
+        {
+            //stop any in-flight wait coroutine so it doesn't fire when resumed at the wrong time
+            StopAllCoroutines();
+            isWaiting = false;
+
+            if (cachedRigidbody != null)
+            {
+                cachedRigidbody.linearVelocity = Vector3.zero;
+                cachedRigidbody.angularVelocity = Vector3.zero;
+            }
+        }
     }
 
     //update the current flight state each frame
     private void Update()
     {
+        //paused or dying enemies skip all logic
+        if (IsPaused || IsDying) return;
+
         if (!HasVisionTarget) return;
 
         //while the swoop attack is running, it owns movement entirely
@@ -135,13 +159,12 @@ public class EyeBatBehaviour_PrototypeSwoop : EnemyBehaviourBase
         if (!SensorHasVisionForDuration(detectionTimer)) return;
 
         //snapshot the player's position at the moment of commit - this is the
-        //fairness contract: the dive target will not move after this point
+        //fairness contract: the dive target will not move after this point.
+        //SwoopAttack handles its own pre-swoop position snapshot internally and
+        //decides where to retreat to based on hit vs. miss.
         Vector3 snapshotPos = VisionTarget.position;
 
-        //bat returns to its anchor point at the configured hover height
-        Vector3 returnPos = anchorPoint + Vector3.up * hoverHeight;
-
-        swoopAttack.PerformAttack(snapshotPos, returnPos);
+        swoopAttack.PerformAttack(snapshotPos);
         currentState = State.Swooping;
     }
 
@@ -151,9 +174,9 @@ public class EyeBatBehaviour_PrototypeSwoop : EnemyBehaviourBase
         Vector3 moveDir = (target - transform.position).normalized;
         Vector3 newPos = transform.position + moveDir * speed * Time.deltaTime;
 
-        if (TryGetComponent<Rigidbody>(out Rigidbody rb))
+        if (cachedRigidbody != null)
         {
-            rb.MovePosition(newPos);
+            cachedRigidbody.MovePosition(newPos);
         }
 
         LookAt(target);

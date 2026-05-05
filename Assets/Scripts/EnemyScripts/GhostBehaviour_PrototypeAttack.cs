@@ -42,7 +42,6 @@ public class GhostBehaviour_PrototypeAttack : EnemyBehaviourBase
 
     private float searchTimer;
     private bool isWaiting;
-    private bool isDying;
 
     //cache references before play starts
     protected override void Awake()
@@ -60,7 +59,8 @@ public class GhostBehaviour_PrototypeAttack : EnemyBehaviourBase
     private void Start()
     {
         //the Ghost's body is its attack - activate the hitbox at spawn and never deactivate.
-        //this is the simplest activation pattern Hitbox supports.
+        //since the player is never in the same room as a paused enemy, the hitbox can stay
+        //active for the entire life of the ghost.
         if (hitbox != null)
         {
             DamageInfo info = new DamageInfo(contactDamage, transform.position, Vector3.zero, gameObject);
@@ -73,25 +73,38 @@ public class GhostBehaviour_PrototypeAttack : EnemyBehaviourBase
         }
     }
 
-    private void OnDestroy()
+    //unsubscribe from the hitbox before the base class reports death to the encounter manager
+    protected override void OnDestroy()
     {
         if (hitbox != null) hitbox.OnContact -= HandleContact;
+        base.OnDestroy();
+    }
+
+    //zero the velocity so the ghost doesn't drift while the player is in another room.
+    //the hitbox stays active because the player is never in the same room as a paused enemy.
+    protected override void OnPauseStateChanged(bool isPaused)
+    {
+        if (isPaused)
+        {
+            velocity = Vector3.zero;
+            isWaiting = false;
+            StopAllCoroutines();
+        }
     }
 
     //called when the hitbox makes contact with anything on its hitLayers - the Ghost dies on touch
     private void HandleContact(Collider other)
     {
-        if (isDying) return;
-        isDying = true;
-
         //future hooks: spawn death VFX, play sound, drop a pickup, etc.
-        Destroy(gameObject);
+        //route through Die() so the encounter manager is notified
+        Die();
     }
 
     //update the ghost state each frame
     private void Update()
     {
-        if (isDying) return;
+        //paused or dying enemies skip all logic
+        if (IsPaused || IsDying) return;
         if (!HasVisionTarget) return;
 
         Transform player = VisionTarget;

@@ -28,9 +28,22 @@ public class HauntedStatueBehaviour_PrototypeAoE : EnemyBehaviourBase
         if (aoeAttack == null) aoeAttack = GetComponent<AoEAttack>();
     }
 
+    //statue has no locomotion to freeze, so pause just resets state on resume to avoid
+    //carrying a stale aim across the pause window
+    protected override void OnPauseStateChanged(bool isPaused)
+    {
+        if (isPaused)
+        {
+            currentState = EnemyState.Idle;
+        }
+    }
+
     //update the statue state each frame
     private void Update()
     {
+        //paused or dying enemies skip all logic
+        if (IsPaused || IsDying) return;
+
         //tick the cooldown regardless of state so it advances during idle too
         cooldownTimer = Mathf.Max(0f, cooldownTimer - Time.deltaTime);
 

@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
+/// Summary:
 /// Visual feedback for the Hobgoblin's melee attack. Subscribes to MeleeAttack
 /// events and drives three layered effects:
 ///   - Claw rear-back during windup, snap-forward at strike
@@ -10,7 +10,7 @@ using UnityEngine;
 ///
 /// All effects are independent and optional - leave any reference null to skip
 /// that layer. The component cleans itself up if the attack is cancelled mid-swing.
-/// </summary>
+
 [RequireComponent(typeof(MeleeAttack))]
 public class HobgoblinAttackFeedback : MonoBehaviour
 {

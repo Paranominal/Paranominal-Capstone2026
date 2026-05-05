@@ -1,13 +1,13 @@
 using UnityEngine;
 
-/// <summary>
+/// Summary:
 /// Visual telegraph for an incoming area attack. Positions and scales the
 /// existing danger-zone GameObject (with its shader) and despawns itself
 /// once the telegraph window has elapsed.
 ///
 /// This script does not deal damage; it is purely the visual indicator.
 /// Damage is handled by AoEAttack, which spawns and owns this object.
-/// </summary>
+
 public class DangerZone : MonoBehaviour
 {
     [Header("Scaling")]
@@ -23,10 +23,10 @@ public class DangerZone : MonoBehaviour
     private float elapsed;
     private bool initialized;
 
-    /// <summary>
+    /// Summary:
     /// Place the zone in the world and start its countdown.
     /// Called by AoEAttack right after instantiation.
-    /// </summary>
+    
     public void Show(Vector3 position, float radius, float duration)
     {
         transform.position = position;
@@ -55,10 +55,10 @@ public class DangerZone : MonoBehaviour
         }
     }
 
-    /// <summary>
+    /// Summary:
     /// Allow the owning attack to clean up the zone early
     /// (e.g. if the attack is interrupted by a stagger).
-    /// </summary>
+    
     public void Cancel()
     {
         Destroy(gameObject);

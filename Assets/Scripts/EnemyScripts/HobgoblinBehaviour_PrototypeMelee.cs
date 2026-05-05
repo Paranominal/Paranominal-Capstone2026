@@ -58,9 +58,37 @@ public class HobgoblinBehaviour_PrototypeMelee : EnemyBehaviourBase
         if (meleeAttack == null) meleeAttack = GetComponent<MeleeAttack>();
     }
 
+    //freeze or resume the nav agent and clear any in-flight chase state when pausing
+    protected override void OnPauseStateChanged(bool isPaused)
+    {
+        if (isPaused)
+        {
+            if (navAgent != null && navAgent.isOnNavMesh)
+            {
+                navAgent.isStopped = true;
+                navAgent.ResetPath();
+            }
+
+            //clear hold/wait flags so resume starts fresh
+            isHolding = false;
+            isWaiting = false;
+            StopAllCoroutines();
+        }
+        else
+        {
+            if (navAgent != null && navAgent.isOnNavMesh)
+            {
+                navAgent.isStopped = false;
+            }
+        }
+    }
+
     //update ai every frame
     private void Update()
     {
+        //paused or dying enemies skip all logic
+        if (IsPaused || IsDying) return;
+
         //tick the cooldown regardless of state
         cooldownTimer = Mathf.Max(0f, cooldownTimer - Time.deltaTime);
 
