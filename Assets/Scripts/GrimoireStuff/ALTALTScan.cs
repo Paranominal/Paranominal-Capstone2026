@@ -53,7 +53,7 @@ public class ALTALTScan : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(mousePos);
         if (Physics.Raycast(ray, out RaycastHit hit, scanRange, scannable))
         {
-            // Debug.DrawLine(transform.position, hit.point, Color.cyan, 10); // can view this in gizmos mode to help with debugging
+            //Debug.DrawLine(transform.position, hit.point, Color.cyan, 10); // can view this in gizmos mode to help with debugging
             ALTScannableObject target = hit.collider.GetComponent<ALTScannableObject>();
             if (target != currentTarget)
             {
