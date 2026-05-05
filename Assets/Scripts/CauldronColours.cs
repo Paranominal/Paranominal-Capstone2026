@@ -5,6 +5,7 @@ public class CauldronColours : MonoBehaviour
 {
     [SerializeField] private Material material;
     [SerializeField] private Container container;
+    [SerializeField] private ContainerCheck spoon;
     private int containedHerbs = 0;
 
     void Awake()
@@ -22,6 +23,7 @@ public class CauldronColours : MonoBehaviour
             else if (container.contents[containedHerbs].entryName == "Orange Herb") AddOrange();
             else Debug.Log("failed to change cauldron colour with: " + container.contents[containedHerbs].entryName);
         }
+        if (container.contents.Count == 0) ClearColour();
     }
     
     private void AddBlue()
@@ -44,5 +46,11 @@ public class CauldronColours : MonoBehaviour
     {
         containedHerbs++;
         material.color = new Color(0.3f, 0f, 0.7f);
+    }
+    private void ClearColour()
+    {
+        
+        containedHerbs = 0;
+        material.color = new Color(0.5f, 0.5f, 0.5f);
     }
 }
