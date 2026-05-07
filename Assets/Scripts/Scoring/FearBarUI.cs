@@ -11,11 +11,11 @@ public class FearBarUI : MonoBehaviour
 
     private void Awake()
     {
-        fearBar.OnFearRankChanged += HandleFearRankChanged;
+        fearBar.OnFearChanged += HandleFearChanged;
         rankText.text = "Fine";
     }
 
-    private void HandleFearRankChanged(FearBar.FearRank rank)
+    private void HandleFearChanged(FearBar.FearRank rank)
     {
         barImage.fillAmount = Mathf.Clamp01((float)fearBar.FearLevel / fearBar.MaxFear);
         rankText.text = rank.ToString();

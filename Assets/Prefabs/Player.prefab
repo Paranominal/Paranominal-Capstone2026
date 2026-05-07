@@ -184,6 +184,11 @@ GameObject:
   - component: {fileID: 6477322163037900572}
   - component: {fileID: 8882670701309718443}
   - component: {fileID: 2358186202558148451}
+  - component: {fileID: 6026379925447788458}
+  - component: {fileID: 4039843358177108119}
+  - component: {fileID: 2835935173375502748}
+  - component: {fileID: 2275136432605139300}
+  - component: {fileID: 2445998353016033923}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -441,6 +446,76 @@ MonoBehaviour:
   ironBarrelEnabled: 1
   silverBarrelEnabled: 1
   autoReloadEnabled: 1
+--- !u!114 &6026379925447788458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f86b1dc698e04ee42a06e6c7cebe018b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FearBar
+  maxFear: 12
+  fearLevel: 0
+--- !u!114 &4039843358177108119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 835900bdba0dbe8498b707c4e92610f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpiritBar
+  scoreManager: {fileID: 2835935173375502748}
+  fearBar: {fileID: 6026379925447788458}
+  visibleSpirit: 50
+--- !u!114 &2835935173375502748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 223291d1c9e1d6348aa7c2477011f387, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
+  weaponEvents: {fileID: 7212527224247330429}
+  pointsPerWeakpointHit: 10
+  currentScore: 50
+--- !u!114 &2275136432605139300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f84da51c004e6d4cbad5712112ecd80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameOverHandler
+  spiritBar: {fileID: 4039843358177108119}
+--- !u!114 &2445998353016033923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd1f953deb3d93a4ba30f125e73c63ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStatus
+  fearBar: {fileID: 6026379925447788458}
 --- !u!1 &3524502881056351253
 GameObject:
   m_ObjectHideFlags: 0
@@ -556,10 +631,7 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
-  m_Cameras:
-  - {fileID: 0}
-  - {fileID: 5940204994785997246}
-  - {fileID: 7236061146324488673}
+  m_Cameras: []
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
@@ -1220,6 +1292,10 @@ PrefabInstance:
       propertyPath: screenUI
       value: 
       objectReference: {fileID: 6897443471252869506}
+    - target: {fileID: 1373146557033366319, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
+      propertyPath: m_Value
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1421732863531194200, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -1425,6 +1501,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1917838342514220651, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: fearBar
+      value: 
+      objectReference: {fileID: 6026379925447788458}
     - target: {fileID: 2950077288419945060, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: weaponAmmo
       value: 
@@ -1462,17 +1542,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3833990357327432590}
     - target: {fileID: 6984559138644257905, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
-      propertyPath: ammoUiElementPrefab
-      value: 
-      objectReference: {fileID: 6886316052428195270}
-    - target: {fileID: 6984559138644257905, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: ammoUiElements.Array.size
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6984559138644257905, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
-      propertyPath: 'ammoUiElements.Array.data[0]'
-      value: 
-      objectReference: {fileID: 6886316052428195270}
     - target: {fileID: 7371022240174911354, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1559,11 +1631,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7780947195705976479, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7804032102815879691, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: spiritBar
+      value: 
+      objectReference: {fileID: 4039843358177108119}
     - target: {fileID: 8097341916491957871, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8487211731980038411, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_LocalScale.x
@@ -1609,17 +1685,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7442887890869459871, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
   m_PrefabInstance: {fileID: 8595229715955629030}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6886316052428195270 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2943515867254046240, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
-  m_PrefabInstance: {fileID: 8595229715955629030}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!114 &6897443471252869506 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2950077288419945060, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}

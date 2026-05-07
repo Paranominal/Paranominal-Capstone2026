@@ -159,6 +159,7 @@ GameObject:
   - component: {fileID: 3604788043001916603}
   - component: {fileID: 646067033187108150}
   - component: {fileID: 3029441059310656729}
+  - component: {fileID: 1917838342514220651}
   m_Layer: 5
   m_Name: FearBar
   m_TagString: Untagged
@@ -224,6 +225,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1917838342514220651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1921758496030106185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8660b6d24d718b4387bc692c6b970f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FearBarUI
+  fearBar: {fileID: 0}
+  barImage: {fileID: 3029441059310656729}
+  rankText: {fileID: 5082455438203110699}
 --- !u!1 &2657470005425090114
 GameObject:
   m_ObjectHideFlags: 0
@@ -883,6 +899,7 @@ GameObject:
   - component: {fileID: 5570314504247143839}
   - component: {fileID: 4153304814028437559}
   - component: {fileID: 298555551605365823}
+  - component: {fileID: 7804032102815879691}
   m_Layer: 5
   m_Name: SpiritBar
   m_TagString: Untagged
@@ -947,6 +964,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7804032102815879691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7522745295911445550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98e4fa1a14d920143b4ae5cca1e866b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpiritBarUI
+  spiritBar: {fileID: 0}
+  barImage: {fileID: 298555551605365823}
+  displayMax: 200
 --- !u!1 &8000818220587203367
 GameObject:
   m_ObjectHideFlags: 0
@@ -1293,11 +1325,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d24621299e34b70499314b8587e5ae87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHUD
-  gunController: {fileID: 0}
-  dashing: {fileID: 0}
+  weaponFiringLogic: {fileID: 0}
+  weaponEvents: {fileID: 0}
+  weaponStateController: {fileID: 0}
   ammoText: {fileID: 5555583921121668197}
   reloadSlider: {fileID: 2908357476381119000}
-  dashSlider: {fileID: 6624925144877706608}
   crosshairImage: {fileID: 667588429423062665}
 --- !u!1 &9053748986595888303
 GameObject:

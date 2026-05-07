@@ -13,12 +13,17 @@ public class FearBar : MonoBehaviour
 
     public FearRank CurrentRank { get; private set; } = FearRank.Fine;
 
-    public event System.Action<FearRank> OnFearRankChanged;
+    public event System.Action<FearRank> OnFearChanged;
+
+    public void Awake()
+    {
+        fearLevel = maxFear;
+    }
 
     public void TakeDamage()
     {
-        fearLevel = Mathf.Min(fearLevel + 1, maxFear);
-        Debug.Log("hello?");
+        fearLevel = fearLevel - 1;
+        fearLevel = Mathf.Min(fearLevel, maxFear);
         EvaluateRank();
     }
 
@@ -37,7 +42,8 @@ public class FearBar : MonoBehaviour
         if (newRank != CurrentRank)
         {
             CurrentRank = newRank;
-            OnFearRankChanged?.Invoke(CurrentRank);
         }
+
+        OnFearChanged?.Invoke(CurrentRank); // event for fearbarUI & spiritbar to update, happens every time player takes damage
     }
 }

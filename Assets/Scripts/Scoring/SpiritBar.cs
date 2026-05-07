@@ -22,7 +22,7 @@ public class SpiritBar : MonoBehaviour
     {
         lastKnownScore = scoreManager.currentScore;
         scoreManager.OnPointsAdded += HandlePointsAdded;
-        fearBar.OnFearRankChanged += HandleFearRankChanged;
+        fearBar.OnFearChanged += HandleFearChanged;
     }
 
     private void Update()
@@ -49,14 +49,14 @@ public class SpiritBar : MonoBehaviour
         visibleSpirit += gained;
     }
 
-    private void HandleFearRankChanged(FearBar.FearRank rank)
+    private void HandleFearChanged(FearBar.FearRank rank)
     {
         drainRate = rank switch // another lit ass switch statement
         {
             FearBar.FearRank.Fine => 0f,
             FearBar.FearRank.Low => 1f,
-            FearBar.FearRank.Medium => 2f,
-            FearBar.FearRank.High => 3f,
+            FearBar.FearRank.Medium => 0.5f,
+            FearBar.FearRank.High => 0.33f,
             _ => 0f
         };
     }
