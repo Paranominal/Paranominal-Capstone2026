@@ -365,6 +365,7 @@ GameObject:
   - component: {fileID: 8341946064033690024}
   - component: {fileID: 6775470288009921241}
   - component: {fileID: 8651904156958788926}
+  - component: {fileID: 5932936124738393656}
   m_Layer: 15
   m_Name: Imp_Reworked
   m_TagString: Untagged
@@ -426,7 +427,7 @@ MonoBehaviour:
   wanderRadius: 8
   idleWaitTime: 2
   followSpeed: 3
-  stopDistance: 1
+  stopDistance: 2
   stagger: {fileID: 7256983414231218104}
 --- !u!114 &7980951876251254891
 MonoBehaviour:
@@ -445,6 +446,8 @@ MonoBehaviour:
   - {fileID: 9057432543407784191}
   - {fileID: 1192530790080143990}
   - {fileID: 3891542749503898057}
+  currentWeakpoint: 0
+  enemyHPComponent: {fileID: 0}
 --- !u!114 &7256983414231218104
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -496,7 +499,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -572,6 +575,33 @@ MonoBehaviour:
   destroyOnHit: 1
   validBulletType: 0
   enemyHP: {fileID: 6775470288009921241}
+--- !u!54 &5932936124738393656
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780255270900913490}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
 --- !u!1001 &1323759862332386954
 PrefabInstance:
   m_ObjectHideFlags: 0
