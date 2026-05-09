@@ -18,6 +18,7 @@ public class DeathPlane : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log(other + " triggered Death Plane!");
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

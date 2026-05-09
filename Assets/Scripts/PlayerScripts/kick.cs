@@ -40,9 +40,8 @@ public class kick : MonoBehaviour
         Vector3 kickDirection = other.gameObject.transform.position - transform.position;
         // if (other.gameObject.layer == enemyLayer)
         {
+            Debug.Log("enemy (" + other + ") was kicked! on "+other.gameObject.layer+" layer!");
             other.GetComponent<Rigidbody>().AddForce(kickDirection * kickStrength, ForceMode.Impulse);
-            Debug.Log("enemy (" + other + ") was kicked!");
         }
     }
-
 }
