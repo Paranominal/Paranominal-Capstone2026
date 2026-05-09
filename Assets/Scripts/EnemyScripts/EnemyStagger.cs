@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class EnemyStagger : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class EnemyStagger : MonoBehaviour
     private int weakpointsDestroyed = 0;
     private int staggerThreshold = 0;
     private Coroutine staggerCoroutine;
+
+    [SerializeField] private SpriteRenderer enemySprite;
 
     private void Awake()
     {
@@ -93,6 +96,7 @@ public class EnemyStagger : MonoBehaviour
     private IEnumerator PerformStagger()
     {
         isStaggered = true;
+
 
         DisableMovement();
 

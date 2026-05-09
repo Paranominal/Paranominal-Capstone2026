@@ -65,8 +65,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   animator: {fileID: 6843362271996118515}
+  enemySprite: {fileID: 0}
   enemyStagger: {fileID: 7256983414231218104}
-  weakPointManager: {fileID: 7980951876251254891}
+  animSpeed: 1
 --- !u!95 &6843362271996118515
 Animator:
   serializedVersion: 7
@@ -226,6 +227,7 @@ MonoBehaviour:
   wanderRadius: 8
   idleWaitTime: 2
   followSpeed: 3
+  stopDistance: 1
   stagger: {fileID: 7256983414231218104}
 --- !u!114 &7980951876251254891
 MonoBehaviour:
@@ -258,6 +260,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
   staggerDuration: 2
   debugMode: 0
+  enemySprite: {fileID: 0}
 --- !u!195 &2688743458007262411
 NavMeshAgent:
   m_ObjectHideFlags: 0
