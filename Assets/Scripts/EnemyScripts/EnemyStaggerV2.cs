@@ -2,13 +2,13 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
-public class EnemyStagger : MonoBehaviour
+public class EnemyStaggerV2 : MonoBehaviour
 {
+    //short stun duration for this iteration
     [Header("Stagger Settings")]
-    [SerializeField] private float staggerDuration = 2f;
+    [SerializeField] private float staggerDuration = 0.5f; 
     [SerializeField] private bool debugMode = false;
 
-    //delegate to notify when stagger ends
     public delegate void OnStaggerEndHandler();
     public event OnStaggerEndHandler OnStaggerEnd;
 
@@ -18,7 +18,6 @@ public class EnemyStagger : MonoBehaviour
     private bool isStaggered = false;
     private int totalWeakpoints = 0;
     private int weakpointsDestroyed = 0;
-    private int staggerThreshold = 0;
     private Coroutine staggerCoroutine;
 
     private void Awake()
@@ -37,7 +36,7 @@ public class EnemyStagger : MonoBehaviour
         else
         {
             if (debugMode)
-                Debug.LogWarning($"[EnemyStagger] No WeakPointManager found on {gameObject.name}. Stagger system disabled.", gameObject);
+                Debug.LogWarning($"[EnemyStaggerV2] No WeakPointManager found on {gameObject.name}. Stagger system disabled.", gameObject);
         }
     }
 
@@ -50,19 +49,16 @@ public class EnemyStagger : MonoBehaviour
         if (totalWeakpoints <= 1)
         {
             if (debugMode)
-                Debug.Log($"[EnemyStagger] {gameObject.name} has {totalWeakpoints} weakpoint(s). Stagger mechanic disabled.", gameObject);
+                Debug.Log($"[EnemyStaggerV2] {gameObject.name} has {totalWeakpoints} weakpoint(s). Stagger mechanic disabled.", gameObject);
             enabled = false;
             return;
         }
 
-        //calculate the poise break totalWeakpoints / 2
-        staggerThreshold = Mathf.CeilToInt(totalWeakpoints / 2f);
-
         if (debugMode)
-            Debug.Log($"[EnemyStagger] {gameObject.name} initialized: {totalWeakpoints} total weakpoints, stagger threshold: {staggerThreshold}", gameObject);
+            Debug.Log($"[EnemyStaggerV2] {gameObject.name} initialized: {totalWeakpoints} total weakpoints. Stagger triggers on every weakpoint hit.", gameObject);
     }
 
-    public void OnWeakPointDestroyed()
+    public void OnWeakPointHit()
     {
         if (!enabled || totalWeakpoints <= 1)
             return;
@@ -70,13 +66,16 @@ public class EnemyStagger : MonoBehaviour
         weakpointsDestroyed++;
 
         if (debugMode)
-            Debug.Log($"[EnemyStagger] {gameObject.name}: {weakpointsDestroyed}/{totalWeakpoints} weakpoints destroyed", gameObject);
+            Debug.Log($"[EnemyStaggerV2] {gameObject.name}: {weakpointsDestroyed}/{totalWeakpoints} weakpoints destroyed. Triggering stagger!", gameObject);
 
-        //coroutine to check if the threshold has been reached and the enemy isn't staggered
-        if (weakpointsDestroyed == staggerThreshold && !isStaggered)
-        {
-            TriggerStagger();
-        }
+        //v2: stun on every weakpoint hit
+        TriggerStagger();
+    }
+
+    public void OnWeakPointDestroyed()
+    {
+        //compatibility path: destroyed weakpoints are still valid hits
+        OnWeakPointHit();
     }
 
     //stagger disables enemy movement for a set duration
@@ -84,11 +83,8 @@ public class EnemyStagger : MonoBehaviour
     {
         if (duration <= 0) duration = staggerDuration; 
         
-        if (isStaggered)
-            return;
-
         if (debugMode)
-            Debug.Log($"[EnemyStagger] {gameObject.name} is STAGGERED!", gameObject);
+            Debug.Log($"[EnemyStaggerV2] {gameObject.name} is STAGGERED!", gameObject);
 
         //stops stagger coroutine from running 
         if (staggerCoroutine != null)
@@ -104,20 +100,18 @@ public class EnemyStagger : MonoBehaviour
 
         DisableMovement();
 
-        //wait for the duration to end
+        //wait for the short duration to end
         yield return new WaitForSeconds(duration);
        
         EnableMovement();
         isStaggered = false;
 
         if (debugMode)
-            Debug.Log($"[EnemyStagger] {gameObject.name} recovered from stagger", gameObject);
+            Debug.Log($"[EnemyStaggerV2] {gameObject.name} recovered from stagger", gameObject);
 
-        //notify subscribers that stagger has ended
         OnStaggerEnd?.Invoke();
     }
 
-    //disables all movement
     private void DisableMovement()
     {
         if (navAgent != null && navAgent.isOnNavMesh)
@@ -138,7 +132,6 @@ public class EnemyStagger : MonoBehaviour
         }
     }
 
-    //re-enables movement
     private void EnableMovement()
     {
         if (navAgent != null && navAgent.isOnNavMesh)
