@@ -17,6 +17,5 @@ public class EnemyAnimationControl : MonoBehaviour
     void Update()
     {
         animator.SetBool("isStaggered", enemyStagger.IsStaggered);
-        stunAnimation.
     }
 }
