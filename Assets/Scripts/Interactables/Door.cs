@@ -19,12 +19,17 @@ public class Door : MonoBehaviour, IInteractable
     public float openAngle = -90;
     public float ajarAngle = -20;
     public float closedAngle = 0;
+    public Collider doorCollider;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         collectAction = InputSystem.actions.FindAction("Collect");
         targetRotation = transform.rotation;
+        if (doorCollider == null)
+        {
+            doorCollider = GetComponentInChildren<Collider>();
+        }
     }
 
     // Update is called once per frame
@@ -50,6 +55,14 @@ public class Door : MonoBehaviour, IInteractable
         }
 
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, speed * Time.deltaTime);
+        if (transform.rotation != targetRotation && doorCollider.enabled)
+        {
+            doorCollider.enabled = false;
+        }
+        else if (transform.rotation == targetRotation && !doorCollider.enabled)
+        {
+            doorCollider.enabled = true;
+        }
     }
 
     public void Interact()
