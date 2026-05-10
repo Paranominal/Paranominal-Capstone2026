@@ -164,6 +164,11 @@ public class WeakPoint : MonoBehaviour
         // Warded weakpoints cannot be destroyed until unlocked externally
         if (isWarded) return;
 
+        if (manager != null)
+        {
+            manager.OnWeakPointHit();
+        }
+
         // Tough weakpoints require multiple successful hits
         remainingShots -= 1;
         if (remainingShots > 0) return;
