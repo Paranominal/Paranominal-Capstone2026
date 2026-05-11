@@ -1,40 +1,86 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.InputSystem;
+using NUnit.Framework;
 
 public class GrimoireAnimManager : MonoBehaviour
 {
-    [SerializeField] Animator grimoireAnimator;
+    [SerializeField] private Animator grimoireAnimator;
     private bool isAnimating;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField] private InputActionReference grimoireScrollInput;
+    private InputAction grimoireScroll;
+    [SerializeField] private InputActionReference PlayerMoveInput;
+    private InputAction playerMove;
+    private bool playerIsMoving;
+    private bool isOpen;
+
     void Start()
     {
-
+        grimoireScroll = grimoireScrollInput;
+        playerMove = PlayerMoveInput;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        grimoireAnimator.SetBool("isAnimating",isAnimating);
+        CheckPlayerMovement();
+        OpenOnScroll();
+
+        grimoireAnimator.SetBool("isAnimating", isAnimating);
+
+        DoDebugLog();
     }
     void OpenGrimoire()
     {
-        grimoireAnimator.SetTrigger("Open");
+        StartCoroutine(DoOpen());
+    }
+    void CloseGrimoire()
+    {
+        StartCoroutine(DoClose());
     }
     
     private IEnumerator DoOpen()
     {
         if (isAnimating) yield break;
-        isAnimating = true;
+        if (isOpen) yield break;
+        grimoireAnimator.SetTrigger("open");
+    }
+    
+    private IEnumerator DoClose()
+    {
+        if (isAnimating) yield break;
+        if (!isOpen) yield break;
+        grimoireAnimator.SetTrigger("close");
+    }
+    private void OpenOnScroll()
+    {
+        if (Mathf.Abs(grimoireScroll.ReadValue<Vector2>().y) > 0) OpenGrimoire();
+    }
+    private void CheckPlayerMovement()
+    {
+        if (playerMove.ReadValue<Vector2>() != new Vector2(0, 0)) playerIsMoving = true;
+        else playerIsMoving = false;
 
-        grimoireAnimator.SetTrigger("Open");
-        yield return null; //the animator needs a frame to update before GetCurrentAnimatorStateInfo can work correctly
-        float animDuration = grimoireAnimator.GetCurrentAnimatorStateInfo(0).length;
-        yield return new WaitForSeconds(animDuration);
+        if (playerIsMoving) CloseGrimoire();
+    }
+    private void DoDebugLog()
+    {
+        Debug.Log("isOpen: " + isOpen);
+        Debug.Log("isAnimating: " + isAnimating);
+    }
+    private void StartAnimation()
+    {
+        isAnimating = true;
+    }
+    private void EndAnimation()
+    {
         isAnimating = false;
     }
-
-    void CloseGrimoire()
+    private void SetOpen()
     {
-        grimoireAnimator.SetTrigger("Close");
+        isOpen = true;
+    }
+    private void SetClosed()
+    {
+        isOpen = false;
     }
 }
