@@ -9,63 +9,89 @@ public class GrimoireAnimManager : MonoBehaviour
     private bool isAnimating;
     [SerializeField] private InputActionReference grimoireScrollInput;
     private InputAction grimoireScroll;
-    [SerializeField] private InputActionReference PlayerMoveInput;
+    [SerializeField] private InputActionReference playerMoveInput;
     private InputAction playerMove;
+    [SerializeField] private InputActionReference scanActionInput;
+    private InputAction scanAction;
     private bool playerIsMoving;
     private bool isOpen;
+    private bool isCasting;
 
     void Start()
     {
         grimoireScroll = grimoireScrollInput;
-        playerMove = PlayerMoveInput;
+        playerMove = playerMoveInput;
+        scanAction = scanActionInput;
     }
 
     void Update()
     {
         CheckPlayerMovement();
         OpenOnScroll();
-
-        grimoireAnimator.SetBool("isAnimating", isAnimating);
+        CheckCast();
 
         DoDebugLog();
+    }
+    private void OpenOnScroll()
+    {
+        if (Mathf.Abs(grimoireScroll.ReadValue<Vector2>().y) > 0) OpenGrimoire();
     }
     void OpenGrimoire()
     {
         StartCoroutine(DoOpen());
     }
-    void CloseGrimoire()
-    {
-        StartCoroutine(DoClose());
-    }
-    
     private IEnumerator DoOpen()
     {
         if (isAnimating) yield break;
         if (isOpen) yield break;
         grimoireAnimator.SetTrigger("open");
     }
-    
+    void CloseGrimoire()
+    {
+        StartCoroutine(DoClose());
+    }
     private IEnumerator DoClose()
     {
         if (isAnimating) yield break;
         if (!isOpen) yield break;
+        if (scanAction.IsPressed()) yield break;
         grimoireAnimator.SetTrigger("close");
     }
-    private void OpenOnScroll()
+    private void CheckCast()
     {
-        if (Mathf.Abs(grimoireScroll.ReadValue<Vector2>().y) > 0) OpenGrimoire();
+        grimoireAnimator.SetBool("isCasting", isCasting);
+
+        if (scanAction.IsPressed()) Cast();
+        else isCasting = false;
+    }
+    private void Cast()
+    {
+        StartCoroutine(DoCasting());
+    }
+    private IEnumerator DoCasting()
+    {
+        if (!scanAction.IsPressed()) yield break;
+        if (!isOpen)
+        {
+            OpenGrimoire();
+            yield break;
+        }
+
+        isCasting = true;
     }
     private void CheckPlayerMovement()
     {
         if (playerMove.ReadValue<Vector2>() != new Vector2(0, 0)) playerIsMoving = true;
         else playerIsMoving = false;
 
-        if (playerIsMoving) CloseGrimoire();
+        if (playerIsMoving && !isCasting) CloseGrimoire();
     }
     private void DoDebugLog()
     {
         Debug.Log("isOpen: " + isOpen);
         Debug.Log("isAnimating: " + isAnimating);
+        Debug.Log("Casting is pressed: " + scanAction.IsPressed());
+        Debug.Log("isCasting: " + isCasting);
     }
     private void StartAnimation()
     {
@@ -75,12 +101,20 @@ public class GrimoireAnimManager : MonoBehaviour
     {
         isAnimating = false;
     }
-    private void SetOpen()
+    private void SetOpenTrue()
     {
         isOpen = true;
     }
-    private void SetClosed()
+    private void SetOpenFalse()
     {
         isOpen = false;
+    }
+    private void SetCastingTrue()
+    {
+        isCasting = true;
+    }
+    private void SetCastingFalse()
+    {
+        isCasting = false;
     }
 }
