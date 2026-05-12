@@ -31,6 +31,11 @@ public class ALTScan : MonoBehaviour
         {
             // Debug.DrawLine(transform.position, hit.point, Color.cyan, 10); // can view this in gizmos mode to help with debugging
             ALTScannableObject tempScan = hit.collider.GetComponent<ALTScannableObject>();
+
+            //temp stagger iteration for staggering enemies when they are scanned
+            EnemyStaggerV3 scannedEnemy = hit.collider.GetComponentInParent<EnemyStaggerV3>();
+
+
             //Debug.Log("Hit " + tempScan);
             if (scannedNow != tempScan && scannedNow != null)
             {
@@ -40,10 +45,19 @@ public class ALTScan : MonoBehaviour
             scannedNow.outline.enabled = true;
             if (scanAction.WasReleasedThisFrame())
             {
-                //Debug.Log(scannedNow.entry);
-                grimoire.AddEntry(scannedNow.entry);
+                //for staggering the enemy
+                if (scannedEnemy != null)
+                {
+                    scannedEnemy.OnEnemyScanned();
+                }
+
+                if (scannedNow != null)
+                {
+                    //Debug.Log(scannedNow.entry);
+                    grimoire.AddEntry(scannedNow.entry);
+                }
             }
-            if (collectAction.WasReleasedThisFrame() && scannedNow.collectable)
+            if (scannedNow != null && collectAction.WasReleasedThisFrame() && scannedNow.collectable)
             {
                 // item gets collected here
                 if (!grimoire.CompareEntry(scannedNow.entry))   //checks if the entry for the collected item has been scanned and adds it if not
