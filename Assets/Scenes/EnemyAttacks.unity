@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 41010043}
   - component: {fileID: 41010042}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: SpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
   enemyPool:
-  - {fileID: 272941483086651391, guid: cc53b5f10b70e764790ca96518cabd9a, type: 3}
+  - {fileID: 7585221046304408112, guid: 40237e9a906facf4aa54e21eec5c27e4, type: 3}
 --- !u!135 &41010043
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -240,7 +240,7 @@ Transform:
   m_GameObject: {fileID: 41010041}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8.799999, y: -0.983806, z: 15.480003}
+  m_LocalPosition: {x: 0.8, y: -0.983806, z: 23}
   m_LocalScale: {x: 1, y: 0.34751183, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -260,7 +260,7 @@ GameObject:
   - component: {fileID: 192569701}
   - component: {fileID: 192569700}
   m_Layer: 0
-  m_Name: Sphere (3)
+  m_Name: SpawnPoint 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -279,7 +279,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
   enemyPool:
-  - {fileID: 272941483086651391, guid: cc53b5f10b70e764790ca96518cabd9a, type: 3}
+  - {fileID: 6780255270900913490, guid: 3992b7ce40fc5b04bb8092c71e70f62e, type: 3}
 --- !u!135 &192569701
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -387,7 +387,7 @@ GameObject:
   - component: {fileID: 208446767}
   - component: {fileID: 208446766}
   m_Layer: 0
-  m_Name: Sphere (4)
+  m_Name: SpawnPoint 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -514,7 +514,7 @@ GameObject:
   - component: {fileID: 362315599}
   - component: {fileID: 362315598}
   m_Layer: 0
-  m_Name: Sphere (2)
+  m_Name: SpawnPoint 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -852,7 +852,7 @@ GameObject:
   - component: {fileID: 1524161328}
   - component: {fileID: 1524161327}
   m_Layer: 0
-  m_Name: Box Volume
+  m_Name: RoomBounds
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -937,7 +937,7 @@ GameObject:
   - component: {fileID: 1676890053}
   - component: {fileID: 1676890052}
   m_Layer: 0
-  m_Name: Cylinder
+  m_Name: EnemyManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1036,10 +1036,10 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 41010046}
-  - {fileID: 208446765}
   - {fileID: 2072315554}
   - {fileID: 362315602}
   - {fileID: 192569704}
+  - {fileID: 208446765}
   - {fileID: 1524161326}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1203,7 +1203,7 @@ GameObject:
   - component: {fileID: 2072315551}
   - component: {fileID: 2072315550}
   m_Layer: 0
-  m_Name: Sphere (1)
+  m_Name: SpawnPoint 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1222,7 +1222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
   enemyPool:
-  - {fileID: 272941483086651391, guid: cc53b5f10b70e764790ca96518cabd9a, type: 3}
+  - {fileID: 6780255270900913490, guid: 3992b7ce40fc5b04bb8092c71e70f62e, type: 3}
 --- !u!135 &2072315551
 SphereCollider:
   m_ObjectHideFlags: 0
