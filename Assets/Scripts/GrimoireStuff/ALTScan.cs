@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class ALTScan : MonoBehaviour
 {
     public LayerMask scannable;
+    [SerializeField] private float interactRange = 4f; // defines the max interaction distance
     InputAction scanAction;
     InputAction collectAction;  // i started implementing collecting as a seperate set of scripts and then realised it was going to either be so wrapped up in this as to be problematic or duplicate so much code it would be incredibly questionable. so. voila.
     private ALTGrimoire grimoire;
@@ -25,10 +26,15 @@ public class ALTScan : MonoBehaviour
     {
         Vector2 mousePos = Pointer.current != null ? Pointer.current.position.ReadValue() : Vector2.zero;
         Ray ray = Camera.main.ScreenPointToRay(mousePos);
-        if (Physics.Raycast(ray, out RaycastHit hit, 1000f, scannable))
+        if (Physics.Raycast(ray, out RaycastHit hit, interactRange, scannable))
         {
             // Debug.DrawLine(transform.position, hit.point, Color.cyan, 10); // can view this in gizmos mode to help with debugging
             ALTScannableObject tempScan = hit.collider.GetComponent<ALTScannableObject>();
+
+            //temp stagger iteration for staggering enemies when they are scanned
+            EnemyStaggerV3 scannedEnemy = hit.collider.GetComponentInParent<EnemyStaggerV3>();
+
+
             //Debug.Log("Hit " + tempScan);
             if (scannedNow != tempScan && scannedNow != null)
             {
@@ -38,10 +44,19 @@ public class ALTScan : MonoBehaviour
             scannedNow.outline.enabled = true;
             if (scanAction.WasReleasedThisFrame())
             {
-                //Debug.Log(scannedNow.entry);
-                grimoire.AddEntry(scannedNow.entry);
+                //for staggering the enemy
+                if (scannedEnemy != null)
+                {
+                    scannedEnemy.OnEnemyScanned();
+                }
+
+                if (scannedNow != null)
+                {
+                    //Debug.Log(scannedNow.entry);
+                    grimoire.AddEntry(scannedNow.entry);
+                }
             }
-            if (collectAction.WasReleasedThisFrame() && scannedNow.collectable)
+            if (scannedNow != null && collectAction.WasReleasedThisFrame() && scannedNow.collectable)
             {
                 // item gets collected here
                 if (!grimoire.CompareEntry(scannedNow.entry))   //checks if the entry for the collected item has been scanned and adds it if not

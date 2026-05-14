@@ -43,6 +43,8 @@ public class Door : MonoBehaviour, IInteractable
         {
             unlocked = true;
             Debug.Log("The sound of a door unlocking. Woah so immersive.");
+            if (clockwise) transform.Rotate(0, 20, 0); // temp ajar functionality
+            if (!clockwise) transform.Rotate(0, -20, 0);
         }
     }
 }
