@@ -12,6 +12,10 @@ public class WeaponSway : MonoBehaviour
     [SerializeField] private float smooth;
     [SerializeField] private float swayMultiplier;
 
+    [Header("Sway Limits")]
+    [SerializeField] private float maxPositionOffset = 0.08f;
+    [SerializeField] private float maxRotationAngle = 10f;
+
     // bob settings define the up/down + side motion while moving.
     // Frequency controls speed of the cycle and amplitude controls how far it moves
     // smoothing controls how quickly the current position catches the target bob position.
@@ -72,6 +76,11 @@ public class WeaponSway : MonoBehaviour
 
         // Final rotation combines look sway and movement tilt
         Quaternion targetRotation = rotationX * rotationY * movementRotation;
+        float rotationAngle = Quaternion.Angle(Quaternion.identity, targetRotation);
+        if (rotationAngle > maxRotationAngle)
+        {
+            targetRotation = Quaternion.RotateTowards(Quaternion.identity, targetRotation, maxRotationAngle);
+        }
 
         // Bob is procedural movement: Y uses sine for the primary bounce rhythm and X uses lower-frequency to add less intense side movement
         // Both are multiplied by moveAmount so bob naturally fades to zero when stationary
@@ -80,6 +89,8 @@ public class WeaponSway : MonoBehaviour
 
         // set desired local position from baseline + bob + directional offset
         Vector3 targetLocalPosition = initialLocalPosition + new Vector3(bobX, bobY, 0f) + movementOffset;
+        Vector3 clampedOffset = Vector3.ClampMagnitude(targetLocalPosition - initialLocalPosition, maxPositionOffset);
+        targetLocalPosition = initialLocalPosition + clampedOffset;
 
         // smoothly interpolate toward target transforms to avoid jitter and abrupt snapping
         // Slerp is used for rotation (better for orientations), Lerp for position
