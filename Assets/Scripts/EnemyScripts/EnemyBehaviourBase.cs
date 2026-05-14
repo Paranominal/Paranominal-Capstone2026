@@ -11,8 +11,9 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
     //tracks whether this enemy has finished dying so behaviour subclasses can early-out
     public bool IsDying { get; private set; }
 
-    //the encounter manager that spawned this enemy, if any
-    private EnemyEncounterManager ownerSpawner;
+    //the spawner that created this enemy, if any. typed as the interface so any
+    //IEnemySpawner implementation (encounter manager, arena spawner, etc.) can own us.
+    private IEnemySpawner ownerSpawner;
     private bool isCreatedBySpawner;
     private bool hasReportedDeathToSpawner;
 
@@ -25,7 +26,7 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
         }
     }
 
-    //reports this enemy's death if it was spawned by an encounter manager
+    //reports this enemy's death if it was spawned by a registered spawner
     protected virtual void OnDestroy()
     {
         ReportDeathToSpawner();
@@ -55,8 +56,8 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
         return vision != null && vision.IsTargetDetected();
     }
 
-    //stores a reference to the encounter manager that created this enemy
-    public void SetOwnerSpawner(EnemyEncounterManager spawner)
+    //stores a reference to the spawner that created this enemy
+    public void SetOwnerSpawner(IEnemySpawner spawner)
     {
         ownerSpawner = spawner;
         isCreatedBySpawner = spawner != null;
@@ -106,7 +107,10 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
     {
     }
 
-    //notifies the owning encounter manager that this enemy has died, guarded so it only fires once
+    //notifies the owning spawner that this enemy has died, guarded so it only fires once.
+    //IEnemySpawner is an interface, so unity's overloaded == does not apply directly to it -
+    //we additionally check the underlying UnityEngine.Object reference so we don't call into
+    //a spawner whose MonoBehaviour has already been destroyed.
     private void ReportDeathToSpawner()
     {
         if (hasReportedDeathToSpawner)
@@ -115,6 +119,12 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
         }
 
         if (!isCreatedBySpawner || ownerSpawner == null)
+        {
+            return;
+        }
+
+        //handle the unity-specific "destroyed but reference is not c# null" case
+        if (ownerSpawner is Object unityOwner && unityOwner == null)
         {
             return;
         }

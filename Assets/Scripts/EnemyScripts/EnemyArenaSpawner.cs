@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyArenaSpawner : MonoBehaviour
+public class EnemyArenaSpawner : MonoBehaviour, IEnemySpawner
 {
     public enum SpawnTimingMode
     {
@@ -51,7 +51,7 @@ public class EnemyArenaSpawner : MonoBehaviour
     private int nextSpawnPointIndex;
 
     private readonly List<EnemyEntry> enemiesToSpawn = new List<EnemyEntry>();
-    private readonly List<EnemyController> spawnedEnemies = new List<EnemyController>();
+    private readonly List<EnemyBehaviourBase> spawnedEnemies = new List<EnemyBehaviourBase>();
 
     // Builds the first wave when the scene begins.
     private void Start()
@@ -240,21 +240,21 @@ public class EnemyArenaSpawner : MonoBehaviour
 
         if (!TryGetSpawnTransform(out Vector3 spawnPosition, out Quaternion spawnRotation))
         {
-            Debug.LogWarning("EnemyWaveSpawner could not find a valid spawn location.");
+            Debug.LogWarning("EnemyArenaSpawner could not find a valid spawn location.");
             return;
         }
 
         GameObject spawnedObject = Instantiate(enemyEntry.enemyPrefab, spawnPosition, spawnRotation);
-        EnemyController enemyController = spawnedObject.GetComponent<EnemyController>();
+        EnemyBehaviourBase enemyBehaviour = spawnedObject.GetComponent<EnemyBehaviourBase>();
 
-        if (enemyController != null)
+        if (enemyBehaviour != null)
         {
-            enemyController.SetOwnerSpawner(this);
-            spawnedEnemies.Add(enemyController);
+            enemyBehaviour.SetOwnerSpawner(this);
+            spawnedEnemies.Add(enemyBehaviour);
         }
         else
         {
-            Debug.LogWarning($"{spawnedObject.name} is missing an EnemyController component.");
+            Debug.LogWarning($"{spawnedObject.name} is missing an EnemyBehaviourBase component.");
         }
     }
 
@@ -335,7 +335,7 @@ public class EnemyArenaSpawner : MonoBehaviour
     }
 
     // Removes a dead enemy from the active enemy list.
-    public void NotifyEnemyDeath(EnemyController deadEnemy)
+    public void NotifyEnemyDeath(EnemyBehaviourBase deadEnemy)
     {
         if (deadEnemy == null)
         {
@@ -350,13 +350,13 @@ public class EnemyArenaSpawner : MonoBehaviour
     {
         if (enemyPool == null || enemyPool.Count == 0)
         {
-            Debug.LogWarning("EnemyWaveSpawner is missing enemy pool entries.");
+            Debug.LogWarning("EnemyArenaSpawner is missing enemy pool entries.");
             return false;
         }
 
         if (spawnTimingMode == SpawnTimingMode.OverWaveDuration && waveDuration <= 0f)
         {
-            Debug.LogWarning("EnemyWaveSpawner requires a wave duration greater than 0 when using timed spawning.");
+            Debug.LogWarning("EnemyArenaSpawner requires a wave duration greater than 0 when using timed spawning.");
             return false;
         }
 
@@ -364,7 +364,7 @@ public class EnemyArenaSpawner : MonoBehaviour
         {
             if (spawnLocations == null || spawnLocations.Length == 0)
             {
-                Debug.LogWarning("EnemyWaveSpawner is missing spawn locations.");
+                Debug.LogWarning("EnemyArenaSpawner is missing spawn locations.");
                 return false;
             }
         }
@@ -373,13 +373,13 @@ public class EnemyArenaSpawner : MonoBehaviour
         {
             if (randomSpawnRadius <= 0f)
             {
-                Debug.LogWarning("EnemyWaveSpawner requires a random spawn radius greater than 0.");
+                Debug.LogWarning("EnemyArenaSpawner requires a random spawn radius greater than 0.");
                 return false;
             }
 
             if (groundLayer == 0)
             {
-                Debug.LogWarning("EnemyWaveSpawner is missing a ground layer for random spawning.");
+                Debug.LogWarning("EnemyArenaSpawner is missing a ground layer for random spawning.");
                 return false;
             }
         }

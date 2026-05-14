@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyEncounterManager : MonoBehaviour
+public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
 {
     [Header("Wave Settings")]
     [SerializeField] private int maxWaves = 1;
