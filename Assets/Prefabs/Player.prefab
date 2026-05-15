@@ -184,6 +184,7 @@ GameObject:
   - component: {fileID: 6477322163037900572}
   - component: {fileID: 8882670701309718443}
   - component: {fileID: 2358186202558148451}
+  - component: {fileID: 5131432862222598260}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -441,6 +442,28 @@ MonoBehaviour:
   ironBarrelEnabled: 1
   silverBarrelEnabled: 1
   autoReloadEnabled: 1
+--- !u!114 &5131432862222598260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33d1ba9d4253160428bb807106aef353, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraEffects
+  playerCamera: {fileID: 6654618607449089807}
+  inputReader: {fileID: 8956652460274281639}
+  characterController: {fileID: 1267710674955157816}
+  enableHeadBob: 1
+  bobFrequency: 12
+  bobAmplitude: 0.03
+  bobResetSpeed: 5
+  enableStrafeTilt: 1
+  maxTiltAngle: 1.5
+  tiltSpeed: 5
 --- !u!1 &3524502881056351253
 GameObject:
   m_ObjectHideFlags: 0
@@ -1379,10 +1402,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSway
   moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookAction: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
-  smooth: 2
-  swayMultiplier: 1
-  bobFrequency: 8
-  bobAmplitude: 0.02
+  smooth: 3
+  swayMultiplier: 0.25
+  maxPositionOffset: 0.08
+  maxRotationAngle: 45
+  bobFrequency: 12
+  bobAmplitude: 0.03
   bobSmoothing: 8
   movementPositionX: 0.025
   movementPositionZ: 0.02
@@ -1400,6 +1425,22 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 77998422472194617, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 13.499999
+      objectReference: {fileID: 0}
+    - target: {fileID: 77998422472194617, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 13.499999
+      objectReference: {fileID: 0}
+    - target: {fileID: 77998422472194617, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 13.499999
+      objectReference: {fileID: 0}
+    - target: {fileID: 2943515867254046240, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1511957116, guid: 3f65b9754d53de44ca8d637f4c931cd2, type: 3}
     - target: {fileID: 2950077288419945060, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: weaponAmmo
       value: 
@@ -1429,13 +1470,25 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7212527224247330429}
     - target: {fileID: 6984559138644257905, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: baseAmmoSprite
+      value: 
+      objectReference: {fileID: 1511957116, guid: 3f65b9754d53de44ca8d637f4c931cd2, type: 3}
+    - target: {fileID: 6984559138644257905, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: elementSpacing
       value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6984559138644257905, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: ironStrikeSprite
+      value: 
+      objectReference: {fileID: 1590295149, guid: 3f65b9754d53de44ca8d637f4c931cd2, type: 3}
+    - target: {fileID: 6984559138644257905, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: weaponFiringLogic
       value: 
       objectReference: {fileID: 3833990357327432590}
+    - target: {fileID: 6984559138644257905, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: silverStrikeSprite
+      value: 
+      objectReference: {fileID: 1922472919, guid: 3f65b9754d53de44ca8d637f4c931cd2, type: 3}
     - target: {fileID: 6984559138644257905, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: ammoUiElementPrefab
       value: 

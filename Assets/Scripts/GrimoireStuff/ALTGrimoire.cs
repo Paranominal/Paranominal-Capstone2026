@@ -181,20 +181,23 @@ public class ALTGrimoire : MonoBehaviour
 
     public void TurnPage(bool forwards) //this is maybe not an ideal function name since OTHER things might be in the grimoire but it works for now
     {
-        if (forwards)
+        if (entries.Count != 0)
         {
-            if (currentEntry != entries.Count - 1)
+            if (forwards)
             {
-                currentEntry++;
-                SelectEntry(currentEntry);
+                if (currentEntry != entries.Count - 1)
+                {
+                    currentEntry++;
+                    SelectEntry(currentEntry);
+                }
             }
-        }
-        else
-        {
-            if (currentEntry != 0)
+            else
             {
-                currentEntry--;
-                SelectEntry(currentEntry);
+                if (currentEntry != 0)
+                {
+                    currentEntry--;
+                    SelectEntry(currentEntry);
+                }
             }
         }
     }

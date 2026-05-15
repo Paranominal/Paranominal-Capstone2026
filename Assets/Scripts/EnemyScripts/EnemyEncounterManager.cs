@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyEncounterManager : MonoBehaviour
+public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
 {
     [Header("Wave Settings")]
     [SerializeField] private int maxWaves = 1;
@@ -12,7 +12,7 @@ public class EnemyEncounterManager : MonoBehaviour
     [SerializeField] private List<EnemySpawnPoint> spawnPoints = new List<EnemySpawnPoint>();
 
     [Header("Encounter State")]
-    [SerializeField] private bool isPlayerInRoom = false;
+    [HideInInspector] public bool isPlayerInRoom = false;
     [SerializeField] private float resetCounter = 5f;
 
     private int currentWave;
@@ -21,7 +21,7 @@ public class EnemyEncounterManager : MonoBehaviour
     private Coroutine waveLoopCoroutine;
     private Coroutine resetCoroutine;
 
-    private readonly List<EncounterEnemyController> spawnedEnemies = new List<EncounterEnemyController>();
+    private readonly List<EnemyBehaviourBase> spawnedEnemies = new List<EnemyBehaviourBase>();
 
     // Gathers child spawn points and keeps their enemy pools synced to the current maximum number of waves.
     private void OnValidate()
@@ -160,10 +160,13 @@ public class EnemyEncounterManager : MonoBehaviour
                 continue;
             }
 
-            EncounterEnemyController spawnedEnemy = spawnPoint.SpawnEnemy(currentWave, this);
+            EnemyBehaviourBase spawnedEnemy = spawnPoint.SpawnEnemy(currentWave, this);
 
             if (spawnedEnemy != null)
             {
+                // Ensure the manager <-> enemy link exists even if the spawn point did not set it.
+                spawnedEnemy.SetOwnerSpawner(this);
+
                 spawnedEnemies.Add(spawnedEnemy);
 
                 if (!isPlayerInRoom)
@@ -179,7 +182,7 @@ public class EnemyEncounterManager : MonoBehaviour
     {
         for (int i = 0; i < spawnedEnemies.Count; i++)
         {
-            EncounterEnemyController enemy = spawnedEnemies[i];
+            EnemyBehaviourBase enemy = spawnedEnemies[i];
 
             if (enemy == null)
             {
@@ -190,12 +193,12 @@ public class EnemyEncounterManager : MonoBehaviour
         }
     }
 
-    // Sets all currently active spawned enemies back to the aggro state.
+    // Sets all currently active spawned enemies back to the unpaused state.
     private void ResumeSpawnedEnemies()
     {
         for (int i = 0; i < spawnedEnemies.Count; i++)
         {
-            EncounterEnemyController enemy = spawnedEnemies[i];
+            EnemyBehaviourBase enemy = spawnedEnemies[i];
 
             if (enemy == null)
             {
@@ -261,7 +264,7 @@ public class EnemyEncounterManager : MonoBehaviour
 
         for (int i = 0; i < spawnedEnemies.Count; i++)
         {
-            EncounterEnemyController enemy = spawnedEnemies[i];
+            EnemyBehaviourBase enemy = spawnedEnemies[i];
 
             if (enemy == null)
             {
@@ -302,7 +305,7 @@ public class EnemyEncounterManager : MonoBehaviour
     }
 
     // Removes a dead enemy from the active enemy list.
-    public void NotifyEnemyDeath(EncounterEnemyController deadEnemy)
+    public void NotifyEnemyDeath(EnemyBehaviourBase deadEnemy)
     {
         if (deadEnemy == null)
         {
