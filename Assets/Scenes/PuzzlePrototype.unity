@@ -1738,11 +1738,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40af0772d050ae141836531215a6b999, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
-  clockwise: 0
   interactable:
     serializedVersion: 2
     m_Bits: 1024
   unlocked: 1
+  state: 2
+  speed: 5
+  openAngle: -90
+  ajarAngle: -20
+  closedAngle: 0
 --- !u!1 &1419102252
 GameObject:
   m_ObjectHideFlags: 0
@@ -1994,6 +1998,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37e83206939aa5b489f1aeb39ccf46ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ContainerCheck
+  tempDeleteObject: {fileID: 0}
   weakPointId: Statue_01_Ward
   container: {fileID: 878704438}
   solution:
