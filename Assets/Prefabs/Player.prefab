@@ -185,6 +185,7 @@ GameObject:
   - component: {fileID: 8882670701309718443}
   - component: {fileID: 2358186202558148451}
   - component: {fileID: 5131432862222598260}
+  - component: {fileID: 921602436989593369}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -464,6 +465,18 @@ MonoBehaviour:
   enableStrafeTilt: 1
   maxTiltAngle: 1.5
   tiltSpeed: 5
+--- !u!114 &921602436989593369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99d723d0db31209419b05a4bb525486b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanModeVisuals
 --- !u!1 &3524502881056351253
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,7 +489,7 @@ GameObject:
   - component: {fileID: 6654618607449089807}
   - component: {fileID: 1401912404428843967}
   - component: {fileID: 7735218202545343683}
-  - component: {fileID: 5847277947550880216}
+  - component: {fileID: 4954481789196031393}
   - component: {fileID: 3501135748319477596}
   m_Layer: 6
   m_Name: PlayerCam
@@ -608,7 +621,7 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &5847277947550880216
+--- !u!114 &4954481789196031393
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -617,13 +630,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 3524502881056351253}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d437b13d946e494cb5c886b2eaaa087, type: 3}
+  m_Script: {fileID: 11500000, guid: e37c9416a20373047baa003d4160bde3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScan
+  m_EditorClassIdentifier: Assembly-CSharp::ALTALTScan
   scannable:
     serializedVersion: 2
     m_Bits: 256
-  interactRange: 4
+  visuals: {fileID: 921602436989593369}
+  reticle: {fileID: 8956247744504574599}
+  scanDuration: 2
+  scanRange: 20
 --- !u!114 &3501135748319477596
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1659,3 +1675,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d24621299e34b70499314b8587e5ae87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHUD
+--- !u!114 &8956247744504574599 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 793363868070709601, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+  m_PrefabInstance: {fileID: 8595229715955629030}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd06b8725edf9224d975c2ebd860796a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
