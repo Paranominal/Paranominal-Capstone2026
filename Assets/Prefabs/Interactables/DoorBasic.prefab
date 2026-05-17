@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1934331341325403241}
   - component: {fileID: 554120226385470945}
   m_Layer: 10
-  m_Name: Door
+  m_Name: DoorBasic
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,8 +26,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2385331454482518890}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 3.803999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -47,11 +47,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40af0772d050ae141836531215a6b999, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
-  clockwise: 0
   interactable:
     serializedVersion: 2
     m_Bits: 1280
   unlocked: 1
+  state: 0
+  speed: 5
+  openAngle: -90
+  ajarAngle: -20
+  closedAngle: 0
+  doorCollider: {fileID: 0}
 --- !u!114 &554120226385470945
 MonoBehaviour:
   m_ObjectHideFlags: 0
