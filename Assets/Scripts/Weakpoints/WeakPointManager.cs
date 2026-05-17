@@ -1,14 +1,21 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class WeakPointManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] weakpoints;
+
     private int currentWeakpoint = 0;
+    private EnemyStagger staggerComponent;
+    private EnemyStaggerV2 staggerComponentV2;
+    private EnemyKnockback knockbackComponent;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //cache stagger components if they exist
+        staggerComponent = GetComponentInParent<EnemyStagger>();
+        staggerComponentV2 = GetComponentInParent<EnemyStaggerV2>();
+        knockbackComponent = GetComponentInParent<EnemyKnockback>();
         SetupWeakpoints();
     }
 
@@ -25,6 +32,12 @@ public class WeakPointManager : MonoBehaviour
 
     public void NextWeakPoint()
     {
+        // notify stagger scripts that weakpoint is destroyed
+        if (staggerComponent != null)
+        {
+            staggerComponent.OnWeakPointDestroyed();
+        }
+
         currentWeakpoint += 1;
         if (currentWeakpoint < weakpoints.Length)
         {
@@ -37,8 +50,32 @@ public class WeakPointManager : MonoBehaviour
         }
     }
 
+    //nak was here
+    //hitting weakpoints will trigger the kb
+    public void OnWeakPointHit()
+    {
+        if (knockbackComponent != null)
+        {
+            knockbackComponent.ApplyKnockback();
+        }
+
+        //staggerv2 staggers on every weakpoint hit
+        if (staggerComponentV2 != null)
+        {
+            staggerComponentV2.OnWeakPointHit();
+        }
+    }
+
+    //returns total amount of weakpoints for the enemy
+    public int GetTotalWeakpoints()
+    {
+        return weakpoints.Length;
+
+    }
+
     public bool UnlockWeakPointById(string weakPointId)
     {
         return WeakPointRegistry.UnlockWardedWeakPointById(weakPointId);
+
     }
 }
