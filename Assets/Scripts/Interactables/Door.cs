@@ -3,16 +3,33 @@ using UnityEngine.InputSystem;
 
 public class Door : MonoBehaviour, IInteractable
 {
-    public bool clockwise;
+    public enum doorState
+    {
+        open,
+        ajar,
+        closed,
+    }
+
     public LayerMask interactable;
     InputAction collectAction;  // this could be rebound to a different action if you prefer
     public bool unlocked;   // at the moment the door can theoretically be "locked" open but thats neither here nor there
-    private bool open;
+    public doorState state;
+    public float speed = 5;
+    private Quaternion targetRotation;
+    public float openAngle = -90;
+    public float ajarAngle = -20;
+    public float closedAngle = 0;
+    public Collider doorCollider;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         collectAction = InputSystem.actions.FindAction("Collect");
+        targetRotation = transform.rotation;
+        if (doorCollider == null)
+        {
+            doorCollider = GetComponentInChildren<Collider>();
+        }
     }
 
     // Update is called once per frame
@@ -23,17 +40,28 @@ public class Door : MonoBehaviour, IInteractable
         {
             if (collectAction.WasReleasedThisFrame() && unlocked && GetComponentInChildren<Collider>() == hit.collider)
             {
-                if (clockwise && !open || !clockwise && open)
+                if (state != doorState.open)
                 {
-                    transform.Rotate(0, 90, 0);
-                    open = !open;
+                    targetRotation = Quaternion.AngleAxis(openAngle, transform.up);
+                    state = doorState.open;
                 }
                 else
                 {
-                    transform.Rotate(0, -90, 0);
-                    open = !open;
+                    targetRotation = Quaternion.AngleAxis(ajarAngle, transform.up);
+                    state = doorState.ajar;
                 }
+
             }
+        }
+
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, speed * Time.deltaTime);
+        if (transform.rotation != targetRotation && doorCollider.enabled)
+        {
+            doorCollider.enabled = false;
+        }
+        else if (transform.rotation == targetRotation && !doorCollider.enabled)
+        {
+            doorCollider.enabled = true;
         }
     }
 
@@ -43,8 +71,22 @@ public class Door : MonoBehaviour, IInteractable
         {
             unlocked = true;
             Debug.Log("The sound of a door unlocking. Woah so immersive.");
-            if (clockwise) transform.Rotate(0, 20, 0); // temp ajar functionality
-            if (!clockwise) transform.Rotate(0, -20, 0);
+
+        }
+    }
+
+    public void Close()
+    {
+        Close(true);    //this can be set to false depending on what you want the default behaviour to be
+    }
+
+    public void Close(bool locked)  //locked bool determines if door locks on close
+    {
+        targetRotation = Quaternion.AngleAxis(closedAngle, transform.up);
+        state = doorState.closed;
+        if (locked)
+        {
+            unlocked = false;
         }
     }
 }
