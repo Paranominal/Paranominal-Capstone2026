@@ -9,8 +9,13 @@ public class EnemyStagger : MonoBehaviour
     [SerializeField] private float staggerDuration = 2f;
     [SerializeField] private bool debugMode = false;
 
+    //delegate to notify when stagger ends
+    public delegate void OnStaggerEndHandler();
+    public event OnStaggerEndHandler OnStaggerEnd;
+
     private NavMeshAgent navAgent;
     private Rigidbody rb;
+    private StaggerColorEffect colorEffect;
     private bool isStaggered = false;
     private int totalWeakpoints = 0;
     private int weakpointsDestroyed = 0;
@@ -24,6 +29,7 @@ public class EnemyStagger : MonoBehaviour
         //cache the main movement components
         navAgent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
+        colorEffect = GetComponent<StaggerColorEffect>();
 
         //find the weakpoints on the enemies
         WeakPointManager manager = GetComponentInChildren<WeakPointManager>();
@@ -76,9 +82,11 @@ public class EnemyStagger : MonoBehaviour
         }
     }
 
-    //stagger disables enemy movement for a set duration isStaggered
-    private void TriggerStagger()
+    //stagger disables enemy movement for a set duration
+    private void TriggerStagger(float duration = -1f)
     {
+        if (duration <= 0) duration = staggerDuration; 
+        
         if (isStaggered)
             return;
 
@@ -89,11 +97,11 @@ public class EnemyStagger : MonoBehaviour
         if (staggerCoroutine != null)
             StopCoroutine(staggerCoroutine);
 
-        staggerCoroutine = StartCoroutine(PerformStagger());
+        staggerCoroutine = StartCoroutine(PerformStagger(duration));
     }
 
     //handles duration and recovery
-    private IEnumerator PerformStagger()
+    private IEnumerator PerformStagger(float duration)
     {
         isStaggered = true;
 
@@ -101,13 +109,16 @@ public class EnemyStagger : MonoBehaviour
         DisableMovement();
 
         //wait for the duration to end
-        yield return new WaitForSeconds(staggerDuration);
+        yield return new WaitForSeconds(duration);
        
         EnableMovement();
         isStaggered = false;
 
         if (debugMode)
             Debug.Log($"[EnemyStagger] {gameObject.name} recovered from stagger", gameObject);
+
+        //notify subscribers that stagger has ended
+        OnStaggerEnd?.Invoke();
     }
 
     //disables all movement
@@ -123,18 +134,30 @@ public class EnemyStagger : MonoBehaviour
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
+
+        //apply stagger color effect
+        if (colorEffect != null)
+        {
+            colorEffect.ApplyStaggerColor();
+        }
     }
 
-    //re-enables movmement
+    //re-enables movement
     private void EnableMovement()
     {
         if (navAgent != null && navAgent.isOnNavMesh)
         {
             navAgent.isStopped = false;
         }
+
+        //restore original sprite color
+        if (colorEffect != null)
+        {
+            colorEffect.RestoreOriginalColor();
+        }
     }
 
-    //returns whether the enemy is staggerred
+    //returns whether the enemy is staggered
     public bool IsStaggered => isStaggered;
 
     //returns number of destroyed weakpoints
