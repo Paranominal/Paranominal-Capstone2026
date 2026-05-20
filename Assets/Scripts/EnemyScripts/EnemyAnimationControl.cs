@@ -15,7 +15,7 @@ public class EnemyAnimationControl : MonoBehaviour
     void Update()
     {
         SetAnimSpeed();
-        StaggerSprite();
+        if (enemyStagger != null) StaggerSprite();
     }
     private void SetAnimSpeed()
     {
