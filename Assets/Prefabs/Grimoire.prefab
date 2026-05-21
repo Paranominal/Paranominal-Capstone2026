@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7132848572541092434}
   - component: {fileID: 1090110928602918560}
   - component: {fileID: 7926319934065651701}
+  - component: {fileID: 2847827877754305373}
   m_Layer: 9
   m_Name: Grimoire
   m_TagString: Untagged
@@ -96,6 +97,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PhotoSnapshots
   combinedCam: {fileID: 0}
   snapshotRT: {fileID: 8400000, guid: ba0fe6e5b85e03841b791463339920a8, type: 2}
+--- !u!114 &2847827877754305373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6535952568432753539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adaf885219ac6c5479807693b25d8261, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  grimMaterial: {fileID: 2100000, guid: 184628c9aba8c524da3bfc36dd0bbb51, type: 2}
+  fineTexture: {fileID: 2800000, guid: 6e443cc19094f4e469f7b6995bce9a46, type: 3}
+  fineEmission: {fileID: 2800000, guid: ac0b61494fac7a74bbcbd640cf0818ec, type: 3}
+  medTexture: {fileID: 2800000, guid: 9084490b8c04d114a9c7143aba4fc794, type: 3}
+  medEmission: {fileID: 2800000, guid: 73298362888261444948deb1f0deb180, type: 3}
+  woundedTexture: {fileID: 2800000, guid: a9c7ee2ebbc458c43a42a8355560e2b9, type: 3}
+  woundedEmission: {fileID: 2800000, guid: 1ff1c98cb24ff904ab39696ce1940d91, type: 3}
+  fearLevel: 0
+  debugMode: 1
 --- !u!1001 &998176791482269656
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -459,7 +481,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   grimoireAnimator: {fileID: 7071875587345286126}
   grimoireScrollInput: {fileID: 5104623742680006299, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
-  PlayerMoveInput: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  playerMoveInput: {fileID: 0}
+  scanActionInput: {fileID: 0}
+  debugMode: 0
 --- !u!4 &2158529282408854767 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5900473113903386770, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}

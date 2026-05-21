@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem;
 using NUnit.Framework;
+using Unity.VisualScripting;
 
 public class GrimoireAnimManager : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class GrimoireAnimManager : MonoBehaviour
     private bool playerIsMoving;
     private bool isOpen;
     private bool isCasting;
+    public bool debugMode;
 
     void Start()
     {
@@ -30,7 +32,7 @@ public class GrimoireAnimManager : MonoBehaviour
         OpenOnScroll();
         CheckCast();
 
-        DoDebugLog();
+        if (debugMode) DoDebugLog();
     }
     private void OpenOnScroll()
     {
