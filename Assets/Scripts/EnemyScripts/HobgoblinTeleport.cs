@@ -37,14 +37,6 @@ public class HobgoblinTeleport : EnemyBehaviourBase
         }
     }
 
-    private void OnDestroy()
-    {
-        //unsubscribe from stagger end event
-        if (staggerV3 != null)
-        {
-            staggerV3.OnStaggerEnd -= HandleStaggerEnded;
-        }
-    }
 
     //called when stagger ends, triggers teleport if player is visible
     private void HandleStaggerEnded()
