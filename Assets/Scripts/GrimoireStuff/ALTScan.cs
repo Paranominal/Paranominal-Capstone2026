@@ -9,6 +9,7 @@ public class ALTScan : MonoBehaviour
     InputAction collectAction;  // i started implementing collecting as a seperate set of scripts and then realised it was going to either be so wrapped up in this as to be problematic or duplicate so much code it would be incredibly questionable. so. voila.
     private ALTGrimoire grimoire;
     private ALTScannableObject scannedNow;
+    private Raycaster raycaster;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -19,14 +20,16 @@ public class ALTScan : MonoBehaviour
         {
             grimoire = FindAnyObjectByType<ALTGrimoire>();
         }
+        if (raycaster == null)
+        {
+            raycaster = FindAnyObjectByType<Raycaster>();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector2 mousePos = Pointer.current != null ? Pointer.current.position.ReadValue() : Vector2.zero;
-        Ray ray = Camera.main.ScreenPointToRay(mousePos);
-        if (Physics.Raycast(ray, out RaycastHit hit, interactRange, scannable))
+        if (Physics.Raycast(raycaster.Ray, out RaycastHit hit, interactRange, scannable))
         {
             // Debug.DrawLine(transform.position, hit.point, Color.cyan, 10); // can view this in gizmos mode to help with debugging
             ALTScannableObject tempScan = hit.collider.GetComponent<ALTScannableObject>();

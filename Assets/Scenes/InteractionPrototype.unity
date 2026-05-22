@@ -935,49 +935,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &919800738 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
-  m_PrefabInstance: {fileID: 1188532876}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &919800744
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919800738}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry:
-    entryName: Second Totem
-    flavourText: Should be destroyed.
-    hintText: Time to find the last one...
-    completeText: 
-    snapshotImage: {fileID: 0}
-  outline: {fileID: 919800745}
-  collectable: 0
---- !u!114 &919800745
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919800738}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Outline
-  outlineMode: 1
-  outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 5
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
 --- !u!1001 &1048188984
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -997,6 +954,10 @@ PrefabInstance:
     - target: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
       propertyPath: m_TagString
       value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 4958462924062620638, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
+      propertyPath: outline
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7874209755911341293, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -1044,6 +1005,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8720586407624190275, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
+    - {fileID: 4958462924062620638, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -1062,13 +1024,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 798536049851109342, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
-      propertyPath: outline
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
       propertyPath: m_Name
       value: Totem (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4958462924062620638, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
+      propertyPath: entry.hintText
+      value: Time to find the last one...
+      objectReference: {fileID: 0}
+    - target: {fileID: 4958462924062620638, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
+      propertyPath: entry.entryName
+      value: Second Totem
       objectReference: {fileID: 0}
     - target: {fileID: 9030708360822107332, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1110,17 +1076,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 8720586407624190275, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 919800745}
-    - targetCorrespondingSourceObject: {fileID: 1934390079477389898, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 919800744}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6789adb6f19b5944ca2f1506d2427129, type: 3}
 --- !u!1 &1313399787
 GameObject:
@@ -1178,6 +1137,8 @@ MonoBehaviour:
   ajarAngle: -20
   closedAngle: 0
   doorCollider: {fileID: 0}
+  isArenaLocked: 0
+  ajarDistance: 20
 --- !u!114 &1313399791
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1225,6 +1186,63 @@ Transform:
   - {fileID: 832575519}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &181543207534701303
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 937215020809856926, guid: 66aba5c6f9d49af47a8628260e3b487d, type: 3}
+      propertyPath: m_Name
+      value: Raycast Manager
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201257147332958978, guid: 66aba5c6f9d49af47a8628260e3b487d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.35147
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201257147332958978, guid: 66aba5c6f9d49af47a8628260e3b487d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201257147332958978, guid: 66aba5c6f9d49af47a8628260e3b487d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -5.47145
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201257147332958978, guid: 66aba5c6f9d49af47a8628260e3b487d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201257147332958978, guid: 66aba5c6f9d49af47a8628260e3b487d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201257147332958978, guid: 66aba5c6f9d49af47a8628260e3b487d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201257147332958978, guid: 66aba5c6f9d49af47a8628260e3b487d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201257147332958978, guid: 66aba5c6f9d49af47a8628260e3b487d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201257147332958978, guid: 66aba5c6f9d49af47a8628260e3b487d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201257147332958978, guid: 66aba5c6f9d49af47a8628260e3b487d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 66aba5c6f9d49af47a8628260e3b487d, type: 3}
 --- !u!1001 &8410527903815319473
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1296,3 +1314,4 @@ SceneRoots:
   - {fileID: 1313399789}
   - {fileID: 306475977}
   - {fileID: 355057542}
+  - {fileID: 181543207534701303}

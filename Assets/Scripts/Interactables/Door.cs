@@ -24,6 +24,7 @@ public class Door : MonoBehaviour, IInteractable
     public bool isArenaLocked;
     public float ajarDistance = 3;
     private PlayerMover player;
+    private Raycaster raycaster;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -39,13 +40,16 @@ public class Door : MonoBehaviour, IInteractable
         {
             player = FindAnyObjectByType<PlayerMover>();    //there is no failsafe here if there's more than one playermover in the scene. don't fuck this up.
         }
+        if (raycaster == null)
+        {
+            raycaster = FindAnyObjectByType<Raycaster>();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Pointer.current.position.ReadValue());
-        if (Physics.Raycast(ray, out RaycastHit hit, 1000f, interactable))
+        if (Physics.Raycast(raycaster.Ray, out RaycastHit hit, 1000f, interactable))
         {
             if (collectAction.WasReleasedThisFrame() && unlocked && GetComponentInChildren<Collider>() == hit.collider)
             {
