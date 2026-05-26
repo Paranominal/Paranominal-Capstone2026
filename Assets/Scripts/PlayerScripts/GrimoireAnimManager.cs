@@ -8,6 +8,7 @@ public class GrimoireAnimManager : MonoBehaviour
 {
     [SerializeField] private Animator grimoireAnimator;
     private bool isAnimating;
+    [SerializeField] private ALTGrimoire altGrimoire;
     [SerializeField] private InputActionReference grimoireScrollInput;
     private InputAction grimoireScroll;
     [SerializeField] private InputActionReference playerMoveInput;
@@ -31,6 +32,7 @@ public class GrimoireAnimManager : MonoBehaviour
         CheckPlayerMovement();
         OpenOnScroll();
         CheckCast();
+        CheckIsMenuing();
 
         if (debugMode) DoDebugLog();
     }
@@ -87,6 +89,11 @@ public class GrimoireAnimManager : MonoBehaviour
         else playerIsMoving = false;
 
         if (playerIsMoving && !isCasting) CloseGrimoire();
+    }
+    private void CheckIsMenuing()
+    {
+        if (altGrimoire.grimoireActive && !isOpen) OpenGrimoire();
+        //Debug.Log(altGrimoire.grimoireActive);
     }
     private void DoDebugLog()
     {
