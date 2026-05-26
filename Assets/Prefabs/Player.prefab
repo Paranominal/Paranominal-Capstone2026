@@ -403,6 +403,12 @@ GameObject:
   - component: {fileID: 8882670701309718443}
   - component: {fileID: 2358186202558148451}
   - component: {fileID: 5131432862222598260}
+  - component: {fileID: 4149097803871491918}
+  - component: {fileID: 7251890482144622992}
+  - component: {fileID: -2555144167512525037}
+  - component: {fileID: 7337831752931299538}
+  - component: {fileID: -5132669401407079164}
+  - component: {fileID: -5338344149167620294}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -683,6 +689,88 @@ MonoBehaviour:
   enableStrafeTilt: 1
   maxTiltAngle: 1
   tiltSpeed: 2
+--- !u!114 &4149097803871491918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99d723d0db31209419b05a4bb525486b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanModeVisuals
+--- !u!114 &7251890482144622992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f86b1dc698e04ee42a06e6c7cebe018b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FearBar
+  maxFear: 12
+  fearLevel: 0
+--- !u!114 &-2555144167512525037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 835900bdba0dbe8498b707c4e92610f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpiritBar
+  scoreManager: {fileID: 7337831752931299538}
+  fearBar: {fileID: 7251890482144622992}
+  visibleSpirit: 50
+--- !u!114 &7337831752931299538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 223291d1c9e1d6348aa7c2477011f387, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
+  weaponEvents: {fileID: 7212527224247330429}
+  pointsPerWeakpointHit: 10
+  currentScore: 50
+--- !u!114 &-5132669401407079164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f84da51c004e6d4cbad5712112ecd80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameOverHandler
+  spiritBar: {fileID: -2555144167512525037}
+--- !u!114 &-5338344149167620294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd1f953deb3d93a4ba30f125e73c63ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStatus
+  fearBar: {fileID: 7251890482144622992}
 --- !u!1 &3524502881056351253
 GameObject:
   m_ObjectHideFlags: 0
