@@ -12,7 +12,7 @@ public class GameOverHandler : MonoBehaviour
 
     private void HandleSpiritDepleted()
     {
-        Debug.Log("[GameOverHandler] Spirit depleted — Game Over."); // TODO: actual game over
+        Debug.Log("Game over!!! Final score:"); // TODO: actual game over
         UnityEditor.EditorApplication.isPlaying = false;
         Application.Quit();
     }
