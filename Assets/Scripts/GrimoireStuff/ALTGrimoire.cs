@@ -23,6 +23,7 @@ public class ALTGrimoire : MonoBehaviour
     [SerializeField] private TextMeshProUGUI flavourTextDisplay;
     [SerializeField] private TextMeshProUGUI hintCompletedTextDisplay;
     [SerializeField] private RawImage displayImage;
+    [SerializeField] private GameObject imageFrameParent;
 
     [Header("UI References: Navigation")]
     [SerializeField] private GameObject listContentParent;
@@ -37,6 +38,7 @@ public class ALTGrimoire : MonoBehaviour
     // Internal Navigation State
     private int currentEntry;
     private List<GameObject> entryButtons = new List<GameObject>();
+    private Vector2 polaroidBasePosition;
 
     // Input Actions
     private InputAction scrollGrimoireAction;
@@ -62,6 +64,8 @@ public class ALTGrimoire : MonoBehaviour
 
         InputSystem.actions.FindActionMap("UI").Disable(); //this will cause issues once we need a menu/pause system but it works for now
 
+        polaroidBasePosition = displayImage.rectTransform.anchoredPosition;
+
         if (entries != null) // sanity check
         {
             for (int i = 0; i < entries.Count; i++)
@@ -72,6 +76,11 @@ public class ALTGrimoire : MonoBehaviour
                 newEntryButton.GetComponent<Button>().onClick.AddListener(() => SelectEntry(currentIndex));
                 entryButtons.Add(newEntryButton);
             }
+        }
+
+        if (entries.Count == 0) 
+        { 
+            imageFrameParent.SetActive(false);
         }
         
     }
@@ -204,6 +213,9 @@ public class ALTGrimoire : MonoBehaviour
 
     public void UpdateText()    //handling this here for now while the rest of the grimoire gets written, should probably NOT ship with this functionality
     {
+        imageFrame.SetActive(true);
+        displayImage.gameObject.SetActive(true);
+
         entryNameDisplay.SetText(GetCurrentEntry().entryName);
         if (GetCurrentEntry().collected)
         {
@@ -216,6 +228,7 @@ public class ALTGrimoire : MonoBehaviour
         flavourTextDisplay.SetText(GetCurrentEntry().flavourText);
         hintCompletedTextDisplay.SetText(GetCurrentEntry().hintText);
         displayImage.texture = GetCurrentEntry().snapshotImage;
+        display
     }
 
     public void AddEntry(ALTGrimoireEntry entry, bool collected)
