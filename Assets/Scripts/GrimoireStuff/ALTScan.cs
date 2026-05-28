@@ -67,6 +67,7 @@ public class ALTScan : MonoBehaviour
                 {
                     grimoire.CollectEntry(scannedNow.entry);
                 }
+                AudioManager.PlaySound(SoundType.OBJECTS, null, 1);
                 Debug.Log("Destroyed " + scannedNow.gameObject);
                 Destroy(scannedNow.gameObject);
                 
