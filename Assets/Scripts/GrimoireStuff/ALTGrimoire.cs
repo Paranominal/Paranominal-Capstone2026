@@ -23,7 +23,7 @@ public class ALTGrimoire : MonoBehaviour
     [SerializeField] private TextMeshProUGUI flavourTextDisplay;
     [SerializeField] private TextMeshProUGUI hintCompletedTextDisplay;
     [SerializeField] private RawImage displayImage;
-    [SerializeField] private GameObject imageFrameParent;
+    [SerializeField] private RawImage imageFrameParent;
 
     [Header("UI References: Navigation")]
     [SerializeField] private GameObject listContentParent;
@@ -64,7 +64,7 @@ public class ALTGrimoire : MonoBehaviour
 
         InputSystem.actions.FindActionMap("UI").Disable(); //this will cause issues once we need a menu/pause system but it works for now
 
-        polaroidBasePosition = displayImage.rectTransform.anchoredPosition;
+        polaroidBasePosition = imageFrameParent.rectTransform.anchoredPosition;
 
         if (entries != null) // sanity check
         {
@@ -80,7 +80,7 @@ public class ALTGrimoire : MonoBehaviour
 
         if (entries.Count == 0) 
         { 
-            imageFrameParent.SetActive(false);
+            imageFrameParent.gameObject.SetActive(false);
         }
         
     }
@@ -213,8 +213,7 @@ public class ALTGrimoire : MonoBehaviour
 
     public void UpdateText()    //handling this here for now while the rest of the grimoire gets written, should probably NOT ship with this functionality
     {
-        imageFrame.SetActive(true);
-        displayImage.gameObject.SetActive(true);
+        imageFrameParent.gameObject.SetActive(true);
 
         entryNameDisplay.SetText(GetCurrentEntry().entryName);
         if (GetCurrentEntry().collected)
@@ -228,7 +227,14 @@ public class ALTGrimoire : MonoBehaviour
         flavourTextDisplay.SetText(GetCurrentEntry().flavourText);
         hintCompletedTextDisplay.SetText(GetCurrentEntry().hintText);
         displayImage.texture = GetCurrentEntry().snapshotImage;
-        display
+
+        // random polaroid position/rotation
+        Random.InitState(currentEntry);
+        float offsetX = Random.Range(-8f, 8); // increasing the x amount by too much increases the likelihood of overlapping text
+        float offsetY = Random.Range(-15f, 15); 
+        float rotation = Random.Range(-20f, 20f);
+        imageFrameParent.rectTransform.anchoredPosition = polaroidBasePosition + new Vector2(offsetX, offsetY);
+        imageFrameParent.rectTransform.localEulerAngles = new Vector3(0f, 0f, rotation);
     }
 
     public void AddEntry(ALTGrimoireEntry entry, bool collected)
