@@ -12,9 +12,12 @@ public class GrimoireFearStates : MonoBehaviour
         grimoireMaterial.SetTexture("_BaseMap", fineTexture);
         grimoireMaterial.SetTexture("_EmissionMap", fineEmission);
 
-        foreach (var localKeywordName in grimoireMaterial.shaderKeywords)
+        if (debugMode)
         {
-            Debug.Log("Local shader keyword " + localKeywordName + " is currently enabled");
+            foreach (var localKeywordName in grimoireMaterial.shaderKeywords)
+            {
+                Debug.Log("Local shader keyword " + localKeywordName + " is currently enabled");
+            }
         }
     }
 

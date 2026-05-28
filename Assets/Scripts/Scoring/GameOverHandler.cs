@@ -4,6 +4,7 @@ public class GameOverHandler : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private SpiritBar spiritBar;
+    [SerializeField] private ScoreManager scoreManager;
 
     private void Awake()
     {
@@ -12,8 +13,13 @@ public class GameOverHandler : MonoBehaviour
 
     private void HandleSpiritDepleted()
     {
-        Debug.Log("Game over!!! Final score:"); // TODO: actual game over
+        Debug.Log("Game over!!! Final score: {scoreManager.currentScore}");
+        // TODO: actual game over
+
+#if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
+#else
         Application.Quit();
+#endif
     }
 }
