@@ -1,5 +1,7 @@
 public enum SoundType
 {
-    ENVIRONMENT,
-    OBJECTS
+    ITEM_PICKUP,
+    DOOR_OPEN,
+    DOOR_CLOSE,
+    UNLOCK,
 }

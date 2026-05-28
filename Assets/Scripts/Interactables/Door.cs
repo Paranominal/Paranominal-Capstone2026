@@ -21,6 +21,8 @@ public class Door : MonoBehaviour, IInteractable
     public float closedAngle = 0;
     public Collider doorCollider;
 
+    public AudioSource audioSource;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -44,11 +46,13 @@ public class Door : MonoBehaviour, IInteractable
                 {
                     targetRotation = Quaternion.AngleAxis(openAngle, transform.up);
                     state = doorState.open;
+                    AudioManager.PlaySound(SoundType.DOOR_OPEN, audioSource, 1);
                 }
                 else
                 {
                     targetRotation = Quaternion.AngleAxis(ajarAngle, transform.up);
                     state = doorState.ajar;
+                    AudioManager.PlaySound(SoundType.DOOR_CLOSE, audioSource, 1);
                 }
 
             }
@@ -70,6 +74,7 @@ public class Door : MonoBehaviour, IInteractable
         if (!unlocked)
         {
             unlocked = true;
+            AudioManager.PlaySound(SoundType.UNLOCK, audioSource, 1);
             Debug.Log("The sound of a door unlocking. Woah so immersive.");
 
         }
