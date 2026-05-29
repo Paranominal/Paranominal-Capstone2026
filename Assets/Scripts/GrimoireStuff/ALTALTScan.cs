@@ -38,64 +38,73 @@ public class ALTALTScan : MonoBehaviour
             SetScanMode(wantScanMode);
         }
 
-        if (!inScanMode) return;
-
         Vector2 mousePos = Pointer.current != null ? Pointer.current.position.ReadValue() : Vector2.zero;
         Ray ray = Camera.main.ScreenPointToRay(mousePos);
+
         if (Physics.Raycast(ray, out RaycastHit hit, scanRange, scannable))
         {
             // Debug.DrawLine(transform.position, hit.point, Color.cyan, 10); // can view this in gizmos mode to help with debugging
             ALTScannableObject target = hit.collider.GetComponent<ALTScannableObject>();
             //Debug.Log("Hit " + tempScan);
-            if (target != currentTarget)
-            {
-                if (currentTarget != null)
-                {
-                    visuals.ApplyOutlineColor(currentTarget); // reset previous target's colour if stopped scanning
-                }
-                scanProgress = 0f;
-                currentTarget = target;
-                if (grimoire.CompareEntry(currentTarget.entry)) // opening the previous one if already scanned
-                {
-                    grimoire.SelectEntry(grimoire.GetEntryID(currentTarget.entry.entryName));
-                }
-            }
 
-            bool alreadyScanned = grimoire.CompareEntry(currentTarget.entry);  
-
-            if (!alreadyScanned)
-            {
-                scanProgress += Time.deltaTime / scanDuration;
-                scanProgress = Mathf.Clamp01(scanProgress);
-
-                currentTarget.outline.OutlineColor = Color.Lerp(ScanModeVisuals.GetCategoryColor(currentTarget), Color.white, scanProgress);
-
-                if (scanProgress >= 1f)
-                {
-                    grimoire.AddEntry(currentTarget.entry);
-                    visuals.ApplyOutlineColor(currentTarget);
-                    scanProgress = 0f;
-                }
-            }
-
-            reticle.SetProgress(alreadyScanned ? 0f : scanProgress);
-
-            if (collectAction.WasReleasedThisFrame() && currentTarget.collectable)
+            // runs regardless of scan mode
+            if (collectAction.WasReleasedThisFrame() && target.collectable)
             {
                 // item gets collected here
-                if (!grimoire.CompareEntry(currentTarget.entry))   //checks if the entry for the collected item has been scanned and adds it if not
+                if (!grimoire.CompareEntry(target.entry))
                 {
-                    grimoire.AddEntry(currentTarget.entry, true);
+                    grimoire.AddEntry(target.entry, true);
                 }
                 else
                 {
-                    grimoire.CollectEntry(currentTarget.entry);
+                    grimoire.CollectEntry(target.entry);
                 }
-                Debug.Log("Destroyed " + currentTarget.gameObject);
-                Destroy(currentTarget.gameObject);
-                currentTarget = null;
-                scanProgress = 0f;
-                reticle.SetProgress(0f);
+                Debug.Log("Destroyed " + target.gameObject);
+                Destroy(target.gameObject);
+
+                if (target == currentTarget)
+                {
+                    currentTarget = null;
+                    scanProgress = 0f;
+                    reticle.SetProgress(0f);
+                }
+                return; // nothing left to scan this frame
+            }
+
+            if (inScanMode)
+            {
+                if (target != currentTarget)
+                {
+                    if (currentTarget != null)
+                    {
+                        visuals.ApplyOutlineColor(currentTarget); // reset previous target's colour if stopped scanning
+                    }
+                    scanProgress = 0f;
+                    currentTarget = target;
+                    if (grimoire.CompareEntry(currentTarget.entry)) // opening the previous one if already scanned
+                    {
+                        grimoire.SelectEntry(grimoire.GetEntryID(currentTarget.entry.entryName));
+                    }
+                }
+
+                bool alreadyScanned = grimoire.CompareEntry(currentTarget.entry);
+
+                if (!alreadyScanned)
+                {
+                    scanProgress += Time.deltaTime / scanDuration;
+                    scanProgress = Mathf.Clamp01(scanProgress);
+
+                    currentTarget.outline.OutlineColor = Color.Lerp(ScanModeVisuals.GetCategoryColor(currentTarget), Color.white, scanProgress);
+
+                    if (scanProgress >= 1f)
+                    {
+                        grimoire.AddEntry(currentTarget.entry);
+                        visuals.ApplyOutlineColor(currentTarget);
+                        scanProgress = 0f;
+                    }
+                }
+
+                reticle.SetProgress(alreadyScanned ? 0f : scanProgress);
             }
         }
         else
