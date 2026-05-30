@@ -10,6 +10,10 @@ public class ALTScan : MonoBehaviour
     private ALTGrimoire grimoire;
     private ALTScannableObject scannedNow;
 
+    [Header("Sounds")]
+    [SerializeField] private SoundDataSO itemPickupSound;
+    [SerializeField] private SoundDataSO scanSound;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -62,15 +66,16 @@ public class ALTScan : MonoBehaviour
                 if (!grimoire.CompareEntry(scannedNow.entry))   //checks if the entry for the collected item has been scanned and adds it if not
                 {
                     grimoire.AddEntry(scannedNow.entry, true);
+                    AudioManager.PlaySound(scanSound);
                 }
                 else
                 {
                     grimoire.CollectEntry(scannedNow.entry);
                 }
-                AudioManager.PlaySound(SoundType.ITEM_PICKUP, null, 1);
+
                 Debug.Log("Destroyed " + scannedNow.gameObject);
                 Destroy(scannedNow.gameObject);
-                
+                AudioManager.PlaySound(itemPickupSound);
             }
         }
         else if (scannedNow != null)
