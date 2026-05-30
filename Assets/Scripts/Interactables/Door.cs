@@ -24,6 +24,7 @@ public class Door : MonoBehaviour, IInteractable
     [Header("Sounds")]
     [SerializeField] private SoundDataSO openSound;
     [SerializeField] private SoundDataSO closeSound;
+    [SerializeField] private SoundDataSO lockedSound;
     [SerializeField] private AudioSource audioSource;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -59,6 +60,10 @@ public class Door : MonoBehaviour, IInteractable
                     AudioManager.PlaySound(closeSound, audioSource);
                 }
 
+            }
+            else if (collectAction.WasReleasedThisFrame() && !unlocked && GetComponentInChildren<Collider>() == hit.collider)
+            {
+                AudioManager.PlaySound(lockedSound, audioSource);
             }
         }
 
