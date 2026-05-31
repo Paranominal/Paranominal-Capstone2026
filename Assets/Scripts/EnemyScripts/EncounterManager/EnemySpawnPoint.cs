@@ -27,7 +27,7 @@ public class EnemySpawnPoint : MonoBehaviour
     }
 
     // Spawns the enemy assigned to the requested wave and returns its EnemyBehaviourBase if one was created.
-    public EnemyBehaviourBase SpawnEnemy(int currentWave, EnemyEncounterManager ownerSpawner)
+    public EnemyBehaviourBase SpawnEnemy(int currentWave, IEnemySpawner ownerSpawner)
     {
         if (currentWave <= 0)
         {
