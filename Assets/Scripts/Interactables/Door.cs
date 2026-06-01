@@ -15,6 +15,8 @@ public class Door : MonoBehaviour, IInteractable
     public bool unlocked;   // at the moment the door can theoretically be "locked" open but thats neither here nor there
     public doorState state;
     public float speed = 10;
+    public float fastMod = 2;
+    private float actualSpeed;
     private Quaternion targetRotation;
     public float openAngle = -90;
     public float ajarAngle = -20;
@@ -44,6 +46,7 @@ public class Door : MonoBehaviour, IInteractable
         {
             raycaster = FindAnyObjectByType<Raycaster>();
         }
+        actualSpeed = speed;
     }
 
     // Update is called once per frame
@@ -67,7 +70,7 @@ public class Door : MonoBehaviour, IInteractable
             }
         }
 
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, speed * Time.deltaTime);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, actualSpeed * Time.deltaTime);
         if (transform.rotation != targetRotation && doorCollider.enabled)
         {
             doorCollider.enabled = false;
@@ -75,6 +78,11 @@ public class Door : MonoBehaviour, IInteractable
         else if (transform.rotation == targetRotation && !doorCollider.enabled)
         {
             doorCollider.enabled = true;
+        }
+
+        if (transform.rotation == targetRotation && actualSpeed != speed)   // used to reset speed whenever the door comes to a stop
+        {
+            actualSpeed = speed;
         }
 
         if (Vector3.Distance(player.transform.position, transform.position) > ajarDistance && state == doorState.open)
@@ -94,18 +102,27 @@ public class Door : MonoBehaviour, IInteractable
         }
     }
 
-    public void Close()
+    public void Slam()
     {
-        Close(true);    //this can be set to false depending on what you want the default behaviour to be
+        Close(true, true);    //this can be set to false depending on what you want the default behaviour to be
     }
 
-    public void Close(bool locked)  //locked bool determines if door locks on close
+    public void Close()
+    {
+        Close(false, false);    //by default this closes calm and chill and nothing bad happens
+    }
+
+    public void Close(bool locked, bool fast)  //locked bool determines if door locks on close, fast bool determines if the speed is multiplied or not
     {
         targetRotation = startAngle * Quaternion.AngleAxis(closedAngle, transform.up);
         state = doorState.closed;
         if (locked)
         {
             unlocked = false;
+        }
+        if (fast)
+        {
+            actualSpeed = speed * fastMod;
         }
     }
 
