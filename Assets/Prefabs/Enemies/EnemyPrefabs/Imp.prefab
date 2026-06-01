@@ -65,8 +65,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   animator: {fileID: 6843362271996118515}
-  enemySprite: {fileID: 3977782472309977724}
-  enemyStagger: {fileID: 0}
+  enemySprite: {fileID: 0}
+  enemyStagger: {fileID: 7256983414231218104}
   animSpeed: 1
 --- !u!95 &6843362271996118515
 Animator:
@@ -137,7 +137,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 1152460412, guid: e39f89bc1a9b51e4390d825649a7568c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -158,15 +158,15 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5173996233358262159}
-  - component: {fileID: 7980951876251254891}
   - component: {fileID: 2880104385379219663}
   - component: {fileID: 8163443709998664147}
-  - component: {fileID: 1751649786895920319}
+  - component: {fileID: 7980951876251254891}
+  - component: {fileID: 7256983414231218104}
   - component: {fileID: 2688743458007262411}
   - component: {fileID: 4048073775354982405}
   - component: {fileID: 5100726843572659257}
   - component: {fileID: 8341946064033690024}
-  m_Layer: 8
+  m_Layer: 15
   m_Name: Imp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -189,23 +189,6 @@ Transform:
   - {fileID: 4840613836788867929}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7980951876251254891
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6780255270900913490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c936537ae8577547866f4342903735a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeakPointManager
-  weakpoints:
-  - {fileID: 2623976667796609166}
-  - {fileID: 9057432543407784191}
-  - {fileID: 1192530790080143990}
-  - {fileID: 3891542749503898057}
 --- !u!114 &2880104385379219663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,8 +225,8 @@ MonoBehaviour:
   navAgent: {fileID: 2688743458007262411}
   followSpeed: 3
   stopDistance: 1
-  stagger: {fileID: 0}
---- !u!114 &1751649786895920319
+  stagger: {fileID: 7256983414231218104}
+--- !u!114 &7980951876251254891
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -252,14 +235,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 6780255270900913490}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dfe4198c73869834192a2201ac7a57c8, type: 3}
+  m_Script: {fileID: 11500000, guid: 9c936537ae8577547866f4342903735a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyStaggerV3
-  staggerDuration: 1
+  m_EditorClassIdentifier: Assembly-CSharp::WeakPointManager
+  weakpoints:
+  - {fileID: 2623976667796609166}
+  - {fileID: 9057432543407784191}
+  - {fileID: 1192530790080143990}
+  - {fileID: 3891542749503898057}
+--- !u!114 &7256983414231218104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780255270900913490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d49d50defecf244d9e2d39fcffcdd3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
+  staggerDuration: 2
   debugMode: 0
-  scanStunDuration: 2
-  maxScanStaggers: -1
-  scanStaggerCooldown: 1.5
+  enemySprite: {fileID: 0}
 --- !u!195 &2688743458007262411
 NavMeshAgent:
   m_ObjectHideFlags: 0
