@@ -5,6 +5,7 @@ public class ALTScannableObject : MonoBehaviour
     public ALTGrimoireEntry entry;
     public Outline outline; // used for objects that DO NOT have a mesh outline
     public bool collectable;
+    public float scanDuration = 2f; // how long should this object take to scan?
 
     public bool usesMeshOutline = false;
     public Renderer outlineRenderer; // used for objects that DO have a mesh outline

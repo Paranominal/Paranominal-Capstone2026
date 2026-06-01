@@ -713,8 +713,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f86b1dc698e04ee42a06e6c7cebe018b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FearBar
-  maxFear: 12
+  maxFear: 100
   fearLevel: 0
+  fearDamage: 8
 --- !u!114 &-2555144167512525037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -729,7 +730,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpiritBar
   scoreManager: {fileID: 7337831752931299538}
   fearBar: {fileID: 7251890482144622992}
-  visibleSpirit: 50
+  visibleSpirit: 100
 --- !u!114 &7337831752931299538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -772,6 +773,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatus
   fearBar: {fileID: 7251890482144622992}
+  spiritBar: {fileID: -2555144167512525037}
 --- !u!1 &3524502881056351253
 GameObject:
   m_ObjectHideFlags: 0
@@ -950,7 +952,6 @@ MonoBehaviour:
     m_Bits: 256
   visuals: {fileID: 4149097803871491918}
   reticle: {fileID: 8956247744504574599}
-  scanDuration: 2
   scanRange: 20
 --- !u!1 &4268114859131718060
 GameObject:

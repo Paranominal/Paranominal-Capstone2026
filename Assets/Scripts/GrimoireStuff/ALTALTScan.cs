@@ -14,7 +14,6 @@ public class ALTALTScan : MonoBehaviour
 
     private bool inScanMode = false;
     private float scanProgress = 0f;
-    public float scanDuration = 2f;
     public float scanRange = 20f;
 
 
@@ -91,7 +90,7 @@ public class ALTALTScan : MonoBehaviour
 
                 if (!alreadyScanned)
                 {
-                    scanProgress += Time.deltaTime / scanDuration;
+                    scanProgress += Time.deltaTime / currentTarget.scanDuration;
                     scanProgress = Mathf.Clamp01(scanProgress);
 
                     float pulse = (Mathf.Sin(Time.time * Mathf.Lerp(3f, 8f, scanProgress)) + 1f) / 2f; // makes the fancy pulsing
