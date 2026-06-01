@@ -95,7 +95,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 870021979, guid: 82996cf26ef161c4484ae5992d52c384, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -117,20 +117,17 @@ GameObject:
   m_Component:
   - component: {fileID: 5454403040594385629}
   - component: {fileID: 8614396900537901332}
-  - component: {fileID: 2322140149872491998}
   - component: {fileID: 1894387095101060742}
+  - component: {fileID: 1483370790856417942}
   - component: {fileID: 4280961717600154479}
   - component: {fileID: 7258074684030722955}
   - component: {fileID: 2522395779099145161}
-<<<<<<<< HEAD:Assets/Prefabs/Enemies/Bat.v.26.04.07 1.prefab
-  m_Layer: 0
-  m_Name: Bat.v.26.04.07 1
-========
   - component: {fileID: -357270100409380465}
   - component: {fileID: 697487408336731762}
+  - component: {fileID: 8232089063731135401}
+  - component: {fileID: -7151052709924787694}
   m_Layer: 8
   m_Name: EyeBat
->>>>>>>> dev:Assets/Prefabs/Enemies/EnemyPrefabs/EyeBat.prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -150,6 +147,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8521917907078320552}
+  - {fileID: 4951780373933805465}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8614396900537901332
@@ -172,29 +170,6 @@ MonoBehaviour:
     m_Bits: 4294967295
   eyeHeight: 1.6
   targetHeight: 1.2
---- !u!114 &2322140149872491998
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7915909615733791053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78580b95999b8b24989d8b2675df109a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EyeBatBehaviour
-  vision: {fileID: 8614396900537901332}
-  detectionTimer: 3
-  hoverHeight: 2.5
-  turnSpeed: 180
-  patrolSpeed: 3
-  wanderRadius: 1
-  idleWaitTime: 2
-  followSpeed: 10
-  keepDistance: 3
-  swoopCooldown: 4
-  swoopSpeed: 10
 --- !u!114 &1894387095101060742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,6 +186,29 @@ MonoBehaviour:
   - {fileID: 9122484986075877985}
   - {fileID: 940071960326430286}
   - {fileID: 2207208786353684176}
+--- !u!114 &1483370790856417942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915909615733791053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0baadbcf1b888c42ad3fb894447dafc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EyeBatBehaviour_PrototypeSwoop
+  vision: {fileID: 8614396900537901332}
+  detectionTimer: 3
+  hoverHeight: 2.5
+  turnSpeed: 180
+  patrolSpeed: 3
+  wanderRadius: 5
+  idleWaitTime: 2
+  followSpeed: 10
+  keepDistance: 4
+  swoopAttack: {fileID: 8232089063731135401}
+  swoopCooldown: 4
 --- !u!114 &4280961717600154479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -312,6 +310,115 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &8232089063731135401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915909615733791053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 635a7ec8bd1ba2144aff564946a28910, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SwoopAttack
+  hitbox: {fileID: 2292610576746257784}
+  windupDuration: 0.6
+  recoveryDuration: 0.2
+  diveSpeed: 14
+  returnSpeed: 6
+  riseSpeed: 4
+  divePastDistance: 1.5
+  windupTurnSpeed: 360
+  damage: 10
+  debugMode: 1
+--- !u!114 &-7151052709924787694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915909615733791053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38d4606f9ea4e2c47a45cd6c93942b9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyKnockback
+  knockbackForce: 10
+  movementLockDuration: 0.12
+--- !u!1001 &777204630496428280
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 5454403040594385629}
+    m_Modifications:
+    - target: {fileID: 5652419394934148961, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5652419394934148961, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.175
+      objectReference: {fileID: 0}
+    - target: {fileID: 5652419394934148961, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5652419394934148961, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5652419394934148961, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5652419394934148961, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5652419394934148961, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5652419394934148961, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5652419394934148961, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5652419394934148961, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5925735058375107295, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
+      propertyPath: m_Name
+      value: HitBox
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
+--- !u!114 &2292610576746257784 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1520477600550804864, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
+  m_PrefabInstance: {fileID: 777204630496428280}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e12cc5aca71d944cbf39a1d02d3c1a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hitbox
+--- !u!4 &4951780373933805465 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5652419394934148961, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
+  m_PrefabInstance: {fileID: 777204630496428280}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1142091917421662898
 PrefabInstance:
   m_ObjectHideFlags: 0
