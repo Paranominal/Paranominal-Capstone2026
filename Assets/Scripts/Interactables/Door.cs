@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(AudioSource))]
 public class Door : MonoBehaviour, IInteractable
 {
     public enum doorState
@@ -20,6 +21,12 @@ public class Door : MonoBehaviour, IInteractable
     public float ajarAngle = -20;
     public float closedAngle = 0;
     public Collider doorCollider;
+
+    [Header("Sounds")]
+    [SerializeField] private SoundDataSO openSound;
+    [SerializeField] private SoundDataSO closeSound;
+    [SerializeField] private SoundDataSO lockedSound;
+    [SerializeField] private AudioSource audioSource;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -44,13 +51,20 @@ public class Door : MonoBehaviour, IInteractable
                 {
                     targetRotation = Quaternion.AngleAxis(openAngle, transform.up);
                     state = doorState.open;
+                    AudioManager.PlaySound(openSound, audioSource);
+
                 }
                 else
                 {
                     targetRotation = Quaternion.AngleAxis(ajarAngle, transform.up);
                     state = doorState.ajar;
+                    AudioManager.PlaySound(closeSound, audioSource);
                 }
 
+            }
+            else if (collectAction.WasReleasedThisFrame() && !unlocked && GetComponentInChildren<Collider>() == hit.collider)
+            {
+                AudioManager.PlaySound(lockedSound, audioSource);
             }
         }
 
