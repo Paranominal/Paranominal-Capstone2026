@@ -11,6 +11,10 @@ public class ALTScan : MonoBehaviour
     private ALTScannableObject scannedNow;
     private Raycaster raycaster;
 
+    [Header("Sounds")]
+    [SerializeField] private SoundDataSO itemPickupSound;
+    [SerializeField] private SoundDataSO scanSound;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -34,8 +38,8 @@ public class ALTScan : MonoBehaviour
             // Debug.DrawLine(transform.position, hit.point, Color.cyan, 10); // can view this in gizmos mode to help with debugging
             ALTScannableObject tempScan = hit.collider.GetComponent<ALTScannableObject>();
 
-            //temp stagger iteration for staggering enemies when they are scanned
-            EnemyStaggerV3 scannedEnemy = hit.collider.GetComponentInParent<EnemyStaggerV3>();
+            //triggers stagger when scanned
+            EnemyStagger scannedEnemy = hit.collider.GetComponentInParent<EnemyStagger>();
 
 
             //Debug.Log("Hit " + tempScan);
@@ -65,14 +69,16 @@ public class ALTScan : MonoBehaviour
                 if (!grimoire.CompareEntry(scannedNow.entry))   //checks if the entry for the collected item has been scanned and adds it if not
                 {
                     grimoire.AddEntry(scannedNow.entry, true);
+                    AudioManager.PlaySound(scanSound);
                 }
                 else
                 {
                     grimoire.CollectEntry(scannedNow.entry);
                 }
+
                 Debug.Log("Destroyed " + scannedNow.gameObject);
                 Destroy(scannedNow.gameObject);
-                
+                AudioManager.PlaySound(itemPickupSound);
             }
         }
         else if (scannedNow != null)

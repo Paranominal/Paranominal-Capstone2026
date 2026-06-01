@@ -1,13 +1,11 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(EnemyVisionSensor))]
 public class HobgoblinTeleport : EnemyBehaviourBase
 {
-    //stores the references required for teleport behavior
-    [Header("References")]
-    [SerializeField] private NavMeshAgent navAgent;
-    [SerializeField] private EnemyStaggerV3 staggerV3;
+    //references resolved at awake
+    private NavMeshAgent navAgent;
+    private EnemyStagger stagger;
 
     [Header("Teleport Escape")]
     //distance to teleport away from player
@@ -20,10 +18,10 @@ public class HobgoblinTeleport : EnemyBehaviourBase
     protected override void Awake()
     {
         base.Awake();
-        if (navAgent == null) navAgent = GetComponent<NavMeshAgent>();
-        if (staggerV3 == null) staggerV3 = GetComponent<EnemyStaggerV3>();
+        navAgent = GetComponent<NavMeshAgent>();
+        stagger = GetComponent<EnemyStagger>();
 
-        //try to find the room bounds from parent RoomEntryDetector
+        //try to find the room bounds from parent roomentrydetector
         RoomEntryDetector roomDetector = GetComponentInParent<RoomEntryDetector>();
         if (roomDetector != null)
         {
@@ -31,12 +29,11 @@ public class HobgoblinTeleport : EnemyBehaviourBase
         }
 
         //subscribe to stagger end event
-        if (staggerV3 != null)
+        if (stagger != null)
         {
-            staggerV3.OnStaggerEnd += HandleStaggerEnded;
+            stagger.OnStaggerEnd += HandleStaggerEnded;
         }
     }
-
 
     //called when stagger ends, triggers teleport if player is visible
     private void HandleStaggerEnded()
@@ -85,7 +82,7 @@ public class HobgoblinTeleport : EnemyBehaviourBase
             searchRadius = Mathf.Max(bounds.extents.x, bounds.extents.z);
         }
 
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 30; i++)
         {
             Vector3 randomPoint;
             if (roomCollider != null)
@@ -105,16 +102,25 @@ public class HobgoblinTeleport : EnemyBehaviourBase
 
             if (navAgent != null && navAgent.isOnNavMesh)
             {
-                if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, teleportDistance, navAgent.areaMask))
+                //use a tiny radius so it never grabs navmesh on the other side of a wall
+                if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 0.5f, navAgent.areaMask))
                 {
-                    teleportTarget = hit.position;
-                    return true;
+                    //use navmesh raycast to ensure we do not cross a wall boundary
+                    if (!NavMesh.Raycast(transform.position, hit.position, out NavMeshHit navHit, navAgent.areaMask))
+                    {
+                        teleportTarget = hit.position;
+                        return true;
+                    }
                 }
             }
             else
             {
-                teleportTarget = randomPoint;
-                return true;
+                //fallback validation check without navmesh
+                if (roomCollider == null || Vector3.Distance(randomPoint, roomCollider.ClosestPoint(randomPoint)) < 0.1f)
+                {
+                    teleportTarget = randomPoint;
+                    return true;
+                }
             }
         }
 
