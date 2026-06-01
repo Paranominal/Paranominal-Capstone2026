@@ -31,8 +31,8 @@ public class ALTScan : MonoBehaviour
             // Debug.DrawLine(transform.position, hit.point, Color.cyan, 10); // can view this in gizmos mode to help with debugging
             ALTScannableObject tempScan = hit.collider.GetComponent<ALTScannableObject>();
 
-            //temp stagger iteration for staggering enemies when they are scanned
-            EnemyStaggerV3 scannedEnemy = hit.collider.GetComponentInParent<EnemyStaggerV3>();
+            //triggers stagger when scanned
+            EnemyStagger scannedEnemy = hit.collider.GetComponentInParent<EnemyStagger>();
 
 
             //Debug.Log("Hit " + tempScan);
