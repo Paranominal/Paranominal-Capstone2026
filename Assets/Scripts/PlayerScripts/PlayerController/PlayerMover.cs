@@ -9,6 +9,12 @@ public class PlayerMover : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float walkSpeed = 6f;
 
+    [Header("Sound")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private SoundDataSO playerFootstep;
+    [SerializeField] private float footstepInterval = 0.45f;
+    private float footstepTimer;
+
     public bool canMove = true;
     public bool CanMove => canMove;
 
@@ -31,4 +37,28 @@ public class PlayerMover : MonoBehaviour
         Vector3 move = (transform.forward * moveInput.y + transform.right * moveInput.x) * walkSpeed;
         characterController.Move(move * Time.deltaTime);
     }
+
+    // Plays a footstep when the player is actively moving on the ground, on a fixed interval.
+    private void HandleFootsteps(Vector2 moveInput)
+    {
+        bool isMoving = moveInput.sqrMagnitude > 0.01f;
+        bool isGrounded = characterController.isGrounded;
+ 
+        if (!isMoving || !isGrounded)
+        {
+            // Reset so the next movement start plays a step immediately
+            footstepTimer = 0f;
+            return;
+        }
+ 
+        footstepTimer -= Time.deltaTime;
+        if (footstepTimer <= 0f)
+        {
+            if (playerFootstep != null && audioSource != null)
+                AudioManager.PlaySound(playerFootstep, audioSource);
+ 
+            footstepTimer = footstepInterval;
+        }
+    }
+
 }
