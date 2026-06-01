@@ -12,34 +12,44 @@ public class Door : MonoBehaviour, IInteractable
     }
 
     public LayerMask interactable;
-    InputAction collectAction;  // this could be rebound to a different action if you prefer
-    public bool unlocked;   // at the moment the door can theoretically be "locked" open but thats neither here nor there
+    InputAction collectAction;
+    public bool unlocked;
     public doorState state;
     public float speed = 5;
+    public float slamSpeed = 20f;
     private Quaternion targetRotation;
+    private float currentSpeed;
     public float openAngle = -90;
     public float ajarAngle = -20;
     public float closedAngle = 0;
     public Collider doorCollider;
 
-    [Header("Sounds")]
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private SoundDataSO slamSound;
     [SerializeField] private SoundDataSO openSound;
     [SerializeField] private SoundDataSO closeSound;
     [SerializeField] private SoundDataSO lockedSound;
-    [SerializeField] private AudioSource audioSource;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    // Caches references and sets the initial target rotation.
     void Start()
     {
         collectAction = InputSystem.actions.FindAction("Collect");
         targetRotation = transform.rotation;
+        currentSpeed = speed;
+
         if (doorCollider == null)
         {
             doorCollider = GetComponentInChildren<Collider>();
         }
+
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
     }
 
-    // Update is called once per frame
+    // Handles interaction input and lerps the door toward its target rotation.
     void Update()
     {
         Ray ray = Camera.main.ScreenPointToRay(Pointer.current.position.ReadValue());
@@ -52,7 +62,6 @@ public class Door : MonoBehaviour, IInteractable
                     targetRotation = Quaternion.AngleAxis(openAngle, transform.up);
                     state = doorState.open;
                     AudioManager.PlaySound(openSound, audioSource);
-
                 }
                 else
                 {
@@ -60,7 +69,6 @@ public class Door : MonoBehaviour, IInteractable
                     state = doorState.ajar;
                     AudioManager.PlaySound(closeSound, audioSource);
                 }
-
             }
             else if (collectAction.WasReleasedThisFrame() && !unlocked && GetComponentInChildren<Collider>() == hit.collider)
             {
@@ -68,7 +76,8 @@ public class Door : MonoBehaviour, IInteractable
             }
         }
 
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, speed * Time.deltaTime);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, currentSpeed * Time.deltaTime);
+
         if (transform.rotation != targetRotation && doorCollider.enabled)
         {
             doorCollider.enabled = false;
@@ -76,6 +85,7 @@ public class Door : MonoBehaviour, IInteractable
         else if (transform.rotation == targetRotation && !doorCollider.enabled)
         {
             doorCollider.enabled = true;
+            currentSpeed = speed;
         }
     }
 
@@ -85,22 +95,48 @@ public class Door : MonoBehaviour, IInteractable
         {
             unlocked = true;
             Debug.Log("The sound of a door unlocking. Woah so immersive.");
-
         }
     }
 
     public void Close()
     {
-        Close(true);    //this can be set to false depending on what you want the default behaviour to be
+        Close(true);
     }
 
-    public void Close(bool locked)  //locked bool determines if door locks on close
+    public void Close(bool locked)
     {
         targetRotation = Quaternion.AngleAxis(closedAngle, transform.up);
         state = doorState.closed;
+
         if (locked)
         {
             unlocked = false;
+        }
+    }
+
+    // Locks the door if it is already closed, or slams it shut if it is open or ajar.
+    public void LockOrSlam()
+    {
+        if (state == doorState.closed)
+        {
+            unlocked = false;
+        }
+        else
+        {
+            Slam();
+        }
+    }
+
+    // Slams the door shut at an increased speed and locks it.
+    // Plays the slam sound spatially if one is assigned.
+    public void Slam()
+    {
+        currentSpeed = slamSpeed;
+        Close(true);
+
+        if (slamSound != null && audioSource != null)
+        {
+            AudioManager.PlaySound(slamSound, audioSource);
         }
     }
 }

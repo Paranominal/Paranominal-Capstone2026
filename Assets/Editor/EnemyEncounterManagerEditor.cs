@@ -1,6 +1,6 @@
 // Summary: Custom editor for EnemyEncounterManager.
 // Hides standard or arena-specific fields based on the selected EncounterMode,
-// keeping the inspector clean for designers.
+// and shows door gating fields when that option is enabled.
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
@@ -12,21 +12,23 @@ public class EnemyEncounterManagerEditor : Editor
     {
         serializedObject.Update();
 
-        SerializedProperty encounterModeProp = serializedObject.FindProperty("encounterMode");
-        SerializedProperty maxWavesProp = serializedObject.FindProperty("maxWaves");
-        SerializedProperty timeBetweenWavesProp = serializedObject.FindProperty("timeBetweenWaves");
-        SerializedProperty spawnPointsProp = serializedObject.FindProperty("spawnPoints");
-        SerializedProperty enemyPoolProp = serializedObject.FindProperty("enemyPool");
-        SerializedProperty startingWaveProp = serializedObject.FindProperty("startingWave");
-        SerializedProperty budgetPerWaveProp = serializedObject.FindProperty("budgetPerWave");
-        SerializedProperty maxEnemiesPerWaveProp = serializedObject.FindProperty("maxEnemiesPerWave");
-        SerializedProperty spawnTimingModeProp = serializedObject.FindProperty("spawnTimingMode");
-        SerializedProperty waveDurationProp = serializedObject.FindProperty("waveDuration");
-        SerializedProperty spawnLocationModeProp = serializedObject.FindProperty("spawnLocationMode");
+        SerializedProperty encounterModeProp      = serializedObject.FindProperty("encounterMode");
+        SerializedProperty maxWavesProp           = serializedObject.FindProperty("maxWaves");
+        SerializedProperty timeBetweenWavesProp   = serializedObject.FindProperty("timeBetweenWaves");
+        SerializedProperty spawnPointsProp        = serializedObject.FindProperty("spawnPoints");
+        SerializedProperty enemyPoolProp          = serializedObject.FindProperty("enemyPool");
+        SerializedProperty startingWaveProp       = serializedObject.FindProperty("startingWave");
+        SerializedProperty budgetPerWaveProp      = serializedObject.FindProperty("budgetPerWave");
+        SerializedProperty maxEnemiesPerWaveProp  = serializedObject.FindProperty("maxEnemiesPerWave");
+        SerializedProperty spawnTimingModeProp    = serializedObject.FindProperty("spawnTimingMode");
+        SerializedProperty waveDurationProp       = serializedObject.FindProperty("waveDuration");
+        SerializedProperty spawnLocationModeProp  = serializedObject.FindProperty("spawnLocationMode");
         SerializedProperty randomiseSpawnPointProp = serializedObject.FindProperty("randomiseSpawnPoint");
-        SerializedProperty randomSpawnRadiusProp = serializedObject.FindProperty("randomSpawnRadius");
-        SerializedProperty groundLayerProp = serializedObject.FindProperty("groundLayer");
-        SerializedProperty resetCounterProp = serializedObject.FindProperty("resetCounter");
+        SerializedProperty randomSpawnRadiusProp  = serializedObject.FindProperty("randomSpawnRadius");
+        SerializedProperty groundLayerProp        = serializedObject.FindProperty("groundLayer");
+        SerializedProperty resetCounterProp       = serializedObject.FindProperty("resetCounter");
+        SerializedProperty useDoorGatingProp      = serializedObject.FindProperty("useDoorGating");
+        SerializedProperty doorsProp              = serializedObject.FindProperty("doors");
 
         EnemyEncounterManager.EncounterMode currentMode =
             (EnemyEncounterManager.EncounterMode)encounterModeProp.enumValueIndex;
@@ -99,6 +101,16 @@ public class EnemyEncounterManagerEditor : Editor
         // Shared encounter state.
         EditorGUILayout.LabelField("Encounter State", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(resetCounterProp);
+        EditorGUILayout.Space();
+
+        // Door gating.
+        EditorGUILayout.LabelField("Door Gating", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(useDoorGatingProp);
+
+        if (useDoorGatingProp.boolValue)
+        {
+            EditorGUILayout.PropertyField(doorsProp, true);
+        }
 
         serializedObject.ApplyModifiedProperties();
     }

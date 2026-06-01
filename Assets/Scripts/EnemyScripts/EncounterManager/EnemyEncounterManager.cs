@@ -66,6 +66,13 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     [HideInInspector] public bool isPlayerInRoom = false;
     [SerializeField] private float resetCounter = 5f;
 
+    // --- Door Gating ---
+    [Header("Door Gating")]
+    [SerializeField] private bool useDoorGating = false;
+    [SerializeField] private List<Door> doors = new List<Door>();
+
+    private bool isPlayerPastDoor = false;
+
     private int currentWave;
     private int nextSpawnPointIndex;
     private bool hasEncounterStarted;
@@ -133,7 +140,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
 
             if (!hasEncounterStarted && !hasEncounterCompleted)
             {
-                StartEncounter();
+                TryStartEncounter();
             }
             else
             {
@@ -142,6 +149,8 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         }
         else
         {
+            isPlayerPastDoor = false;
+
             if (hasEncounterStarted && !hasEncounterCompleted)
             {
                 PauseSpawnedEnemies();
@@ -150,7 +159,43 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         }
     }
 
-    // Starts the encounter wave loop the first time the player enters the room.
+    // Called by a DoorRadiusDetector when the player exits any door's radius.
+    // If door gating is enabled, this satisfies the distance condition for starting the encounter.
+    public void NotifyDoorRadiusExited()
+    {
+        if (!useDoorGating || hasEncounterStarted || hasEncounterCompleted)
+        {
+            return;
+        }
+
+        isPlayerPastDoor = true;
+        TryStartEncounter();
+    }
+
+    // Starts the encounter if all entry conditions are satisfied.
+    // Without door gating, only the room flag is required.
+    // With door gating, both the room flag and the door radius flag must be set.
+    private void TryStartEncounter()
+    {
+        if (hasEncounterStarted || hasEncounterCompleted)
+        {
+            return;
+        }
+
+        if (!isPlayerInRoom)
+        {
+            return;
+        }
+
+        if (useDoorGating && !isPlayerPastDoor)
+        {
+            return;
+        }
+
+        StartEncounter();
+    }
+
+    // Starts the encounter wave loop and slams/locks all registered doors.
     private void StartEncounter()
     {
         if (hasEncounterStarted)
@@ -159,7 +204,45 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         }
 
         hasEncounterStarted = true;
+
+        if (useDoorGating)
+        {
+            LockDoors();
+        }
+
         waveLoopCoroutine = StartCoroutine(WaveLoopRoutine());
+    }
+
+    // Slams or locks each registered door depending on its current state.
+    private void LockDoors()
+    {
+        for (int i = 0; i < doors.Count; i++)
+        {
+            Door door = doors[i];
+
+            if (door == null)
+            {
+                continue;
+            }
+
+            door.LockOrSlam();
+        }
+    }
+
+    // Unlocks all registered doors once the encounter is complete.
+    private void UnlockDoors()
+    {
+        for (int i = 0; i < doors.Count; i++)
+        {
+            Door door = doors[i];
+
+            if (door == null)
+            {
+                continue;
+            }
+
+            door.unlocked = true;
+        }
     }
 
     // Repeats the full wave cycle of spawning, waiting, and advancing until the maximum number of waves is reached.
@@ -178,6 +261,11 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
 
         hasEncounterCompleted = true;
         waveLoopCoroutine = null;
+
+        if (useDoorGating)
+        {
+            UnlockDoors();
+        }
     }
 
     // Handles one full wave from spawning through to completion.
@@ -604,6 +692,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         spawnedEnemies.Clear();
         enemiesToSpawn.Clear();
 
+        isPlayerPastDoor = false;
         currentWave = encounterMode == EncounterMode.Arena ? startingWave - 1 : 0;
         hasEncounterStarted = false;
         hasEncounterCompleted = false;
@@ -701,6 +790,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         return true;
     }
 
-    // Exposes the current encounter mode for the custom editor.
+    // Exposes fields for the custom editor.
     public EncounterMode CurrentEncounterMode => encounterMode;
+    public bool UseDoorGating => useDoorGating;
 }
