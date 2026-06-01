@@ -2,33 +2,22 @@ using UnityEngine;
 
 public class ShotgunInteraction : MonoBehaviour
 {
+    [SerializeField] private ALTGrimoire grimoire;
+    [SerializeField] private WeaponStateController stateController;
     private ShotgunCollection currentItem;
+    private ALTGrimoireEntry shotgunEntry;
+    private bool collected;
 
-    //private void Update()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.E) && currentItem != null)
-    //    {
-    //        currentItem.Interact();
-    //    }
-    //}
 
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    ShotgunCollection item = other.GetComponent<ShotgunCollection>();
+    void Update()
+    {
+        collected = grimoire.entries.Exists(shotgunEntry => shotgunEntry.entryName == "shotgun");
+        CollectShotgun();
+    }
 
-    //    if (item != null)
-    //    {
-    //        currentItem = item;
-    //    }
-    //}
-
-    //private void OnTriggerExit(Collider other)
-    //{
-    //    ShotgunCollection item = other.GetComponent<ShotgunCollection>();
-
-    //    if (item == currentItem)
-    //    {
-    //        currentItem = null;
-    //    }
-    //}
+    void CollectShotgun()
+    {
+        if (!collected) return;
+        stateController.SetWeaponEnabled(true);
+    }
 }
