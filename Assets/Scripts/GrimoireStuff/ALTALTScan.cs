@@ -16,6 +16,9 @@ public class ALTALTScan : MonoBehaviour
     private float scanProgress = 0f;
     public float scanRange = 20f;
 
+    [Header("Sounds")]
+    [SerializeField] private SoundDataSO itemPickupSound;
+    [SerializeField] private SoundDataSO scanSound;
 
     void Start()
     {
@@ -53,6 +56,7 @@ public class ALTALTScan : MonoBehaviour
                 if (!grimoire.CompareEntry(target.entry))
                 {
                     grimoire.AddEntry(target.entry, true);
+                    AudioManager.PlaySound(scanSound);
                 }
                 else
                 {
@@ -60,6 +64,7 @@ public class ALTALTScan : MonoBehaviour
                 }
                 Debug.Log("Destroyed " + target.gameObject);
                 Destroy(target.gameObject);
+                AudioManager.PlaySound(itemPickupSound);
 
                 if (target == currentTarget)
                 {
