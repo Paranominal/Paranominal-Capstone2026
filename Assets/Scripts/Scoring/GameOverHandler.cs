@@ -22,7 +22,7 @@ public class GameOverHandler : MonoBehaviour
         }
     }
 
-    private void HandleSpiritDepleted()
+    public void HandleSpiritDepleted()
     {
         Debug.Log($"Game over!!! Final score: {scoreManager.currentScore}");
 
