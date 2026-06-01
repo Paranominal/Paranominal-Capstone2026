@@ -92,8 +92,9 @@ public class ALTALTScan : MonoBehaviour
                 }
 
                 bool alreadyScanned = grimoire.CompareEntry(currentTarget.entry);
+                EnemyStagger scannedEnemy = hit.collider.GetComponentInParent<EnemyStagger>();
 
-                if (!alreadyScanned)
+                if (!alreadyScanned || scannedEnemy != null)
                 {
                     scanProgress += Time.deltaTime / currentTarget.scanDuration;
                     scanProgress = Mathf.Clamp01(scanProgress);
@@ -104,13 +105,22 @@ public class ALTALTScan : MonoBehaviour
 
                     if (scanProgress >= 1f)
                     {
-                        grimoire.AddEntry(currentTarget.entry);
+                        if (!alreadyScanned)
+                        {
+                            grimoire.AddEntry(currentTarget.entry);
+                        }
+
+                        if (scannedEnemy != null)
+                        {
+                            scannedEnemy.OnEnemyScanned();
+                        }
+
                         visuals.ApplyOutlineColor(currentTarget);
                         scanProgress = 0f;
                     }
                 }
 
-                reticle.SetProgress(alreadyScanned ? 0f : scanProgress);
+                reticle.SetProgress((alreadyScanned && scannedEnemy == null) ? 0f : scanProgress);
             }
         }
         else
