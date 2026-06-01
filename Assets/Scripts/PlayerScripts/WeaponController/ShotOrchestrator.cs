@@ -12,6 +12,11 @@ public class ShotOrchestrator : MonoBehaviour
     [SerializeField] private GunVisuals gunVisuals;
     [SerializeField] private WeaponStateController weaponStateController;
 
+        [Header("Sound")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private SoundDataSO shotgunFire;
+    [SerializeField] private SoundDataSO shotgunReload;
+
     private bool wasReloading;
 
     private void Awake()
@@ -36,6 +41,7 @@ public class ShotOrchestrator : MonoBehaviour
 
         if (weaponFiringLogic.IsReloading)
         {
+            AudioManager.PlaySound(shotgunReload, audioSource);
             if (!wasReloading && weaponEvents != null)
                 weaponEvents.RaiseReloadStarted();
 
@@ -129,7 +135,7 @@ public class ShotOrchestrator : MonoBehaviour
         {
             return target.ResolveHit(shotType);
         }
-
+        AudioManager.PlaySound(shotgunFire, audioSource);
         weaponHitscan.LogWorldHitOrMiss();
         return false;
     }

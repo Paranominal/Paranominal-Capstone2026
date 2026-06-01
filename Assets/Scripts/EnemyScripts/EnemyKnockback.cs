@@ -5,7 +5,7 @@ using UnityEngine.AI;
 public class EnemyKnockback : MonoBehaviour
 {
     [Header("Knockback")]
-    [SerializeField] private float knockbackForce = 10f;
+    [SerializeField] private float knockbackForce = 15f; 
     [SerializeField] private float movementLockDuration = 0.12f;
 
     private NavMeshAgent navAgent;
@@ -41,73 +41,51 @@ public class EnemyKnockback : MonoBehaviour
             StopCoroutine(restoreCoroutine);
         }
 
-        //disable all AI behaviors during knockback
+        //disable all behaviors during knockback
         SetBehavioursEnabled(false);
 
-        //interrupt any active navigation
+        //start the controlled knockback slide
+        restoreCoroutine = StartCoroutine(KnockbackRoutine(knockDir));
+    }
+
+    private IEnumerator KnockbackRoutine(Vector3 knockDir)
+    {
+        float elapsedTime = 0f;
+
         if (navAgent != null && navAgent.isOnNavMesh)
         {
+            //interrupt any active navigation
             navAgent.isStopped = true;
             navAgent.ResetPath();
+
+            //smoothly push the enemy without leaving the navmesh
+            while (elapsedTime < movementLockDuration)
+            {
+                navAgent.Move(knockDir * (knockbackForce * Time.deltaTime));
+                elapsedTime += Time.deltaTime;
+                //wait for the next frame
+                yield return null; 
+            }
+
+            navAgent.isStopped = false;
         }
-
-        bool appliedPhysicsKnockback = false;
-
-        //apply knockback via physics if rigidbody is available and not kinematic
-        if (rb != null && !rb.isKinematic)
+        else if (rb != null && !rb.isKinematic)
         {
+            //disable the navmeshagent entirely so physics work properly (yes, this is a fallback)
+            if (navAgent != null) navAgent.enabled = false;
+            
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             rb.AddForce(knockDir * knockbackForce, ForceMode.VelocityChange);
-            appliedPhysicsKnockback = true;
+
+            //wait for knockback lock duration to expire
+            yield return new WaitForSeconds(movementLockDuration);
+            
+            rb.linearVelocity = Vector3.zero;
+            if (navAgent != null) navAgent.enabled = true;
         }
 
-        //fallback to position-based knockback if physics is unavailable
-        if (!appliedPhysicsKnockback)
-        {
-            ApplyFallbackKnockback(knockDir);
-        }
-
-        //schedule behavior and movement restoration after lock duration
-        restoreCoroutine = StartCoroutine(RestoreMovementAfterDelay());
-    }
-
-    private void ApplyFallbackKnockback(Vector3 knockDir)
-    {
-        //calculate target position offset from current location
-        Vector3 targetPosition = transform.position + knockDir * (knockbackForce * 0.2f);
-
-        //use navmesh warping for better pathfinding integration
-        if (navAgent != null && navAgent.isOnNavMesh)
-        {
-            //try to find a valid navmesh position near the target
-            if (NavMesh.SamplePosition(targetPosition, out NavMeshHit hit, Mathf.Max(0.5f, knockbackForce), navAgent.areaMask))
-            {
-                navAgent.Warp(hit.position);
-                return;
-            }
-
-            //warp directly to target if sampling fails
-            navAgent.Warp(targetPosition);
-            return;
-        }
-
-        //direct position change if navmesh is unavailable
-        transform.position = targetPosition;
-    }
-
-    private IEnumerator RestoreMovementAfterDelay()
-    {
-        //wait for knockback lock duration to expire
-        yield return new WaitForSeconds(movementLockDuration);
-
-        //resume navmesh agent pathfinding
-        if (navAgent != null && navAgent.isOnNavMesh)
-        {
-            navAgent.isStopped = false;
-        }
-
-        //re-enable all AI behavior components
+        //re-enable all behavior components
         SetBehavioursEnabled(true);
         restoreCoroutine = null;
     }
@@ -115,8 +93,7 @@ public class EnemyKnockback : MonoBehaviour
     private void SetBehavioursEnabled(bool isEnabled)
     {
         //guard against missing or empty behavior array
-        if (enemyBehaviours == null || enemyBehaviours.Length == 0)
-            return;
+        if (enemyBehaviours == null || enemyBehaviours.Length == 0) return;
 
         //iterate through all behaviors and apply enabled state
         for (int i = 0; i < enemyBehaviours.Length; i++)
