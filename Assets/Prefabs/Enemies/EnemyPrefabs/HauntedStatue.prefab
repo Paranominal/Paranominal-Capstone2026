@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 5925632851110987253}
   - component: {fileID: 8194848053869983242}
   - component: {fileID: -3830337907838001936}
+  - component: {fileID: 7291461537017937302}
   m_Layer: 0
   m_Name: HauntedStatue
   m_TagString: Untagged
@@ -115,6 +116,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HauntedStatueBehaviour_PrototypeAoE
   vision: {fileID: 6924014765454415162}
+  crowdAvoidanceRadius: 1.25
+  crowdAvoidanceStrength: 0.85
   turnSpeed: 180
   aoeAttack: {fileID: 5925632851110987253}
   attackCooldown: 3
@@ -180,6 +183,19 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &7291461537017937302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7585221046304408112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fd8d9b4bb13db4b88d2c3e5a12150d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StaggerColorEffect
+  staggerColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &9060832233878377879
 GameObject:
   m_ObjectHideFlags: 0

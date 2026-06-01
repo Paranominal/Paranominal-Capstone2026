@@ -125,10 +125,11 @@ GameObject:
   - component: {fileID: 4048073775354982405}
   - component: {fileID: 7715542274334475992}
   - component: {fileID: 6151485535973328032}
-  - component: {fileID: 6125797347773108851}
   - component: {fileID: 6064368626902276524}
   - component: {fileID: 2613330379652825894}
   - component: {fileID: 7666949824764973486}
+  - component: {fileID: -8196229125008853200}
+  - component: {fileID: 3398322363394716667}
   m_Layer: 8
   m_Name: imp
   m_TagString: Untagged
@@ -187,10 +188,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HobgoblinBehaviour_PrototypeMelee
   vision: {fileID: 2880104385379219663}
   navAgent: {fileID: 2688743458007262411}
-  patrolSpeed: 2
-  wanderRadius: 8
-  idleWaitTime: 2
   followSpeed: 3
+  stopDistance: 1
   meleeAttack: {fileID: 2613330379652825894}
   attackRange: 2
   repositionRange: 2.5
@@ -229,6 +228,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
   staggerDuration: 2
   debugMode: 1
+  scanStunDuration: 2
+  maxScanStaggers: -1
+  scanStaggerCooldown: 1.5
 --- !u!195 &2688743458007262411
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -238,7 +240,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 6780255270900913490}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 1
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -305,25 +307,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Outline
   outlineMode: 0
-  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineColor: {r: 0.09066868, g: 0, b: 1, a: 1}
   outlineWidth: 2
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
---- !u!114 &6125797347773108851
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6780255270900913490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d49d50defecf244d9e2d39fcffcdd3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
-  staggerDuration: 1
-  debugMode: 0
 --- !u!114 &6064368626902276524
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -374,7 +362,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyKnockback
   knockbackForce: 10
-  movementLockDuration: 0.12
+  movementLockDuration: 0.15
+--- !u!114 &-8196229125008853200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780255270900913490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fd8d9b4bb13db4b88d2c3e5a12150d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StaggerColorEffect
+  staggerColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!114 &3398322363394716667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780255270900913490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fc9bac9c26501e428012cbd33ee5b95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HobgoblinTeleport
+  vision: {fileID: 0}
+  teleportDistance: 5
+  debugMode: 0
 --- !u!1001 &623349153814622997
 PrefabInstance:
   m_ObjectHideFlags: 0
