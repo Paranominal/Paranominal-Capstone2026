@@ -23,7 +23,7 @@ public class StaggerColorEffect : MonoBehaviour
 
             for (int i = 0; i < spriteRenderers.Length; i++)
             {
-                if (spriteRenderers[i].gameObject.tag != "WeakPoint") originalColors[i] = spriteRenderers[i].color;
+                originalColors[i] = spriteRenderers[i].color;
             }
 
             isInitialized = true;
@@ -41,7 +41,7 @@ public class StaggerColorEffect : MonoBehaviour
         for (int i = 0; i < spriteRenderers.Length; i++)
         {
             Color newColor = staggerColor;
-            spriteRenderers[i].color = newColor;
+            if (spriteRenderers[i].gameObject.tag != "WeakPoint") spriteRenderers[i].color = newColor;
         }
     }
 

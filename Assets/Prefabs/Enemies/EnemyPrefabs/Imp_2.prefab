@@ -35,6 +35,7 @@ Transform:
   - {fileID: 2246626588160685372}
   - {fileID: 8220002242998097845}
   - {fileID: 6097418222259991562}
+  - {fileID: 9056563018423737092}
   m_Father: {fileID: 5173996233358262159}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &157793635272378435
@@ -139,11 +140,11 @@ RectTransform:
   m_LocalScale: {x: 0.02032, y: 0.02032, z: 0.02032}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 5173996233358262159}
+  m_Father: {fileID: 4840613836788867929}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.5, y: 1.325}
+  m_AnchoredPosition: {x: 0.5, y: 1.825}
   m_SizeDelta: {x: 20, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &944327796763656371
@@ -349,7 +350,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 9056563018423737092}
   - {fileID: 4840613836788867929}
   - {fileID: 2312510617703023802}
   m_Father: {fileID: 0}
@@ -388,7 +388,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HobgoblinBehaviour_PrototypeMelee
   vision: {fileID: 2880104385379219663}
   navAgent: {fileID: 2688743458007262411}
-  followSpeed: 3
+  followSpeed: 4
   stopDistance: 1
   meleeAttack: {fileID: 2613330379652825894}
   attackRange: 2
@@ -496,7 +496,7 @@ MonoBehaviour:
     snapshotImage: {fileID: 0}
   outline: {fileID: 6151485535973328032}
   collectable: 0
-  scanDuration: 2
+  scanDuration: 1
   usesMeshOutline: 0
   outlineRenderer: {fileID: 0}
   outlineMaterialIndex: 1
@@ -567,7 +567,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38d4606f9ea4e2c47a45cd6c93942b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyKnockback
-  knockbackForce: 10
+  knockbackForce: 5
   movementLockDuration: 0.15
 --- !u!114 &-8196229125008853200
 MonoBehaviour:
@@ -611,7 +611,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   weakPointsManager: {fileID: 7980951876251254891}
   display: {fileID: 4254064174229396109}
-  toughness: 1
+  toughness: 2
   hp: 1
 --- !u!114 &8193359981861585842
 MonoBehaviour:
@@ -800,7 +800,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4434378975981373331, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: weakPointType
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalPosition.x
