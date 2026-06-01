@@ -94,7 +94,9 @@ public class ALTALTScan : MonoBehaviour
                     scanProgress += Time.deltaTime / scanDuration;
                     scanProgress = Mathf.Clamp01(scanProgress);
 
-                    currentTarget.outline.OutlineColor = Color.Lerp(ScanModeVisuals.GetCategoryColor(currentTarget), Color.white, scanProgress);
+                    float pulse = (Mathf.Sin(Time.time * Mathf.Lerp(3f, 8f, scanProgress)) + 1f) / 2f; // makes the fancy pulsing
+                    Color scanColor = Color.Lerp(Color.white, Color.green, pulse * scanProgress);
+                    currentTarget.SetOutlineColor(scanColor);
 
                     if (scanProgress >= 1f)
                     {

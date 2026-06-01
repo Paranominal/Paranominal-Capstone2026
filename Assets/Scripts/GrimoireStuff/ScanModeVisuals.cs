@@ -7,10 +7,8 @@ public class ScanModeVisuals : MonoBehaviour
 
     private List<ALTScannableObject> allScannables = new List<ALTScannableObject>();
 
-    public static Color ColObject = Color.green;
-    public static Color ColEnemy = Color.red;
-    public static Color ColKeyItem = Color.yellow;
-    public static Color ColScanned = Color.white;
+    public static Color colUnscanned = Color.white;
+    public static Color colScanned = Color.black;
 
     private void Awake()
     {
@@ -24,7 +22,7 @@ public class ScanModeVisuals : MonoBehaviour
         }
     }
 
-    public void RegisterScannable(ALTScannableObject s) // called by ALTScannableObject
+    public void RegisterScannable(ALTScannableObject s)
     {
         if (!allScannables.Contains(s))
         {
@@ -38,55 +36,21 @@ public class ScanModeVisuals : MonoBehaviour
         {
             if (s != null) // otherwise we get nullrefs lmao
             {
-                s.outline.enabled = active;
+                s.SetOutlineVisible(active);
                 if (active) ApplyOutlineColor(s);
             }
         }
     }
 
-    public void ApplyOutlineColor(ALTScannableObject s)
+    public void ApplyOutlineColor(ALTScannableObject s) // decides which colour it should be, setoutlinecolor actually applies it
     {
         if (ALTGrimoire.instance.CompareEntry(s.entry))
         {
-            s.outline.OutlineColor = ColScanned;
-            return;
+            s.SetOutlineColor(colScanned);
         }
-        switch (s.category) // there's probably a cleaner way of doing this but i am dumb
+        else
         {
-            case ScanCategory.Enemy:
-                {
-                    s.outline.OutlineColor = ColEnemy; 
-                    break;
-                }
-            case ScanCategory.KeyItem:
-                {
-                    s.outline.OutlineColor = ColKeyItem; 
-                    break;
-                }
-            default:
-                {
-                    s.outline.OutlineColor = ColObject; 
-                    break;
-                }
-        }
-    }
-
-    public static Color GetCategoryColor(ALTScannableObject s)
-    {
-        switch (s.category)
-        {
-            case ScanCategory.Enemy:
-                {
-                    return ColEnemy;
-                }
-            case ScanCategory.KeyItem: 
-                { 
-                    return ColKeyItem; 
-                }
-            default:
-                {
-                    return ColObject;
-                }
+            s.SetOutlineColor(colUnscanned);
         }
     }
 }
