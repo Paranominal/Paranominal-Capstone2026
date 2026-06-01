@@ -9,11 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1271792376151176368}
-  - component: {fileID: 6924014765454415162}
-  - component: {fileID: 2661741654052275633}
-  - component: {fileID: 1378227693022400216}
-  - component: {fileID: 5991142127238362800}
   - component: {fileID: 8325665426074419931}
+  - component: {fileID: 1378227693022400216}
+  - component: {fileID: 6924014765454415162}
+  - component: {fileID: -6242825993279238921}
+  - component: {fileID: 5925632851110987253}
   - component: {fileID: 8194848053869983242}
   - component: {fileID: -3830337907838001936}
   m_Layer: 0
@@ -39,74 +39,6 @@ Transform:
   - {fileID: 5787369184196353134}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6924014765454415162
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7585221046304408112}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 875e8c249219829468c559b51fdade0d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyVisionSensor
-  viewDistance: 14
-  viewAngle: 180
-  chaseDistance: 12
-  visionBlockers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  eyeHeight: 1.6
-  targetHeight: 1.2
---- !u!114 &2661741654052275633
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7585221046304408112}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 678250040a0280f448a07bb318e9fb1c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HauntedStatueBehaviour
-  vision: {fileID: 6924014765454415162}
-  turnSpeed: 180
---- !u!114 &1378227693022400216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7585221046304408112}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c936537ae8577547866f4342903735a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeakPointManager
-  weakpoints:
-  - {fileID: 6729942635406484585}
-  - {fileID: 5991326543013350113}
-  - {fileID: 2222561382265464862}
-  - {fileID: 9157204415754640170}
-  - {fileID: 6364177138404320866}
-  - {fileID: 1760927749143339351}
-  - {fileID: 4331166013458019792}
---- !u!114 &5991142127238362800
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7585221046304408112}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d49d50defecf244d9e2d39fcffcdd3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
-  staggerDuration: 2
-  debugMode: 1
 --- !u!136 &8325665426074419931
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -130,6 +62,86 @@ CapsuleCollider:
   m_Height: 4
   m_Direction: 1
   m_Center: {x: 0, y: 2, z: 0}
+--- !u!114 &1378227693022400216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7585221046304408112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c936537ae8577547866f4342903735a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeakPointManager
+  weakpoints:
+  - {fileID: 6729942635406484585}
+  - {fileID: 5991326543013350113}
+  - {fileID: 2222561382265464862}
+  - {fileID: 9157204415754640170}
+  - {fileID: 6364177138404320866}
+  - {fileID: 1760927749143339351}
+  - {fileID: 4331166013458019792}
+--- !u!114 &6924014765454415162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7585221046304408112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 875e8c249219829468c559b51fdade0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyVisionSensor
+  viewDistance: 14
+  viewAngle: 180
+  chaseDistance: 12
+  visionBlockers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  eyeHeight: 1.6
+  targetHeight: 1.2
+--- !u!114 &-6242825993279238921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7585221046304408112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0a9593ec9a12b84f9bc28bc378a92c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HauntedStatueBehaviour_PrototypeAoE
+  vision: {fileID: 6924014765454415162}
+  turnSpeed: 180
+  aoeAttack: {fileID: 5925632851110987253}
+  attackCooldown: 3
+  aimToleranceDegrees: 10
+--- !u!114 &5925632851110987253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7585221046304408112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c4cbe4f2c4ad104db1e1e0e01a2db06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AoEAttack
+  dangerZonePrefab: {fileID: 4280848331170967189, guid: c661cb46322183c4196f414021fa8d3e, type: 3}
+  strikePrefab: {fileID: 6737971453628130217, guid: c920a0b33fe08ad4eadcf7b604bc7168, type: 3}
+  telegraphDuration: 2
+  recoveryDuration: 1
+  telegraphRadius: 2
+  stationaryThreshold: 0.5
+  towardCasterOffset: 1
+  leadTime: 0.3
+  scatterRadius: 1.5
+  velocityWindowDuration: 0.15
+  debugMode: 0
 --- !u!114 &8194848053869983242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,7 +266,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 361439973, guid: 82996cf26ef161c4484ae5992d52c384, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
