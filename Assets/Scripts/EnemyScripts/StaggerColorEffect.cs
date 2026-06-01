@@ -1,3 +1,4 @@
+using UnityEditor.UIElements;
 using UnityEngine;
 
 public class StaggerColorEffect : MonoBehaviour
@@ -22,7 +23,7 @@ public class StaggerColorEffect : MonoBehaviour
 
             for (int i = 0; i < spriteRenderers.Length; i++)
             {
-                originalColors[i] = spriteRenderers[i].color;
+                if (spriteRenderers[i].gameObject.tag != "WeakPoint") originalColors[i] = spriteRenderers[i].color;
             }
 
             isInitialized = true;
