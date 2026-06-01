@@ -109,6 +109,15 @@ public class Door : MonoBehaviour, IInteractable
         }
     }
 
+    public void Open()
+    {
+        if (unlocked)
+        {
+            targetRotation = startAngle * Quaternion.AngleAxis(openAngle, transform.up);
+            state = doorState.open;
+        }
+    }
+
     public void Unlock()
     {
         Interact();
