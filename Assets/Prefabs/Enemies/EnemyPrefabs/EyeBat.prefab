@@ -126,6 +126,7 @@ GameObject:
   - component: {fileID: 697487408336731762}
   - component: {fileID: 8232089063731135401}
   - component: {fileID: -7151052709924787694}
+  - component: {fileID: 4505595464840246474}
   m_Layer: 8
   m_Name: EyeBat
   m_TagString: Untagged
@@ -199,16 +200,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EyeBatBehaviour_PrototypeSwoop
   vision: {fileID: 8614396900537901332}
-  detectionTimer: 3
+  crowdAvoidanceRadius: 1.25
+  crowdAvoidanceStrength: 0.85
   hoverHeight: 2.5
   turnSpeed: 180
-  patrolSpeed: 3
-  wanderRadius: 5
-  idleWaitTime: 2
   followSpeed: 10
   keepDistance: 4
   swoopAttack: {fileID: 8232089063731135401}
   swoopCooldown: 4
+  swoopSpeed: 10
 --- !u!114 &4280961717600154479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,6 +223,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
   staggerDuration: 2
   debugMode: 1
+  scanStunDuration: 2
+  maxScanStaggers: -1
+  scanStaggerCooldown: 1.5
 --- !u!54 &7258074684030722955
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -346,6 +349,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyKnockback
   knockbackForce: 10
   movementLockDuration: 0.12
+--- !u!114 &4505595464840246474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915909615733791053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fd8d9b4bb13db4b88d2c3e5a12150d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StaggerColorEffect
+  staggerColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1001 &777204630496428280
 PrefabInstance:
   m_ObjectHideFlags: 0

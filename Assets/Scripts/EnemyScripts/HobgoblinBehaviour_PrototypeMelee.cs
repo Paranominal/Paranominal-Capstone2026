@@ -5,46 +5,36 @@ using UnityEngine.AI;
 [RequireComponent(typeof(EnemyVisionSensor))]
 public class HobgoblinBehaviour_PrototypeMelee : EnemyBehaviourBase
 {
-    private enum EnemyState { Roam, Chase, Attacking }
+    private enum EnemyState { Chase, Attacking }
 
     //stores the vision sensor and nav agent references
     [Header("References")]
     [SerializeField] private NavMeshAgent navAgent;
 
-    //patrol path settings
-    [Header("Patrolling")]
-    [SerializeField] private float patrolSpeed = 2f;
-    [SerializeField] private float wanderRadius = 8f;
-    [SerializeField] private float idleWaitTime = 2f;
-
     //follow speed settings
     [Header("Following")]
     [SerializeField] private float followSpeed = 5f;
+    [SerializeField] private float stopDistance = 1f;
 
     //attack configuration
     [Header("Attack")]
     [SerializeField] private MeleeAttack meleeAttack;
-    [Tooltip("Distance at which the Hobgoblin will commit to a swing. The agent stops " +
-             "pursuing inside this range to avoid crowding the player.")]
+    [Tooltip("Distance at which the Hobgoblin will commit to a swing. The agent stops pursuing inside this range to avoid crowding the player.")]
     [SerializeField] private float attackRange = 2f;
-    [Tooltip("Distance at which the Hobgoblin resumes pursuing after stopping. Should be " +
-             "slightly larger than attackRange to prevent jittering at the boundary.")]
+    [Tooltip("Distance at which the Hobgoblin resumes pursuing after stopping. Should be slightly larger than attackRange to prevent jittering at the boundary.")]
     [SerializeField] private float repositionRange = 2.5f;
     [Tooltip("How closely the Hobgoblin must be facing the player before committing to a swing.")]
     [SerializeField] private float aimToleranceDegrees = 30f;
     [Tooltip("Time between attacks, measured from the end of one swing to the start of the next.")]
     [SerializeField] private float attackCooldown = 1.5f;
-    [Tooltip("Turn speed used when the Hobgoblin is in melee range but not currently attacking. " +
-             "Keeps it facing the player while waiting for the cooldown.")]
+    [Tooltip("Turn speed used when the Hobgoblin is in melee range but not currently attacking. Keeps it facing the player while waiting for the cooldown.")]
     [SerializeField] private float idleTurnSpeed = 360f;
 
     [Header("Status")]
     [SerializeField] private EnemyStagger stagger;
 
     //current ai state
-    private EnemyState currentState = EnemyState.Roam;
-    private Vector3 anchorPoint;
-    private bool isWaiting;
+    private EnemyState currentState = EnemyState.Chase;
     private bool isHolding;
     private float cooldownTimer;
 
@@ -52,7 +42,6 @@ public class HobgoblinBehaviour_PrototypeMelee : EnemyBehaviourBase
     protected override void Awake()
     {
         base.Awake();
-        anchorPoint = transform.position;
         if (navAgent == null) navAgent = GetComponent<NavMeshAgent>();
         if (stagger == null) stagger = GetComponent<EnemyStagger>();
         if (meleeAttack == null) meleeAttack = GetComponent<MeleeAttack>();
@@ -69,9 +58,8 @@ public class HobgoblinBehaviour_PrototypeMelee : EnemyBehaviourBase
                 navAgent.ResetPath();
             }
 
-            //clear hold/wait flags so resume starts fresh
+            //clear hold flag so resume starts fresh
             isHolding = false;
-            isWaiting = false;
             StopAllCoroutines();
         }
         else
@@ -125,53 +113,8 @@ public class HobgoblinBehaviour_PrototypeMelee : EnemyBehaviourBase
             return;
         }
 
-        //decide whether to roam or chase
-        UpdateBehaviourState();
-        //run the active state
-        RunCurrentState();
-    }
-
-    //call the active state behavior
-    private void RunCurrentState()
-    {
-        switch (currentState)
-        {
-            case EnemyState.Roam:
-                PerformRoam();
-                break;
-
-            case EnemyState.Chase:
-                PerformChase();
-                break;
-        }
-    }
-
-    //use sensor detection to choose the state
-    private void UpdateBehaviourState()
-    {
-        if (IsPlayerDetected())
-        {
-            currentState = EnemyState.Chase;
-
-            return;
-        }
-
-        //returning to roam - clear the hold flag so next chase starts fresh
-        isHolding = false;
-        currentState = EnemyState.Roam;
-    }
-
-    //follow the patrol path on the navmesh
-    private void PerformRoam()
-    {
-        if (isWaiting || navAgent == null || !navAgent.isOnNavMesh) return;
-
-        navAgent.speed = patrolSpeed;
-
-        if (!navAgent.hasPath || navAgent.remainingDistance < 0.5f)
-        {
-            StartCoroutine(WaitAtPatrolPoint());
-        }
+        //run chase behavior
+        PerformChase();
     }
 
     //pursue the player when out of range; hold position and face them when in range
@@ -249,25 +192,5 @@ public class HobgoblinBehaviour_PrototypeMelee : EnemyBehaviourBase
 
         meleeAttack.PerformAttack(VisionTarget);
         currentState = EnemyState.Attacking;
-    }
-
-    //pause before picking a new patrol point
-    private IEnumerator WaitAtPatrolPoint()
-    {
-        isWaiting = true;
-        yield return new WaitForSeconds(idleWaitTime);
-
-        Vector2 rand = Random.insideUnitCircle * wanderRadius;
-        Vector3 nextPoint = anchorPoint + new Vector3(rand.x, 0, rand.y);
-
-        if (navAgent != null && navAgent.isOnNavMesh) navAgent.SetDestination(nextPoint);
-
-        isWaiting = false;
-    }
-
-    //check if the player is in sight or range
-    private bool IsPlayerDetected()
-    {
-        return SensorDetectsTarget();
     }
 }

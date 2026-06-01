@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 4206877478203493182}
   - component: {fileID: 97054203973693678}
   - component: {fileID: -4000586417156685449}
+  - component: {fileID: 2480451604828081716}
   m_Layer: 8
   m_Name: Ghost
   m_TagString: Untagged
@@ -73,14 +74,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GhostBehaviour_PrototypeAttack
   vision: {fileID: 5409116871053633608}
-  detectionTimer: 5
+  crowdAvoidanceRadius: 1.25
+  crowdAvoidanceStrength: 0.85
   floatHeight: 0.6
   acceleration: 5
   turnSpeed: 120
-  wanderSpeed: 1.5
-  wanderRadius: 7
-  idleWaitTime: 3
-  chaseSpeed: 4
+  followSpeed: 3.5
+  keepDistance: 2
   hitbox: {fileID: 5818136416367540292}
   contactDamage: 10
 --- !u!114 &5425350769874602465
@@ -111,6 +111,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
   staggerDuration: 2
   debugMode: 1
+  scanStunDuration: 2
+  maxScanStaggers: -1
+  scanStaggerCooldown: 1.5
 --- !u!135 &4206877478203493182
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -170,6 +173,19 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &2480451604828081716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272941483086651391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fd8d9b4bb13db4b88d2c3e5a12150d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StaggerColorEffect
+  staggerColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &3649698560257739166
 GameObject:
   m_ObjectHideFlags: 0
