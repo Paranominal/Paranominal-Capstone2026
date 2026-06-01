@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameOverHandler : MonoBehaviour
 {
@@ -6,20 +7,30 @@ public class GameOverHandler : MonoBehaviour
     [SerializeField] private SpiritBar spiritBar;
     [SerializeField] private ScoreManager scoreManager;
 
+    public static int FinalScore { get; private set; }
+
     private void Awake()
     {
         spiritBar.OnSpiritDepleted += HandleSpiritDepleted;
     }
 
+    private void OnDestroy()
+    {   
+        if (spiritBar != null)
+        {
+            spiritBar.OnSpiritDepleted -= HandleSpiritDepleted;
+        }
+    }
+
     private void HandleSpiritDepleted()
     {
-        Debug.Log("Game over!!! Final score: {scoreManager.currentScore}");
-        // TODO: actual game over
+        Debug.Log($"Game over!!! Final score: {scoreManager.currentScore}");
 
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
+        if (scoreManager != null)
+        {
+            FinalScore = scoreManager.currentScore;
+        }
+
+        SceneManager.LoadScene(1);
     }
 }
