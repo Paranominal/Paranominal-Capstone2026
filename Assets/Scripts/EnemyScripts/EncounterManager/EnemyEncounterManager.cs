@@ -241,7 +241,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
                 continue;
             }
 
-            door.unlocked = true;
+            door.Unlock();
         }
     }
 
@@ -705,8 +705,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         spawnPoints.AddRange(GetComponentsInChildren<EnemySpawnPoint>(true));
     }
 
-    // Resizes all child spawn point enemy pools to match the current maximum number of waves.
-    // Only relevant in standard mode; arena mode uses spawn points as location markers only.
+    // Resizes all child spawn point enemy pools to match the current maximum number of waves - only relevant in standard mode; arena mode uses spawn points as location markers only.
     private void SyncSpawnPointEnemyPools()
     {
         for (int i = 0; i < spawnPoints.Count; i++)
@@ -752,6 +751,11 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         {
             Debug.LogWarning("EnemyEncounterManager could not find any child EnemySpawnPoint components.");
             return false;
+        }
+
+        if (useDoorGating && (doors == null || doors.Count == 0))
+        {
+            Debug.LogWarning("EnemyEncounterManager has door gating enabled but no doors are assigned.");
         }
 
         if (encounterMode == EncounterMode.Standard)
