@@ -12,9 +12,9 @@ public class Door : MonoBehaviour, IInteractable
     }
 
     public LayerMask interactable;
-    InputAction collectAction;
+    InputAction collectAction; // this could be rebound to a different action if you prefer
 
-    public bool unlocked;
+    public bool unlocked; // at the moment the door can theoretically be "locked" open but thats neither here nor there
     public DoorState state;
     public float speed = 5f;
     public float slamSpeed = 20f;
@@ -22,10 +22,16 @@ public class Door : MonoBehaviour, IInteractable
     public float openAngle = -100f;
     public float ajarAngle = -20f;
     private Quaternion closedRotation; // Set when door starts - local transform value so the door isn't moving relative to the doorway parent object.
+    private float actualSpeed;
     private Quaternion targetRotation;
     private float currentSpeed;
     private bool isMoving;
     public Collider doorCollider;
+    private Quaternion startAngle;
+    public bool isArenaLocked;
+    public float ajarDistance = 3;
+    private PlayerMover player;
+    private Raycaster raycaster;
 
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
@@ -52,13 +58,21 @@ public class Door : MonoBehaviour, IInteractable
         {
             audioSource = GetComponent<AudioSource>();
         }
+        if (player == null)
+        {
+            player = FindAnyObjectByType<PlayerMover>();    //there is no failsafe here if there's more than one playermover in the scene. don't fuck this up.
+        }
+        if (raycaster == null)
+        {
+            raycaster = FindAnyObjectByType<Raycaster>();
+        }
+        actualSpeed = speed;
     }
 
     // Handles interaction input and lerps the door toward its target rotation.
     void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Pointer.current.position.ReadValue());
-        if (Physics.Raycast(ray, out RaycastHit hit, 1000f, interactable))
+        if (Physics.Raycast(raycaster.Ray, out RaycastHit hit, 1000f, interactable))
         {
             if (collectAction.WasReleasedThisFrame() && GetComponentInChildren<Collider>() == hit.collider)
             {
@@ -85,6 +99,17 @@ public class Door : MonoBehaviour, IInteractable
             {
                 doorCollider.enabled = false;
             }
+        }
+
+        if (transform.rotation == targetRotation && actualSpeed != speed)   // used to reset speed whenever the door comes to a stop
+        {
+            actualSpeed = speed;
+        }
+
+        if (Vector3.Distance(player.transform.position, transform.position) > ajarDistance && state == DoorState.Open)
+        {
+            targetRotation = startAngle * Quaternion.AngleAxis(ajarAngle, transform.up);
+            state = DoorState.Ajar;
         }
     }
 
