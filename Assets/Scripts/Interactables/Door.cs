@@ -18,9 +18,13 @@ public class Door : MonoBehaviour, IInteractable
     public DoorState state;
     public float speed = 5f;
     public float slamSpeed = 20f;
-    public float arrivalThreshold = 0.5f;
-    public float openAngle = -90f;
+    public float arrivalThreshold = 0.5f; // Threshold to final position for re-enabling the door's collider after opening/closing.
+    public float openAngle = -100f;
     public float ajarAngle = -20f;
+    private Quaternion closedRotation; // Set when door starts - local transform value so the door isn't moving relative to the doorway parent object.
+    private Quaternion targetRotation;
+    private float currentSpeed;
+    private bool isMoving;
     public Collider doorCollider;
 
     [Header("Audio")]
@@ -29,11 +33,6 @@ public class Door : MonoBehaviour, IInteractable
     [SerializeField] private SoundDataSO openSound;
     [SerializeField] private SoundDataSO closeSound;
     [SerializeField] private SoundDataSO lockedSound;
-
-    private Quaternion closedRotation;
-    private Quaternion targetRotation;
-    private float currentSpeed;
-    private bool isMoving;
 
     // Gathers references and stores the local closed rotation as the baseline for all angle calculations.
     void Start()
