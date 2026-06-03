@@ -34,6 +34,9 @@ public class PlayerLook : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale == 0f)
+            return;
+
         if (playerMover != null && !playerMover.CanMove)
             return;
 
