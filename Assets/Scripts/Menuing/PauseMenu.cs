@@ -9,6 +9,7 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private InputActionReference pauseAction;
     [SerializeField] private string playerActionMapName = "Player";
     [SerializeField] private string grimoireActionMapName = "GrimoireUI";
+    [SerializeField] private ALTGrimoire grimoire;
 
     private void OnEnable()
     {
@@ -64,6 +65,10 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1;
         InputSystem.actions.FindActionMap(playerActionMapName, true)?.Enable();
         InputSystem.actions.FindActionMap(grimoireActionMapName, true)?.Enable();
+        if (grimoire != null)
+        {
+            grimoire.ForceCloseForPause();
+        }
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         isPaused = false;

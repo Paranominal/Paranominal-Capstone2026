@@ -96,8 +96,13 @@ public class ALTGrimoire : MonoBehaviour
         {
             if (!grimoireActive) // GRIMOIRE ACTIVATE!
             {
-                grimoireAnim.Play("up");
+                SetGrimoireUnscaledTime(true);
+                if (grimoireAnim != null)
+                {
+                    grimoireAnim.Play("up");
+                }
                 grimoireActive = true;
+                Time.timeScale = 0f;
 
                 if (playerInputReader != null)
                     playerInputReader.SetCursorState(CursorLockMode.None, true);
@@ -115,8 +120,13 @@ public class ALTGrimoire : MonoBehaviour
             }
             else // GRIMOIRE AWAY!!
             {
-                grimoireAnim.Play("down");
+                SetGrimoireUnscaledTime(false);
+                if (grimoireAnim != null)
+                {
+                    grimoireAnim.Play("down");
+                }
                 grimoireActive = false;
+                Time.timeScale = 1f;
 
                 if (playerInputReader != null)
                     playerInputReader.SetCursorState(CursorLockMode.Locked, false);
@@ -140,6 +150,38 @@ public class ALTGrimoire : MonoBehaviour
                 EventSystem.current.SetSelectedGameObject(entryButtons[currentEntry]); // grabbing the current entry selection if it drops off
             }
         }
+    }
+
+    private void SetGrimoireUnscaledTime(bool useUnscaledTime)
+    {
+        Animator[] animators = GetComponentsInChildren<Animator>(true);
+        foreach (Animator animator in animators)
+        {
+            animator.updateMode = useUnscaledTime ? AnimatorUpdateMode.UnscaledTime : AnimatorUpdateMode.Normal;
+        }
+    }
+
+    public void ForceCloseForPause()
+    {
+        if (!grimoireActive)
+        {
+            return;
+        }
+
+        SetGrimoireUnscaledTime(false);
+        if (grimoireAnim != null)
+        {
+            grimoireAnim.Play("down");
+        }
+
+        grimoireActive = false;
+
+        if (screenUI != null)
+        {
+            screenUI.UIVisible(true);
+        }
+
+        InputSystem.actions.FindActionMap("UI")?.Disable();
     }
 
     public ALTGrimoireEntry GetEntry(int n)    //this could be overloaded to handle several means of accessing (by name, an ID, etc)
