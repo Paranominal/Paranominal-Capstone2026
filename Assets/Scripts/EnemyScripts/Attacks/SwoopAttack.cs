@@ -1,25 +1,17 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// Reusable telegraphed swoop attack. Handles the sequence:
-///   1. Windup  - hover in place, face the dive target (the player's read)
-///   2. Dive    - move in a straight line through the snapshotted target point.
-///                The Hitbox is active during this phase.
-///   3. Resolve - on hit, return to the pre-swoop position.
-///                on miss, rise straight up from where the dive ended to the
-///                pre-swoop altitude.
-///   4. Recover - brief pause before the attack is considered finished
-///
-/// The owning behaviour snapshots the dive target and supplies it. SwoopAttack
-/// snapshots its own pre-swoop position internally, so the post-dive resolution
-/// is fully encapsulated here. Once committed, the dive target does not move -
-/// this is the fairness contract that makes the swoop dodgeable.
-///
-/// Hit detection is delegated to the Hitbox component, which sits on a child
-/// trigger collider and routes hits to IDamageable targets. SwoopAttack
-/// subscribes to Hitbox.OnHit during the dive to track whether the swoop landed.
-/// </summary>
+// The Eye-bat's Swoop Attack:
+//   1. Windup - Mover in place, face the target.
+//   2. Dive - Move in a straight line through the snapshotted target point. The Hitbox is active during this phase.
+//   3. Resolve - On hit, return to the pre-swoop position -> On miss, rise straight up from where the dive ended to the pre-swoop altitude.
+//   4. Recover - Brief pause before the attack is considered finished.
+
+// The Eye-Bat behaviour script snapshots the player's position and supplies it. SwoopAttack snapshots the Bat's own pre-swoop position internally, so the post-dive resolution
+// is fully handled here. Once committed, the target position does not move - this is what makes the swoop dodgeable.
+
+// Hit detection is delegated to the Hitbox component, which sits on a child trigger collider and routes hits to IDamageable targets.
+// SwoopAttack subscribes to Hitbox.OnHit during the dive to track whether the swoop landed.
 public class SwoopAttack : MonoBehaviour
 {
     [Header("Hitbox")]
@@ -61,20 +53,10 @@ public class SwoopAttack : MonoBehaviour
     private bool isAttacking;
     private bool diveLandedHit;
     private Coroutine attackRoutine;
-    private Rigidbody rb;
 
     public bool IsAttacking => isAttacking;
 
-    private void Awake()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
-
-    /// <summary>
-    /// Begin the windup -> dive -> resolve -> recovery sequence.
-    /// targetPosition should be snapshotted by the caller before this is invoked.
-    /// SwoopAttack snapshots its own position internally for the hit-retreat target.
-    /// </summary>
+    // Begin the windup -> dive -> resolve -> recovery sequence.
     public void PerformAttack(Vector3 targetPosition)
     {
         if (isAttacking)
@@ -93,9 +75,7 @@ public class SwoopAttack : MonoBehaviour
         attackRoutine = StartCoroutine(AttackSequence(targetPosition));
     }
 
-    /// <summary>
-    /// Cancel an in-progress swoop. The owner stops where it is and the hitbox is deactivated.
-    /// </summary>
+    // Cancel an in-progress swoop. The owner stops where it is and the hitbox is deactivated.
     public void CancelAttack()
     {
         if (!isAttacking) return;
@@ -117,11 +97,7 @@ public class SwoopAttack : MonoBehaviour
             Debug.Log($"[SwoopAttack] Attack cancelled on {gameObject.name}.", this);
     }
 
-    //flips the dive-landed flag so the resolve phase knows to use the return-to-snapshot path.
-    //subscribed to OnContact rather than OnHit so the swoop registers as "landed" purely from
-    //physical contact with a layer-matching collider - this works even before the player has
-    //an IDamageable component. once IDamageable exists, this can be swapped to OnHit if we
-    //want the retreat to depend on damage actually being dealt (e.g. parries should not count).
+    // Flips the dive-landed flag so the resolve phase knows to use the return-to-snapshot path.
     private void HandleHitboxContact(Collider other)
     {
         diveLandedHit = true;
@@ -132,7 +108,7 @@ public class SwoopAttack : MonoBehaviour
         isAttacking = true;
         diveLandedHit = false;
 
-        //snapshot the pre-swoop position and altitude for use in the resolve phase
+        // Snapshot the pre-swoop position and altitude for use in the resolve phase
         Vector3 preSwoopPosition = transform.position;
         float preSwoopAltitude = preSwoopPosition.y;
 
@@ -142,30 +118,28 @@ public class SwoopAttack : MonoBehaviour
         //windup: hover in place and face the target
         yield return WindupPhase(targetPosition, windupDuration);
 
-        //commit: lock in the dive endpoint, extending past the target so we pass through it
+        // Commit: lock in the dive endpoint, extending past the target so we pass through it
         Vector3 diveDirection = (targetPosition - transform.position).normalized;
         Vector3 diveEndpoint = targetPosition + diveDirection * divePastDistance;
 
         if (debugMode)
             Debug.Log($"[SwoopAttack] Diving to {diveEndpoint}", this);
 
-        //subscribe to contact for the duration of the dive so we can branch on hit vs. miss.
-        //OnContact fires on any layer-matching collision, which is what we need while the
-        //player doesn't yet have an IDamageable component.
+        // Subscribe to contact for the duration of the dive so we can branch on hit vs. miss.
         hitbox.OnContact += HandleHitboxContact;
 
-        //activate the hitbox for the duration of the dive
+        // Activate the hitbox for the duration of the dive
         DamageInfo damageInfo = new DamageInfo(damage, transform.position, diveDirection, gameObject);
         hitbox.Activate(damageInfo);
 
-        //dive
+        // Dive
         yield return DivePhase(diveEndpoint);
 
-        //hitbox off and unsubscribe as soon as the dive ends - resolution movement should not damage
+        // Hitbox off and unsubscribe as soon as the dive ends - resolution movement should not damage
         hitbox.Deactivate();
         hitbox.OnContact -= HandleHitboxContact;
 
-        //resolve: on hit, fly back to the pre-swoop position. on miss, rise straight up.
+        // Resolve: on hit, fly back to the pre-swoop position. on miss, rise straight up.
         if (diveLandedHit)
         {
             if (debugMode)
@@ -179,7 +153,7 @@ public class SwoopAttack : MonoBehaviour
             yield return RiseToAltitudePhase(preSwoopAltitude, targetPosition);
         }
 
-        //recovery
+        // Recovery
         yield return new WaitForSeconds(recoveryDuration);
 
         isAttacking = false;
@@ -194,7 +168,7 @@ public class SwoopAttack : MonoBehaviour
         float elapsed = 0f;
         while (elapsed < duration)
         {
-            //face the dive target on the horizontal plane
+            // Face the dive target on the horizontal plane
             Vector3 lookDir = targetPosition - transform.position;
             lookDir.y = 0f;
             if (lookDir.sqrMagnitude > 0.01f)
@@ -211,39 +185,27 @@ public class SwoopAttack : MonoBehaviour
 
     private IEnumerator DivePhase(Vector3 endpoint)
     {
-        //break out the moment a hit is registered so the bat doesn't push through
-        //the player for the rest of the dive distance. the resolve phase then runs
-        //immediately, sending the bat back to its pre-swoop position.
+        // Break out the moment a hit is registered so the bat doesn't push through the player for the rest of the dive distance
         while (Vector3.Distance(transform.position, endpoint) > 0.1f)
         {
             if (diveLandedHit) yield break;
 
             Vector3 moveDir = (endpoint - transform.position).normalized;
-            Vector3 newPos = transform.position + moveDir * diveSpeed * Time.deltaTime;
-
-            if (rb != null)
-                rb.MovePosition(newPos);
-            else
-                transform.position = newPos;
+            transform.position += moveDir * diveSpeed * Time.deltaTime;
 
             yield return null;
         }
     }
 
-    //fly back to the snapshotted pre-swoop position; used when the dive landed a hit
+    // fly back to the snapshotted pre-swoop position; used when the dive landed a hit
     private IEnumerator ReturnToPreSwoopPhase(Vector3 preSwoopPosition)
     {
         while (Vector3.Distance(transform.position, preSwoopPosition) > 0.1f)
         {
             Vector3 moveDir = (preSwoopPosition - transform.position).normalized;
-            Vector3 newPos = transform.position + moveDir * returnSpeed * Time.deltaTime;
+            transform.position += moveDir * returnSpeed * Time.deltaTime;
 
-            if (rb != null)
-                rb.MovePosition(newPos);
-            else
-                transform.position = newPos;
-
-            //face the direction of return travel
+            // Face the direction of return travel
             Vector3 lookDir = moveDir;
             lookDir.y = 0f;
             if (lookDir.sqrMagnitude > 0.01f)
@@ -257,11 +219,7 @@ public class SwoopAttack : MonoBehaviour
         }
     }
 
-    //rise straight up from the dive's end position to the pre-swoop altitude
-    //while turning back to face the snapshotted target. used on a miss.
-    //facing the snapshot point lets the vision sensor re-acquire the player
-    //naturally if they're still nearby - the behaviour keeps pestering without
-    //any special-case logic in the bat itself.
+    // rise straight up from the dive's end position to the pre-swoop altitude while turning back to face the snapshotted target - used on a miss.
     private IEnumerator RiseToAltitudePhase(float targetAltitude, Vector3 lookBackTarget)
     {
         Vector3 lookDir = lookBackTarget - transform.position;
@@ -275,21 +233,16 @@ public class SwoopAttack : MonoBehaviour
 
         while (stillRising || stillTurning)
         {
-            //rise toward target altitude
+            // Rise toward target altitude
             if (stillRising)
             {
                 float yStep = Mathf.MoveTowards(transform.position.y, targetAltitude, riseSpeed * Time.deltaTime);
-                Vector3 newPos = new Vector3(transform.position.x, yStep, transform.position.z);
-
-                if (rb != null)
-                    rb.MovePosition(newPos);
-                else
-                    transform.position = newPos;
+                transform.position = new Vector3(transform.position.x, yStep, transform.position.z);
 
                 if (Mathf.Abs(transform.position.y - targetAltitude) <= 0.1f) stillRising = false;
             }
 
-            //turn to face the snapshot position concurrently with the rise
+            // Turn to face the snapshot position concurrently with the rise
             if (stillTurning)
             {
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot,
