@@ -15,6 +15,7 @@ public class Door : MonoBehaviour, IInteractable
     InputAction collectAction; // this could be rebound to a different action if you prefer
 
     public bool unlocked; // at the moment the door can theoretically be "locked" open but thats neither here nor there
+    public bool isEncounterLocked; // This is just for specifying that the door was locked by an encounter/arena - basically only needed if specific visuals will be implemented
     public DoorState state;
     public float speed = 5f;
     public float slamSpeed = 20f;
@@ -171,7 +172,7 @@ public class Door : MonoBehaviour, IInteractable
         unlocked = true;
     }
 
-    // Locks the door if already closed, or slams it shut if open or ajar.
+    // Locks the door if already closed, or slams it shut if open or ajar - sets isEncounterLocked so external systems can distinguish encounter locks from regular locks.
     public void LockOrSlam()
     {
         if (state == DoorState.Closed)
@@ -182,6 +183,7 @@ public class Door : MonoBehaviour, IInteractable
         {
             Slam();
         }
+        isEncounterLocked = true;
     }
 
     // Slams the door shut at increased speed, locks it, and plays the slam sound - calls SetState directly to avoid triggering the close sound via Close().
@@ -192,4 +194,12 @@ public class Door : MonoBehaviour, IInteractable
         Lock();
         AudioManager.PlaySound(slamSound, audioSource);
     }
+
+    // Unlocks the door and clears the encounter lock flag.
+    public void EncounterUnlock()
+    {
+        Unlock();
+        isEncounterLocked = false;
+    }
+
 }

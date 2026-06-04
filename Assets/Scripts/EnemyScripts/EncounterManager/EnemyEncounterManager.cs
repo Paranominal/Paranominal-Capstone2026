@@ -229,7 +229,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         }
     }
 
-    // Unlocks all registered doors once the encounter is complete.
+    // Unlocks all registered doors once the encounter is complete and clears their encounter lock flag.
     private void UnlockDoors()
     {
         for (int i = 0; i < doors.Count; i++)
@@ -241,7 +241,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
                 continue;
             }
 
-            door.Unlock();
+            door.EncounterUnlock();
         }
     }
 
@@ -705,7 +705,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         spawnPoints.AddRange(GetComponentsInChildren<EnemySpawnPoint>(true));
     }
 
-    // Resizes all child spawn point enemy pools to match the current maximum number of waves - only relevant in standard mode; arena mode uses spawn points as location markers only.
+    // Resizes all child spawn point enemy pools to match the current maximum number of waves - only really relevant in standard mode; arena mode uses spawn points as location markers only.
     private void SyncSpawnPointEnemyPools()
     {
         for (int i = 0; i < spawnPoints.Count; i++)
