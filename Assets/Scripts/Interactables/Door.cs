@@ -22,7 +22,6 @@ public class Door : MonoBehaviour, IInteractable
     public float openAngle = -100f;
     public float ajarAngle = -20f;
     private Quaternion closedRotation; // Set when door starts - local transform value so the door isn't moving relative to the doorway parent object.
-    private float actualSpeed;
     private Quaternion targetRotation;
     private float currentSpeed;
     private bool isMoving;
@@ -66,7 +65,6 @@ public class Door : MonoBehaviour, IInteractable
         {
             raycaster = FindAnyObjectByType<Raycaster>();
         }
-        actualSpeed = speed;
     }
 
     // Handles interaction input and lerps the door toward its target rotation.
@@ -99,11 +97,6 @@ public class Door : MonoBehaviour, IInteractable
             {
                 doorCollider.enabled = false;
             }
-        }
-
-        if (transform.rotation == targetRotation && actualSpeed != speed)   // used to reset speed whenever the door comes to a stop
-        {
-            actualSpeed = speed;
         }
 
         if (Vector3.Distance(player.transform.position, transform.position) > ajarDistance && state == DoorState.Open)
