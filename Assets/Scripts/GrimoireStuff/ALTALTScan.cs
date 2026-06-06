@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -19,6 +20,10 @@ public class ALTALTScan : MonoBehaviour
     [Header("Sounds")]
     [SerializeField] private SoundDataSO itemPickupSound;
     [SerializeField] private SoundDataSO scanSound;
+    [SerializeField] private AudioSource audioSource; // add Miriam's AudioSource here (she should have two but either one, it doesn't matter lmao)
+
+    // Tracks whether the looping scan sound is currently playing on the AudioSource.
+    private bool scanSoundPlaying;
 
     void Start()
     {
@@ -40,6 +45,11 @@ public class ALTALTScan : MonoBehaviour
             SetScanMode(wantScanMode);
         }
 
+        // Set to true inside the scan logic when actively scanning a valid target.
+        // Checked at the end of Update to decide whether the looping scan sound
+        // should be playing this frame.
+        bool wantScanSoundThisFrame = false;
+
         Vector2 mousePos = Pointer.current != null ? Pointer.current.position.ReadValue() : Vector2.zero;
         Ray ray = Camera.main.ScreenPointToRay(mousePos);
 
@@ -56,14 +66,12 @@ public class ALTALTScan : MonoBehaviour
                 if (!grimoire.CompareEntry(target.entry))
                 {
                     grimoire.AddEntry(target.entry, true);
-                    AudioManager.PlaySound(scanSound);
                 }
                 else
                 {
                     grimoire.CollectEntry(target.entry);
                 }
                 Debug.Log("Destroyed " + target.gameObject);
-                Destroy(target.gameObject);
                 AudioManager.PlaySound(itemPickupSound);
 
                 if (target == currentTarget)
@@ -72,6 +80,8 @@ public class ALTALTScan : MonoBehaviour
                     scanProgress = 0f;
                     reticle.SetProgress(0f);
                 }
+                Destroy(target.gameObject);
+                UpdateScanSound(wantScanSoundThisFrame);
                 return; // nothing left to scan this frame
             }
 
@@ -103,6 +113,9 @@ public class ALTALTScan : MonoBehaviour
                     Color scanColor = Color.Lerp(Color.white, Color.green, pulse * scanProgress);
                     currentTarget.SetOutlineColor(scanColor);
 
+                    // Mark that we want the looping scan sound this frame.
+                    wantScanSoundThisFrame = true;
+
                     if (scanProgress >= 1f)
                     {
                         if (!alreadyScanned)
@@ -133,6 +146,8 @@ public class ALTALTScan : MonoBehaviour
             scanProgress = 0f;
             reticle.SetProgress(0f);
         }
+
+        UpdateScanSound(wantScanSoundThisFrame);
     }
 
     private void SetScanMode(bool active)
@@ -149,6 +164,26 @@ public class ALTALTScan : MonoBehaviour
             }
             scanProgress = 0f;
             reticle.SetProgress(0f);
+        }
+    }
+
+    // Summary: Starts or stops the looping scan sound based on whether we want it
+    // playing this frame. Only triggers Play/Stop on state transitions, so no
+    // per-frame restarts.
+    private void UpdateScanSound(bool wantPlaying)
+    {
+        if (wantPlaying && !scanSoundPlaying)
+        {
+            if (scanSound != null && audioSource != null)
+            {
+                AudioManager.PlaySound(scanSound, audioSource);
+                scanSoundPlaying = true;
+            }
+        }
+        else if (!wantPlaying && scanSoundPlaying)
+        {
+            if (audioSource != null) audioSource.Stop();
+            scanSoundPlaying = false;
         }
     }
 }
