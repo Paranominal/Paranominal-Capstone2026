@@ -62,4 +62,15 @@ public class PlayerLook : MonoBehaviour
 
         transform.Rotate(0f, mouseX, 0f);
     }
+
+    public void SetLookSensitivity(float newSensitivity)
+    {
+        lookSensitivity = newSensitivity;
+    }
+
+    public float GetLookSensitivity()
+    {
+        return lookSensitivity;
+    }
+
 }

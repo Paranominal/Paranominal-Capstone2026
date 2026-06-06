@@ -1,8 +1,6 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
-using System;
 
 public class PlayerFOVAdjuster : MonoBehaviour
 {
