@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AdaptivePerformance.Provider;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 

@@ -5,6 +5,8 @@ using UnityEngine.UI;
 public class SensitivityAdjuster : MonoBehaviour
 {
     [SerializeField] private PlayerLook playerLook;
+    [SerializeField] private WeaponSway weaponSway;
+    [SerializeField] private WeaponSway bookSway;
     [SerializeField] private TMP_Text sensitivityText;
     [SerializeField] private Slider sensitivitySlider;
     private float sensitivityValue;
@@ -28,6 +30,8 @@ public class SensitivityAdjuster : MonoBehaviour
         {
             sensitivityValue = sensitivitySlider.value;
             playerLook.SetLookSensitivity(sensitivityValue);
+            weaponSway.SetSwayMultiplier(sensitivityValue * 2);
+            bookSway.SetSwayMultiplier(sensitivityValue * 2);
             UpdateSensitivityText();
         }
 

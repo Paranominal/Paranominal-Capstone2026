@@ -97,4 +97,9 @@ public class WeaponSway : MonoBehaviour
         transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, smooth * Time.deltaTime);
         transform.localPosition = Vector3.Lerp(transform.localPosition, targetLocalPosition, bobSmoothing * Time.deltaTime);
     }
+
+    public void SetSwayMultiplier(float multiplier)
+    {
+        swayMultiplier = multiplier;
+    }
 }
