@@ -3,7 +3,6 @@ using UnityEngine;
 public class GrimoirePause : MonoBehaviour
 {
     [SerializeField] private ALTGrimoire grimoire;
-    [SerializeField] private GameObject backgroundBlur;
 
     private bool wasGrimoireActive;
 
@@ -29,10 +28,6 @@ public class GrimoirePause : MonoBehaviour
         }
 
         Time.timeScale = isActive ? 0f : 1f;
-        if (backgroundBlur != null)
-        {
-            backgroundBlur.SetActive(isActive);
-        }
         wasGrimoireActive = isActive;
     }
 }
