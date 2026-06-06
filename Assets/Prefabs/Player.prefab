@@ -171,6 +171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSway
   moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookAction: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  enableSway: 1
   smooth: 3
   swayMultiplier: 0.1
   maxPositionOffset: 0.08
@@ -1663,6 +1664,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSway
   moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookAction: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  enableSway: 1
   smooth: 3
   swayMultiplier: 0.1
   maxPositionOffset: 0.08
@@ -1910,7 +1912,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1430355900412827828, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1430355900412827828, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -2007,6 +2009,46 @@ PrefabInstance:
     - target: {fileID: 4302207120811932538, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
       propertyPath: pauseActionName
       value: Pause
+      objectReference: {fileID: 0}
+    - target: {fileID: 5827995852630165368, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5827995852630165368, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5827995852630165368, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7089696161066055925}
+    - target: {fileID: 5827995852630165368, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 4266937559180357537}
+    - target: {fileID: 5827995852630165368, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ToggleSway
+      objectReference: {fileID: 0}
+    - target: {fileID: 5827995852630165368, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ToggleSway
+      objectReference: {fileID: 0}
+    - target: {fileID: 5827995852630165368, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WeaponSway, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5827995852630165368, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: WeaponSway, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5827995852630165368, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5827995852630165368, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6701949768413786074, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
       propertyPath: m_IsActive
