@@ -60,6 +60,31 @@ public class WeaponHitscan : MonoBehaviour
         return target != null;
     }
 
+    //allows for interactions with idamageable for the enemy states
+    public bool TryGetDamageableHit(out IDamageable damageable, out RaycastHit damageableHit)
+    {
+        damageable = null;
+
+        if (playerCamera == null)
+        {
+            damageableHit = default;
+            return false;
+        }
+
+        Ray ray = BuildAimRay();
+        
+        bool hasHit = Physics.Raycast(ray, out damageableHit, rayDistance, ~0, QueryTriggerInteraction.Collide);
+        if (!hasHit)
+            return false;
+
+        
+        damageable = damageableHit.collider.GetComponent<IDamageable>();
+        if (damageable == null)
+            damageable = damageableHit.collider.GetComponentInParent<IDamageable>();
+
+        return damageable != null;
+    }
+
     public void LogWorldHitOrMiss()
     {
         if (playerCamera == null)

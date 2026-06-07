@@ -135,6 +135,13 @@ public class ShotOrchestrator : MonoBehaviour
         {
             return target.ResolveHit(shotType);
         }
+
+        if (weaponHitscan.TryGetDamageableHit(out IDamageable damageable, out RaycastHit damageHit))
+        {
+            damageable.TakeDamage(new DamageInfo());
+            return false; 
+        }
+
         AudioManager.PlaySound(shotgunFire, audioSource);
         weaponHitscan.LogWorldHitOrMiss();
         return false;
