@@ -38,13 +38,12 @@ public class Door : MonoBehaviour, IInteractable
     [SerializeField] private SoundDataSO closeSound;
     [SerializeField] private SoundDataSO lockedSound;
 
-    // Gathers references and stores the local closed rotation as the baseline for all angle calculations.
     void Start()
     {
         collectAction = InputSystem.actions.FindAction("Collect");
 
-        //closedRotation = transform.localRotation;
         targetRotation = transform.rotation;
+        startAngle = transform.rotation;
         actualSpeed = speed;
 
         if (doorCollider == null)
