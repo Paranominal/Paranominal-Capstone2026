@@ -33,7 +33,14 @@ public class ALTScan : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Physics.Raycast(raycaster.Ray, out RaycastHit hit, interactRange, scannable))
+        if (Time.timeScale == 0f)
+        {
+            return;
+        }
+
+        Vector2 mousePos = Pointer.current != null ? Pointer.current.position.ReadValue() : Vector2.zero;
+        Ray ray = Camera.main.ScreenPointToRay(mousePos);
+        if (Physics.Raycast(ray, out RaycastHit hit, interactRange, scannable))
         {
             // Debug.DrawLine(transform.position, hit.point, Color.cyan, 10); // can view this in gizmos mode to help with debugging
             ALTScannableObject tempScan = hit.collider.GetComponent<ALTScannableObject>();

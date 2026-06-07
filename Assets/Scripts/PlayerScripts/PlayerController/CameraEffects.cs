@@ -94,4 +94,11 @@ public class CameraEffects : MonoBehaviour
 
         playerCamera.transform.localRotation = Quaternion.Euler(currentEuler);
     }
+
+    public void ToggleCameraEffects(bool toggle)
+    {
+        enableHeadBob = toggle;
+        enableStrafeTilt = toggle;
+    }
+    
 }

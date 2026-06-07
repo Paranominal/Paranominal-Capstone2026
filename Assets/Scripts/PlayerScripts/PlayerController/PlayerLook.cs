@@ -34,6 +34,9 @@ public class PlayerLook : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale == 0f)
+            return;
+
         if (playerMover != null && !playerMover.CanMove)
             return;
 
@@ -59,4 +62,15 @@ public class PlayerLook : MonoBehaviour
 
         transform.Rotate(0f, mouseX, 0f);
     }
+
+    public void SetLookSensitivity(float newSensitivity)
+    {
+        lookSensitivity = newSensitivity;
+    }
+
+    public float GetLookSensitivity()
+    {
+        return lookSensitivity;
+    }
+
 }
