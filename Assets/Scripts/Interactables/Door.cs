@@ -12,20 +12,18 @@ public class Door : MonoBehaviour, IInteractable
     }
 
     public LayerMask interactable;
-    InputAction collectAction; // this could be rebound to a different action if you prefer
+    InputAction collectAction;  // this could be rebound to a different action if you prefer
 
-    public bool unlocked; // at the moment the door can theoretically be "locked" open but thats neither here nor there
-    public bool isEncounterLocked; // This is just for specifying that the door was locked by an encounter/arena - basically only needed if specific visuals will be implemented
+    public bool unlocked;   // at the moment the door can theoretically be "locked" open but thats neither here nor there
+    public bool isEncounterLocked;  // This is just for specifying that the door was locked by an encounter/arena - basically only needed if specific visuals will be implemented
     public DoorState state;
-    public float speed = 5f;
-    public float slamSpeed = 20f;
-    public float arrivalThreshold = 0.5f; // Threshold to final position for re-enabling the door's collider after opening/closing.
-    public float openAngle = -100f;
-    public float ajarAngle = -20f;
-    private Quaternion closedRotation; // Set when door starts - local transform value so the door isn't moving relative to the doorway parent object.
+    public float speed = 10;
+    public float slamSpeed = 20;
+    public float openAngle = -90;
+    public float ajarAngle = -20;
+    public float closedAngle = 0;
     private Quaternion targetRotation;
-    private float currentSpeed;
-    private bool isMoving;
+    private float actualSpeed;
     public Collider doorCollider;
     private Quaternion startAngle;
     public bool isArenaLocked;
@@ -45,9 +43,9 @@ public class Door : MonoBehaviour, IInteractable
     {
         collectAction = InputSystem.actions.FindAction("Collect");
 
-        closedRotation = transform.localRotation;
-        targetRotation = closedRotation;
-        currentSpeed = speed;
+        //closedRotation = transform.localRotation;
+        targetRotation = transform.rotation;
+        actualSpeed = speed;
 
         if (doorCollider == null)
         {
@@ -75,89 +73,110 @@ public class Door : MonoBehaviour, IInteractable
         {
             if (collectAction.WasReleasedThisFrame() && GetComponentInChildren<Collider>() == hit.collider)
             {
-                Interact();
+                TryDoor();
             }
         }
 
-        if (isMoving)
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, actualSpeed * Time.deltaTime);
+
+        if (transform.rotation != targetRotation && doorCollider.enabled)
         {
-            transform.localRotation = Quaternion.Lerp(transform.localRotation, targetRotation, currentSpeed * Time.deltaTime);
+            doorCollider.enabled = false;
+        }
+        else if (transform.rotation == targetRotation && !doorCollider.enabled)
+        {
+            doorCollider.enabled = true;
+        }
 
-            if (Quaternion.Angle(transform.localRotation, targetRotation) < arrivalThreshold)
-            {
-                transform.localRotation = targetRotation;
-                currentSpeed = speed;
-                isMoving = false;
-
-                if (doorCollider != null)
-                {
-                    doorCollider.enabled = true;
-                }
-            }
-            else if (doorCollider != null && doorCollider.enabled)
-            {
-                doorCollider.enabled = false;
-            }
+        if (transform.rotation == targetRotation && actualSpeed != speed)   // used to reset speed whenever the door comes to a stop
+        {
+            actualSpeed = speed;
         }
 
         if (Vector3.Distance(player.transform.position, transform.position) > ajarDistance && state == DoorState.Open)
         {
-            targetRotation = startAngle * Quaternion.AngleAxis(ajarAngle, transform.up);
-            state = DoorState.Ajar;
+            Ajar();
         }
     }
 
-    // Sets the door's state and derives the target local rotation from the closed baseline.
-    protected void SetState(DoorState newState)
+    public void Open()
     {
-        if (newState == state)
+        if (unlocked)
         {
-            return;
+            targetRotation = startAngle * Quaternion.AngleAxis(openAngle, transform.up);
+            state = DoorState.Open;
+            AudioManager.PlaySound(openSound, audioSource);
         }
-
-        state = newState;
-
-        switch (newState)
-        {
-            case DoorState.Open:
-                targetRotation = closedRotation * Quaternion.AngleAxis(openAngle, Vector3.up);
-                break;
-            case DoorState.Ajar:
-                targetRotation = closedRotation * Quaternion.AngleAxis(ajarAngle, Vector3.up);
-                break;
-            case DoorState.Closed:
-                targetRotation = closedRotation;
-                break;
-        }
-
-        isMoving = true;
     }
 
-    // Toggles the door open or closes it, depending on current state.
-    public void Interact()
+    public void ForceOpen() //this will unlock the door in the process. does not play unlocking sound
+    {
+        unlocked = true;
+        Open();
+    }
+
+    public void Ajar()
+    {
+        targetRotation = startAngle * Quaternion.AngleAxis(ajarAngle, transform.up);
+        state = DoorState.Ajar;
+        AudioManager.PlaySound(closeSound, audioSource);    //a seperate ajar and closed sound would be ideal
+    }
+
+    public void Interact()  //This is an IInteract Interface function. It should only ever be called by Interaction objects unless you know what you are doing.
     {
         if (!unlocked)
         {
             AudioManager.PlaySound(lockedSound, audioSource);
             return;
         }
+    }
 
-        if (state == DoorState.Open)
+    public void TryDoor()   //attempts to toggle the door's state
+    {
+        if (unlocked)
         {
-            Close();
+            if (state == DoorState.Open)
+            {
+                Ajar();
+            }
+            else
+            {
+                Open();
+            }
         }
         else
         {
-            SetState(DoorState.Open);
-            AudioManager.PlaySound(openSound, audioSource);
+            AudioManager.PlaySound(lockedSound, audioSource);
         }
     }
 
-    // Closes the door and plays the close sound.
+    public void Slam()
+    {
+        Close(true, true);    //this can be set to false depending on what you want the default behaviour to be
+    }
+
     public void Close()
     {
-        SetState(DoorState.Closed);
-        AudioManager.PlaySound(closeSound, audioSource);
+        Close(false, false);    //by default this closes calm and chill and nothing bad happens
+    }
+
+    public void Close(bool locked, bool fast)  //locked bool determines if door locks on close, fast bool determines if the speed is multiplied or not
+    {
+        targetRotation = startAngle * Quaternion.AngleAxis(closedAngle, transform.up);
+        state = DoorState.Closed;
+        if (locked)
+        {
+            unlocked = false;
+        }
+        if (fast)
+        {
+            actualSpeed = slamSpeed;
+            AudioManager.PlaySound(slamSound, audioSource);
+        }
+        else
+        {
+            AudioManager.PlaySound(closeSound);
+        }
     }
 
     // Locks the door.
@@ -169,37 +188,35 @@ public class Door : MonoBehaviour, IInteractable
     // Unlocks the door.
     public void Unlock()
     {
-        unlocked = true;
+        Interact();
     }
 
-    // Locks the door if already closed, or slams it shut if open or ajar - sets isEncounterLocked so external systems can distinguish encounter locks from regular locks.
-    public void LockOrSlam()
+    public void StartArena()
     {
-        if (state == DoorState.Closed)
+        if (!isArenaLocked)
         {
-            Lock();
+            Slam();
+            isArenaLocked = true;
+            Debug.Log("Door locked in Arena mode.");
         }
         else
         {
-            Slam();
+            Debug.LogWarning("Door already in Arena mode. Did you mean EndArena()?");
         }
-        isEncounterLocked = true;
     }
 
-    // Slams the door shut at increased speed, locks it, and plays the slam sound - calls SetState directly to avoid triggering the close sound via Close().
-    public void Slam()
+    public void EndArena()
     {
-        currentSpeed = slamSpeed;
-        SetState(DoorState.Closed);
-        Lock();
-        AudioManager.PlaySound(slamSound, audioSource);
-    }
-
-    // Unlocks the door and clears the encounter lock flag.
-    public void EncounterUnlock()
-    {
-        Unlock();
-        isEncounterLocked = false;
+        if (isArenaLocked)
+        {
+            Unlock();
+            isArenaLocked = false;
+            Debug.Log("Arena mode ended.");
+        }
+        else
+        {
+            Debug.LogWarning("Door is not in Arena mode. Did you mean StartArena()?");
+        }
     }
 
 }

@@ -225,7 +225,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
                 continue;
             }
 
-            door.LockOrSlam();
+            door.StartArena();
         }
     }
 
@@ -241,7 +241,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
                 continue;
             }
 
-            door.EncounterUnlock();
+            door.EndArena();
         }
     }
 
