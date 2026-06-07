@@ -125,8 +125,8 @@ public class Door : MonoBehaviour, IInteractable
     {
         if (!unlocked)
         {
-            AudioManager.PlaySound(lockedSound, audioSource);
-            return;
+            unlocked = true;
+            AudioManager.PlaySound(lockedSound, audioSource);   //this should probably be a different sound?? idfk
         }
     }
 
