@@ -139,7 +139,6 @@ public class ShotOrchestrator : MonoBehaviour
             return false; 
         }
 
-        AudioManager.PlaySound(shotgunFire, audioSource);
         weaponHitscan.LogWorldHitOrMiss();
         return false;
     }
