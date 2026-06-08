@@ -3,6 +3,14 @@ using UnityEngine;
 public class PlayerStatus : MonoBehaviour, IDamageable
 {
     [SerializeField] private FearBar fearBar;
+    [SerializeField] private SpiritBar spiritBar;
+
+    public bool IsInEncounter { get; private set; } // Whether the player is currently inside an active enemy encounter.
+
+    public void SetInEncounter(bool value)
+    {
+        IsInEncounter = value;
+    }
 
     public void TakeDamage(DamageInfo info)
     { // super duper basic just to allow the player to get damage

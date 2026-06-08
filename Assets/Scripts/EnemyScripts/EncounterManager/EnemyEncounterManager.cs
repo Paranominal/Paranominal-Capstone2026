@@ -39,11 +39,11 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     [SerializeField] private int maxWaves = 1;
     [SerializeField] private float timeBetweenWaves = 3f;
 
-    // --- Standard Mode ---
+    // tandard Mode
     [Header("Standard Mode - Spawn Points")]
     [SerializeField] private List<EnemySpawnPoint> spawnPoints = new List<EnemySpawnPoint>();
 
-    // --- Arena Mode ---
+    // Arena Mode
     [Header("Arena Mode - Enemy Pool")]
     [SerializeField] private List<EnemyEntry> enemyPool = new List<EnemyEntry>();
 
@@ -66,13 +66,13 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     [HideInInspector] public bool isPlayerInRoom = false;
     [SerializeField] private float resetCounter = 5f;
 
-    // --- Door Gating ---
+    // Door Gating
     [Header("Door Gating")]
     [SerializeField] private bool useDoorGating = false;
     [SerializeField] private List<Door> doors = new List<Door>();
 
     private bool isPlayerPastDoor = false;
-
+    private PlayerStatus playerStatus;
     private int currentWave;
     private int nextSpawnPointIndex;
     private bool hasEncounterStarted;
@@ -111,6 +111,11 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         }
 
         currentWave = encounterMode == EncounterMode.Arena ? startingWave - 1 : 0;
+
+        playerStatus = FindFirstObjectByType<PlayerStatus>();
+
+        if (playerStatus == null)
+            Debug.LogWarning("[EnemyEncounterManager] Could not find PlayerStatus in scene.");
     }
 
     // Removes any destroyed enemy references that still remain in the live list.
@@ -204,6 +209,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         }
 
         hasEncounterStarted = true;
+        playerStatus?.SetInEncounter(true);
 
         if (useDoorGating)
         {
@@ -260,6 +266,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         }
 
         hasEncounterCompleted = true;
+        playerStatus?.SetInEncounter(false);
         waveLoopCoroutine = null;
 
         if (useDoorGating)
@@ -695,6 +702,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         isPlayerPastDoor = false;
         currentWave = encounterMode == EncounterMode.Arena ? startingWave - 1 : 0;
         hasEncounterStarted = false;
+        playerStatus?.SetInEncounter(false);
         hasEncounterCompleted = false;
     }
 
