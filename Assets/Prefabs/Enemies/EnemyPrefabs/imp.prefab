@@ -125,11 +125,11 @@ GameObject:
   - component: {fileID: 2613330379652825894}
   - component: {fileID: 6064368626902276524}
   - component: {fileID: 7256983414231218104}
-  - component: {fileID: 7715542274334475992}
-  - component: {fileID: 6151485535973328032}
   - component: {fileID: 7666949824764973486}
   - component: {fileID: -8196229125008853200}
   - component: {fileID: 3398322363394716667}
+  - component: {fileID: 7715542274334475992}
+  - component: {fileID: 6151485535973328032}
   m_Layer: 8
   m_Name: Imp
   m_TagString: Untagged
@@ -311,48 +311,6 @@ MonoBehaviour:
   scanStunDuration: 2
   maxScanStaggers: -1
   scanStaggerCooldown: 1.5
---- !u!114 &7715542274334475992
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6780255270900913490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry:
-    entryName: Imp
-    flavourText: A subordinate minion to a devilish entity.
-    hintText: These things creep me out...
-    completeText: 
-    snapshotImage: {fileID: 0}
-  outline: {fileID: 6151485535973328032}
-  collectable: 0
-  scanDuration: 2
-  usesMeshOutline: 0
-  outlineRenderer: {fileID: 0}
-  outlineMaterialIndex: 1
---- !u!114 &6151485535973328032
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6780255270900913490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Outline
-  outlineMode: 0
-  outlineColor: {r: 0.09066868, g: 0, b: 1, a: 1}
-  outlineWidth: 2
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
 --- !u!114 &7666949824764973486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -395,6 +353,48 @@ MonoBehaviour:
   vision: {fileID: 2880104385379219663}
   teleportDistance: 0
   debugMode: 0
+--- !u!114 &7715542274334475992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780255270900913490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
+  entry:
+    entryName: Imp
+    flavourText: A subordinate minion to a devilish entity.
+    hintText: These things creep me out...
+    completeText: 
+    snapshotImage: {fileID: 0}
+  outline: {fileID: 6151485535973328032}
+  collectable: 0
+  scanDuration: 2
+  usesMeshOutline: 0
+  outlineRenderer: {fileID: 0}
+  outlineMaterialIndex: 1
+--- !u!114 &6151485535973328032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780255270900913490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 0.09066868, g: 0, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1001 &623349153814622997
 PrefabInstance:
   m_ObjectHideFlags: 0

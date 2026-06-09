@@ -127,8 +127,11 @@ GameObject:
   - component: {fileID: 7256983414231218104}
   - component: {fileID: 7666949824764973486}
   - component: {fileID: -8196229125008853200}
+  - component: {fileID: 6605150244527184879}
   - component: {fileID: 4737573433280951539}
-  m_Layer: 0
+  - component: {fileID: 3963566422253646542}
+  - component: {fileID: 1650361166420418648}
+  m_Layer: 8
   m_Name: Imp_Tough
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -336,6 +339,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StaggerColorEffect
   staggerColor: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 1}
+--- !u!114 &6605150244527184879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780255270900913490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fc9bac9c26501e428012cbd33ee5b95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HobgoblinTeleport
+  vision: {fileID: 0}
+  teleportDistance: 0
+  debugMode: 0
 --- !u!114 &4737573433280951539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -349,6 +367,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ToTough
   hitsToStagger: 3
+--- !u!114 &3963566422253646542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780255270900913490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
+  entry:
+    entryName: Imp
+    flavourText: A subordinate minion to a devilish entity.
+    hintText: These things creep me out...
+    completeText: 
+    snapshotImage: {fileID: 0}
+  outline: {fileID: 6151485535973328032, guid: 90cad4ddb320cd544b4c63f73d0b5fa3, type: 3}
+  collectable: 0
+  scanDuration: 2
+  usesMeshOutline: 0
+  outlineRenderer: {fileID: 0}
+  outlineMaterialIndex: 1
+--- !u!114 &1650361166420418648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780255270900913490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 0.09066868, g: 0, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1001 &623349153814622997
 PrefabInstance:
   m_ObjectHideFlags: 0
