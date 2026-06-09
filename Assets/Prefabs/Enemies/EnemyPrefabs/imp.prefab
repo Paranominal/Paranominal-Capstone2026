@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c31a935967c3dd47b0f2fea3ec4ef49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
+  rotateX: 0
 --- !u!212 &3977782472309977724
 SpriteRenderer:
   serializedVersion: 2
@@ -130,6 +131,7 @@ GameObject:
   - component: {fileID: 3398322363394716667}
   - component: {fileID: 7715542274334475992}
   - component: {fileID: 6151485535973328032}
+  - component: {fileID: 6994235932479669295}
   m_Layer: 8
   m_Name: Imp
   m_TagString: Untagged
@@ -395,6 +397,20 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &6994235932479669295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780255270900913490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3f7b310a23364d4dae279e762532cd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShootableTarget
+  destroyOnHit: 0
+  validBulletType: 0
 --- !u!1001 &623349153814622997
 PrefabInstance:
   m_ObjectHideFlags: 0
