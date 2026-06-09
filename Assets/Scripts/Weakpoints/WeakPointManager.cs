@@ -45,7 +45,6 @@ public class WeakPointManager : MonoBehaviour
     public void NextWeakPoint()
     {
         // weakpoint destroyed: no longer triggers stagger (scan-only)
-
         currentWeakpoint += 1;
         if (currentWeakpoint < weakpoints.Length)
         {
@@ -53,12 +52,20 @@ public class WeakPointManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("Enemy Killed!");
-            Destroy(gameObject);
+            //checks for miniboss cycles
+            ToMiniBoss miniBoss = GetComponentInParent<ToMiniBoss>();
+            if (miniBoss != null)
+            {
+                miniBoss.OnCycleComplete();
+            }
+            else
+            {
+                Debug.Log("Enemy Killed!");
+                Destroy(gameObject);
+            }
         }
     }
 
-    //nak was here
     //hitting weakpoints will trigger the kb
     public void OnWeakPointHit()
     {
@@ -66,6 +73,13 @@ public class WeakPointManager : MonoBehaviour
         {
             knockbackComponent.ApplyKnockback();
         }
+    }
+
+    //allows miniboss cycles to repeat
+    public void ResetWeakpoints()
+    {
+        currentWeakpoint = 0;
+        SetupWeakpoints(); 
     }
 
     //returns total amount of weakpoints for the enemy
