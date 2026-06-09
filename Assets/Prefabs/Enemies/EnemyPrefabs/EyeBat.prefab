@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c31a935967c3dd47b0f2fea3ec4ef49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
+  rotateX: 0
 --- !u!212 &6016132784837794902
 SpriteRenderer:
   serializedVersion: 2
@@ -128,7 +129,6 @@ GameObject:
   - component: {fileID: 8232089063731135401}
   - component: {fileID: -7151052709924787694}
   - component: {fileID: 4505595464840246474}
-  - component: {fileID: 1970258881779162800}
   - component: {fileID: 6217460184859595310}
   m_Layer: 8
   m_Name: EyeBat
@@ -190,8 +190,6 @@ MonoBehaviour:
   - {fileID: 9122484986075877985}
   - {fileID: 940071960326430286}
   - {fileID: 2207208786353684176}
-  currentWeakpoint: 0
-  enemyHPComponent: {fileID: 0}
 --- !u!114 &1483370790856417942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -369,22 +367,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StaggerColorEffect
   staggerColor: {r: 1, g: 0, b: 0, a: 1}
---- !u!114 &1970258881779162800
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7915909615733791053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3f85133fbd8b7146b3f42d7aca47f73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHP
-  weakPointsManager: {fileID: 1894387095101060742}
-  display: {fileID: 1284784961338897524}
-  toughness: 1
-  hp: 1
 --- !u!114 &6217460184859595310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399,7 +381,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShootableTarget
   destroyOnHit: 0
   validBulletType: 0
-  enemyHP: {fileID: 1970258881779162800}
 --- !u!1 &8269592786964946544
 GameObject:
   m_ObjectHideFlags: 0
@@ -596,7 +577,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShootableTarget
   destroyOnHit: 1
   validBulletType: 0
-  enemyHP: {fileID: 0}
 --- !u!1001 &777204630496428280
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -66,6 +66,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c31a935967c3dd47b0f2fea3ec4ef49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
+  rotateX: 0
 --- !u!212 &3977782472309977724
 SpriteRenderer:
   serializedVersion: 2
@@ -135,7 +136,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5173996233358262159}
   - component: {fileID: 2880104385379219663}
-  - component: {fileID: 8163443709998664147}
   - component: {fileID: 7980951876251254891}
   - component: {fileID: 2688743458007262411}
   - component: {fileID: 4048073775354982405}
@@ -184,26 +184,6 @@ MonoBehaviour:
     m_Bits: 4294967295
   eyeHeight: 1.6
   targetHeight: 1.2
---- !u!114 &8163443709998664147
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6780255270900913490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e240ba900e5bba641b4eddf8adc6b6d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HobgoblinBehaviour
-  vision: {fileID: 2880104385379219663}
-  navAgent: {fileID: 2688743458007262411}
-  patrolSpeed: 2
-  wanderRadius: 8
-  idleWaitTime: 2
-  followSpeed: 3
-  stopDistance: 1
-  stagger: {fileID: 0}
 --- !u!114 &7980951876251254891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -301,6 +281,10 @@ MonoBehaviour:
     snapshotImage: {fileID: 0}
   outline: {fileID: 4543373875377568041}
   collectable: 0
+  scanDuration: 2
+  usesMeshOutline: 0
+  outlineRenderer: {fileID: 0}
+  outlineMaterialIndex: 1
 --- !u!114 &4543373875377568041
 MonoBehaviour:
   m_ObjectHideFlags: 0

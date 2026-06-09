@@ -17,7 +17,6 @@ GameObject:
   - component: {fileID: 97054203973693678}
   - component: {fileID: -4000586417156685449}
   - component: {fileID: 2480451604828081716}
-  - component: {fileID: -7199118255569828893}
   - component: {fileID: 894080395420570444}
   m_Layer: 8
   m_Name: Ghost
@@ -97,8 +96,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeakPointManager
   weakpoints:
   - {fileID: 147398069966076335}
-  currentWeakpoint: 0
-  enemyHPComponent: {fileID: 0}
 --- !u!114 &8192007907820673360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,22 +189,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StaggerColorEffect
   staggerColor: {r: 1, g: 0, b: 0, a: 1}
---- !u!114 &-7199118255569828893
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 272941483086651391}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3f85133fbd8b7146b3f42d7aca47f73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHP
-  weakPointsManager: {fileID: 5425350769874602465}
-  display: {fileID: 7694854577147141989}
-  toughness: 1
-  hp: 1
 --- !u!114 &894080395420570444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,7 +203,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShootableTarget
   destroyOnHit: 0
   validBulletType: 0
-  enemyHP: {fileID: -7199118255569828893}
 --- !u!1 &3649698560257739166
 GameObject:
   m_ObjectHideFlags: 0
@@ -270,6 +250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c31a935967c3dd47b0f2fea3ec4ef49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
+  rotateX: 0
 --- !u!212 &405706474175905397
 SpriteRenderer:
   serializedVersion: 2
@@ -327,7 +308,7 @@ SpriteRenderer:
   m_Size: {x: 1.8000224, y: 1.6700001}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8639887696346791248
 GameObject:
@@ -525,7 +506,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShootableTarget
   destroyOnHit: 1
   validBulletType: 0
-  enemyHP: {fileID: 0}
 --- !u!1001 &61327701195846995
 PrefabInstance:
   m_ObjectHideFlags: 0

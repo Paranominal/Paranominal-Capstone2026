@@ -18,7 +18,6 @@ GameObject:
   - component: {fileID: -3830337907838001936}
   - component: {fileID: 2055248637883492321}
   - component: {fileID: 7291461537017937302}
-  - component: {fileID: -750895496240227479}
   - component: {fileID: -4472409376266027680}
   m_Layer: 8
   m_Name: HauntedStatue
@@ -87,8 +86,6 @@ MonoBehaviour:
   - {fileID: 6364177138404320866}
   - {fileID: 1760927749143339351}
   - {fileID: 4331166013458019792}
-  currentWeakpoint: 0
-  enemyHPComponent: {fileID: 0}
 --- !u!114 &6924014765454415162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221,22 +218,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StaggerColorEffect
   staggerColor: {r: 1, g: 0, b: 0, a: 1}
---- !u!114 &-750895496240227479
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7585221046304408112}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3f85133fbd8b7146b3f42d7aca47f73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHP
-  weakPointsManager: {fileID: 1378227693022400216}
-  display: {fileID: 4886433112106366411}
-  toughness: 3
-  hp: 1
 --- !u!114 &-4472409376266027680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,7 +232,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShootableTarget
   destroyOnHit: 0
   validBulletType: 0
-  enemyHP: {fileID: -750895496240227479}
 --- !u!1 &8984952621230003225
 GameObject:
   m_ObjectHideFlags: 0
@@ -448,7 +428,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShootableTarget
   destroyOnHit: 1
   validBulletType: 0
-  enemyHP: {fileID: 0}
 --- !u!1 &9060832233878377879
 GameObject:
   m_ObjectHideFlags: 0
