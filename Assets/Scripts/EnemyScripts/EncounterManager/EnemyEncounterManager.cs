@@ -39,11 +39,9 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     [SerializeField] private int maxWaves = 1;
     [SerializeField] private float timeBetweenWaves = 3f;
 
-    // tandard Mode
     [Header("Standard Mode - Spawn Points")]
     [SerializeField] private List<EnemySpawnPoint> spawnPoints = new List<EnemySpawnPoint>();
 
-    // Arena Mode
     [Header("Arena Mode - Enemy Pool")]
     [SerializeField] private List<EnemyEntry> enemyPool = new List<EnemyEntry>();
 
@@ -66,7 +64,6 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     [HideInInspector] public bool isPlayerInRoom = false;
     [SerializeField] private float resetCounter = 5f;
 
-    // Door Gating
     [Header("Door Gating")]
     [SerializeField] private bool useDoorGating = false;
     [SerializeField] private List<Door> doors = new List<Door>();
