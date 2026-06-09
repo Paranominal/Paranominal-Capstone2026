@@ -138,8 +138,6 @@ public class ShotOrchestrator : MonoBehaviour
             damageable.TakeDamage(new DamageInfo());
             return false; 
         }
-
-        AudioManager.PlaySound(shotgunFire, audioSource);
         weaponHitscan.LogWorldHitOrMiss();
         return false;
     }
