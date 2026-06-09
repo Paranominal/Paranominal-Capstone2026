@@ -140,19 +140,20 @@ public class WeakPoint : MonoBehaviour
 
     public void Hide()
     {
-        // Deactivate both visuals and collider so hidden weakpoints can't be hit
         isShown = false;
 
         if (weakPointCollider != null)
             weakPointCollider.enabled = false;
 
-        foreach (SpriteRenderer renderer in allRenderers)
-            renderer.enabled = false;
+        if (allRenderers != null) // <-- guard against pre-Awake calls
+        {
+            foreach (SpriteRenderer renderer in allRenderers)
+                renderer.enabled = false;
+        }
 
         if (wardedOverlayRenderer != null)
             wardedOverlayRenderer.enabled = false;
 
-        // Keep state reset so the next show starts from a clean fade
         currentAlpha = 0f;
     }
 
