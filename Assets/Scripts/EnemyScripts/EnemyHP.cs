@@ -18,9 +18,9 @@ public class EnemyHP : MonoBehaviour
     }
     void Update()
     {
-        Debug.Log("hp" + hp);
-        Debug.Log("hpMax" + hpMax);
-        Debug.Log("damageTaken" + damageTaken);
+        // Debug.Log("hp" + hp);
+        // Debug.Log("hpMax" + hpMax);
+        // Debug.Log("damageTaken" + damageTaken);
     }
     public void IsShot()
     {
