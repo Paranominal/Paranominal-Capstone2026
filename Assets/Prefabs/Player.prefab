@@ -586,6 +586,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatus
   fearBar: {fileID: 0}
+  spiritBar: {fileID: 0}
 --- !u!1 &3524502881056351253
 GameObject:
   m_ObjectHideFlags: 0
@@ -2242,9 +2243,7 @@ MonoBehaviour:
   cameraRecoilController: {fileID: 2601122520336315906}
   gunVisuals: {fileID: 6232948056006973311}
   weaponStateController: {fileID: 1129320781834323432}
-  audioSource: {fileID: 0}
-  shotgunFire: {fileID: 11400000, guid: fb3c274af03cb9b4e9cba33fb64a27b3, type: 2}
-  shotgunReload: {fileID: 11400000, guid: abd7296a0353de749a28154b3aacc81d, type: 2}
+  postShotReloadDelay: 0.25
 --- !u!114 &7342759667392061402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2357,6 +2356,10 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 13.499999
       objectReference: {fileID: 0}
+    - target: {fileID: 1616003964371186215, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -296
+      objectReference: {fileID: 0}
     - target: {fileID: 2943515867254046240, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -2377,9 +2380,17 @@ PrefabInstance:
       propertyPath: weaponStateController
       value: 
       objectReference: {fileID: 1129320781834323432}
+    - target: {fileID: 3445251275019508778, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -379.32397
+      objectReference: {fileID: 0}
     - target: {fileID: 6818782401789846890, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6900052789867670306, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -462.70398
       objectReference: {fileID: 0}
     - target: {fileID: 6984559138644257905, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: weaponEvents
