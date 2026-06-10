@@ -31770,6 +31770,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Floor1_Courtyard
       objectReference: {fileID: 0}
+    - target: {fileID: 7484292225835096794, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
+      propertyPath: encounterManager
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7824715085758199000, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -31778,7 +31782,8 @@ PrefabInstance:
       propertyPath: m_VersionIndex
       value: 10951
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5133784622836617903, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
     m_RemovedGameObjects:
     - {fileID: 2545693473985156215, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
     - {fileID: 8602877183607104291, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
@@ -31885,13 +31890,75 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4660088750073456449, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3794931338828600913}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6730184709883978011, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8679916809301031406}
   m_SourcePrefab: {fileID: 100100000, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
 --- !u!4 &4700221254418428302 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4660088750073456449, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
   m_PrefabInstance: {fileID: 113008169415202511}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6698848264803039188 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6730184709883978011, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
+  m_PrefabInstance: {fileID: 113008169415202511}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8679916809301031406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6698848264803039188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ccdb687bbf5b2b4685690083400646c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyEncounterManager
+  encounterMode: 0
+  maxWaves: 1
+  timeBetweenWaves: 3
+  spawnPoints:
+  - {fileID: 1077353655040437304}
+  - {fileID: 6268263563452738102}
+  - {fileID: 8444993196661257938}
+  - {fileID: 4331389658938240074}
+  - {fileID: 6455464560434754625}
+  - {fileID: 891661821615904788}
+  - {fileID: 5640997318959365133}
+  - {fileID: 4186419828252320997}
+  - {fileID: 6789445765711320340}
+  - {fileID: 4453950331271991123}
+  - {fileID: 8510616565864334930}
+  - {fileID: 3643443450389955919}
+  - {fileID: 7468049007782180175}
+  - {fileID: 448745697115381726}
+  - {fileID: 7025847300069436310}
+  - {fileID: 1341966754983935905}
+  - {fileID: 7182393792115846348}
+  - {fileID: 2394974290931243441}
+  - {fileID: 6122169593118631785}
+  - {fileID: 5270173785470502623}
+  - {fileID: 2449803700443088827}
+  - {fileID: 5953062124948513786}
+  enemyPool: []
+  startingWave: 1
+  budgetPerWave: 10
+  maxEnemiesPerWave: 50
+  spawnTimingMode: 0
+  waveDuration: 10
+  spawnLocationMode: 0
+  randomiseSpawnPoint: 1
+  randomSpawnRadius: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isPlayerInRoom: 0
+  resetCounter: 5
+  useDoorGating: 0
+  doors: []
 --- !u!1001 &771508757634309692
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31946,7 +32013,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -31974,7 +32041,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &999589310874133742
@@ -32031,7 +32098,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -32063,7 +32130,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &1071069678077760383
@@ -32182,7 +32249,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -32214,7 +32281,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &1374568966659833065
@@ -32279,7 +32346,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4723982744490319635, guid: 817d504dd85c8ed4382c5533fb151b1f, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4723982744490319635, guid: 817d504dd85c8ed4382c5533fb151b1f, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -32311,7 +32378,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &1689885355680232741
@@ -32376,7 +32443,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4723982744490319635, guid: 817d504dd85c8ed4382c5533fb151b1f, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -32396,7 +32463,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &1692362924845514460
@@ -32461,7 +32528,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8573914673235334474, guid: d00128c921db7724289b95d2cd40b804, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8573914673235334474, guid: d00128c921db7724289b95d2cd40b804, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -32493,7 +32560,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &1928911730162104101
@@ -32550,7 +32617,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -32578,7 +32645,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &2750892632786545244
@@ -32643,7 +32710,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4723982744490319635, guid: 817d504dd85c8ed4382c5533fb151b1f, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4723982744490319635, guid: 817d504dd85c8ed4382c5533fb151b1f, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -32675,7 +32742,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &2833000653367578365
@@ -32732,7 +32799,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -32764,7 +32831,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &2984116255910736057
@@ -32777,7 +32844,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1546311503644679411, guid: edcd75f898e61464d8e9a5dd425a86bd, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2243131787214766685, guid: edcd75f898e61464d8e9a5dd425a86bd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -32849,7 +32916,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &3668149602290476131
@@ -32906,7 +32973,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -32934,7 +33001,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &3800002167910050241
@@ -32999,7 +33066,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4723982744490319635, guid: 817d504dd85c8ed4382c5533fb151b1f, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -33019,7 +33086,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &5166955412786217165
@@ -33084,7 +33151,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4723982744490319635, guid: 817d504dd85c8ed4382c5533fb151b1f, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4723982744490319635, guid: 817d504dd85c8ed4382c5533fb151b1f, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -33107,7 +33174,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!4 &6383151995585643152 stripped
@@ -33125,7 +33192,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1546311503644679411, guid: edcd75f898e61464d8e9a5dd425a86bd, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2243131787214766685, guid: edcd75f898e61464d8e9a5dd425a86bd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -33197,7 +33264,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &5727859885665481515
@@ -33262,7 +33329,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4723982744490319635, guid: 817d504dd85c8ed4382c5533fb151b1f, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -33277,7 +33344,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!4 &5790580522268635510 stripped
@@ -33347,7 +33414,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4723982744490319635, guid: 817d504dd85c8ed4382c5533fb151b1f, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4723982744490319635, guid: 817d504dd85c8ed4382c5533fb151b1f, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -33374,7 +33441,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!4 &9174028440534276853 stripped
@@ -33444,7 +33511,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8573914673235334474, guid: d00128c921db7724289b95d2cd40b804, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8573914673235334474, guid: d00128c921db7724289b95d2cd40b804, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -33471,7 +33538,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!4 &8881663779554863286 stripped
@@ -33533,7 +33600,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -33560,7 +33627,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!4 &8854558558194317789 stripped
@@ -33622,7 +33689,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -33645,7 +33712,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!4 &7587724204829631779 stripped
@@ -33707,7 +33774,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -33730,7 +33797,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!4 &7355084420476579647 stripped
@@ -33800,7 +33867,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8573914673235334474, guid: d00128c921db7724289b95d2cd40b804, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -33815,7 +33882,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!4 &7314492522583084803 stripped
@@ -33877,7 +33944,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: enemyPool.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4970894319744819761, guid: 9c8cf82fa9aa0ed45a1396c47fbe152a, type: 3}
       propertyPath: 'enemyPool.Array.data[0]'
@@ -33900,7 +33967,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!4 &7044818195577226377 stripped

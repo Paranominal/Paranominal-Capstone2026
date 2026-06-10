@@ -20,6 +20,7 @@ public class ContainerCheck : MonoBehaviour
     public List<ALTGrimoireEntry> failures;
     InputAction collectAction;
     public LayerMask interactable;
+    private Raycaster raycaster;
     [SerializeField]
     CheckType checkType;
 
@@ -27,14 +28,16 @@ public class ContainerCheck : MonoBehaviour
     void Start()
     {
         collectAction = InputSystem.actions.FindAction("Collect");
-
+        if (raycaster == null)
+        {
+            raycaster = FindAnyObjectByType<Raycaster>();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Pointer.current.position.ReadValue());
-        if (Physics.Raycast(ray, out RaycastHit hit, 1000f, interactable))
+        if (Physics.Raycast(raycaster.Ray, out RaycastHit hit, 1000f, interactable))
         {
             if (collectAction.WasReleasedThisFrame() && GetComponentInChildren<Collider>() == hit.collider && container.contents.Count != 0)
             {

@@ -9,6 +9,7 @@ public class ALTScan : MonoBehaviour
     InputAction collectAction;  // i started implementing collecting as a seperate set of scripts and then realised it was going to either be so wrapped up in this as to be problematic or duplicate so much code it would be incredibly questionable. so. voila.
     private ALTGrimoire grimoire;
     private ALTScannableObject scannedNow;
+    private Raycaster raycaster;
 
     [Header("Sounds")]
     [SerializeField] private SoundDataSO itemPickupSound;
@@ -22,6 +23,10 @@ public class ALTScan : MonoBehaviour
         if (grimoire == null)
         {
             grimoire = FindAnyObjectByType<ALTGrimoire>();
+        }
+        if (raycaster == null)
+        {
+            raycaster = FindAnyObjectByType<Raycaster>();
         }
     }
 

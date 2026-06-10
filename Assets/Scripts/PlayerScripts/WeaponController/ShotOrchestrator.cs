@@ -138,6 +138,7 @@ public class ShotOrchestrator : MonoBehaviour
             damageable.TakeDamage(new DamageInfo());
             return false; 
         }
+
         weaponHitscan.LogWorldHitOrMiss();
         return false;
     }

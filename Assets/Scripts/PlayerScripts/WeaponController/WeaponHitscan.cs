@@ -10,6 +10,16 @@ public class WeaponHitscan : MonoBehaviour
     [SerializeField] private LayerMask weakPointLayer;
     [SerializeField] private float rayDistance = 1000f;
 
+    private Raycaster raycaster;
+
+    private void Start()
+    {
+        if (raycaster == null)
+        {
+            raycaster = FindAnyObjectByType<Raycaster>();
+        }
+    }
+
     private void Awake()
     {
         if (playerCamera == null)
@@ -100,10 +110,6 @@ public class WeaponHitscan : MonoBehaviour
 
     private Ray BuildAimRay()
     {
-        Vector2 mousePos = Pointer.current != null
-            ? Pointer.current.position.ReadValue()
-            : Vector2.zero;
-
-        return playerCamera.ScreenPointToRay(mousePos);
+        return raycaster.Ray;
     }
 }

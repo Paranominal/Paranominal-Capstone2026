@@ -14,7 +14,6 @@ public class HobgoblinBehaviour_PrototypeMelee : EnemyBehaviourBase
     //follow speed settings
     [Header("Following")]
     [SerializeField] private float followSpeed = 5f;
-    [SerializeField] private float stopDistance = 1f;
 
     //attack configuration
     [Header("Attack")]

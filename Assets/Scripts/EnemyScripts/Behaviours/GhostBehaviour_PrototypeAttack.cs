@@ -24,8 +24,6 @@ public class GhostBehaviour_PrototypeAttack : EnemyBehaviourBase
     [Tooltip("Damage dealt to the player on contact. Logged only until PlayerStatus is implemented.")]
     [SerializeField] private int contactDamage = 10;
 
-    //current ai state
-    private EnemyState currentState = EnemyState.Chase;
     private Vector3 velocity;
 
     //cache references before play starts

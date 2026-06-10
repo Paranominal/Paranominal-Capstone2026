@@ -66,7 +66,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3de42df2263eb3946969af566b4d5c7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomEntryDetector
-  encounterManager: {fileID: 8810946042997462459}
+  encounterManager: {fileID: 0}
 --- !u!1 &3466624523629475555
 GameObject:
   m_ObjectHideFlags: 0
@@ -76,8 +76,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7647847478927510611}
-  - component: {fileID: 8810946042997462459}
   - component: {fileID: 7646215224186066398}
+  - component: {fileID: 6672952274329951842}
   m_Layer: 0
   m_Name: Room_Bathroom
   m_TagString: Untagged
@@ -105,26 +105,6 @@ Transform:
   - {fileID: 7814707771027778315}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8810946042997462459
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3466624523629475555}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8dac0a8e96544014ab412e4912f494f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyEncounterManager
-  maxWaves: 1
-  timeBetweenWaves: 3
-  spawnPoints:
-  - {fileID: 5350229549191584573}
-  - {fileID: 2192222867983056593}
-  - {fileID: 4012273122403093351}
-  isPlayerInRoom: 0
-  resetCounter: 5
 --- !u!114 &7646215224186066398
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,6 +137,41 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: b197c87021016834ca2a5bc022c18ba8, type: 2}
   m_BuildHeightMesh: 0
+--- !u!114 &6672952274329951842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3466624523629475555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ccdb687bbf5b2b4685690083400646c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyEncounterManager
+  encounterMode: 0
+  maxWaves: 1
+  timeBetweenWaves: 3
+  spawnPoints:
+  - {fileID: 5350229549191584573}
+  - {fileID: 2192222867983056593}
+  - {fileID: 4012273122403093351}
+  enemyPool: []
+  startingWave: 1
+  budgetPerWave: 10
+  maxEnemiesPerWave: 50
+  spawnTimingMode: 0
+  waveDuration: 10
+  spawnLocationMode: 0
+  randomiseSpawnPoint: 1
+  randomSpawnRadius: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isPlayerInRoom: 0
+  resetCounter: 5
+  useDoorGating: 0
+  doors: []
 --- !u!1001 &1063974731788155148
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -227,7 +242,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &1523608822813677124
@@ -247,10 +262,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1139535396041686499, guid: eda23cb4360426d44aa8983ea43f2de8, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1356697071609799900, guid: eda23cb4360426d44aa8983ea43f2de8, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
@@ -319,10 +330,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 3636772875164698474, guid: eda23cb4360426d44aa8983ea43f2de8, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3636772875164698474, guid: eda23cb4360426d44aa8983ea43f2de8, type: 3}
       propertyPath: m_VersionIndex
       value: 3766
       objectReference: {fileID: 0}
@@ -331,16 +338,8 @@ PrefabInstance:
       value: Asset_Bathroom
       objectReference: {fileID: 0}
     - target: {fileID: 4312106119008356478, guid: eda23cb4360426d44aa8983ea43f2de8, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312106119008356478, guid: eda23cb4360426d44aa8983ea43f2de8, type: 3}
       propertyPath: m_VersionIndex
       value: 1599
-      objectReference: {fileID: 0}
-    - target: {fileID: 4552224240906197703, guid: eda23cb4360426d44aa8983ea43f2de8, type: 3}
-      propertyPath: m_Mesh
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4552224240906197703, guid: eda23cb4360426d44aa8983ea43f2de8, type: 3}
       propertyPath: m_VersionIndex
@@ -359,16 +358,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5780606641092266894, guid: eda23cb4360426d44aa8983ea43f2de8, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5780606641092266894, guid: eda23cb4360426d44aa8983ea43f2de8, type: 3}
       propertyPath: m_VersionIndex
       value: 3124
-      objectReference: {fileID: 0}
-    - target: {fileID: 6148506548009799682, guid: eda23cb4360426d44aa8983ea43f2de8, type: 3}
-      propertyPath: m_Mesh
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6148506548009799682, guid: eda23cb4360426d44aa8983ea43f2de8, type: 3}
       propertyPath: m_VersionIndex
@@ -383,10 +374,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 9049073843618538589, guid: eda23cb4360426d44aa8983ea43f2de8, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 9191257235188301908, guid: eda23cb4360426d44aa8983ea43f2de8, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
@@ -469,7 +456,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!4 &5021875739174723261 stripped
@@ -542,7 +529,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!4 &7814707771027778315 stripped
