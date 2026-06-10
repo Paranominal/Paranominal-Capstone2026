@@ -12,10 +12,8 @@ public class ShotOrchestrator : MonoBehaviour
     [SerializeField] private GunVisuals gunVisuals;
     [SerializeField] private WeaponStateController weaponStateController;
 
-        [Header("Sound")]
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private SoundDataSO shotgunFire;
-    [SerializeField] private SoundDataSO shotgunReload;
+    [Header("Reload")]
+    [SerializeField] private float postShotReloadDelay = 0.25f;
 
     private bool wasReloading;
 
@@ -41,7 +39,6 @@ public class ShotOrchestrator : MonoBehaviour
 
         if (weaponFiringLogic.IsReloading)
         {
-            AudioManager.PlaySound(shotgunReload, audioSource);
             if (!wasReloading && weaponEvents != null)
                 weaponEvents.RaiseReloadStarted();
 
@@ -109,7 +106,7 @@ public class ShotOrchestrator : MonoBehaviour
         }
 
         if (!weaponFiringLogic.HasAmmo() && autoReloadEnabled)
-            weaponFiringLogic.TryStartReload();
+            StartCoroutine(DelayedAutoReload());
     }
 
     private bool Fire(WeakPointType shotType)
@@ -141,9 +138,16 @@ public class ShotOrchestrator : MonoBehaviour
             damageable.TakeDamage(new DamageInfo());
             return false; 
         }
-
-        AudioManager.PlaySound(shotgunFire, audioSource);
         weaponHitscan.LogWorldHitOrMiss();
         return false;
+    }
+
+    private System.Collections.IEnumerator DelayedAutoReload()
+    {
+        yield return new WaitForSeconds(postShotReloadDelay);
+
+        // Re-check ammo in case something else refilled it during the delay
+        if (!weaponFiringLogic.HasAmmo())
+            weaponFiringLogic.TryStartReload();
     }
 }

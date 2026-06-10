@@ -15,5 +15,5 @@ public class SceneResetTEMP : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (resetInput.WasReleasedThisFrame()) SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);    }
+        if (resetInput.WasReleasedThisFrame()) SceneManager.LoadScene(0);    }
 }

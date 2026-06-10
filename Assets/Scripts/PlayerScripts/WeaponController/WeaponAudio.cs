@@ -1,13 +1,13 @@
 using UnityEngine;
 
-// Summary: Listens to WeaponEvents and plays sounds for firing and reloading.
-// Sits alongside the other weapon components on the weapon GameObject.
+// Listens to WeaponEvents and plays sounds for firing and reloading. Sits alongside the other weapon components on the weapon GameObject.
 [RequireComponent(typeof(AudioSource))]
 public class WeaponAudio : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private WeaponEvents weaponEvents;
-    [SerializeField] private AudioSource source;
+    [SerializeField] private AudioSource fireSource;
+    [SerializeField] private AudioSource reloadSource;
 
     [Header("Sounds")]
     [SerializeField] private SoundDataSO shotgunFire;
@@ -16,13 +16,15 @@ public class WeaponAudio : MonoBehaviour
     private void Reset()
     {
         weaponEvents = GetComponent<WeaponEvents>();
-        source = GetComponent<AudioSource>();
+        // Pre-fill fireSource with the first AudioSource on this GameObject.
+        fireSource = GetComponent<AudioSource>();
+        // reloadSource must be wired up manually in the inspector (designer adds a second AudioSource and drags it into the slot).
     }
 
     private void Awake()
     {
         if (weaponEvents == null) weaponEvents = GetComponent<WeaponEvents>();
-        if (source == null) source = GetComponent<AudioSource>();
+        if (fireSource == null) fireSource = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
@@ -41,11 +43,11 @@ public class WeaponAudio : MonoBehaviour
 
     private void OnShotFired(WeakPointType shotType)
     {
-        if (shotgunFire != null) AudioManager.PlaySound(shotgunFire, source);
+        if (shotgunFire != null) AudioManager.PlaySound(shotgunFire, fireSource);
     }
 
     private void OnReloadStarted()
     {
-        if (shotgunReload != null) AudioManager.PlaySound(shotgunReload, source);
+        if (shotgunReload != null) AudioManager.PlaySound(shotgunReload, reloadSource);
     }
 }
