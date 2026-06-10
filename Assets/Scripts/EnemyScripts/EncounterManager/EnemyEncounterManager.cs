@@ -749,7 +749,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
 
         if (spawnPoints == null || spawnPoints.Count == 0)
         {
-            Debug.LogWarning("EnemyEncounterManager could not find any child EnemySpawnPoint components.");
+            Debug.LogWarning($"[{this.gameObject}]EnemyEncounterManager could not find any child EnemySpawnPoint components.");
             return false;
         }
 
