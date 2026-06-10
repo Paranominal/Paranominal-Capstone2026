@@ -56,14 +56,43 @@ PrefabInstance:
       propertyPath: unlocked
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8897224583443814603, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 52eb51f447777b147b1f9b78c19ae21c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 7228497878310599864, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7466856141944953546}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1203907827036965114, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3116721854000706604}
   m_SourcePrefab: {fileID: 100100000, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
+--- !u!1 &4306053155479194119 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1203907827036965114, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
+  m_PrefabInstance: {fileID: 3131988891537523453}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3116721854000706604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4306053155479194119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f88c309b4fe5244f95a8c5abab799d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractionObject
+  keyName: Holy Water
+  interactable:
+    serializedVersion: 2
+    m_Bits: 1024
+  consumesItem: 1
 --- !u!4 &5703747115445812805 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7228497878310599864, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
@@ -77,6 +106,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5703747115445812805}
     m_Modifications:
+    - target: {fileID: 1238455157926057541, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.9081551
+      objectReference: {fileID: 0}
+    - target: {fileID: 1238455157926057541, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.8941175
+      objectReference: {fileID: 0}
+    - target: {fileID: 1238455157926057541, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.8941175
+      objectReference: {fileID: 0}
     - target: {fileID: 1238455157926057541, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.009
@@ -167,23 +208,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7806677775689557063, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
       propertyPath: entry.hintText
-      value: I bet a spell can break this ward...
+      value: I bet some Holy Water can break this spell...
       objectReference: {fileID: 0}
     - target: {fileID: 7806677775689557063, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
       propertyPath: entry.entryName
-      value: Strange Glyph
+      value: Pentagram
       objectReference: {fileID: 0}
     - target: {fileID: 7806677775689557063, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
       propertyPath: entry.flavourText
-      value: A mysterious spell Glyph.
+      value: A demonic glyph.
       objectReference: {fileID: 0}
     - target: {fileID: 8919746013310607801, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
       propertyPath: m_Radius
-      value: 0.24
+      value: 0.17805874
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919746013310607801, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8919746013310607801, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
       propertyPath: m_Center.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919746013310607801, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: m_Center.y
+      value: -0.034180228
       objectReference: {fileID: 0}
     - target: {fileID: 8919746013310607801, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
       propertyPath: m_Center.z

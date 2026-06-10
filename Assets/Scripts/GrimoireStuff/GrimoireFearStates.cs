@@ -1,45 +1,54 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GrimoireFearStates : MonoBehaviour
 {
-    [SerializeField] Material grimMaterial;
+    [SerializeField] Material grimoireMaterial;
     [SerializeField] Texture fineTexture, fineEmission, medTexture, medEmission, woundedTexture, woundedEmission;
-    [Range(0, 3)]
-    [SerializeField] int fearLevel;
-    private Texture startTexture;
+    [SerializeField] FearBar fearBar;
     public bool debugMode;
+
     void Start()
     {
-        grimMaterial.SetTexture("_BaseMap", fineTexture);
-        grimMaterial.SetTexture("_EmissionMap", fineEmission);
+        grimoireMaterial.SetTexture("_BaseMap", fineTexture);
+        grimoireMaterial.SetTexture("_EmissionMap", fineEmission);
 
-        if(debugMode)foreach (var localKeywordName in grimMaterial.shaderKeywords)
+        if (debugMode)
         {
-            Debug.Log("Local shader keyword " + localKeywordName + " is currently enabled");
+            foreach (var localKeywordName in grimoireMaterial.shaderKeywords)
+            {
+                Debug.Log("Local shader keyword " + localKeywordName + " is currently enabled");
+            }
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        if (debugMode) Debug.Log("fearLevel: " + fearLevel);
-        if (debugMode) Debug.Log("Grimoire texture is set to: " + grimMaterial.mainTexture);
+        fearBar.OnFearChanged += HandleFearChanged;
+    }
 
-        if (fearLevel == 0)
+    private void HandleFearChanged(FearBar.FearRank rank)
+    {
+        if (debugMode) Debug.Log("fearLevel updated to: " + rank);
+        if (debugMode) Debug.Log("Grimoire texture is now set to: " + grimoireMaterial.mainTexture);
+
+        switch (rank) // ek, meet switch statement
         {
-            grimMaterial.SetTexture("_BaseMap", fineTexture);
-            grimMaterial.SetTexture("_EmissionMap", medEmission);
+            case FearBar.FearRank.Fine:
+            case FearBar.FearRank.High:
+                grimoireMaterial.SetTexture("_BaseMap", fineTexture);
+                grimoireMaterial.SetTexture("_EmissionMap", fineEmission); // this emission map
+                break;
+            case FearBar.FearRank.Medium:
+                grimoireMaterial.SetTexture("_BaseMap", medTexture);
+                grimoireMaterial.SetTexture("_EmissionMap", medEmission); // and this one were swapped initally - i assume it was a mistake?
+                break;
+            case FearBar.FearRank.Low:
+                grimoireMaterial.SetTexture("_BaseMap", woundedTexture);
+                grimoireMaterial.SetTexture("_EmissionMap", woundedEmission);
+                break;
         }
-        else if (fearLevel == 1)
-        {
-            grimMaterial.SetTexture("_BaseMap", medTexture);
-            grimMaterial.SetTexture("_EmissionMap", fineEmission);
-        }
-        else if (fearLevel == 2)
-        {
-            grimMaterial.SetTexture("_BaseMap", woundedTexture);
-            grimMaterial.SetTexture("_EmissionMap", woundedEmission);
-        }
+
+        if (debugMode) Debug.Log("fearLevel updated to: " + rank);
+        if (debugMode) Debug.Log("Grimoire texture is now set to: " + grimoireMaterial.mainTexture);
     }
 }

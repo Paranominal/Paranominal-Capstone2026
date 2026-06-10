@@ -40,7 +40,7 @@ public class StaggerColorEffect : MonoBehaviour
         for (int i = 0; i < spriteRenderers.Length; i++)
         {
             Color newColor = staggerColor;
-            spriteRenderers[i].color = newColor;
+            if (spriteRenderers[i].gameObject.tag != "WeakPoint") spriteRenderers[i].color = newColor;
         }
     }
 

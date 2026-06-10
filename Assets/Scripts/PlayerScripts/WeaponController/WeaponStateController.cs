@@ -20,6 +20,8 @@ public class WeaponStateController : MonoBehaviour
     public bool IsSilverBarrelEnabled => weaponEnabled && silverBarrelEnabled;
     public bool AutoReloadEnabled => weaponEnabled && autoReloadEnabled;
 
+    public GameObject shotGun;
+
     private void Awake()
     {
         if (gunVisuals == null) gunVisuals = GetComponent<GunVisuals>();
@@ -55,7 +57,7 @@ public class WeaponStateController : MonoBehaviour
         silverBarrelEnabled = cachedSilverBarrelEnabled;
 
         if (gunVisuals != null)
-            gunVisuals.SetVisualsVisible(true);
+            gunVisuals.SetVisualsVisible(true);        
     }
 
     public void DisableWeapon()

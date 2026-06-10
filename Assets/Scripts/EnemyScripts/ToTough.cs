@@ -8,12 +8,14 @@ public class ToTough : MonoBehaviour, IDamageable
     private bool isStaggered = false;
 
     private WeakPointManager wpManager;
+    private EnemyStagger stagger;
     private EnemyKnockback knockback;
 
     private void Awake()
     {
         currentHits = hitsToStagger;
         wpManager = GetComponentInChildren<WeakPointManager>(true);
+        stagger = GetComponentInChildren<EnemyStagger>();
 
         knockback = GetComponent<EnemyKnockback>();
 
@@ -54,6 +56,8 @@ public class ToTough : MonoBehaviour, IDamageable
         //enable wpm to setup the weakpoints
         if (wpManager != null)
         {
+            if (stagger != null) stagger.TriggerStagger();
+            else Debug.LogWarning($"Tough enemy [{this}] is missing EnemyStagger component!");
             wpManager.enabled = true;
         }
     }
