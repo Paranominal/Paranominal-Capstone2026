@@ -66,7 +66,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3de42df2263eb3946969af566b4d5c7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomEntryDetector
-  encounterManager: {fileID: 9150328596903443923}
+  encounterManager: {fileID: 0}
 --- !u!1 &3792408558221385355
 GameObject:
   m_ObjectHideFlags: 0
@@ -76,8 +76,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7969162549003232315}
-  - component: {fileID: 9150328596903443923}
   - component: {fileID: 6750893793042612491}
+  - component: {fileID: 4295120835400644537}
   m_Layer: 0
   m_Name: Floor1_LHallway
   m_TagString: Untagged
@@ -109,24 +109,6 @@ Transform:
   - {fileID: 3121155475654017203}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!114 &9150328596903443923
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3792408558221385355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8dac0a8e96544014ab412e4912f494f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyEncounterManager
-  maxWaves: 1
-  timeBetweenWaves: 3
-  spawnPoints:
-  - {fileID: 2259072307142324667}
-  isPlayerInRoom: 0
-  resetCounter: 5
 --- !u!114 &6750893793042612491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,6 +141,39 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: ec6394579079d8249bd6b9b6131b64ee, type: 2}
   m_BuildHeightMesh: 0
+--- !u!114 &4295120835400644537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3792408558221385355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ccdb687bbf5b2b4685690083400646c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyEncounterManager
+  encounterMode: 0
+  maxWaves: 1
+  timeBetweenWaves: 3
+  spawnPoints:
+  - {fileID: 2259072307142324667}
+  enemyPool: []
+  startingWave: 1
+  budgetPerWave: 10
+  maxEnemiesPerWave: 50
+  spawnTimingMode: 0
+  waveDuration: 10
+  spawnLocationMode: 0
+  randomiseSpawnPoint: 1
+  randomSpawnRadius: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isPlayerInRoom: 0
+  resetCounter: 5
+  useDoorGating: 0
+  doors: []
 --- !u!1001 &36613892040705289
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -361,7 +376,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &1269533475993402924

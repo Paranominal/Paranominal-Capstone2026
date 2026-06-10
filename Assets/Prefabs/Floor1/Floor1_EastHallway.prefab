@@ -1445,6 +1445,10 @@ PrefabInstance:
       propertyPath: m_VersionIndex
       value: 1805
       objectReference: {fileID: 0}
+    - target: {fileID: 1857444730747878634, guid: 33e62c86a2ec89c488f468ac2e8a3a88, type: 3}
+      propertyPath: encounterManager
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 2008274571015191138, guid: 33e62c86a2ec89c488f468ac2e8a3a88, type: 3}
       propertyPath: m_VersionIndex
       value: 2983
@@ -1565,7 +1569,8 @@ PrefabInstance:
       propertyPath: m_VersionIndex
       value: 2983
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8810946042997462459, guid: 33e62c86a2ec89c488f468ac2e8a3a88, type: 3}
     m_RemovedGameObjects:
     - {fileID: 4954705040218649735, guid: 33e62c86a2ec89c488f468ac2e8a3a88, type: 3}
     - {fileID: 4370345574669258344, guid: 33e62c86a2ec89c488f468ac2e8a3a88, type: 3}
@@ -1604,8 +1609,84 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7647847478927510611, guid: 33e62c86a2ec89c488f468ac2e8a3a88, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7126530264477353214}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3466624523629475555, guid: 33e62c86a2ec89c488f468ac2e8a3a88, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6906139540085654948}
   m_SourcePrefab: {fileID: 100100000, guid: 33e62c86a2ec89c488f468ac2e8a3a88, type: 3}
+--- !u!1 &2394615683038881256 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3466624523629475555, guid: 33e62c86a2ec89c488f468ac2e8a3a88, type: 3}
+  m_PrefabInstance: {fileID: 1234143416083485451}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6906139540085654948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2394615683038881256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ccdb687bbf5b2b4685690083400646c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyEncounterManager
+  encounterMode: 0
+  maxWaves: 1
+  timeBetweenWaves: 3
+  spawnPoints:
+  - {fileID: 2978611274459927222}
+  - {fileID: 3503002785453052592}
+  - {fileID: 5957186935425626566}
+  enemyPool: []
+  startingWave: 1
+  budgetPerWave: 10
+  maxEnemiesPerWave: 50
+  spawnTimingMode: 0
+  waveDuration: 10
+  spawnLocationMode: 0
+  randomiseSpawnPoint: 1
+  randomSpawnRadius: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isPlayerInRoom: 0
+  resetCounter: 5
+  useDoorGating: 0
+  doors: []
+--- !u!114 &2978611274459927222 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4068625997747143101, guid: 33e62c86a2ec89c488f468ac2e8a3a88, type: 3}
+  m_PrefabInstance: {fileID: 1234143416083485451}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
+--- !u!114 &3503002785453052592 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2431280366718878139, guid: 33e62c86a2ec89c488f468ac2e8a3a88, type: 3}
+  m_PrefabInstance: {fileID: 1234143416083485451}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
+--- !u!114 &5957186935425626566 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4867444592421593805, guid: 33e62c86a2ec89c488f468ac2e8a3a88, type: 3}
+  m_PrefabInstance: {fileID: 1234143416083485451}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!4 &8863666975203417944 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7647847478927510611, guid: 33e62c86a2ec89c488f468ac2e8a3a88, type: 3}

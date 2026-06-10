@@ -853,7 +853,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &2421975090437734095
@@ -1468,7 +1468,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: Floor1_Parlour
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 7484292225835096794, guid: b6c6affd4fa2803409160d324f8a38b1, type: 3}
+      propertyPath: encounterManager
+      value: 
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5133784622836617903, guid: b6c6affd4fa2803409160d324f8a38b1, type: 3}
     m_RemovedGameObjects:
     - {fileID: 2545693473985156215, guid: b6c6affd4fa2803409160d324f8a38b1, type: 3}
     m_AddedGameObjects:
@@ -1574,8 +1579,54 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4660088750073456449, guid: b6c6affd4fa2803409160d324f8a38b1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8763517565138490297}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6730184709883978011, guid: b6c6affd4fa2803409160d324f8a38b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1392297831083648379}
   m_SourcePrefab: {fileID: 100100000, guid: b6c6affd4fa2803409160d324f8a38b1, type: 3}
+--- !u!1 &7869878952547104816 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6730184709883978011, guid: b6c6affd4fa2803409160d324f8a38b1, type: 3}
+  m_PrefabInstance: {fileID: 3481570996698405163}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1392297831083648379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7869878952547104816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ccdb687bbf5b2b4685690083400646c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyEncounterManager
+  encounterMode: 0
+  maxWaves: 1
+  timeBetweenWaves: 3
+  spawnPoints:
+  - {fileID: 8718478023679471642}
+  - {fileID: 3367494736612251452}
+  - {fileID: 1427151610548245655}
+  - {fileID: 3470724525223711150}
+  - {fileID: 8995061474205338493}
+  - {fileID: 915331847078512071}
+  enemyPool: []
+  startingWave: 1
+  budgetPerWave: 10
+  maxEnemiesPerWave: 50
+  spawnTimingMode: 0
+  waveDuration: 10
+  spawnLocationMode: 0
+  randomiseSpawnPoint: 1
+  randomSpawnRadius: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isPlayerInRoom: 0
+  resetCounter: 5
+  useDoorGating: 0
+  doors: []
 --- !u!4 &8141083602662129258 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4660088750073456449, guid: b6c6affd4fa2803409160d324f8a38b1, type: 3}
@@ -1807,7 +1858,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &5827066494334582280
@@ -1949,7 +2000,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!4 &7963978979974270176 stripped
@@ -2747,7 +2798,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!4 &5916648307937958025 stripped
@@ -2944,7 +2995,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!4 &5575882857934719449 stripped
@@ -3030,7 +3081,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f330365124611541a92997734fabb04, type: 3}
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
 --- !u!1001 &8269744665558028130
