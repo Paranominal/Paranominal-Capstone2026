@@ -20,12 +20,6 @@ public class FearAudioEffects : MonoBehaviour
     [SerializeField] private float mediumInterval = 1.2f;
     [SerializeField] private float lowInterval = 0.8f;
 
-    [Header("Lowpass Filter")]
-    [SerializeField] private AudioMixer audioMixer;
-    [SerializeField] private string lowpassParameterName = "AmbientLowpassCutoff";
-    [SerializeField] private float lowpassMin = 800f;
-    [SerializeField] private float lowpassMax = 22000f;
-
     private AudioSource heartbeatSource;
     private float beatTimer;
     private bool heartbeatActive;
@@ -49,7 +43,6 @@ public class FearAudioEffects : MonoBehaviour
     public void UpdateIntensity(float normalizedFear, bool isInEncounter)
     {
         UpdateHeartbeat(normalizedFear, isInEncounter);
-        UpdateLowpass(normalizedFear);
     }
 
     public void OnRankChanged(FearBar.FearRank rank)
@@ -124,18 +117,5 @@ public class FearAudioEffects : MonoBehaviour
 
         float t = Mathf.InverseLerp(fearMin, fearMax, normalizedFear);
         return Mathf.Lerp(volMin, volMax, t);
-    }
-
-    // Lowpass only active at Medium or Low rank. Higher fear = lower cutoff.
-    private void UpdateLowpass(float normalizedFear)
-    {
-        if (currentRank != FearBar.FearRank.Medium && currentRank != FearBar.FearRank.Low)
-        {
-            audioMixer?.SetFloat(lowpassParameterName, lowpassMax);
-            return;
-        }
-
-        float cutoff = Mathf.Lerp(lowpassMax, lowpassMin, normalizedFear);
-        audioMixer?.SetFloat(lowpassParameterName, cutoff);
     }
 }
