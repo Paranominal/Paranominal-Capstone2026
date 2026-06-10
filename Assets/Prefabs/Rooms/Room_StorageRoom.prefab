@@ -66,7 +66,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3de42df2263eb3946969af566b4d5c7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomEntryDetector
-  encounterManager: {fileID: 8810946042997462459}
+  encounterManager: {fileID: 0}
 --- !u!1 &3466624523629475555
 GameObject:
   m_ObjectHideFlags: 0
@@ -76,8 +76,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7647847478927510611}
-  - component: {fileID: 8810946042997462459}
   - component: {fileID: 5231173504551992612}
+  - component: {fileID: 5196736032530279293}
   m_Layer: 0
   m_Name: Room_StorageRoom
   m_TagString: Untagged
@@ -102,23 +102,6 @@ Transform:
   - {fileID: 173283367726949597}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8810946042997462459
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3466624523629475555}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8dac0a8e96544014ab412e4912f494f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyEncounterManager
-  maxWaves: 1
-  timeBetweenWaves: 3
-  spawnPoints: []
-  isPlayerInRoom: 0
-  resetCounter: 5
 --- !u!114 &5231173504551992612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151,6 +134,38 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: b330f1932e1045f42b9e265406a4a33e, type: 2}
   m_BuildHeightMesh: 0
+--- !u!114 &5196736032530279293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3466624523629475555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ccdb687bbf5b2b4685690083400646c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyEncounterManager
+  encounterMode: 0
+  maxWaves: 1
+  timeBetweenWaves: 3
+  spawnPoints: []
+  enemyPool: []
+  startingWave: 1
+  budgetPerWave: 10
+  maxEnemiesPerWave: 50
+  spawnTimingMode: 0
+  waveDuration: 10
+  spawnLocationMode: 0
+  randomiseSpawnPoint: 1
+  randomSpawnRadius: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isPlayerInRoom: 0
+  resetCounter: 5
+  useDoorGating: 0
+  doors: []
 --- !u!1001 &1523608822813677124
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -160,16 +175,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 7647847478927510611}
     m_Modifications:
     - target: {fileID: 367969313389613258, guid: a50f0723e83e1ab49aa549432ec499ed, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 367969313389613258, guid: a50f0723e83e1ab49aa549432ec499ed, type: 3}
       propertyPath: m_VersionIndex
       value: 3191
       objectReference: {fileID: 0}
-    - target: {fileID: 644462326281226171, guid: a50f0723e83e1ab49aa549432ec499ed, type: 3}
-      propertyPath: m_Mesh
-      value: 
+    - target: {fileID: 367969313389613258, guid: a50f0723e83e1ab49aa549432ec499ed, type: 3}
+      propertyPath: m_SelectedEdges.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 367969313389613258, guid: a50f0723e83e1ab49aa549432ec499ed, type: 3}
+      propertyPath: m_SelectedVertices.Array.size
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 644462326281226171, guid: a50f0723e83e1ab49aa549432ec499ed, type: 3}
       propertyPath: m_VersionIndex
@@ -232,10 +247,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4166631815629013895, guid: a50f0723e83e1ab49aa549432ec499ed, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4166631815629013895, guid: a50f0723e83e1ab49aa549432ec499ed, type: 3}
       propertyPath: m_VersionIndex
       value: 937
       objectReference: {fileID: 0}
@@ -244,18 +255,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5962211958745131764, guid: a50f0723e83e1ab49aa549432ec499ed, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5962211958745131764, guid: a50f0723e83e1ab49aa549432ec499ed, type: 3}
       propertyPath: m_VersionIndex
       value: 3301
       objectReference: {fileID: 0}
     - target: {fileID: 6513357496307353081, guid: a50f0723e83e1ab49aa549432ec499ed, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 7134909596473529837, guid: a50f0723e83e1ab49aa549432ec499ed, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}

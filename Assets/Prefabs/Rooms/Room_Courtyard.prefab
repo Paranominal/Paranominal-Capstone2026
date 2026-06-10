@@ -13,16 +13,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2374906837706050354, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2374906837706050354, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
       propertyPath: m_VersionIndex
       value: 9925
-      objectReference: {fileID: 0}
-    - target: {fileID: 2495134612696902788, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
-      propertyPath: m_Mesh
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2495134612696902788, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
       propertyPath: m_VersionIndex
@@ -77,10 +69,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5950363121836128608, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5950363121836128608, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
       propertyPath: m_VersionIndex
       value: 9925
       objectReference: {fileID: 0}
@@ -92,8 +80,8 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 8785066041032842624, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
-      propertyPath: m_Mesh
+    - target: {fileID: 7484292225835096794, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
+      propertyPath: encounterManager
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8785066041032842624, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
@@ -104,8 +92,61 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5133784622836617903, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6730184709883978011, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2471586663288475100}
   m_SourcePrefab: {fileID: 100100000, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
+--- !u!1 &5082534740184087633 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6730184709883978011, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
+  m_PrefabInstance: {fileID: 2012723375874989386}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2471586663288475100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5082534740184087633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ccdb687bbf5b2b4685690083400646c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyEncounterManager
+  encounterMode: 0
+  maxWaves: 1
+  timeBetweenWaves: 3
+  spawnPoints:
+  - {fileID: 6123550200285252033}
+  enemyPool: []
+  startingWave: 1
+  budgetPerWave: 10
+  maxEnemiesPerWave: 50
+  spawnTimingMode: 0
+  waveDuration: 10
+  spawnLocationMode: 0
+  randomiseSpawnPoint: 1
+  randomSpawnRadius: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isPlayerInRoom: 0
+  resetCounter: 5
+  useDoorGating: 0
+  doors: []
+--- !u!114 &6123550200285252033 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5698629444707619979, guid: ba0b108b1ac5e95438d43e7502fe2e92, type: 3}
+  m_PrefabInstance: {fileID: 2012723375874989386}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
