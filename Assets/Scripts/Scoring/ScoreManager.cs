@@ -8,7 +8,7 @@ public class ScoreManager : MonoBehaviour
     [Header("Scoring")]
     [SerializeField] private int pointsPerWeakpointHit = 10;
 
-    public int currentScore = 50; // if changing, also change private float visibleSpirit = 50f; in SpiritBar
+    public int currentScore = 100; // if changing, also change private float visibleSpirit = 100f; in SpiritBar
 
     public event System.Action<int> OnPointsAdded;
 

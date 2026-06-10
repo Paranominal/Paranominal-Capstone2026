@@ -17,7 +17,6 @@ public class WeakPointManager : MonoBehaviour
         SetupWeakpoints();
     }
 
-    // Update is called once per frame
     void SetupWeakpoints()
     {
         foreach (GameObject weakpoint in weakpoints)

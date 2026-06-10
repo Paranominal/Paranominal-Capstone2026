@@ -11,7 +11,6 @@ public class ShootableTarget : MonoBehaviour
 {
     [SerializeField] private bool destroyOnHit = true;
     [SerializeField] private TargetBulletType validBulletType = TargetBulletType.Any;
-
     public bool ResolveHit(WeakPointType shotType)
     {
         bool isValid = false;

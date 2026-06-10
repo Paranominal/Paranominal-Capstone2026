@@ -7,7 +7,7 @@ public class SpiritBar : MonoBehaviour
     [SerializeField] private FearBar fearBar;
 
     [Header("Spirit")]
-    [SerializeField] private float visibleSpirit = 50f; // if changing, also change public int currentScore = 50; in ScoreManager
+    [SerializeField] private float visibleSpirit = 100f; // if changing, also change public int currentScore in ScoreManager
 
     public float VisibleSpirit => visibleSpirit;
 
@@ -33,6 +33,23 @@ public class SpiritBar : MonoBehaviour
         }
 
         visibleSpirit -= drainRate * Time.deltaTime;
+
+        if (visibleSpirit <= 0f)
+        {
+            visibleSpirit = 0f;
+            isDepleted = true;
+            OnSpiritDepleted?.Invoke(); // event for the game over manager
+        }
+    }
+
+    public void ModifySpirit(float amount) // positive values heal, negative values damage
+    { // its the same as update but can be called from anywhere
+        if (isDepleted)
+        {
+            return; // stops game over from triggering over and over
+        }
+
+        visibleSpirit += amount;
 
         if (visibleSpirit <= 0f)
         {
