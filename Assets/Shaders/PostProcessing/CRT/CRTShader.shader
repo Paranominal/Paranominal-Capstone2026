@@ -6,6 +6,7 @@ Shader "Custom/URP/CRTShader"
         _VignetteWidth ("Vignette Width", Range(1.0, 100.0)) = 30.0 // Controls how wide the vignette fade is at the edges.
         _OverlayTex ("Overlay Texture", 2D) = "white" {} // Optional texture that can be shown instead of the camera image.
         _UseOverlayTex ("Use Overlay Texture", Float) = 0
+        _Enabled ("Enabled", Float) = 1.0
     }
 
     SubShader
@@ -35,6 +36,7 @@ Shader "Custom/URP/CRTShader"
                 float _Curvature; // Curvature amount for the barrel distortion seen on old curved glass CRT screens.
                 float _VignetteWidth; // Width of the darkened edge falloff.
                 float _UseOverlayTex; // Toggle between using the screen image and the overlay texture.
+                float _Enabled; // Toggle to bypass the effect for Scene View camera.
             CBUFFER_END
 
             // Optional overlay texture sampled when requested.
@@ -46,6 +48,10 @@ Shader "Custom/URP/CRTShader"
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
                 float2 baseUV = input.texcoord; // Use fullscreen pass UV coords to sample the current rendered screen image.
+
+                // Bypass the effect when disabled (Scene View camera).
+                if (_Enabled < 0.5)
+                    return SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, baseUV);
 
                 // Convert UV coords into a centred -1 to 1 range for distortion.
                 float2 uv = baseUV * 2.0 - 1.0;

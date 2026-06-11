@@ -8,6 +8,7 @@ Shader "Custom/URP/FearVignetteShader"
         _NoiseIntensity ("Noise Intensity", Range(0.0, 1.0)) = 0.5
         _NoiseScale ("Noise Scale", Range(1.0, 20.0)) = 6.0
         _NoiseSpeed ("Noise Speed", Range(0.0, 2.0)) = 0.3
+        _Enabled ("Enabled", Float) = 1.0
     }
 
     SubShader
@@ -40,6 +41,7 @@ Shader "Custom/URP/FearVignetteShader"
                 float _NoiseIntensity; // How much the noise distorts the vignette edge.
                 float _NoiseScale; // Size of the noise pattern.
                 float _NoiseSpeed; // How fast the noise creeps inward.
+                float _Enabled; // Toggle to bypass the effect for Scene View camera.
             CBUFFER_END
 
             // Hash-based pseudo-random function for smooth value noise.
@@ -80,6 +82,11 @@ Shader "Custom/URP/FearVignetteShader"
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
                 float2 uv = input.texcoord;
+
+                // Bypass the effect when disabled (Scene View camera).
+                if (_Enabled < 0.5)
+                    return SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
+
                 half4 col = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
 
                 // Radial distance from screen centre, 0 at centre, ~1 at corners.

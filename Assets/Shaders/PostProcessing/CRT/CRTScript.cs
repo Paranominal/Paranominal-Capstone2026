@@ -1,7 +1,8 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [ExecuteAlways]
-public class CRT : MonoBehaviour
+public class CRTScript : MonoBehaviour
 {
     [Header("CRT Settings")]
     [SerializeField] private Material crtMat;
@@ -18,6 +19,24 @@ public class CRT : MonoBehaviour
     private static readonly int VignetteWidthID = Shader.PropertyToID("_VignetteWidth");
     private static readonly int OverlayTexID = Shader.PropertyToID("_OverlayTex");
     private static readonly int UseOverlayTexID = Shader.PropertyToID("_UseOverlayTex");
+    private static readonly int EnabledID = Shader.PropertyToID("_Enabled");
+
+    private void OnEnable()
+    {
+        RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
+    }
+
+    private void OnDisable()
+    {
+        RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
+    }
+
+    private void OnBeginCameraRendering(ScriptableRenderContext context, Camera cam)
+    {
+        if (crtMat == null) return;
+
+        crtMat.SetFloat(EnabledID, cam.cameraType == CameraType.SceneView ? 0f : 1f);
+    }
 
     void Update()
     {
