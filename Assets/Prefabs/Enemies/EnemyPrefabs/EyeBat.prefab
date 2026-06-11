@@ -209,28 +209,6 @@ MonoBehaviour:
   keepDistance: 4
   swoopAttack: {fileID: 8232089063731135401}
   swoopCooldown: 4
---- !u!114 &8232089063731135401
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7915909615733791053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 635a7ec8bd1ba2144aff564946a28910, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SwoopAttack
-  hitbox: {fileID: 2292610576746257784}
-  windupDuration: 0.6
-  recoveryDuration: 0.2
-  diveSpeed: 10
-  returnSpeed: 5
-  riseSpeed: 4
-  divePastDistance: 0
-  windupTurnSpeed: 360
-  damage: 10
-  debugMode: 1
 --- !u!114 &4280961717600154479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -248,6 +226,33 @@ MonoBehaviour:
   scanStunDuration: 2
   maxScanStaggers: -1
   scanStaggerCooldown: 1.5
+--- !u!54 &7258074684030722955
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915909615733791053}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!135 &2522395779099145161
 SphereCollider:
   m_ObjectHideFlags: 0
