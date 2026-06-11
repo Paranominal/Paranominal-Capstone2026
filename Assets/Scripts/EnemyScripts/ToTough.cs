@@ -19,7 +19,26 @@ public class ToTough : MonoBehaviour, IDamageable
 
         knockback = GetComponent<EnemyKnockback>();
 
-        //hide weakpoints
+        HideWeakpoints();
+
+        //monitors stagger, if it ends, hide weakpoints
+        if (stagger != null)
+        {
+            stagger.OnStaggerEnd += StaggerTimeout;
+        }
+    }
+
+    //prevent leakage 
+    private void OnDestroy()
+    {
+        if (stagger != null)
+        {
+            stagger.OnStaggerEnd -= StaggerTimeout;
+        }
+    }
+
+    private void HideWeakpoints()
+    {
         if (wpManager != null)
         {
             wpManager.enabled = false;
@@ -51,14 +70,26 @@ public class ToTough : MonoBehaviour, IDamageable
     private void Stagger()
     {
         isStaggered = true;
-        Debug.Log("Enemy Staggered! Weakpoints exposed.");
+        Debug.Log($"Tough Enemy staggered! Weakpoints exposed.");
 
-        //enable wpm to setup the weakpoints
+        gameObject.Trigger();
+
         if (wpManager != null)
         {
-            if (stagger != null) stagger.TriggerStagger();
-            else Debug.LogWarning($"Tough enemy [{this}] is missing EnemyStagger component!");
             wpManager.enabled = true;
+            //add to wpm next
+            wpManager.ResetWeakpoints();
+        }
+    }
+
+    private void StaggerTimeout()
+    {
+        //handles the stagger disappearing,
+        if (isStaggered)
+        {
+            isStaggered = false;
+            currentHits = hitsToStagger;
+            HideWeakpoints();
         }
     }
 }

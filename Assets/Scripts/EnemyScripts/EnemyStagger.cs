@@ -14,6 +14,10 @@ public class EnemyStagger : MonoBehaviour
     [SerializeField] private int maxScanStaggers = -1; 
     [SerializeField] private float scanStaggerCooldown = 1.5f; 
 
+    [Header("Weakpoint Stagger Extension")]
+    [SerializeField] private float extensionPerHit = 0.5f;
+    private float currentStaggerRemaining;
+
     public event Action OnStaggerEnd;
 
     private NavMeshAgent navAgent;
@@ -71,14 +75,30 @@ public class EnemyStagger : MonoBehaviour
         staggerCoroutine = StartCoroutine(PerformStagger(duration));
     }
 
+    //extends stagger per hit
+    public void ExtendStagger()
+    {
+        if (isStaggered)
+        {
+            currentStaggerRemaining += extensionPerHit;
+            Debug.Log($"[EnemyStagger] Stagger extended! Duration: {currentStaggerRemaining:F2}s", gameObject);
+        }
+    }
+
     //handles duration and recovery
     private IEnumerator PerformStagger(float duration)
     {
         isStaggered = true;
+        //duration of current stagger remaining
+        currentStaggerRemaining = (duration > 0) ? duration : staggerDuration;
         SetMovementState(false);
 
         //wait for the duration to end
-        yield return new WaitForSeconds(duration);
+        while (currentStaggerRemaining > 0)
+        {
+            yield return null;
+            currentStaggerRemaining -= Time.deltaTime;
+        }
        
         SetMovementState(true);
         isStaggered = false;

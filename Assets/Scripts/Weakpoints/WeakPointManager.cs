@@ -29,6 +29,11 @@ public class WeakPointManager : MonoBehaviour
 
     public void NextWeakPoint()
     {
+        //extend time when weakpoints are destroyed
+        if (staggerComponent != null)
+        {
+            staggerComponent.ExtendStagger();
+        }
         // weakpoint destroyed: no longer triggers stagger (scan-only)
         currentWeakpoint += 1;
         if (currentWeakpoint < weakpoints.Length)
