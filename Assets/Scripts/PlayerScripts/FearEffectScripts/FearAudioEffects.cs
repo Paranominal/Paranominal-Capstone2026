@@ -18,7 +18,9 @@ public class FearAudioEffects : MonoBehaviour
 
     [Header("Heartbeat Interval (Seconds)")]
     [SerializeField] private float mediumInterval = 1.2f;
+    [SerializeField] private float mediumActionInterval = 0.9f;
     [SerializeField] private float lowInterval = 0.8f;
+    [SerializeField] private float lowActionInterval = 0.6f;
 
     private AudioSource heartbeatSource;
     private float beatTimer;
@@ -71,11 +73,20 @@ public class FearAudioEffects : MonoBehaviour
         if (beatTimer <= 0f)
         {
             PlayBeat(normalizedFear, isInEncounter);
-            float interval = currentRank == FearBar.FearRank.Low ? lowInterval : mediumInterval;
-            beatTimer = interval;
+            beatTimer = GetCurrentInterval(isInEncounter);
         }
     }
 
+    private float GetCurrentInterval(bool isInEncounter)
+    {
+        return currentRank switch
+        {
+            FearBar.FearRank.Medium => isInEncounter ? mediumActionInterval : mediumInterval,
+            FearBar.FearRank.Low => isInEncounter ? lowActionInterval : lowInterval,
+            _ => mediumInterval,
+        };
+    }
+    
     private void PlayBeat(float normalizedFear, bool isInEncounter)
     {
         SoundDataSO beatSO = GetCurrentBeatSO(isInEncounter);

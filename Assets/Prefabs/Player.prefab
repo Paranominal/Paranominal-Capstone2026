@@ -742,6 +742,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FearBar
   maxFear: 12
   fearLevel: 0
+  fearDamage: 10
 --- !u!114 &99801912839501907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -777,11 +778,9 @@ MonoBehaviour:
   lowVolumeMin: 0.4
   lowVolumeMax: 0.7
   mediumInterval: 1.5
+  mediumActionInterval: 0.9
   lowInterval: 1
-  audioMixer: {fileID: 24100000, guid: 8338ae4582a9484468eb2864752dde7e, type: 2}
-  lowpassParameterName: AmbientLowpassCutoff
-  lowpassMin: 800
-  lowpassMax: 22000
+  lowActionInterval: 0.6
 --- !u!82 &3153474681554931024
 AudioSource:
   m_ObjectHideFlags: 0
@@ -891,7 +890,6 @@ GameObject:
   - component: {fileID: 6654618607449089807}
   - component: {fileID: 1401912404428843967}
   - component: {fileID: 7735218202545343683}
-  - component: {fileID: 5847277947550880216}
   - component: {fileID: 3501135748319477596}
   - component: {fileID: 2601122520336315906}
   - component: {fileID: 827315314202517041}
@@ -1026,24 +1024,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &5847277947550880216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3524502881056351253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d437b13d946e494cb5c886b2eaaa087, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScan
-  scannable:
-    serializedVersion: 2
-    m_Bits: 256
-  interactRange: 4
-  itemPickupSound: {fileID: 11400000, guid: 730fb5d232b4f4f4583007432f52eef5, type: 2}
-  scanSound: {fileID: 11400000, guid: 03fb4babbd4bfe3498e8f2c4383b0daf, type: 2}
 --- !u!114 &3501135748319477596
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2705,6 +2685,7 @@ MonoBehaviour:
   ironBarrelEnabled: 1
   silverBarrelEnabled: 1
   autoReloadEnabled: 1
+  shotGun: {fileID: 0}
 --- !u!114 &8228406316724665379
 MonoBehaviour:
   m_ObjectHideFlags: 0
