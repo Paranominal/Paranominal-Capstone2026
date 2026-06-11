@@ -6,6 +6,7 @@ public class GameOverHandler : MonoBehaviour
     [Header("References")]
     [SerializeField] private SpiritBar spiritBar;
     [SerializeField] private ScoreManager scoreManager;
+    [SerializeField] private int endScreenBuildIndex;
 
     public static int FinalScore { get; private set; }
 
@@ -31,6 +32,6 @@ public class GameOverHandler : MonoBehaviour
             FinalScore = scoreManager.currentScore;
         }
 
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(endScreenBuildIndex);
     }
 }
