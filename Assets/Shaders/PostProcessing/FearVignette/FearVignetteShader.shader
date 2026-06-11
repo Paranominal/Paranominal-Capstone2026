@@ -4,6 +4,7 @@ Shader "Custom/URP/FearVignetteShader"
     {
         _VignetteIntensity ("Vignette Intensity", Range(0.0, 1.0)) = 0.0
         _VignetteSoftness ("Vignette Softness", Range(0.01, 1.0)) = 0.3
+        _VignetteColor ("Vignette Color", Color) = (0, 0, 0, 1)
         _NoiseIntensity ("Noise Intensity", Range(0.0, 1.0)) = 0.5
         _NoiseScale ("Noise Scale", Range(1.0, 20.0)) = 6.0
         _NoiseSpeed ("Noise Speed", Range(0.0, 2.0)) = 0.3
@@ -35,9 +36,10 @@ Shader "Custom/URP/FearVignetteShader"
             CBUFFER_START(UnityPerMaterial)
                 float _VignetteIntensity; // How far the vignette encroaches from the edges. 0 = none, 1 = full coverage.
                 float _VignetteSoftness; // How gradual the vignette falloff is.
+                float4 _VignetteColor; // Colour the vignette fades toward.
                 float _NoiseIntensity; // How much the noise distorts the vignette edge.
                 float _NoiseScale; // Size of the noise pattern.
-                float _NoiseSpeed; // How fast the noise shifts over time.
+                float _NoiseSpeed; // How fast the noise creeps inward.
             CBUFFER_END
 
             // Hash-based pseudo-random function for smooth value noise.
@@ -84,8 +86,11 @@ Shader "Custom/URP/FearVignetteShader"
                 float2 centredUV = uv * 2.0 - 1.0;
                 float radialDist = length(centredUV);
 
-                // Sample scrolling noise based on UV position and time.
-                float2 noiseUV = uv * _NoiseScale + _Time.y * _NoiseSpeed;
+                // Direction from this pixel toward the screen centre, used to scroll noise inward.
+                float2 inwardDir = normalize(centredUV + 0.0001); // small bias to avoid zero at exact centre
+
+                // Scroll noise along the inward direction so it creeps from edges toward centre.
+                float2 noiseUV = uv * _NoiseScale + inwardDir * _Time.y * _NoiseSpeed;
                 float noise = FractalNoise(noiseUV);
 
                 // Remap noise from 0..1 to -1..1 and scale by intensity.
@@ -98,7 +103,7 @@ Shader "Custom/URP/FearVignetteShader"
                 // Smooth falloff from the vignette edge inward.
                 float vignette = smoothstep(vignetteRadius, vignetteRadius + _VignetteSoftness, adjustedDist);
 
-                col.rgb *= 1.0 - vignette;
+                col.rgb = lerp(col.rgb, _VignetteColor.rgb, vignette);
 
                 return col;
             }

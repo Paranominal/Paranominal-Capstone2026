@@ -20,6 +20,12 @@ Shader "Custom/URP/DownsampleShader"
         ZTest Always
         Cull Off
 
+        Stencil
+        {
+            Ref 1
+            Comp NotEqual
+        }
+
         Pass
         {
             Name "PixelateFullscreenPass"

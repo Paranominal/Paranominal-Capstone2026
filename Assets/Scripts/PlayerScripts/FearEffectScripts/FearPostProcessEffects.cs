@@ -15,10 +15,12 @@ public class FearPostProcessEffects : MonoBehaviour
     [SerializeField] private float noiseIntensityMax = 0.5f;
 
     [Header("Vignette Settings")]
+    [SerializeField] private Color vignetteColor = Color.black;
     [SerializeField] private float vignetteSoftness = 0.3f;
     [SerializeField] private float noiseScale = 6.0f;
     [SerializeField] private float noiseSpeed = 0.3f;
 
+    private static readonly int VignetteColorID = Shader.PropertyToID("_VignetteColor");
     private static readonly int VignetteIntensityID = Shader.PropertyToID("_VignetteIntensity");
     private static readonly int VignetteSoftnessID = Shader.PropertyToID("_VignetteSoftness");
     private static readonly int NoiseIntensityID = Shader.PropertyToID("_NoiseIntensity");
@@ -37,6 +39,7 @@ public class FearPostProcessEffects : MonoBehaviour
         vignetteMaterial.SetFloat(NoiseIntensityID, noiseIntensity);
         vignetteMaterial.SetFloat(NoiseScaleID, noiseScale);
         vignetteMaterial.SetFloat(NoiseSpeedID, noiseSpeed);
+        vignetteMaterial.SetColor(VignetteColorID, vignetteColor);
     }
 
     public void OnRankChanged(FearBar.FearRank rank)
