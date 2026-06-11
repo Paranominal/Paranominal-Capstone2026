@@ -18,12 +18,12 @@ public class FearBar : MonoBehaviour
 
     public void Awake()
     {
-        fearLevel = maxFear;
+        fearLevel = 0;
     }
 
     public void TakeDamage()
     {
-        ModifyFear(-fearDamage);
+        ModifyFear(fearDamage);
     }
 
     public void ChangeFear(int amount)
@@ -31,9 +31,10 @@ public class FearBar : MonoBehaviour
         ModifyFear(amount);
     }
 
-    public void ModifyFear(int amount) // positive values heal, negative values damage
+    public void ModifyFear(int amount) // positive values increase fear (worsen), negative values decrease fear (improve)
     {
         fearLevel = Mathf.Clamp(fearLevel + amount, 0, maxFear);
+        Debug.Log("yo");
         EvaluateRank();
     }
 
