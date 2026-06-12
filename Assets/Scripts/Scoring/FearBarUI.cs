@@ -9,6 +9,9 @@ public class FearBarUI : MonoBehaviour
     [SerializeField] private RectTransform barRect;
     [SerializeField] private TextMeshProUGUI rankText;
 
+    [Header("Display")]
+    [SerializeField] private bool grimoireOnlyVisibility = true;
+
     private float fullWidth;
 
     private void Awake()
@@ -17,6 +20,15 @@ public class FearBarUI : MonoBehaviour
         fearBar.OnFearChanged += HandleFearChanged;
         rankText.text = "Fine";
         SetBarWidth(0f);
+    }
+
+    private void Start()
+    {
+        if (grimoireOnlyVisibility)
+        {
+            gameObject.SetActive(false);
+            ALTGrimoire.instance.OnGrimoireToggled += gameObject.SetActive;
+        }
     }
 
     private void HandleFearChanged(FearBar.FearRank rank)
