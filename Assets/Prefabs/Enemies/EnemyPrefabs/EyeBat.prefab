@@ -120,13 +120,14 @@ GameObject:
   - component: {fileID: 8614396900537901332}
   - component: {fileID: 1894387095101060742}
   - component: {fileID: 1483370790856417942}
-  - component: {fileID: 8232089063731135401}
+  - component: {fileID: -8427896845508226490}
   - component: {fileID: 4280961717600154479}
   - component: {fileID: 2522395779099145161}
   - component: {fileID: -357270100409380465}
   - component: {fileID: 697487408336731762}
   - component: {fileID: -7151052709924787694}
   - component: {fileID: 4505595464840246474}
+  - component: {fileID: 7258074684030722955}
   m_Layer: 8
   m_Name: EyeBat
   m_TagString: Untagged
@@ -205,8 +206,30 @@ MonoBehaviour:
   followSpeed: 10
   followSmoothTime: 0.2
   keepDistance: 4
-  swoopAttack: {fileID: 8232089063731135401}
+  swoopAttack: {fileID: -8427896845508226490}
   swoopCooldown: 4
+--- !u!114 &-8427896845508226490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915909615733791053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 635a7ec8bd1ba2144aff564946a28910, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SwoopAttack
+  hitbox: {fileID: 2292610576746257784}
+  windupDuration: 0.6
+  recoveryDuration: 0.2
+  diveSpeed: 8
+  returnSpeed: 3
+  riseSpeed: 3
+  divePastDistance: 0
+  windupTurnSpeed: 360
+  damage: 10
+  debugMode: 1
 --- !u!114 &4280961717600154479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,33 +248,6 @@ MonoBehaviour:
   maxScanStaggers: -1
   scanStaggerCooldown: 1.5
   extensionPerHit: 0.5
---- !u!54 &7258074684030722955
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7915909615733791053}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!135 &2522395779099145161
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -343,6 +339,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StaggerColorEffect
   staggerColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!54 &7258074684030722955
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915909615733791053}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &777204630496428280
 PrefabInstance:
   m_ObjectHideFlags: 0

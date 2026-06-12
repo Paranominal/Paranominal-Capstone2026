@@ -30,7 +30,7 @@ public class FearEffectsManager : MonoBehaviour
 
     private void Update()
     {
-        normalizedFear = 1f - ((float)fearBar.FearLevel / fearBar.MaxFear); // 0 = no fear, 1 = maximum fear
+        normalizedFear = (float)fearBar.FearLevel / fearBar.MaxFear;
         isInEncounter = playerStatus.IsInEncounter;
 
         postProcessEffects?.UpdateIntensity(normalizedFear, isInEncounter);
