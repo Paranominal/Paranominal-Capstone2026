@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 public class GameOverHandler : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private SpiritBar spiritBar;
+    [SerializeField] private FearBar fearBar;
     [SerializeField] private ScoreManager scoreManager;
     [SerializeField] private int endScreenBuildIndex;
 
@@ -12,18 +12,18 @@ public class GameOverHandler : MonoBehaviour
 
     private void Awake()
     {
-        spiritBar.OnSpiritDepleted += HandleSpiritDepleted;
+        fearBar.OnFearMaxed += HandleFearDepleted;
     }
 
     private void OnDestroy()
     {   
-        if (spiritBar != null)
+        if (fearBar != null)
         {
-            spiritBar.OnSpiritDepleted -= HandleSpiritDepleted;
+            fearBar.OnFearMaxed -= HandleFearDepleted;
         }
     }
 
-    public void HandleSpiritDepleted()
+    public void HandleFearDepleted()
     {
         Debug.Log($"Game over!!! Final score: {scoreManager.currentScore}");
 

@@ -17,6 +17,8 @@ public class ALTGrimoire : MonoBehaviour
     
     [HideInInspector] public bool grimoireActive;
 
+    public event System.Action<bool> OnGrimoireToggled;
+
     [Header("UI References: Content")]
     [SerializeField] private TextMeshProUGUI entryNameDisplay;
     [SerializeField] private TextMeshProUGUI collectedDisplay;
@@ -111,6 +113,7 @@ public class ALTGrimoire : MonoBehaviour
                     grimoireAnim.Play("up");
                 }
                 grimoireActive = true;
+                OnGrimoireToggled?.Invoke(true);
                 Time.timeScale = 0f;
 
                 if (playerInputReader != null)
@@ -135,6 +138,7 @@ public class ALTGrimoire : MonoBehaviour
                     grimoireAnim.Play("down");
                 }
                 grimoireActive = false;
+                OnGrimoireToggled?.Invoke(false);
                 Time.timeScale = 1f;
 
                 if (playerInputReader != null)
@@ -184,6 +188,7 @@ public class ALTGrimoire : MonoBehaviour
         }
 
         grimoireActive = false;
+        OnGrimoireToggled?.Invoke(false);
 
         if (screenUI != null)
         {

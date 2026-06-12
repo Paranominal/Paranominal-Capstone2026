@@ -6,7 +6,7 @@ public class ElevatorTrigger : MonoBehaviour
     [SerializeField] private GameObject miriam;
     void OnTriggerEnter(Collider other)
     {
-        gameOverHandler.HandleSpiritDepleted();
+        gameOverHandler.HandleFearDepleted();
         Debug.Log("game over triggered by:" + other);
     }
 }

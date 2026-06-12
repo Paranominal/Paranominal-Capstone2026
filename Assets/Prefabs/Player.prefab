@@ -451,9 +451,7 @@ GameObject:
   - component: {fileID: 2358186202558148451}
   - component: {fileID: 5131432862222598260}
   - component: {fileID: 388139220132730565}
-  - component: {fileID: 6200677881892505940}
   - component: {fileID: 1642531195737763663}
-  - component: {fileID: 5707545480560585984}
   - component: {fileID: 2395450753178358459}
   - component: {fileID: 5855240123241697755}
   - component: {fileID: 795694508415802441}
@@ -762,19 +760,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatus
   fearBar: {fileID: 1642531195737763663}
-  spiritBar: {fileID: 5707545480560585984}
---- !u!114 &6200677881892505940
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2579260593497910125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99d723d0db31209419b05a4bb525486b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScanModeVisuals
 --- !u!114 &1642531195737763663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -787,24 +772,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f86b1dc698e04ee42a06e6c7cebe018b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FearBar
+  weaponEvents: {fileID: 7212527224247330429}
   maxFear: 100
   fearLevel: 0
   fearDamage: 10
---- !u!114 &5707545480560585984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2579260593497910125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 835900bdba0dbe8498b707c4e92610f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpiritBar
-  scoreManager: {fileID: 2395450753178358459}
-  fearBar: {fileID: 1642531195737763663}
-  visibleSpirit: 100
+  fearHealPerShot: 5
+  tickRateFine: 0
+  tickRateLow: 0.5
+  tickRateMedium: 1
+  tickRateHigh: 2
 --- !u!114 &2395450753178358459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -819,7 +795,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
   weaponEvents: {fileID: 7212527224247330429}
   pointsPerWeakpointHit: 10
-  currentScore: 50
+  ranks:
+  - label: D
+    pointThreshold: 50
+  - label: D+
+    pointThreshold: 100
+  - label: C-
+    pointThreshold: 150
+  - label: C
+    pointThreshold: 200
+  - label: C+
+    pointThreshold: 250
+  - label: B-
+    pointThreshold: 300
+  - label: B
+    pointThreshold: 350
+  - label: B+
+    pointThreshold: 400
+  - label: A-
+    pointThreshold: 450
+  - label: A
+    pointThreshold: 500
+  - label: A+
+    pointThreshold: 550
+  - label: S-
+    pointThreshold: 600
+  - label: S
+    pointThreshold: 650
+  - label: S+
+    pointThreshold: 700
+  - label: S++
+    pointThreshold: 750
+  currentScore: 0
 --- !u!114 &5855240123241697755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -832,7 +839,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f84da51c004e6d4cbad5712112ecd80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameOverHandler
-  spiritBar: {fileID: 5707545480560585984}
+  fearBar: {fileID: 1642531195737763663}
   scoreManager: {fileID: 2395450753178358459}
   endScreenBuildIndex: 2
 --- !u!82 &795694508415802441
@@ -1448,9 +1455,8 @@ MonoBehaviour:
   scannable:
     serializedVersion: 2
     m_Bits: 256
-  visuals: {fileID: 6200677881892505940}
   reticle: {fileID: 8956247744504574599}
-  scanRange: 20
+  scanRange: 3.5
   itemPickupSound: {fileID: 11400000, guid: 730fb5d232b4f4f4583007432f52eef5, type: 2}
   scanSound: {fileID: 11400000, guid: 03fb4babbd4bfe3498e8f2c4383b0daf, type: 2}
   audioSource: {fileID: 3771664914730634187}
@@ -2851,10 +2857,18 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 13.499999
       objectReference: {fileID: 0}
-    - target: {fileID: 145023252887126880, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
-      propertyPath: spiritBar
+    - target: {fileID: 338192486869065975, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: barRect
       value: 
-      objectReference: {fileID: 5707545480560585984}
+      objectReference: {fileID: 2407798992946438512}
+    - target: {fileID: 338192486869065975, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: fearBar
+      value: 
+      objectReference: {fileID: 1642531195737763663}
+    - target: {fileID: 1343818820744944852, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_fontStyle
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2943515867254046240, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -2879,10 +2893,42 @@ PrefabInstance:
       propertyPath: weaponStateController
       value: 
       objectReference: {fileID: 2358186202558148451}
+    - target: {fileID: 2981764712250907783, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: scoreManager
+      value: 
+      objectReference: {fileID: 2395450753178358459}
+    - target: {fileID: 3016453236148378036, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.2771319
+      objectReference: {fileID: 0}
+    - target: {fileID: 3016453236148378036, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2771319
+      objectReference: {fileID: 0}
+    - target: {fileID: 3016453236148378036, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.2771319
+      objectReference: {fileID: 0}
+    - target: {fileID: 3016453236148378036, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 177
+      objectReference: {fileID: 0}
+    - target: {fileID: 4344012189328898015, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: scoreManager
+      value: 
+      objectReference: {fileID: 2395450753178358459}
+    - target: {fileID: 4570009823555342335, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_text
+      value: Fear!!!!
+      objectReference: {fileID: 0}
     - target: {fileID: 4680102478432004949, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: fearBar
       value: 
       objectReference: {fileID: 1642531195737763663}
+    - target: {fileID: 5291957544519085325, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_fontStyle
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6818782401789846890, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -2923,6 +2969,10 @@ PrefabInstance:
       propertyPath: 'ammoUiElements.Array.data[0]'
       value: 
       objectReference: {fileID: 6886316052428195270}
+    - target: {fileID: 7324164807399881896, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: fearBar
+      value: 
+      objectReference: {fileID: 1642531195737763663}
     - target: {fileID: 7371022240174911354, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -3011,6 +3061,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7921848297371319633, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_fontStyle
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8097341916491957871, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -3062,6 +3116,11 @@ GameObject:
 --- !u!224 &1153503117673635961 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7442887890869459871, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+  m_PrefabInstance: {fileID: 8595229715955629030}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2407798992946438512 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6206623903246654102, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
   m_PrefabInstance: {fileID: 8595229715955629030}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &6886316052428195270 stripped
