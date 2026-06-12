@@ -453,6 +453,7 @@ GameObject:
   - component: {fileID: 6226453563411988871}
   - component: {fileID: 404796220867514065}
   - component: {fileID: 388139220132730565}
+  - component: {fileID: 7580485715396838539}
   - component: {fileID: 2345774501309732177}
   - component: {fileID: 99801912839501907}
   - component: {fileID: 569203713311215142}
@@ -591,6 +592,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatus
   fearBar: {fileID: 2345774501309732177}
+--- !u!114 &7580485715396838539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 223291d1c9e1d6348aa7c2477011f387, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
+  weaponEvents: {fileID: 8228406316724665379}
+  pointsPerWeakpointHit: 10
+  ranks:
+  - label: D
+    pointThreshold: 50
+  - label: C
+    pointThreshold: 100
+  - label: B
+    pointThreshold: 200
+  - label: A
+    pointThreshold: 400
+  - label: S
+    pointThreshold: 800
+  currentScore: 0
 --- !u!114 &2345774501309732177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -603,7 +630,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f86b1dc698e04ee42a06e6c7cebe018b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FearBar
-  weaponEvents: {fileID: 0}
+  weaponEvents: {fileID: 8228406316724665379}
   maxFear: 30
   fearLevel: 0
   fearDamage: 10
@@ -664,7 +691,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FearPostProcessEffects
   vignetteMaterial: {fileID: 2100000, guid: 259b1eb3cab294e4f9902c1af2592769, type: 2}
   vignetteIntensityMin: 0
-  vignetteIntensityMax: 0.5
+  vignetteIntensityMax: 0.25
   noiseIntensityMin: 0
   noiseIntensityMax: 1
   vignetteColor: {r: 0.8396226, g: 0, b: 0.689287, a: 1}
@@ -683,7 +710,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -2980,6 +3007,10 @@ PrefabInstance:
       propertyPath: weaponStateController
       value: 
       objectReference: {fileID: 1129320781834323432}
+    - target: {fileID: 2981764712250907783, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: scoreManager
+      value: 
+      objectReference: {fileID: 7580485715396838539}
     - target: {fileID: 3445251275019508778, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -379.32397
@@ -3060,6 +3091,10 @@ PrefabInstance:
       propertyPath: 'ammoUiElements.Array.data[0]'
       value: 
       objectReference: {fileID: 6886316052428195270}
+    - target: {fileID: 7324164807399881896, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: fearBar
+      value: 
+      objectReference: {fileID: 2345774501309732177}
     - target: {fileID: 7371022240174911354, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
