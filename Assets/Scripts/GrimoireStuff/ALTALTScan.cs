@@ -116,9 +116,7 @@ public class ALTALTScan : MonoBehaviour
                     scanProgress += Time.deltaTime / currentTarget.scanDuration;
                     scanProgress = Mathf.Clamp01(scanProgress);
 
-                    float pulse = (Mathf.Sin(Time.time * Mathf.Lerp(3f, 8f, scanProgress)) + 1f) / 2f; // makes the fancy pulsing
-                    Color scanColor = Color.Lerp(Color.white, Color.green, pulse * scanProgress);
-                    currentTarget.SetOutlineColor(scanColor);
+                    currentTarget.SetOutlineColor(new Color(0.0f, 0.941f, 0.459f));
 
                     // Mark that we want the looping scan sound this frame.
                     wantScanSoundThisFrame = true;
