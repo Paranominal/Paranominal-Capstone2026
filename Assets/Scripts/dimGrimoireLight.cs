@@ -59,7 +59,7 @@ public class dimGrimoireLight : MonoBehaviour
 
         while (lightComponent.intensity > dimmedIntensity && !brightening)
         {
-            currentChange -= Time.deltaTime;
+            currentChange -= Time.unscaledDeltaTime;
             lightComponent.intensity = lightCurve.Evaluate(currentChange);
             yield return null;
         }
@@ -76,7 +76,7 @@ public class dimGrimoireLight : MonoBehaviour
 
         while (lightComponent.intensity < cachedIntensity && !dimming)
         {
-            currentChange += Time.deltaTime;
+            currentChange += Time.unscaledDeltaTime;
             lightComponent.intensity = lightCurve.Evaluate(currentChange);
             yield return null;
         }
