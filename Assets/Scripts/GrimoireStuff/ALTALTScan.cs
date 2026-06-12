@@ -10,7 +10,6 @@ public class ALTALTScan : MonoBehaviour
     private ALTGrimoire grimoire;
     private ALTScannableObject currentTarget;
 
-    public ScanModeVisuals visuals;
     public ScanReticle reticle;
 
     private bool inScanMode = false;
@@ -37,7 +36,11 @@ public class ALTALTScan : MonoBehaviour
 
     void Update()
     {
-        if (grimoire.grimoireActive) return; // shouldn't be able to happen bc action maps, but that may change eventually
+        if (grimoire.grimoireActive)
+        {
+            ClearHover(); // hide any active hover outline when grimoire opens
+            return;
+        }
 
         bool wantScanMode = scanAction.IsPressed();
         if (wantScanMode != inScanMode)
@@ -85,22 +88,26 @@ public class ALTALTScan : MonoBehaviour
                 return; // nothing left to scan this frame
             }
 
+            // show white outline on whatever we're looking at; hide the previous target
+            if (target != currentTarget)
+            {
+                if (currentTarget != null)
+                {
+                    currentTarget.SetOutlineVisible(false);
+                }
+                scanProgress = 0f;
+                currentTarget = target;
+                currentTarget.SetOutlineVisible(true);
+                currentTarget.SetOutlineColor(Color.white);
+
+                if (inScanMode && grimoire.CompareEntry(currentTarget.entry)) // open existing entry when hovering in scan mode
+                {
+                    grimoire.SelectEntry(grimoire.GetEntryID(currentTarget.entry.entryName));
+                }
+            }
+
             if (inScanMode)
             {
-                if (target != currentTarget)
-                {
-                    if (currentTarget != null)
-                    {
-                        visuals.ApplyOutlineColor(currentTarget); // reset previous target's colour if stopped scanning
-                    }
-                    scanProgress = 0f;
-                    currentTarget = target;
-                    if (grimoire.CompareEntry(currentTarget.entry)) // opening the previous one if already scanned
-                    {
-                        grimoire.SelectEntry(grimoire.GetEntryID(currentTarget.entry.entryName));
-                    }
-                }
-
                 bool alreadyScanned = grimoire.CompareEntry(currentTarget.entry);
                 EnemyStagger scannedEnemy = hit.collider.GetComponentInParent<EnemyStagger>();
 
@@ -128,7 +135,7 @@ public class ALTALTScan : MonoBehaviour
                             scannedEnemy.OnEnemyScanned();
                         }
 
-                        visuals.ApplyOutlineColor(currentTarget);
+                        currentTarget.SetOutlineColor(Color.white); // scan complete, back to plain hover white
                         scanProgress = 0f;
                     }
                 }
@@ -138,11 +145,7 @@ public class ALTALTScan : MonoBehaviour
         }
         else
         {
-            if (currentTarget != null)
-            {
-                visuals.ApplyOutlineColor(currentTarget); // reset colour when losing target
-                currentTarget = null;
-            }
+            ClearHover();
             scanProgress = 0f;
             reticle.SetProgress(0f);
         }
@@ -153,17 +156,26 @@ public class ALTALTScan : MonoBehaviour
     private void SetScanMode(bool active)
     {
         inScanMode = active;
-        visuals.SetScanMode(active);
 
         if (!active)
         {
+            // keep hover outline visible if we're still looking at something,
+            // just reset scan progress and revert to plain white
             if (currentTarget != null)
             {
-                visuals.ApplyOutlineColor(currentTarget);
-                currentTarget = null;
+                currentTarget.SetOutlineColor(Color.white);
             }
             scanProgress = 0f;
             reticle.SetProgress(0f);
+        }
+    }
+
+    private void ClearHover()
+    {
+        if (currentTarget != null)
+        {
+            currentTarget.SetOutlineVisible(false);
+            currentTarget = null;
         }
     }
 
