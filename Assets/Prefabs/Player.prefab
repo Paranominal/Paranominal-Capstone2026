@@ -647,7 +647,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2981b2cfd676e004594b2c18e3880329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponAmmo
-  magazineSize: 3
+  magazineSize: 5
   reloadDuration: 2
   shotCooldown: 0.2
 --- !u!114 &7212527224247330429
@@ -772,9 +772,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f86b1dc698e04ee42a06e6c7cebe018b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FearBar
+  weaponEvents: {fileID: 7212527224247330429}
   maxFear: 100
   fearLevel: 0
   fearDamage: 10
+  fearHealPerShot: 5
+  tickRateFine: 0
+  tickRateLow: 0.5
+  tickRateMedium: 1
+  tickRateHigh: 2
 --- !u!114 &5707545480560585984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -817,9 +823,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f84da51c004e6d4cbad5712112ecd80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameOverHandler
-  spiritBar: {fileID: 5707545480560585984}
+  fearBar: {fileID: 1642531195737763663}
   scoreManager: {fileID: 2395450753178358459}
-  endScreenBuildIndex: 0
+  endScreenBuildIndex: 2
 --- !u!82 &795694508415802441
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1045,7 +1051,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShotgunInteraction
   grimoire: {fileID: 446425657346133023}
   stateController: {fileID: 2358186202558148451}
-  shotgunName: 
+  shotgunName: The Norwych
 --- !u!82 &3771664914730634187
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2826,9 +2832,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5707545480560585984}
     - target: {fileID: 338192486869065975, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: barRect
+      value: 
+      objectReference: {fileID: 2407798992946438512}
+    - target: {fileID: 338192486869065975, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: fearBar
       value: 
       objectReference: {fileID: 1642531195737763663}
+    - target: {fileID: 1343818820744944852, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_fontStyle
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2943515867254046240, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -2853,10 +2867,34 @@ PrefabInstance:
       propertyPath: weaponStateController
       value: 
       objectReference: {fileID: 2358186202558148451}
+    - target: {fileID: 3016453236148378036, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.2771319
+      objectReference: {fileID: 0}
+    - target: {fileID: 3016453236148378036, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2771319
+      objectReference: {fileID: 0}
+    - target: {fileID: 3016453236148378036, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.2771319
+      objectReference: {fileID: 0}
+    - target: {fileID: 3016453236148378036, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 177
+      objectReference: {fileID: 0}
+    - target: {fileID: 4570009823555342335, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_text
+      value: Fear!!!!
+      objectReference: {fileID: 0}
     - target: {fileID: 4680102478432004949, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: fearBar
       value: 
       objectReference: {fileID: 1642531195737763663}
+    - target: {fileID: 5291957544519085325, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_fontStyle
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6818782401789846890, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -2985,6 +3023,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7921848297371319633, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: m_fontStyle
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8097341916491957871, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -3036,6 +3078,11 @@ GameObject:
 --- !u!224 &1153503117673635961 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7442887890869459871, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+  m_PrefabInstance: {fileID: 8595229715955629030}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2407798992946438512 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6206623903246654102, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
   m_PrefabInstance: {fileID: 8595229715955629030}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &6886316052428195270 stripped
