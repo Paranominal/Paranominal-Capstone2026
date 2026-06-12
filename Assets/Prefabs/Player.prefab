@@ -295,6 +295,7 @@ GameObject:
   - component: {fileID: 5945705187376820528}
   - component: {fileID: 5772234148983226412}
   - component: {fileID: 8310924354825382273}
+  - component: {fileID: 1822622895965474925}
   m_Layer: 0
   m_Name: Spot Light (1)
   m_TagString: Untagged
@@ -411,6 +412,20 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &1822622895965474925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2559866451957183978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f238bd60dd7dbb949b1e817b56d189dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::dimTorchlight
+  grimoire: {fileID: 446425657346133023}
+  dimFactor: 0.05
 --- !u!1 &2579260593497910125
 GameObject:
   m_ObjectHideFlags: 0
@@ -647,7 +662,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2981b2cfd676e004594b2c18e3880329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponAmmo
-  magazineSize: 3
+  magazineSize: 5
   reloadDuration: 2
   shotCooldown: 0.2
 --- !u!114 &7212527224247330429
@@ -819,7 +834,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameOverHandler
   spiritBar: {fileID: 5707545480560585984}
   scoreManager: {fileID: 2395450753178358459}
-  endScreenBuildIndex: 0
+  endScreenBuildIndex: 2
 --- !u!82 &795694508415802441
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1045,7 +1060,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShotgunInteraction
   grimoire: {fileID: 446425657346133023}
   stateController: {fileID: 2358186202558148451}
-  shotgunName: 
+  shotgunName: The Norwych
 --- !u!82 &3771664914730634187
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1484,6 +1499,7 @@ GameObject:
   - component: {fileID: 7481248769648853166}
   - component: {fileID: 8405981094496246058}
   - component: {fileID: 3808215403591676798}
+  - component: {fileID: 2487491788695362657}
   m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
@@ -1602,6 +1618,20 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &2487491788695362657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5052392480935002084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f238bd60dd7dbb949b1e817b56d189dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  grimoire: {fileID: 446425657346133023}
+  dimFactor: 0.2
 --- !u!1 &5401686530064671538
 GameObject:
   m_ObjectHideFlags: 0
