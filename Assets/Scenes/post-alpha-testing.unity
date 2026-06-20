@@ -6920,6 +6920,37 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &440782885 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1064482449173962114, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+  m_PrefabInstance: {fileID: 721273275}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &440782887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 440782885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 911c86f751db6c94081de9b03a599a92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponSway
+  moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  lookAction: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  enableSway: 1
+  smooth: 3
+  swayMultiplier: 0.1
+  maxPositionOffset: 0.08
+  maxRotationAngle: 45
+  bobFrequency: 12
+  bobAmplitude: 0.03
+  bobSmoothing: 8
+  movementPositionX: 0.025
+  movementPositionZ: 0.02
+  movementTiltX: 2
+  movementTiltZ: 3
 --- !u!43 &443080612
 Mesh:
   m_ObjectHideFlags: 0
@@ -10096,6 +10127,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4408240210696984918, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: bulletSpeed
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 5603623974522252460, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -10103,6 +10138,10 @@ PrefabInstance:
     - target: {fileID: 5603623974522252460, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6571566168232087112, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: m_Value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6595384875945171519, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_IsActive
@@ -10112,10 +10151,34 @@ PrefabInstance:
       propertyPath: m_CullingMask.m_Bits
       value: 218583
       objectReference: {fileID: 0}
+    - target: {fileID: 7089696161066055925, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: smooth
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7089696161066055925, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: moveAction
+      value: 
+      objectReference: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+    - target: {fileID: 7089696161066055925, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: bobAmplitude
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 7089696161066055925, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: bobFrequency
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 7089696161066055925, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: swayMultiplier
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 7089696161066055925, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: maxRotationAngle
+      value: 45
+      objectReference: {fileID: 0}
     - target: {fileID: 7430418579340721778, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: weaponSway
       value: 
-      objectReference: {fileID: 819765025}
+      objectReference: {fileID: 440782887}
     - target: {fileID: 8013496993476994936, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_LocalPosition.x
       value: 11.84
@@ -10160,10 +10223,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1801712279058226374, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1064482449173962114, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 440782887}
   m_SourcePrefab: {fileID: 100100000, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
 --- !u!43 &737176594
 Mesh:
@@ -10912,17 +10979,6 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
---- !u!114 &819765025 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1801712279058226374, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-  m_PrefabInstance: {fileID: 721273275}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 911c86f751db6c94081de9b03a599a92, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponSway
 --- !u!43 &857412295
 Mesh:
   m_ObjectHideFlags: 0
