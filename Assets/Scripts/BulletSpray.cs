@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,11 +15,14 @@ public class BulletSpray : MonoBehaviour
     public float width = 0;
     public List<GameObject> bullets; //make this public to bug test, make private after
 
+    [SerializeField] private BulletSprayFX fx;
+
     void Update()
     {
         AimDir();
         Inaccuracy();
         if (shoot.action.IsPressed()) Shoot();
+        if (fx != null) fx.DoFX();        
     }
     Quaternion AimDir()
     {
