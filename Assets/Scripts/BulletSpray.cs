@@ -7,14 +7,15 @@ public class BulletSpray : MonoBehaviour
     [SerializeField] private Camera playerCam;
     [SerializeField] private Transform origin;
     [SerializeField] private InputActionReference shoot;
-    [SerializeField] private GameObject bullet;
+    [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private float bulletSpeed = 10;
-    public float speedVariability = 0;
     [SerializeField] private int maxBulletCount = 100;
+    [SerializeField] private int maxDistance = 30;
+    public float speedVariability = 0;
     public float angleInaccuracy = 0;
     public float width = 0;
     [SerializeField] private bool randomiseSpin;
-    public List<GameObject> bullets; //make this public to bug test, make private after
+    public List<Bullet> bullets;
 
     [SerializeField] private BulletSprayFX fx;
     public bool debugMode;
@@ -22,7 +23,8 @@ public class BulletSpray : MonoBehaviour
     void Update()
     {
         if (shoot.action.IsPressed()) Shoot();
-        if (fx != null) fx.DoFX();        
+        if (fx != null) fx.DoFX();
+        if (bullets.Count > 0) DistanceCheck();
     }
     Quaternion AimDir()
     {
@@ -40,19 +42,20 @@ public class BulletSpray : MonoBehaviour
     void Shoot()
     {
         bullets.Add(InstanceBullet());
-        foreach (GameObject x in bullets)
+        foreach (Bullet bullet in bullets)
         {
-            x.GetComponent<Bullet>().speed = bulletSpeed + Random.Range(-speedVariability, speedVariability);
+            bullet.GetComponent<Bullet>().speed = bulletSpeed + Random.Range(-speedVariability, speedVariability);
         }
         if (bullets.Count > maxBulletCount)
         {
-            Destroy(bullets[0]);
+            Destroy(bullets[0].gameObject);
             bullets.RemoveAt(0);
         }
     }
-    GameObject InstanceBullet()
+    Bullet InstanceBullet()
     {
-        return Instantiate(bullet, AimPos(), AimDir());
+        return Instantiate(bulletPrefab, AimPos(), AimDir()).GetComponent<Bullet>();
+        
     }
     Vector3 Inaccuracy()
     {
@@ -71,5 +74,20 @@ public class BulletSpray : MonoBehaviour
         Vector3 originWidth = new Vector3 (Random.Range(-width, width), Random.Range(-width, width), Random.Range(-width, width)) * 0.01f;
         if (debugMode) Debug.Log($"{this} | OriginWidth():{originWidth}");
         return originWidth;
+    }
+    void DistanceCheck()
+    {
+        for (int i = 0; i < bullets.Count; i++)
+        {
+            if (debugMode) Debug.Log($"DistanceCheck() bullet index: {i}");
+            if (debugMode) Debug.Log($"DistanceCheck() distance of: [{bullets[i]}] = [{Vector3.Distance(bullets[i].transform.position, transform.position)}]");
+            
+            if (Vector3.Distance(bullets[i].transform.position, transform.position) > maxDistance)
+            {
+                Destroy(bullets[i].gameObject);
+                if (debugMode) Debug.Log($"DistanceCheck() destroyed: {bullets[i]}");
+                bullets.RemoveAt(i);
+            }
+        }
     }
 }
