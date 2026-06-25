@@ -6,6 +6,7 @@ public class dimGrimoireLight : MonoBehaviour
 
     [SerializeField] private ALTGrimoire grimoire;
     [SerializeField] private float dimFactor = 1f;
+    [SerializeField] private float dimTime = 1f;
     private AnimationCurve lightCurve;
     private float cachedIntensity;
     private float dimmedIntensity;
@@ -23,7 +24,7 @@ public class dimGrimoireLight : MonoBehaviour
         cachedIntensity = lightComponent.intensity;
         dimmedIntensity = lightComponent.intensity * dimFactor;
 
-        lightCurve = AnimationCurve.Linear(0, dimmedIntensity, 1, cachedIntensity);
+        lightCurve = AnimationCurve.Linear(0, dimmedIntensity, dimTime, cachedIntensity);
     }
 
     void Update()
