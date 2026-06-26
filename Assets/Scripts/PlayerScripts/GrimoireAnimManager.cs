@@ -93,7 +93,7 @@ public class GrimoireAnimManager : MonoBehaviour
         if (isAnimating) return;
         
         if (collectAction.action.WasPressedThisFrame()) OpenGrimoire();
-        if (collectAction.action.WasPressedThisFrame()) Debug.Log($"[{this}] | collect action was pressed");
+        if (collectAction.action.WasPressedThisFrame() && debugMode) Debug.Log($"[{this}] | collect action was pressed");
     }
     // Actions
     void OpenGrimoire()
