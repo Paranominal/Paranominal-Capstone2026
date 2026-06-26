@@ -8,6 +8,7 @@ public class BulletSpray : MonoBehaviour
     [SerializeField] private Transform origin;
     [SerializeField] private InputActionReference shoot;
     [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private int bulletsPerFrame = 1;
     [SerializeField] private float bulletSpeed = 10;
     [SerializeField] private int maxBulletCount = 100;
     [SerializeField] private int maxDistance = 30;
@@ -22,9 +23,15 @@ public class BulletSpray : MonoBehaviour
 
     void Update()
     {
-        if (shoot.action.IsPressed()) Shoot();
-        if (fx != null) fx.DoFX();
+                if (fx != null) fx.DoFX();
         if (bullets.Count > 0) DistanceCheck();
+    }
+    void FixedUpdate()
+    {
+        if (shoot.action.IsPressed())
+        {
+            for (int i = 0; i < bulletsPerFrame; i++) Shoot();
+        }
     }
     Quaternion AimDir()
     {
@@ -41,11 +48,10 @@ public class BulletSpray : MonoBehaviour
     }
     void Shoot()
     {
-        bullets.Add(InstanceBullet());
-        foreach (Bullet bullet in bullets)
-        {
-            bullet.GetComponent<Bullet>().speed = bulletSpeed + Random.Range(-speedVariability, speedVariability);
-        }
+        Bullet bullet = InstanceBullet();
+        bullets.Add(bullet);
+        bullet.speed = bulletSpeed + Random.Range(-speedVariability, speedVariability);
+        
         if (bullets.Count > maxBulletCount)
         {
             Destroy(bullets[0].gameObject);
@@ -55,7 +61,6 @@ public class BulletSpray : MonoBehaviour
     Bullet InstanceBullet()
     {
         return Instantiate(bulletPrefab, AimPos(), AimDir()).GetComponent<Bullet>();
-        
     }
     Vector3 Inaccuracy()
     {
