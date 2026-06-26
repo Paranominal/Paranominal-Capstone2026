@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5820451053879187290}
-  - component: {fileID: 7132848572541092434}
   - component: {fileID: 1090110928602918560}
   - component: {fileID: 7926319934065651701}
   - component: {fileID: 2847827877754305373}
@@ -36,28 +35,6 @@ Transform:
   - {fileID: 6210826139122004800}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &7132848572541092434
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6535952568432753539}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 3f8c6455415694841aec06eac21738cf, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &1090110928602918560
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,7 +57,7 @@ MonoBehaviour:
   imageFrameParent: {fileID: 437282379777640986}
   listContentParent: {fileID: 3135534153435844958}
   entryButtonPrefab: {fileID: 8592193082140125892, guid: 7b073f58fb7e42e43bb264ba6f46362f, type: 3}
-  grimoireAnim: {fileID: 7132848572541092434}
+  grimoireAnim: {fileID: 1836343103789049700}
   snapshotHandler: {fileID: 7926319934065651701}
   playerInputReader: {fileID: 0}
   screenUI: {fileID: 0}
@@ -269,7 +246,10 @@ PrefabInstance:
       addedObject: {fileID: 1836343103789049700}
     - targetCorrespondingSourceObject: {fileID: 6532860093128772136, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 9024748461103425540}
+      addedObject: {fileID: 7649480553947373842}
+    - targetCorrespondingSourceObject: {fileID: 6532860093128772136, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8870854293444549547}
   m_SourcePrefab: {fileID: 100100000, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
 --- !u!4 &2169486006195455376 stripped
 Transform:
@@ -313,7 +293,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &9024748461103425540
+--- !u!114 &7649480553947373842
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -329,11 +309,33 @@ MonoBehaviour:
   altGrimoire: {fileID: 1090110928602918560}
   grimoireScroll: {fileID: 5104623742680006299, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   playerMove: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  playerShoot: {fileID: 1110478493490812807, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   scanAction: {fileID: 1781555164194001046, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   collectAction: {fileID: -9115422242872714626, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
-  stayOpenDuration: 1
+  stayOpenDuration: 2
   startOpen: 0
+  lowerGrimoire: {fileID: 8870854293444549547}
   debugMode: 0
+--- !u!114 &8870854293444549547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6735865358607165946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c52b46f8d7a44fb4d91fd0fc83a76e4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LowerGrimoire
+  targetObject: {fileID: 0}
+  distance: 0.1
+  speed: 3
+  x: 0
+  y: 1
+  z: 0
+  debugMode: 1
+  grimoireAnimManager: {fileID: 0}
 --- !u!4 &7255997013680192133 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7161148542362605911, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}

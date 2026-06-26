@@ -10,7 +10,9 @@ public class GrimoireAnimManager : MonoBehaviour
     [SerializeField] private Animator grimoireAnimator;
     [SerializeField] private ALTGrimoire altGrimoire;
     [SerializeField] private InputActionReference grimoireScroll;
+    [SerializeField] private InputActionReference grimoireMenu;
     [SerializeField] private InputActionReference playerMove;
+    [SerializeField] private InputActionReference playerShoot;
     [SerializeField] private InputActionReference scanAction;
     [SerializeField] private InputActionReference collectAction;
     [Tooltip("The duration in seconds, that the grimoire ignores the Close function after being opened")]
@@ -18,12 +20,13 @@ public class GrimoireAnimManager : MonoBehaviour
     private bool stayOpen;
     private bool isAnimating;
     private bool isPlayerMoving;
+    private bool isPlayerShooting;
     private bool isOpen;
     private bool isCasting;
     private bool isMenuing;
     [SerializeField] private bool startOpen;
+    [SerializeField] private GrimoirePositioner lowerGrimoire;
     public bool debugMode;
-
 
     void Start()
     {
@@ -38,7 +41,10 @@ public class GrimoireAnimManager : MonoBehaviour
         CastOnHold();
         OpenIfMenuing();
         OpenOnCollect();
+        MenuOpen();
+        MenuClose();
 
+        if (lowerGrimoire != null) DoLowerGrimoire();
         if (debugMode) DoDebugLog();
     }
     void ControlBools()
@@ -48,9 +54,11 @@ public class GrimoireAnimManager : MonoBehaviour
         if (scanAction.action.IsPressed()) isCasting = true;
         else isCasting = false;
         grimoireAnimator.SetBool("isCasting", isCasting);
-        
+
         if (playerMove.action.IsPressed()) isPlayerMoving = true;
         else isPlayerMoving = false;
+        if (playerShoot.action.IsPressed()) isPlayerShooting = true;
+        else isPlayerShooting = false;
     }
     // Input to Action
     private void OpenOnScroll()
@@ -78,7 +86,7 @@ public class GrimoireAnimManager : MonoBehaviour
         if (isAnimating) return;
         if (isMenuing) return;
 
-        if (scanAction.action.IsPressed()) DoScan();
+        if (scanAction.action.IsPressed()) Scan();
     }
     private void OpenIfMenuing()
     {
@@ -91,9 +99,24 @@ public class GrimoireAnimManager : MonoBehaviour
         if (isOpen) return;
         if (isCasting) return;
         if (isAnimating) return;
-        
+
         if (collectAction.action.WasPressedThisFrame()) OpenGrimoire();
         if (collectAction.action.WasPressedThisFrame() && debugMode) Debug.Log($"[{this}] | collect action was pressed");
+    }
+    private void MenuOpen()
+    {
+        if (grimoireMenu.action.WasPressedThisFrame() && !isMenuing)
+        {
+            OpenGrimoire();
+            OpenMenu();
+        } 
+    }
+    private void MenuClose()
+    {
+        if (grimoireMenu.action.WasPressedThisFrame() && isMenuing)
+        {
+            CloseMenu();
+        } 
     }
     // Actions
     void OpenGrimoire()
@@ -105,16 +128,32 @@ public class GrimoireAnimManager : MonoBehaviour
     {
         grimoireAnimator.SetTrigger("close");
     }
-    void DoScan()
+    void Scan()
     {
         if (isOpen) grimoireAnimator.SetTrigger("castFromOpen");
         else grimoireAnimator.SetTrigger("castFromClosed");
+    }
+    void OpenMenu()
+    {
+        grimoireAnimator.SetTrigger("openMenu");
+    }
+    void CloseMenu()
+    {
+        grimoireAnimator.SetTrigger("closeMenu");
     }
     private IEnumerator StayOpen()
     {
         stayOpen = true;
         yield return new WaitForSeconds(stayOpenDuration);
         stayOpen = false;
+    }
+    // Lower Grimoire component control
+    private void DoLowerGrimoire()
+    {
+        if (isMenuing) lowerGrimoire.Menu();
+        else if (isPlayerMoving | isPlayerShooting) lowerGrimoire.Lower();
+        else if (isOpen) lowerGrimoire.Open();
+        else lowerGrimoire.Raise();
     }
     // Animation Events call these
     private void StartAnimation()
