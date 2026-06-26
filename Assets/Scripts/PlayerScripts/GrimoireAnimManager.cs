@@ -49,7 +49,7 @@ public class GrimoireAnimManager : MonoBehaviour
         else isCasting = false;
         grimoireAnimator.SetBool("isCasting", isCasting);
         
-        if (playerMove.action.ReadValue<Vector2>() != new Vector2(0, 0)) isPlayerMoving = true;
+        if (playerMove.action.IsPressed()) isPlayerMoving = true;
         else isPlayerMoving = false;
     }
     // Input to Action
