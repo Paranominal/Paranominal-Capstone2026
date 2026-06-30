@@ -23,7 +23,7 @@ public class BulletSpray : MonoBehaviour
 
     void Update()
     {
-                if (fx != null) fx.DoFX();
+        if (fx != null) fx.DoFX();
         if (bullets.Count > 0) DistanceCheck();
     }
     void FixedUpdate()
@@ -51,6 +51,7 @@ public class BulletSpray : MonoBehaviour
         Bullet bullet = InstanceBullet();
         bullets.Add(bullet);
         bullet.speed = bulletSpeed + Random.Range(-speedVariability, speedVariability);
+        bullet.SetSpeed();
         
         if (bullets.Count > maxBulletCount)
         {

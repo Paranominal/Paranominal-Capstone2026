@@ -23,10 +23,10 @@ public class GrimoirePositioner : MonoBehaviour
         originPosition = targetObject.transform.localPosition;
         originRotation = targetObject.transform.localRotation;
     }
-    void Update()
-    {
-        Debug.Log($"[{this}] targetObject.transform.localPosition: {targetObject.transform.localPosition}");
-    }
+    // void Update()
+    // {
+    //     Debug.Log($"[{this}] targetObject.transform.localPosition: {targetObject.transform.localPosition}");
+    // }
     public void Lower()
     {
         if (debugMode) Debug.Log($"[{this}] Lowering!");

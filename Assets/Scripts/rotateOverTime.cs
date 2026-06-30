@@ -1,7 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class rotateOverTime : MonoBehaviour
+public class RotateEffect : MonoBehaviour
 {
     [Header("Local")]
     [SerializeField] private float xSpeed;
@@ -12,6 +12,11 @@ public class rotateOverTime : MonoBehaviour
     [SerializeField] private float worldYSpeed;
     [SerializeField] private float worldZSpeed;
     void Update()
+    {
+        Rotate();
+    }
+
+    void Rotate()
     {
         transform.Rotate(xSpeed * Time.deltaTime, ySpeed * Time.deltaTime, zSpeed * Time.deltaTime, Space.Self);
         transform.Rotate(worldXSpeed * Time.deltaTime, worldYSpeed * Time.deltaTime, worldZSpeed * Time.deltaTime, Space.World);

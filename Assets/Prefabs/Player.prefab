@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 2206759139523817720}
   - component: {fileID: 3250094807878775779}
   - component: {fileID: 5680047837094277008}
+  - component: {fileID: 7765198966142163988}
   m_Layer: 6
   m_Name: RHand
   m_TagString: Untagged
@@ -185,6 +186,32 @@ MonoBehaviour:
   movementTiltX: 2
   movementTiltZ: 3
 --- !u!114 &5680047837094277008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1064482449173962114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 911c86f751db6c94081de9b03a599a92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponSway
+  moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  lookAction: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  enableSway: 1
+  smooth: 3
+  swayMultiplier: 0.1
+  maxPositionOffset: 0.08
+  maxRotationAngle: 45
+  bobFrequency: 12
+  bobAmplitude: 0.03
+  bobSmoothing: 8
+  movementPositionX: 0.025
+  movementPositionZ: 0.02
+  movementTiltX: 2
+  movementTiltZ: 3
+--- !u!114 &7765198966142163988
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -362,13 +389,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1879563748342986603}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.6649355, y: -0.022150302, z: -0.0271694, w: 0.7460777}
+  m_LocalRotation: {x: -0.664368, y: -0.03528401, z: -0.041905303, w: 0.74539536}
   m_LocalPosition: {x: -0.196, y: -0.122, z: 0.455}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6143742847426307529}
-  m_LocalEulerAnglesHint: {x: -83.409, y: 1.538, z: -5.541}
+  m_LocalEulerAnglesHint: {x: -83.409, y: 1.538, z: -7.806}
 --- !u!1 &2559866451957183978
 GameObject:
   m_ObjectHideFlags: 0
@@ -2819,7 +2846,7 @@ PrefabInstance:
     - target: {fileID: 7474983565027225632, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
       propertyPath: weaponSway
       value: 
-      objectReference: {fileID: 5680047837094277008}
+      objectReference: {fileID: 7765198966142163988}
     - target: {fileID: 8473800095320953970, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -2848,7 +2875,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 250437841754734501, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_Value
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 430255705077211595, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2864,11 +2891,11 @@ PrefabInstance:
       objectReference: {fileID: 1642531195737763663}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -0.0012985714
+      value: 0.0011888186
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.00048311023
+      value: 0.00012442422
       objectReference: {fileID: 0}
     - target: {fileID: 1090110928602918560, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: screenUI
@@ -2976,31 +3003,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5820451053879187290, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.766007
+      value: 0.766785
       objectReference: {fileID: 0}
     - target: {fileID: 5820451053879187290, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.63120306
+      value: -0.63048553
       objectReference: {fileID: 0}
     - target: {fileID: 5820451053879187290, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.07869363
+      value: -0.07751477
       objectReference: {fileID: 0}
     - target: {fileID: 5820451053879187290, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.09286211
+      value: -0.092305124
       objectReference: {fileID: 0}
     - target: {fileID: 5820451053879187290, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -79
+      value: -78.874
       objectReference: {fileID: 0}
     - target: {fileID: 5820451053879187290, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -1
+      value: -0.736
       objectReference: {fileID: 0}
     - target: {fileID: 5820451053879187290, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -13
+      value: -13.123
       objectReference: {fileID: 0}
     - target: {fileID: 5917795077080198391, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_Size
@@ -3197,9 +3224,21 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5466451141561666599, guid: ef8381f92e4211d4a8017db5fb97517e, type: 3}
+      propertyPath: width
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5466451141561666599, guid: ef8381f92e4211d4a8017db5fb97517e, type: 3}
       propertyPath: playerCam
       value: 
       objectReference: {fileID: 6654618607449089807}
+    - target: {fileID: 5466451141561666599, guid: ef8381f92e4211d4a8017db5fb97517e, type: 3}
+      propertyPath: angleInaccuracy
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5466451141561666599, guid: ef8381f92e4211d4a8017db5fb97517e, type: 3}
+      propertyPath: bulletsPerFrame
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8766396168757975875, guid: ef8381f92e4211d4a8017db5fb97517e, type: 3}
       propertyPath: m_Name
       value: Miriam's Hand of Doom
