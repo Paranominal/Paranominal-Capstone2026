@@ -19,29 +19,41 @@ public class BulletSprayFX : MonoBehaviour
     void Start()
     {
         //cache sprite and light values
-        foreach (Light light in lights)
+        if (lights != null)
         {
-            maxBrightness.Add(light.intensity);
-            minBrightness.Add(light.intensity * lightFadePercent);
+            foreach (Light light in lights)
+            {
+                maxBrightness.Add(light.intensity);
+                minBrightness.Add(light.intensity * lightFadePercent);
+            }
         }
-        foreach (SpriteRenderer sprite in sprites)
+        if (sprites != null)
         {
-            maxAlpha.Add(sprite.color.a);
-            minAlpha.Add(sprite.color.a * spriteFadePercent);
+            foreach (SpriteRenderer sprite in sprites)
+            {
+                maxAlpha.Add(sprite.color.a);
+                minAlpha.Add(sprite.color.a * spriteFadePercent);
+            }
         }
     }
     public void DoFX()
     {
         int i = 0;
-        foreach (Light light in lights)
+        if (lights != null)
         {
-            if (shoot.action.IsPressed()) light.intensity = maxBrightness[i];
-            else light.intensity = minBrightness[i];
+            foreach (Light light in lights)
+            {
+                if (shoot.action.IsPressed()) light.intensity = maxBrightness[i];
+                else light.intensity = minBrightness[i];
+            }
         }
-        foreach (SpriteRenderer sprite in sprites)
+        if (sprites != null)
         {
-            if (shoot.action.IsPressed()) sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, maxAlpha[i]);
-            else sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, minAlpha[i]);
+            foreach (SpriteRenderer sprite in sprites)
+            {
+                if (shoot.action.IsPressed()) sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, maxAlpha[i]);
+                else sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, minAlpha[i]);
+            }
         }
         i++;
     }

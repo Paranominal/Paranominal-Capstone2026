@@ -13,6 +13,7 @@ public class BulletSpray : MonoBehaviour
     [SerializeField] private int maxBulletCount = 100;
     [SerializeField] private int maxDistance = 30;
     public float speedVariability = 0;
+    public float scaleVariability = 0;
     public float angleInaccuracy = 0;
     public float width = 0;
     [SerializeField] private bool randomiseSpin;
@@ -25,6 +26,8 @@ public class BulletSpray : MonoBehaviour
     {
         if (fx != null) fx.DoFX();
         if (bullets.Count > 0) DistanceCheck();
+
+        CleanUp();
     }
     void FixedUpdate()
     {
@@ -52,6 +55,8 @@ public class BulletSpray : MonoBehaviour
         bullets.Add(bullet);
         bullet.speed = bulletSpeed + Random.Range(-speedVariability, speedVariability);
         bullet.SetSpeed();
+        float newScale = Random.Range(1, 1 + scaleVariability);
+        bullet.transform.localScale = Vector3.one * newScale;
         
         if (bullets.Count > maxBulletCount)
         {
@@ -87,12 +92,23 @@ public class BulletSpray : MonoBehaviour
         {
             if (debugMode) Debug.Log($"DistanceCheck() bullet index: {i}");
             if (debugMode) Debug.Log($"DistanceCheck() distance of: [{bullets[i]}] = [{Vector3.Distance(bullets[i].transform.position, transform.position)}]");
-            
+
             if (Vector3.Distance(bullets[i].transform.position, transform.position) > maxDistance)
             {
                 Destroy(bullets[i].gameObject);
                 if (debugMode) Debug.Log($"DistanceCheck() destroyed: {bullets[i]}");
                 bullets.RemoveAt(i);
+            }
+        }
+    }
+    
+    void CleanUp()
+    {
+        foreach (Bullet bullet in bullets)
+        {
+            if (bullet == null)
+            {
+                bullets.RemoveAt(bullets.IndexOf(bullet));
             }
         }
     }

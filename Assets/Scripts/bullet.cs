@@ -29,7 +29,7 @@ public class Bullet : MonoBehaviour
             rotate.enabled = false;
         }
     }
-    void DoEmbed(Transform transform)
+    void DoEmbed(Transform transform) //problematic currently cause if the bullet gets deleted by a dying enemy, it goes missing from the list.
     {
         this.transform.SetParent(transform);
         DoStop();
@@ -38,12 +38,22 @@ public class Bullet : MonoBehaviour
     {
         weakPoint.OnHit(WeakPointType.Iron | WeakPointType.Silver);
     }
+    private DamageInfo damageInfo;
+    void HitEnemy(ToTough enemy)
+    {
+        Debug.Log($"[{this}] hit tough enemy!");
+        damageInfo.amount = 1;
+        damageInfo.source = this.gameObject;
+        enemy.TakeDamage(damageInfo);
+    }
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log($"[{this}] hit! [{collision.gameObject}]");
+        //damage
+        if (collision.gameObject.layer == weakpointLayer.value) HitWeakpoint(collision.gameObject.GetComponent<WeakPoint>());
+        else if (collision.gameObject.layer == enemyLayer.value) HitEnemy(collision.gameObject.GetComponent<ToTough>());
+        //stick
         if (!collision.gameObject.isStatic) DoEmbed(collision.gameObject.transform);
         else DoStop();
-        if (collision.gameObject.layer == weakpointLayer) HitWeakpoint(collision.gameObject.GetComponent<WeakPoint>());
     }
 
 }
