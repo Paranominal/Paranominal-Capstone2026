@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -7,8 +8,10 @@ public class BulletSpray : MonoBehaviour
     [SerializeField] private Camera playerCam;
     [SerializeField] private Transform origin;
     [SerializeField] private InputActionReference shoot;
-    [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private int bulletsPerFrame = 1;
+    [SerializeField] private List<GameObject> bulletPrefabs;
+    [SerializeField] private float shotsPerSecond = 5;
+    [SerializeField] private int bulletsPerShot = 1;
+    private bool shotCooldown;
     [SerializeField] private float bulletSpeed = 10;
     [SerializeField] private int maxBulletCount = 100;
     [SerializeField] private int maxDistance = 30;
@@ -18,28 +21,28 @@ public class BulletSpray : MonoBehaviour
     public float width = 0;
     [SerializeField] private bool randomiseSpin;
     public List<Bullet> bullets;
-
     [SerializeField] private BulletSprayFX fx;
     public bool debugMode;
 
     void Update()
     {
+        //the shooting
+        if (shoot.action.IsPressed() && !shotCooldown) for (int i = 0; i < bulletsPerShot; i++)
+        {
+            StartCoroutine(FireRateCD());
+            Shoot();
+        }
+        //activate the visual fx script
         if (fx != null) fx.DoFX();
+        //check for bullets that are out of range
         if (bullets.Count > 0) DistanceCheck();
 
         CleanUp();
     }
-    void FixedUpdate()
-    {
-        if (shoot.action.IsPressed())
-        {
-            for (int i = 0; i < bulletsPerFrame; i++) Shoot();
-        }
-    }
     Quaternion AimDir()
     {
         Quaternion aimDir = Quaternion.LookRotation(transform.forward + Inaccuracy());
-        if (randomiseSpin) aimDir.eulerAngles = aimDir.eulerAngles + RandomSpin();
+        // if (randomiseSpin) aimDir.eulerAngles = aimDir.eulerAngles + RandomSpin();
         if (debugMode) Debug.Log($"{this} | AimDir():{aimDir}");
         return aimDir;
     }
@@ -57,29 +60,37 @@ public class BulletSpray : MonoBehaviour
         bullet.SetSpeed();
         float newScale = Random.Range(1, 1 + scaleVariability);
         bullet.transform.localScale = Vector3.one * newScale;
-        
+
         if (bullets.Count > maxBulletCount)
         {
             Destroy(bullets[0].gameObject);
             bullets.RemoveAt(0);
         }
     }
+    IEnumerator FireRateCD()
+    {
+        shotCooldown = true;
+        if (debugMode) Debug.Log($"{this} | Cooling down for [{1/shotsPerSecond}] seconds");
+        yield return new WaitForSeconds(1/shotsPerSecond);
+        if (debugMode) Debug.Log($"{this} | Cool down complete");
+        shotCooldown = false;
+    }
     Bullet InstanceBullet()
     {
-        return Instantiate(bulletPrefab, AimPos(), AimDir()).GetComponent<Bullet>();
+        return Instantiate(bulletPrefabs[Random.Range(0,bulletPrefabs.Count)], AimPos(), AimDir()).GetComponent<Bullet>();
     }
     Vector3 Inaccuracy()
     {
-        Vector3 inaccuracy = new Vector3 (Random.Range(-angleInaccuracy, angleInaccuracy), Random.Range(-angleInaccuracy, angleInaccuracy), Random.Range(-angleInaccuracy, angleInaccuracy)) * 0.01f;
+        Vector3 inaccuracy = new Vector3(Random.Range(-angleInaccuracy, angleInaccuracy), Random.Range(-angleInaccuracy, angleInaccuracy), Random.Range(-angleInaccuracy, angleInaccuracy)) * 0.01f;
         if (debugMode) Debug.Log($"{this} | Innaccuracy():{inaccuracy}");
         return inaccuracy;
     }
-    Vector3 RandomSpin()
-    {
-        Vector3 randomSpin = new Vector3(0, 0, Random.Range(0, 360));
-        if (debugMode) Debug.Log($"{this} | RandomSpin():{randomSpin}");
-        return randomSpin;
-    }
+    // Vector3 RandomSpin()
+    // {
+    //     Vector3 randomSpin = new Vector3(0, 0, Random.Range(0, 360));
+    //     if (debugMode) Debug.Log($"{this} | RandomSpin():{randomSpin}");
+    //     return randomSpin;
+    // }
     Vector3 OriginWidth()
     {
         Vector3 originWidth = new Vector3 (Random.Range(-width, width), Random.Range(-width, width), Random.Range(-width, width)) * 0.01f;
@@ -102,14 +113,19 @@ public class BulletSpray : MonoBehaviour
         }
     }
     
-    void CleanUp()
+    void CleanUp() //currently not working
     {
-        foreach (Bullet bullet in bullets)
+        // foreach (Bullet bullet in bullets)
+        // {
+        //     if (bullet == null)
+        //     {
+        //         bullets.RemoveAt(bullets.IndexOf(bullet));
+        //     }
+        // }
+
+        for (var i = bullets.Count -1; i > -1; i--)
         {
-            if (bullet == null)
-            {
-                bullets.RemoveAt(bullets.IndexOf(bullet));
-            }
+            if (bullets[i] == null) bullets.RemoveAt(i);
         }
     }
 }

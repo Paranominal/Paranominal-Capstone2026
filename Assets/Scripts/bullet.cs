@@ -9,7 +9,7 @@ public class Bullet : MonoBehaviour
     [SerializeField] private Collider bulletCollider;
     [SerializeField] private Rigidbody bulletRigidbody;
     public float speed = 1;
-    private bool stuck = false;
+    public bool stuck;
     [SerializeField] private List<RotateEffect> rotationEffects;
     void Awake()
     {
@@ -29,14 +29,14 @@ public class Bullet : MonoBehaviour
             rotate.enabled = false;
         }
     }
-    void DoEmbed(Transform transform) //problematic currently cause if the bullet gets deleted by a dying enemy, it goes missing from the list.
-    {
-        this.transform.SetParent(transform);
-        DoStop();
-    }
+    // void DoEmbed(Transform transform) //problematic currently cause if the bullet gets deleted by a dying enemy, it goes missing from the list.
+    // {
+    //     this.transform.SetParent(transform);
+    //     DoStop();
+    // }
     void HitWeakpoint(WeakPoint weakPoint)
     {
-        weakPoint.OnHit(WeakPointType.Iron | WeakPointType.Silver);
+        weakPoint.OnHit(WeakPointType.Iron);
     }
     private DamageInfo damageInfo;
     void HitEnemy(ToTough enemy)
@@ -52,8 +52,8 @@ public class Bullet : MonoBehaviour
         if (collision.gameObject.layer == weakpointLayer.value) HitWeakpoint(collision.gameObject.GetComponent<WeakPoint>());
         else if (collision.gameObject.layer == enemyLayer.value) HitEnemy(collision.gameObject.GetComponent<ToTough>());
         //stick
-        if (!collision.gameObject.isStatic) DoEmbed(collision.gameObject.transform);
-        else DoStop();
+        // if (!collision.gameObject.isStatic) DoEmbed(collision.gameObject.transform);
+        // else 
+        DoStop();
     }
-
 }

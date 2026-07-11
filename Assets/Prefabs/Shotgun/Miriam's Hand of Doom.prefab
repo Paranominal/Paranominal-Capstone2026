@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &304088282005058862
 Transform:
   m_ObjectHideFlags: 0
@@ -101,15 +101,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 183255364975837117}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8283e6e80b2870149bed84f51959e99e, type: 3}
+  m_Script: {fileID: 11500000, guid: 255fbe486ba67124bb598505c94e9228, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
   xSpeed: 0
   ySpeed: 0
-  zSpeed: 33
+  zSpeed: 60
   worldXSpeed: 0
   worldYSpeed: 0
   worldZSpeed: 0
+  invert: 0
 --- !u!1 &3170918307494686285
 GameObject:
   m_ObjectHideFlags: 0
@@ -218,7 +219,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4257575093897941530
 Transform:
   m_ObjectHideFlags: 0
@@ -302,15 +303,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 3565375910694583945}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8283e6e80b2870149bed84f51959e99e, type: 3}
+  m_Script: {fileID: 11500000, guid: 255fbe486ba67124bb598505c94e9228, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
   xSpeed: 0
   ySpeed: 0
-  zSpeed: -150
+  zSpeed: -20
   worldXSpeed: 0
   worldYSpeed: 0
   worldZSpeed: 0
+  invert: 0
 --- !u!1 &4973317014461025762
 GameObject:
   m_ObjectHideFlags: 0
@@ -328,7 +330,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6270927135311384165
 Transform:
   m_ObjectHideFlags: 0
@@ -412,15 +414,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 4973317014461025762}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8283e6e80b2870149bed84f51959e99e, type: 3}
+  m_Script: {fileID: 11500000, guid: 255fbe486ba67124bb598505c94e9228, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
   xSpeed: 0
   ySpeed: 0
-  zSpeed: 200
+  zSpeed: 20
   worldXSpeed: 0
   worldYSpeed: 0
   worldZSpeed: 0
+  invert: 0
 --- !u!1 &8024408493313222370
 GameObject:
   m_ObjectHideFlags: 0
@@ -446,7 +449,7 @@ Transform:
   m_GameObject: {fileID: 8024408493313222370}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0392, y: 0.31, z: -0.0911}
+  m_LocalPosition: {x: -0.0392, y: 0.2831, z: 0.1998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -815,8 +818,10 @@ MonoBehaviour:
   playerCam: {fileID: 0}
   origin: {fileID: 3052238270776913014}
   shoot: {fileID: 1110478493490812807, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
-  bulletPrefab: {fileID: 2145277322441919992, guid: a5ac7e668f0a6f04f8b348579ba18287, type: 3}
-  bulletsPerFrame: 1
+  bulletPrefabs:
+  - {fileID: 2145277322441919992, guid: a5ac7e668f0a6f04f8b348579ba18287, type: 3}
+  shotsPerSecond: 10
+  bulletsPerShot: 1
   bulletSpeed: 35
   maxBulletCount: 50
   maxDistance: 30
