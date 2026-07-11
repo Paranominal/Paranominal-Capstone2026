@@ -19,7 +19,7 @@ public class BulletSprayFX : MonoBehaviour
     void Start()
     {
         //cache sprite and light values
-        if (lights != null)
+        if (lights[0] != null)
         {
             foreach (Light light in lights)
             {
@@ -27,7 +27,7 @@ public class BulletSprayFX : MonoBehaviour
                 minBrightness.Add(light.intensity * lightFadePercent);
             }
         }
-        if (sprites != null)
+        if (sprites[0] != null)
         {
             foreach (SpriteRenderer sprite in sprites)
             {
@@ -38,23 +38,21 @@ public class BulletSprayFX : MonoBehaviour
     }
     public void DoFX()
     {
-        int i = 0;
-        if (lights != null)
+        if (lights[0] != null)
         {
             foreach (Light light in lights)
             {
-                if (shoot.action.IsPressed()) light.intensity = maxBrightness[i];
-                else light.intensity = minBrightness[i];
+                if (shoot.action.IsPressed()) light.intensity = maxBrightness[lights.IndexOf(light)];
+                else light.intensity = minBrightness[lights.IndexOf(light)];
             }
         }
-        if (sprites != null)
+        if (sprites[0] != null)
         {
             foreach (SpriteRenderer sprite in sprites)
             {
-                if (shoot.action.IsPressed()) sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, maxAlpha[i]);
-                else sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, minAlpha[i]);
+                if (shoot.action.IsPressed()) sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, maxAlpha[sprites.IndexOf(sprite)]);
+                else sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, minAlpha[sprites.IndexOf(sprite)]);
             }
         }
-        i++;
     }
 }

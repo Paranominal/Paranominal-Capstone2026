@@ -6,78 +6,114 @@ using UnityEngine.InputSystem;
 public class BulletSpray : MonoBehaviour
 {
     [SerializeField] private Camera playerCam;
-    [SerializeField] private Transform origin;
-    [SerializeField] private InputActionReference shoot;
-    [SerializeField] private List<GameObject> bulletPrefabs;
+    [SerializeField] private Transform shotOrigin;
+    [SerializeField] private InputActionReference shootInput;
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private BulletSprayFX fx;
+    public bool debugMode;
     [SerializeField] private float shotsPerSecond = 5;
-    [SerializeField] private int bulletsPerShot = 1;
     private bool shotCooldown;
-    [SerializeField] private float bulletSpeed = 10;
-    [SerializeField] private int maxBulletCount = 100;
+    [SerializeField] private float bulletSpeed = 20;
+    [SerializeField] private int maxBulletCount = 50;
     [SerializeField] private int maxDistance = 30;
     public float speedVariability = 0;
     public float scaleVariability = 0;
     public float angleInaccuracy = 0;
-    public float width = 0;
-    [SerializeField] private bool randomiseSpin;
-    public List<Bullet> bullets;
-    [SerializeField] private BulletSprayFX fx;
-    public bool debugMode;
+    public float bulletSpread = 0;
+    [Header("Bullets")]
+    public List<Bullet> bulletsAll;
+    public List<Bullet> bulletsActive;
+    public List<Bullet> bulletsInactive;
 
+    private void Awake()
+    {
+        WarnBulletsInList(); // a debug warning if there are bullets in lists before starting
+    }
+    private void Start()
+    {
+        LoadBullets(); // instantiate bullets as cached inactive game objects
+    }
     void Update()
     {
-        //the shooting
-        if (shoot.action.IsPressed() && !shotCooldown) for (int i = 0; i < bulletsPerShot; i++)
+        if (shootInput.action.IsPressed()) Shoot(); // Shoot on hold
+        if (fx != null) fx.DoFX(); // Start up the FX script
+    }
+    void LateUpdate()
+    {
+        if (bulletsActive.Count > 0) DistanceCheck(); // Check for bullets out of range
+    }
+    private void LoadBullets()
+    {
+        for (int i = 0; i < maxBulletCount; i++)
         {
-            StartCoroutine(FireRateCD());
-            Shoot();
+            Bullet bullet = InstanceBullet();
+            bulletsAll.Add(bullet);
+            bulletsInactive.AddRange(bulletsAll);
         }
-        //activate the visual fx script
-        if (fx != null) fx.DoFX();
-        //check for bullets that are out of range
-        if (bullets.Count > 0) DistanceCheck();
+    }
+    private Bullet InstanceBullet()
+    {
+        return Instantiate(bulletPrefab).GetComponent<Bullet>();
+    }
+    void Shoot()
+    {
+        if (shotCooldown) return;
+        StartCoroutine(ShotCooldown());
+        if (BulletsEmpty()) RetrieveBullet(bulletsActive[0]); // if empty, retrieve oldest bullet
 
-        CleanUp();
+        Bullet bullet = bulletsInactive[0];
+        PrepareBullet(bullet);
+        bullet.gameObject.SetActive(true); //set active and fire
+    }
+    private void PrepareBullet(Bullet bullet)
+    {
+        bullet.speed = bulletSpeed + Random.Range(-speedVariability, speedVariability); //set speed
+        bullet.transform.localPosition = AimPos(); // set position
+        bullet.transform.localRotation = AimDir(); // set rotation / accuracy
+        bullet.transform.localScale = Vector3.one * Random.Range(1, 1 + scaleVariability); // set scale randomness
+
+        bulletsActive.Add(bullet);
+        bulletsInactive.Remove(bullet);
+    }
+    private bool BulletsEmpty()
+    {
+        if (bulletsInactive.Count == 0) return true;
+        else return false;
+    }
+    private void RetrieveBullet(Bullet bullet)
+    {
+        bullet.gameObject.SetActive(false); // deactivate it
+        bulletsActive.Remove(bullet); // remove it from active list
+        bulletsInactive.Add(bullet); // add it to inactive list
+        bullet.transform.localPosition = Vector3.zero; // reset position
+        bullet.transform.localRotation = Quaternion.identity; // reset rotation
+    }
+    void DistanceCheck()
+    {
+        foreach (Bullet bullet in bulletsAll)
+        {
+            if (bulletsInactive.Contains(bullet)) return;
+            float distance = Vector3.Distance(bullet.transform.position, transform.position);
+            if (distance > maxDistance) RetrieveBullet(bullet);
+        }
+    }
+    Vector3 AimPos()
+    {        
+        Vector3 aimPos = shotOrigin.position + OriginWidth();
+        if (debugMode) Debug.Log($"{this} | AimPos():{aimPos}");
+        return aimPos;
+    }
+    Vector3 OriginWidth()
+    {
+        Vector3 originWidth = new Vector3 (Random.Range(-bulletSpread, bulletSpread), Random.Range(-bulletSpread, bulletSpread), Random.Range(-bulletSpread, bulletSpread)) * 0.01f;
+        if (debugMode) Debug.Log($"{this} | OriginWidth():{originWidth}");
+        return originWidth;
     }
     Quaternion AimDir()
     {
         Quaternion aimDir = Quaternion.LookRotation(transform.forward + Inaccuracy());
-        // if (randomiseSpin) aimDir.eulerAngles = aimDir.eulerAngles + RandomSpin();
         if (debugMode) Debug.Log($"{this} | AimDir():{aimDir}");
         return aimDir;
-    }
-    Vector3 AimPos()
-    {        
-        Vector3 aimPos = origin.position + OriginWidth();
-        if (debugMode) Debug.Log($"{this} | AimPos():{aimPos}");
-        return aimPos;
-    }
-    void Shoot()
-    {
-        Bullet bullet = InstanceBullet();
-        bullets.Add(bullet);
-        bullet.speed = bulletSpeed + Random.Range(-speedVariability, speedVariability);
-        bullet.SetSpeed();
-        float newScale = Random.Range(1, 1 + scaleVariability);
-        bullet.transform.localScale = Vector3.one * newScale;
-
-        if (bullets.Count > maxBulletCount)
-        {
-            Destroy(bullets[0].gameObject);
-            bullets.RemoveAt(0);
-        }
-    }
-    IEnumerator FireRateCD()
-    {
-        shotCooldown = true;
-        if (debugMode) Debug.Log($"{this} | Cooling down for [{1/shotsPerSecond}] seconds");
-        yield return new WaitForSeconds(1/shotsPerSecond);
-        if (debugMode) Debug.Log($"{this} | Cool down complete");
-        shotCooldown = false;
-    }
-    Bullet InstanceBullet()
-    {
-        return Instantiate(bulletPrefabs[Random.Range(0,bulletPrefabs.Count)], AimPos(), AimDir()).GetComponent<Bullet>();
     }
     Vector3 Inaccuracy()
     {
@@ -85,47 +121,25 @@ public class BulletSpray : MonoBehaviour
         if (debugMode) Debug.Log($"{this} | Innaccuracy():{inaccuracy}");
         return inaccuracy;
     }
-    // Vector3 RandomSpin()
-    // {
-    //     Vector3 randomSpin = new Vector3(0, 0, Random.Range(0, 360));
-    //     if (debugMode) Debug.Log($"{this} | RandomSpin():{randomSpin}");
-    //     return randomSpin;
-    // }
-    Vector3 OriginWidth()
+    IEnumerator ShotCooldown()
     {
-        Vector3 originWidth = new Vector3 (Random.Range(-width, width), Random.Range(-width, width), Random.Range(-width, width)) * 0.01f;
-        if (debugMode) Debug.Log($"{this} | OriginWidth():{originWidth}");
-        return originWidth;
+        shotCooldown = true;
+        if (debugMode) Debug.Log($"{this} | Cooling down for [{1 / shotsPerSecond}] seconds");
+        yield return new WaitForSeconds(1 / shotsPerSecond);
+        if (debugMode) Debug.Log($"{this} | Cool down complete");
+        shotCooldown = false;
     }
-    void DistanceCheck()
+    void WarnBulletsInList()
     {
-        for (int i = 0; i < bullets.Count; i++)
+        if (bulletsActive.Count > 0)
         {
-            if (debugMode) Debug.Log($"DistanceCheck() bullet index: {i}");
-            if (debugMode) Debug.Log($"DistanceCheck() distance of: [{bullets[i]}] = [{Vector3.Distance(bullets[i].transform.position, transform.position)}]");
-
-            if (Vector3.Distance(bullets[i].transform.position, transform.position) > maxDistance)
-            {
-                Destroy(bullets[i].gameObject);
-                if (debugMode) Debug.Log($"DistanceCheck() destroyed: {bullets[i]}");
-                bullets.RemoveAt(i);
-            }
+            Debug.LogWarning("Bullets Active list should start empty! clearing it now!");
+            bulletsActive.Clear();
         }
-    }
-    
-    void CleanUp() //currently not working
-    {
-        // foreach (Bullet bullet in bullets)
-        // {
-        //     if (bullet == null)
-        //     {
-        //         bullets.RemoveAt(bullets.IndexOf(bullet));
-        //     }
-        // }
-
-        for (var i = bullets.Count -1; i > -1; i--)
+        if (bulletsInactive.Count > 0)
         {
-            if (bullets[i] == null) bullets.RemoveAt(i);
+            Debug.LogWarning("Bullets Inctive list should start empty! clearing it now!");
+            bulletsInactive.Clear();
         }
     }
 }
