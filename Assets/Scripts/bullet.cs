@@ -54,6 +54,6 @@ public class Bullet : MonoBehaviour
         //stick
         // if (!collision.gameObject.isStatic) DoEmbed(collision.gameObject.transform);
         // else 
-        DoStop();
+        if (!collision.gameObject.isStatic) DoStop();
     }
 }
