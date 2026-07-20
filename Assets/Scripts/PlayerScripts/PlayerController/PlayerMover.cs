@@ -7,7 +7,8 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private PlayerInputReader inputReader;
 
     [Header("Movement")]
-    [SerializeField] private float walkSpeed = 6f;
+    [SerializeField] private float walkSpeed = 5f;
+    [SerializeField] private float sprintStrength = 5f;
 
     [Header("Sound")]
     [SerializeField] private AudioSource audioSource;
@@ -34,7 +35,10 @@ public class PlayerMover : MonoBehaviour
             return;
 
         Vector2 moveInput = inputReader != null ? inputReader.MoveInput : Vector2.zero;
+        bool sprintInput = inputReader != null ? inputReader.SprintInput : false;
+
         Vector3 move = (transform.forward * moveInput.y + transform.right * moveInput.x) * walkSpeed;
+        if (sprintInput) move *= sprintStrength;
         characterController.Move(move * Time.deltaTime);
     }
 
