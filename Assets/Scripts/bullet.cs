@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using UnityEditor.Callbacks;
 using UnityEngine;
-using UnityEngine.ProBuilder.MeshOperations;
 
 public class Bullet : MonoBehaviour
 {
@@ -31,8 +29,8 @@ public class Bullet : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         //damage
-        if (collision.gameObject.layer == weakpointLayer.value) HitWeakpoint(collision.gameObject.GetComponent<WeakPoint>());
-        else if (collision.gameObject.layer == enemyLayer.value) HitEnemy(collision.gameObject.GetComponent<ToTough>());
+        if (weakpointLayer.Contains(collision.gameObject.layer)) HitWeakpoint(collision.gameObject.GetComponent<WeakPoint>());
+        else if (enemyLayer.Contains(collision.gameObject.layer)) HitEnemy(collision.gameObject.GetComponent<ToTough>());
         //stick
         if (!collision.gameObject.isStatic) DoStop();
     }
