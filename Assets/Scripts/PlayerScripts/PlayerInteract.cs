@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class PlayerCollect : MonoBehaviour
 {
     [SerializeField] private PlayerLook look;
+    [SerializeField] private Inventory inventory;
     [SerializeField] private InputActionReference collectAction;
     [SerializeField] private LayerMask interactablesLayers;
     [SerializeField] private LayerMask collectiblesLayer;
@@ -12,6 +13,7 @@ public class PlayerCollect : MonoBehaviour
     void Update()
     {
         Hover();
+        if (collectAction.action.WasPressedThisFrame()) Collect(currentTarget);
         if (debugMode) DoDebugLog();
     }
     void Hover()
@@ -31,6 +33,11 @@ public class PlayerCollect : MonoBehaviour
             target.Activate();
             currentTarget = target;
         }
+    }
+    void Collect(CollectibleObject collectible)
+    {
+        if (collectible == null) return;
+        inventory.Add(collectible.gameObject, true);
     }
 
     void DoDebugLog()
