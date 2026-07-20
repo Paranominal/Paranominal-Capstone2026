@@ -80,8 +80,84 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2113135451559821451, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3524502881056351253, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5239160679434606946}
   m_SourcePrefab: {fileID: 100100000, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+--- !u!20 &1536785462057580849 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 6654618607449089807, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+  m_PrefabInstance: {fileID: 5263078908757548606}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3378086087614630332 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7488194288341063554, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+  m_PrefabInstance: {fileID: 5263078908757548606}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7692545885301060947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26610a684dd371147bda96f749b28ec2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraRecoilController
+--- !u!114 &3838858625336406681 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8956652460274281639, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+  m_PrefabInstance: {fileID: 5263078908757548606}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7692545885301060947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 355507da6e9a0ca419d0d8d11a0ff80c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInputReader
+--- !u!114 &5518060067731181807 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 404796220867514065, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+  m_PrefabInstance: {fileID: 5263078908757548606}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7692545885301060947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b856661fc033abb429ec138fbb1d0086, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMover
+--- !u!1 &7692545885301060947 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2579260593497910125, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+  m_PrefabInstance: {fileID: 5263078908757548606}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8783069116764027435 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3524502881056351253, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+  m_PrefabInstance: {fileID: 5263078908757548606}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5239160679434606946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8783069116764027435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18e67ab7004eb55448b731af20e759bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLook
+  player: {fileID: 7692545885301060947}
+  playerCamera: {fileID: 1536785462057580849}
+  inputReader: {fileID: 3838858625336406681}
+  playerMover: {fileID: 5518060067731181807}
+  cameraRecoil: {fileID: 3378086087614630332}
+  lookSensitivity: 0.05
+  lookXLimit: 60
+  lookSmoothing: 0.03
+  lookingMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  lookDistance: 10
