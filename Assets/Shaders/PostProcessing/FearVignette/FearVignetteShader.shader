@@ -7,7 +7,8 @@ Shader "Custom/URP/FearVignetteShader"
         _VignetteColor ("Vignette Color", Color) = (0, 0, 0, 1)
         _NoiseIntensity ("Noise Intensity", Range(0.0, 1.0)) = 0.5
         _NoiseScale ("Noise Scale", Range(1.0, 20.0)) = 6.0
-        _NoiseSpeed ("Noise Speed", Range(0.0, 2.0)) = 0.3
+        _NoiseSpeed ("Noise Speed", Float) = 0.3
+        _CycleDuration ("Cycle Duration (Seconds)", Float) = 10.0
         _Enabled ("Enabled", Float) = 1.0
     }
 
@@ -41,6 +42,7 @@ Shader "Custom/URP/FearVignetteShader"
                 float _NoiseIntensity; // How much the noise distorts the vignette edge.
                 float _NoiseScale; // Size of the noise pattern.
                 float _NoiseSpeed; // How fast the noise creeps inward.
+                float _CycleDuration; // How long in seconds before each noise layer resets.
                 float _Enabled; // Toggle to bypass the effect for Scene View camera.
             CBUFFER_END
 
@@ -96,9 +98,21 @@ Shader "Custom/URP/FearVignetteShader"
                 // Direction from this pixel toward the screen centre, used to scroll noise inward.
                 float2 inwardDir = normalize(centredUV + 0.0001); // small bias to avoid zero at exact centre
 
-                // Scroll noise along the inward direction so it creeps from edges toward centre.
-                float2 noiseUV = uv * _NoiseScale + inwardDir * _Time.y * _NoiseSpeed;
-                float noise = FractalNoise(noiseUV);
+                // Dual-layer crossfade: two noise layers offset by half a cycle, blended so each
+                // fades out before it stretches noticeably. Keeps the inward creep without distortion.
+                float cyclePeriod = _CycleDuration * _NoiseSpeed;
+                float t1 = fmod(_Time.y * _NoiseSpeed, cyclePeriod);
+                float t2 = fmod(_Time.y * _NoiseSpeed + cyclePeriod * 0.5, cyclePeriod);
+
+                float2 noiseUV1 = uv * _NoiseScale + inwardDir * t1;
+                float2 noiseUV2 = uv * _NoiseScale + inwardDir * t2;
+
+                float noise1 = FractalNoise(noiseUV1);
+                float noise2 = FractalNoise(noiseUV2);
+
+                // Crossfade: each layer peaks at mid-cycle, fades at reset point.
+                float blend = abs(t1 / cyclePeriod * 2.0 - 1.0);
+                float noise = lerp(noise1, noise2, blend);
 
                 // Remap noise from 0..1 to -1..1 and scale by intensity.
                 float noiseOffset = (noise * 2.0 - 1.0) * _NoiseIntensity;

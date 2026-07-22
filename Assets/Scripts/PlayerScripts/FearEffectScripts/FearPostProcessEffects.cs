@@ -20,7 +20,9 @@ public class FearPostProcessEffects : MonoBehaviour
     [SerializeField] private Color vignetteColor = Color.black;
     [SerializeField] private float vignetteSoftness = 0.3f;
     [SerializeField] private float noiseScale = 6.0f;
-    [SerializeField] private float noiseSpeed = 0.3f;
+    [SerializeField] private float noiseSpeedMin = 0.1f;
+    [SerializeField] private float noiseSpeedMax = 0.5f;
+    [SerializeField] private float cycleDuration = 10f;
 
     private static readonly int VignetteIntensityID = Shader.PropertyToID("_VignetteIntensity");
     private static readonly int VignetteSoftnessID = Shader.PropertyToID("_VignetteSoftness");
@@ -28,6 +30,7 @@ public class FearPostProcessEffects : MonoBehaviour
     private static readonly int NoiseIntensityID = Shader.PropertyToID("_NoiseIntensity");
     private static readonly int NoiseScaleID = Shader.PropertyToID("_NoiseScale");
     private static readonly int NoiseSpeedID = Shader.PropertyToID("_NoiseSpeed");
+    private static readonly int CycleDurationID = Shader.PropertyToID("_CycleDuration");
     private static readonly int EnabledID = Shader.PropertyToID("_Enabled");
 
     private void OnEnable()
@@ -53,6 +56,7 @@ public class FearPostProcessEffects : MonoBehaviour
 
         float vignetteIntensity = Mathf.Lerp(vignetteIntensityMin, vignetteIntensityMax, normalizedFear);
         float noiseIntensity = Mathf.Lerp(noiseIntensityMin, noiseIntensityMax, normalizedFear);
+        float noiseSpeed = Mathf.Lerp(noiseSpeedMin, noiseSpeedMax, normalizedFear);
 
         vignetteMaterial.SetFloat(VignetteIntensityID, vignetteIntensity);
         vignetteMaterial.SetFloat(VignetteSoftnessID, vignetteSoftness);
@@ -60,6 +64,7 @@ public class FearPostProcessEffects : MonoBehaviour
         vignetteMaterial.SetFloat(NoiseIntensityID, noiseIntensity);
         vignetteMaterial.SetFloat(NoiseScaleID, noiseScale);
         vignetteMaterial.SetFloat(NoiseSpeedID, noiseSpeed);
+        vignetteMaterial.SetFloat(CycleDurationID, cycleDuration);
     }
 
     public void OnRankChanged(FearBar.FearRank rank)
