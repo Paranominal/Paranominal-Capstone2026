@@ -77,7 +77,7 @@ public class PlayerLook : MonoBehaviour
     // Looking at
     [Header("Looking At")]
     [SerializeField] private LayerMask interactableMask;
-    [SerializeField] private float lookAtRange = 10;
+    [SerializeField] private float lookAtRange = 4;
     public GameObject LookingAt()
     {
         Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, lookAtRange, interactableMask);

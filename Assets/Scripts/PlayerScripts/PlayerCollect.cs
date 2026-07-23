@@ -6,8 +6,8 @@ public class PlayerCollect : MonoBehaviour
     [SerializeField] private PlayerLook look;
     [SerializeField] private Inventory inventory;
     [SerializeField] private InputActionReference collectAction;
-    [SerializeField] private LayerMask interactablesLayers;
-    [SerializeField] private LayerMask collectiblesLayer;
+    // [SerializeField] private LayerMask interactablesLayers;
+    // [SerializeField] private LayerMask collectiblesLayer;
     private CollectibleObject currentTarget;
     public bool debugMode; 
     void Update()
