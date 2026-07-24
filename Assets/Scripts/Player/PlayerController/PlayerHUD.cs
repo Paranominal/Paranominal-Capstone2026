@@ -27,6 +27,10 @@ public class PlayerHUD : MonoBehaviour
     [Header("Crosshair UI")]
     [SerializeField] private Image crosshairImage;
 
+    // EDIT (interaction prompt system): HUD interaction prompt, toggled alongside the rest of the HUD.
+    [Header("Interaction UI")]
+    [SerializeField] private HudPromptPresenter interactionPrompt;
+
     private void Start()
     {
         if (weaponFiringLogic == null)
@@ -155,6 +159,7 @@ public class PlayerHUD : MonoBehaviour
             reloadSlider.gameObject.SetActive(showReload);
         }
 
-
+        // EDIT (interaction prompt system): mute/unmute the interaction prompt with the rest of the HUD.
+        if (interactionPrompt != null) interactionPrompt.SetVisible(state);
     }
 }
