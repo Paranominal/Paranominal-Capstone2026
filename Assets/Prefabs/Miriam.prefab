@@ -499,7 +499,6 @@ GameObject:
   - component: {fileID: 8240368774250594449}
   - component: {fileID: 8956652460274281639}
   - component: {fileID: 404796220867514065}
-  - component: {fileID: 5131432862222598260}
   - component: {fileID: 388139220132730565}
   - component: {fileID: 1642531195737763663}
   - component: {fileID: 2395450753178358459}
@@ -588,6 +587,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInputReader
   moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   sprintAction: {fileID: 6790621974129141125, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  slowWalkAction: {fileID: 4707686780592785771, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookAction: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   startLockMode: 1
   startCursorVisible: 0
@@ -604,34 +604,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMover
   inputReader: {fileID: 8956652460274281639}
-  walkSpeed: 6
+  walkSpeed: 4
   sprintStrength: 5
+  slowWalkPercent: 0.3
   audioSource: {fileID: 0}
   playerFootstep: {fileID: 0}
   footstepInterval: 0.45
   canMove: 1
---- !u!114 &5131432862222598260
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2579260593497910125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33d1ba9d4253160428bb807106aef353, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraEffects
-  playerCamera: {fileID: 6654618607449089807}
-  inputReader: {fileID: 8956652460274281639}
-  characterController: {fileID: 1267710674955157816}
-  enableHeadBob: 0
-  bobFrequency: 12
-  bobAmplitude: 0.1
-  bobResetSpeed: 5
-  enableStrafeTilt: 0
-  maxTiltAngle: 1
-  tiltSpeed: 2
 --- !u!114 &388139220132730565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -952,6 +931,7 @@ GameObject:
   - component: {fileID: 536699545516337382}
   - component: {fileID: 125830863215445852}
   - component: {fileID: 5328460482735633148}
+  - component: {fileID: 8357035724081902887}
   - component: {fileID: 260499741174559401}
   m_Layer: 6
   m_Name: PlayerCam
@@ -1057,7 +1037,6 @@ MonoBehaviour:
   m_CameraType: 0
   m_Cameras:
   - {fileID: 5940204994785997246}
-  - {fileID: 0}
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
@@ -1161,6 +1140,28 @@ MonoBehaviour:
   inventory: {fileID: 3614694985984837223}
   collectAction: {fileID: -9115422242872714626, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   debugMode: 0
+--- !u!114 &8357035724081902887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3524502881056351253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33d1ba9d4253160428bb807106aef353, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraEffects
+  playerCamera: {fileID: 6654618607449089807}
+  inputReader: {fileID: 8956652460274281639}
+  characterController: {fileID: 1267710674955157816}
+  enableHeadBob: 1
+  bobFrequency: 8
+  bobAmplitude: 0.01
+  bobResetSpeed: 5
+  enableStrafeTilt: 0
+  maxTiltAngle: 1
+  tiltSpeed: 2
 --- !u!114 &260499741174559401
 MonoBehaviour:
   m_ObjectHideFlags: 0

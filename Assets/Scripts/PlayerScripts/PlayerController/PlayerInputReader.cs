@@ -6,6 +6,7 @@ public class PlayerInputReader : MonoBehaviour
     [Header("Input Actions")]
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference sprintAction;
+    [SerializeField] private InputActionReference slowWalkAction;
     [SerializeField] private InputActionReference lookAction;
 
     [Header("Cursor")]
@@ -17,6 +18,9 @@ public class PlayerInputReader : MonoBehaviour
         : Vector2.zero;
     public bool SprintInput => sprintAction != null && sprintAction.action != null
         ? sprintAction.action.IsPressed()
+        : false;
+    public bool SlowWalkInput => slowWalkAction != null && slowWalkAction.action != null
+        ? slowWalkAction.action.IsPressed()
         : false;
 
     public Vector2 LookInput => lookAction != null && lookAction.action != null
