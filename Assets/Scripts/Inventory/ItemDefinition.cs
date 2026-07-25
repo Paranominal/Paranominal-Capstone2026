@@ -17,6 +17,9 @@ public class ItemDefinition : ScriptableObject
     [TextArea(2, 4)]
     public string flavourText;
 
+    [TextArea(2, 4)]
+    public string hintText;
+
     public Sprite icon;
 
     public ItemTag tags;
@@ -24,8 +27,6 @@ public class ItemDefinition : ScriptableObject
     [Tooltip("Maximum stack size. 1 for unique items like keys.")]
     public int maxStack = 1;
 
-    // EDIT (cauldron system): color tint used by the cauldron for ingredient blending,
-    // and potentially for UI highlights, item glows, etc.
     [Header("Visuals")]
     public Color tintColor = Color.white;
 

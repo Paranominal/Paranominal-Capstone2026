@@ -1,25 +1,30 @@
 using UnityEngine;
 
-// EDIT (weapon consolidation): references WeaponController instead of WeaponStateController.
-// NOTE: still uses string matching against grimoire entries. Should migrate to Inventory/ItemDefinition
-// in a future pass.
+// EDIT (grimoire migration): uses Inventory + ItemDefinition reference instead of grimoire string matching.
 public class ShotgunInteraction : MonoBehaviour
 {
-    [SerializeField] private ALTGrimoire grimoire;
     [SerializeField] private WeaponController weaponController;
-    [SerializeField] private string shotgunName;
+    [SerializeField] private ItemDefinition shotgunItem;
+
+    private Inventory inventory;
     private bool collected;
 
+    void Awake()
+    {
+        if (weaponController == null)
+            weaponController = FindAnyObjectByType<WeaponController>();
+        if (inventory == null)
+            inventory = FindAnyObjectByType<Inventory>();
+    }
 
     void Update()
     {
-        collected = grimoire.entries.Exists(shotgunEntry => shotgunEntry.entryName == shotgunName);
-        CollectShotgun();
-    }
+        if (collected) return;
 
-    void CollectShotgun()
-    {
-        if (!collected) return;
-        weaponController.SetWeaponEnabled(true);
+        if (inventory != null && shotgunItem != null && inventory.Has(shotgunItem))
+        {
+            weaponController.SetWeaponEnabled(true);
+            collected = true;
+        }
     }
 }

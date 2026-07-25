@@ -1,48 +1,42 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-// NOTE (interaction prompt system): this is a world event, not a player interaction, so it no
-// longer routes through IInteractable. Scanning the lock object unlocks the door directly.
+// Summary: A world event that unlocks a door when the player has discovered a specific item.
+// EDIT (grimoire migration): checks DiscoveryLog instead of grimoire.CompareEntry.
 public class ScannableLock : MonoBehaviour
 {
-    public ALTScannableObject lockObject;
-    private ALTGrimoire grimoire;
-
-    // EDIT (interaction prompt system): was a generic IInteractable target calling Interact().
-    // Now a direct Door reference calling Unlock(), since Interact() means "the player pressed the
-    // button" and is a toggle. Worth generalising to an IUnlockable interface later.
+    // EDIT (grimoire migration): was ALTScannableObject. Now holds an ItemDefinition directly,
+    // since we're checking discovery status, not grimoire entries.
+    public ItemDefinition requiredDiscovery;
     public Door targetDoor;
-
     public bool destroysItem;
-    private bool hasFired = false;   // EDIT: guards the unlock so it only runs once, regardless of destroysItem
+    [SerializeField] private GameObject itemToDestroy;   // the world object to destroy (if destroysItem is true)
+
+    private DiscoveryLog discoveryLog;
+    private bool hasFired = false;
 
     void Start()
     {
-        if (grimoire == null)
-        {
-            grimoire = FindAnyObjectByType<ALTGrimoire>();
-        }
+        if (discoveryLog == null)
+            discoveryLog = FindAnyObjectByType<DiscoveryLog>();
         if (targetDoor == null)
-        {
             targetDoor = GetComponentInChildren<Door>();
-        }
     }
 
     void Update()
     {
-        if (hasFired || targetDoor == null || lockObject == null)
+        if (hasFired || targetDoor == null || requiredDiscovery == null || discoveryLog == null)
         {
             return;
         }
 
-        if (grimoire.CompareEntry(lockObject.entry))
+        if (discoveryLog.HasDiscovered(requiredDiscovery))
         {
             targetDoor.Unlock();
             hasFired = true;
 
-            if (destroysItem)
+            if (destroysItem && itemToDestroy != null)
             {
-                Destroy(lockObject.gameObject);
+                Destroy(itemToDestroy);
             }
         }
     }

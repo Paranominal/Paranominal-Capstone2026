@@ -284,6 +284,7 @@ GameObject:
   - component: {fileID: 3038331375921785943}
   - component: {fileID: 3650826178074886653}
   - component: {fileID: 8270761705309787215}
+  - component: {fileID: 6745670558241303960}
   m_Layer: 8
   m_Name: ArcaneLock
   m_TagString: Untagged
@@ -343,12 +344,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry:
-    entryName: Rune Lock
-    flavourText: Only permits entry to an experienced Magician.
-    hintText: How pretentious... Thankfully the Grimoire can bypass its magic.
-    completeText: 
-    snapshotImage: {fileID: 0}
+  itemDefinition: {fileID: 11400000, guid: 0aaf96940d1e1164ba2da797e2b28498, type: 2}
   outline: {fileID: 8270761705309787215}
   collectable: 0
   scanDuration: 2
@@ -373,6 +369,22 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &6745670558241303960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5964849342888895002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b5df0903ddfa0345bf9336f5c093093, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScannableLock
+  requiredDiscovery: {fileID: 11400000, guid: 0aaf96940d1e1164ba2da797e2b28498, type: 2}
+  targetDoor: {fileID: 0}
+  destroysItem: 0
+  itemToDestroy: {fileID: 0}
 --- !u!1 &8147365743161647379
 GameObject:
   m_ObjectHideFlags: 0

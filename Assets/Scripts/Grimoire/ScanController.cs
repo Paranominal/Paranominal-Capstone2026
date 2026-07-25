@@ -2,15 +2,14 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // Summary: Handles the scan and collect mechanics. Hold the scan button to scan objects/enemies,
-// press collect to pick up collectable items. Renamed from ALTALTScan.
-// Scan registers discoveries in DiscoveryLog (items) or Bestiary (enemies, future).
-// Collect adds items to Inventory and bridges to the Grimoire for UI.
+// press collect to pick up collectable items.
+// EDIT (grimoire migration): all grimoire dual-write calls removed. Scans write to DiscoveryLog only,
+// collection writes to Inventory + DiscoveryLog only. The grimoire reads from those systems.
 public class ScanController : MonoBehaviour
 {
     public LayerMask scannable;
     InputAction scanAction;
     InputAction collectAction;
-    private ALTGrimoire grimoire;
     private ALTScannableObject currentTarget;
 
     public ScanReticle reticle;
@@ -19,44 +18,39 @@ public class ScanController : MonoBehaviour
     private float scanProgress = 0f;
     public float scanRange = 20f;
 
-    // EDIT (inventory system): references to the new inventory and discovery systems.
     private Inventory inventory;
     private DiscoveryLog discoveryLog;
+    private ALTGrimoire grimoire;   // only used for grimoireActive UI state check
+    private PhotoSnapshots snapshotHandler;
 
     [Header("Sounds")]
     [SerializeField] private SoundDataSO itemPickupSound;
     [SerializeField] private SoundDataSO scanSound;
     [SerializeField] private AudioSource audioSource;
 
-    // Tracks whether the looping scan sound is currently playing on the AudioSource.
     private bool scanSoundPlaying;
 
     void Start()
     {
         scanAction = InputSystem.actions.FindAction("Scan");
         collectAction = InputSystem.actions.FindAction("Collect");
-        if (grimoire == null)
-        {
-            grimoire = FindAnyObjectByType<ALTGrimoire>();
-        }
 
+        if (inventory == null)
+            inventory = FindAnyObjectByType<Inventory>();
+        if (discoveryLog == null)
+            discoveryLog = FindAnyObjectByType<DiscoveryLog>();
+        if (grimoire == null)
+            grimoire = FindAnyObjectByType<ALTGrimoire>();
+        if (snapshotHandler == null)
+            snapshotHandler = FindAnyObjectByType<PhotoSnapshots>();
         if (reticle == null)
             reticle = FindAnyObjectByType<ScanReticle>();
-
-        // EDIT (inventory system): find the new systems.
-        if (inventory == null)
-        {
-            inventory = FindAnyObjectByType<Inventory>();
-        }
-        if (discoveryLog == null)
-        {
-            discoveryLog = FindAnyObjectByType<DiscoveryLog>();
-        }
     }
 
     void Update()
     {
-        if (grimoire.grimoireActive)
+        // Suppress scanning while the grimoire UI is open.
+        if (grimoire != null && grimoire.grimoireActive)
         {
             ClearHover();
             return;
@@ -68,9 +62,6 @@ public class ScanController : MonoBehaviour
             SetScanMode(wantScanMode);
         }
 
-        // Set to true inside the scan logic when actively scanning a valid target.
-        // Checked at the end of Update to decide whether the looping scan sound
-        // should be playing this frame.
         bool wantScanSoundThisFrame = false;
 
         Vector2 mousePos = Pointer.current != null ? Pointer.current.position.ReadValue() : Vector2.zero;
@@ -110,16 +101,19 @@ public class ScanController : MonoBehaviour
                     currentTarget.SetOutlineVisible(true);
                     currentTarget.SetOutlineColor(Color.white);
 
-                    if (inScanMode && grimoire.CompareEntry(currentTarget.entry))
+                    // EDIT (grimoire migration): auto-select the grimoire page for already-scanned items.
+                    if (inScanMode && currentTarget.itemDefinition != null && discoveryLog.HasDiscovered(currentTarget.itemDefinition))
                     {
-                        grimoire.SelectEntry(grimoire.GetEntryID(currentTarget.entry.entryName));
+                        if (grimoire != null)
+                            grimoire.SelectByItem(currentTarget.itemDefinition);
                     }
                 }
             }
 
             if (inScanMode && currentTarget != null)
             {
-                bool alreadyScanned = grimoire.CompareEntry(currentTarget.entry);
+                // EDIT (grimoire migration): "already scanned" now checks DiscoveryLog, not Grimoire.
+                bool alreadyScanned = currentTarget.itemDefinition != null && discoveryLog.HasDiscovered(currentTarget.itemDefinition);
                 EnemyStagger scannedEnemy = hit.collider.GetComponentInParent<EnemyStagger>();
 
                 if (!alreadyScanned || scannedEnemy != null)
@@ -161,43 +155,27 @@ public class ScanController : MonoBehaviour
         UpdateScanSound(wantScanSoundThisFrame);
     }
 
-    // Summary: Registers a completed scan in the Grimoire and DiscoveryLog.
+    // Summary: Registers a completed scan in DiscoveryLog with a snapshot.
     private void CompleteScan(ALTScannableObject target)
     {
-        grimoire.AddEntry(target.entry);
+        if (target.itemDefinition == null || discoveryLog == null) return;
 
-        // EDIT (inventory system): also register in the new discovery system.
-        if (target.itemDefinition != null && discoveryLog != null)
-        {
-            Texture2D snapshot = grimoire.snapshotHandler != null ? grimoire.snapshotHandler.TakeSnapshot() : null;
-            discoveryLog.Add(target.itemDefinition, snapshot);
-        }
+        Texture2D snapshot = snapshotHandler != null ? snapshotHandler.TakeSnapshot() : null;
+        discoveryLog.Add(target.itemDefinition, snapshot);
     }
 
-    // Summary: Collects an item into Inventory and registers in Grimoire + DiscoveryLog.
+    // Summary: Collects an item into Inventory and auto-discovers it.
     private void CollectItem(ALTScannableObject target)
     {
-        // Grimoire bridge: add or mark as collected.
-        if (!grimoire.CompareEntry(target.entry))
-        {
-            grimoire.AddEntry(target.entry, true);
-        }
-        else
-        {
-            grimoire.CollectEntry(target.entry);
-        }
+        if (target.itemDefinition == null) return;
 
-        // EDIT (inventory system): add to inventory and auto-discover.
-        if (target.itemDefinition != null)
-        {
-            if (inventory != null)
-                inventory.Add(target.itemDefinition, 1);
+        if (inventory != null)
+            inventory.Add(target.itemDefinition, 1);
 
-            if (discoveryLog != null && !discoveryLog.HasDiscovered(target.itemDefinition))
-            {
-                Texture2D snapshot = grimoire.snapshotHandler != null ? grimoire.snapshotHandler.TakeSnapshot() : null;
-                discoveryLog.Add(target.itemDefinition, snapshot);
-            }
+        if (discoveryLog != null && !discoveryLog.HasDiscovered(target.itemDefinition))
+        {
+            Texture2D snapshot = snapshotHandler != null ? snapshotHandler.TakeSnapshot() : null;
+            discoveryLog.Add(target.itemDefinition, snapshot);
         }
 
         Debug.Log("Collected " + target.gameObject);
@@ -228,9 +206,6 @@ public class ScanController : MonoBehaviour
         }
     }
 
-    // Summary: Starts or stops the looping scan sound based on whether we want it
-    // playing this frame. Only triggers Play/Stop on state transitions, so no
-    // per-frame restarts.
     private void UpdateScanSound(bool wantPlaying)
     {
         if (wantPlaying && !scanSoundPlaying)

@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 4962042740982598131}
   - component: {fileID: 6691526260147872027}
   - component: {fileID: 868802445675664923}
-  - component: {fileID: 1587837287928712570}
   - component: {fileID: 1104264099839123567}
   - component: {fileID: 5501344799788246202}
   m_Layer: 10
@@ -117,58 +116,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &1587837287928712570
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2419629029646900265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37e83206939aa5b489f1aeb39ccf46ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ContainerCheck
-  rewardItem: {fileID: 5995851088844131008, guid: 54623716b13b56243987c223e5a14be6, type: 3}
-  cauldron: {fileID: 7989190696244721844}
-  weakPointId: 
-  container: {fileID: 0}
-  solution:
-  - entryName: Green Herb
-    flavourText: 
-    hintText: 
-    completeText: 
-    collected: 0
-    snapshotImage: {fileID: 0}
-  - entryName: Purple Herb
-    flavourText: 
-    hintText: 
-    completeText: 
-    collected: 0
-    snapshotImage: {fileID: 0}
-  - entryName: Purple Herb
-    flavourText: 
-    hintText: 
-    completeText: 
-    collected: 0
-    snapshotImage: {fileID: 0}
-  - entryName: Blue Herb
-    flavourText: 
-    hintText: 
-    completeText: 
-    collected: 0
-    snapshotImage: {fileID: 0}
-  failures:
-  - entryName: Orange Herb
-    flavourText: 
-    hintText: 
-    completeText: 
-    collected: 0
-    snapshotImage: {fileID: 0}
-  interactable:
-    serializedVersion: 2
-    m_Bits: 1280
-  checkType: 2
 --- !u!114 &1104264099839123567
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,17 +128,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry:
-    entryName: Stirring Wand
-    flavourText: Used to complete a cauldron spell.
-    hintText: 
-    completeText: 
-    collected: 0
-    snapshotImage: {fileID: 0}
+  itemDefinition: {fileID: 11400000, guid: 9adb8e48ed4e0094fb9faadb3cd5ada2, type: 2}
   outline: {fileID: 5501344799788246202}
   collectable: 0
   scanDuration: 2
-  itemDefinition: {fileID: 0}
   usesMeshOutline: 0
   outlineRenderer: {fileID: 0}
   outlineMaterialIndex: 1
@@ -419,17 +359,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry:
-    entryName: 
-    flavourText: 
-    hintText: 
-    completeText: 
-    collected: 0
-    snapshotImage: {fileID: 0}
+  itemDefinition: {fileID: 0}
   outline: {fileID: 9076875559891293055}
   collectable: 0
   scanDuration: 1.5
-  itemDefinition: {fileID: 0}
   usesMeshOutline: 0
   outlineRenderer: {fileID: 0}
   outlineMaterialIndex: 1
@@ -697,6 +630,30 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 6920956112194310394, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6920956112194310394, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6920956112194310394, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6920956112194310394, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6920956112194310394, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6920956112194310394, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6999691976411709109, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
       propertyPath: m_Layer
       value: 10
@@ -720,6 +677,10 @@ PrefabInstance:
     - target: {fileID: 7574466722094641173, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
       propertyPath: m_Layer
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7732338388459845674, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7928008015005943683, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
       propertyPath: m_Layer
@@ -748,6 +709,30 @@ PrefabInstance:
     - target: {fileID: 8437160006795376698, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
       propertyPath: m_Layer
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8524274152775243773, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8524274152775243773, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8524274152775243773, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8524274152775243773, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8524274152775243773, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8524274152775243773, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8554013600809647974, guid: c7375b3cb192b3e45aff1349e2764db4, type: 3}
       propertyPath: m_Name

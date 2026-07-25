@@ -89,8 +89,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b5df0903ddfa0345bf9336f5c093093, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScannableLock
-  lockObject: {fileID: 283734574443752414}
+  requiredDiscovery: {fileID: 0}
+  targetDoor: {fileID: 0}
   destroysItem: 1
+  itemToDestroy: {fileID: 0}
+--- !u!114 &4446469093490098714 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4495634724647422031, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
+  m_PrefabInstance: {fileID: 276615013257333333}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397127614772511407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40af0772d050ae141836531215a6b999, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door
 --- !u!1001 &3556242848652110371
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -151,24 +164,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: ArcaneLock
       objectReference: {fileID: 0}
+    - target: {fileID: 6745670558241303960, guid: 68c31d9db2ad0204db1603dda67b3cae, type: 3}
+      propertyPath: targetDoor
+      value: 
+      objectReference: {fileID: 4446469093490098714}
+    - target: {fileID: 6745670558241303960, guid: 68c31d9db2ad0204db1603dda67b3cae, type: 3}
+      propertyPath: destroysItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6745670558241303960, guid: 68c31d9db2ad0204db1603dda67b3cae, type: 3}
+      propertyPath: itemToDestroy
+      value: 
+      objectReference: {fileID: 7177953685617756217}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68c31d9db2ad0204db1603dda67b3cae, type: 3}
---- !u!114 &283734574443752414 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3650826178074886653, guid: 68c31d9db2ad0204db1603dda67b3cae, type: 3}
-  m_PrefabInstance: {fileID: 3556242848652110371}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
 --- !u!4 &4599653198135822864 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1049075044129349683, guid: 68c31d9db2ad0204db1603dda67b3cae, type: 3}
+  m_PrefabInstance: {fileID: 3556242848652110371}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7177953685617756217 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5964849342888895002, guid: 68c31d9db2ad0204db1603dda67b3cae, type: 3}
   m_PrefabInstance: {fileID: 3556242848652110371}
   m_PrefabAsset: {fileID: 0}

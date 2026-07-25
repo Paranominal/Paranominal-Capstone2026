@@ -1,17 +1,14 @@
 using UnityEngine;
 
+// EDIT (grimoire migration): the old ALTGrimoireEntry 'entry' field has been removed.
+// ItemDefinition is now the sole source of truth. The 'collectable' and 'scanDuration'
+// fields remain here as per-instance configuration until the IScannable refactor.
 public class ALTScannableObject : MonoBehaviour
 {
-    public ALTGrimoireEntry entry;
+    public ItemDefinition itemDefinition;
     public Outline outline; // used for objects that DO NOT have a mesh outline
     public bool collectable;
     public float scanDuration = 2f; // how long should this object take to scan?
-
-    // EDIT (inventory system): the new item definition asset for this object.
-    // This is the source of truth for the inventory and discovery systems.
-    // The old 'entry' field is kept temporarily so the grimoire UI can bridge.
-    [Header("Item Definition")]
-    public ItemDefinition itemDefinition;
 
     public bool usesMeshOutline = false;
     public Renderer outlineRenderer; // used for objects that DO have a mesh outline
