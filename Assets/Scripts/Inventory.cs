@@ -28,7 +28,7 @@ public class Inventory : MonoBehaviour
         }
         else Destroy(item.gameObject);
     }
-    public void Add(GameObject item, bool cache, Dialogue dialogue) //if cache is true, hides object as child. if false, destroys it.
+    public void Add(GameObject item, bool cache, GameObject pickupDialogue) //if cache is true, hides object as child. if false, destroys it.
     {
         if (inventory.Contains(item) && !doDuplicates) return;
         inventory.Add(item);
@@ -41,21 +41,20 @@ public class Inventory : MonoBehaviour
         }
         else Destroy(item.gameObject);
 
-        DoDialogue(dialogue);
+        DoDialogue(pickupDialogue);
     }
     private void AddToGrimoire(GameObject item)
     {
         if (grimoire != null)
         {
             ALTGrimoireEntry entry = item.GetComponent<CollectibleObject>().grimoireEntry;
-            if (entry.entryName != "") grimoire.AddEntry(entry); //makes no entry if it isnt named.
+            if (entry.entryName != "") grimoire.AddEntry(entry, true); //makes no entry if it isnt named.
             else Debug.Log($"[{this}] Item Collected [{item}] has no named Entry");
         }
     }
-    private void DoDialogue(Dialogue dialogue)
+    private void DoDialogue(GameObject pickupDialogue)
     {
-        dialogueManager.dialogue = dialogue;
-        dialogueManager.StartDialogue();
+        dialogueManager.StartDialogue(pickupDialogue);
     }
     public void Remove(GameObject item)
     {

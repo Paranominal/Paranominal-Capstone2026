@@ -1,8 +1,11 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Dialogue : MonoBehaviour
 {
-    public string action;
-    public string itemName;
+    public TextMeshProUGUI action;
+    public TextMeshProUGUI itemName;
+    public TextMeshProUGUI description;
     public GameObject itemDisplay;
 }
