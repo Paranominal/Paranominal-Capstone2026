@@ -24,6 +24,11 @@ public class ItemDefinition : ScriptableObject
     [Tooltip("Maximum stack size. 1 for unique items like keys.")]
     public int maxStack = 1;
 
+    // EDIT (cauldron system): color tint used by the cauldron for ingredient blending,
+    // and potentially for UI highlights, item glows, etc.
+    [Header("Visuals")]
+    public Color tintColor = Color.white;
+
     // Summary: True if the item carries the given tag (or any of the given tags).
     public bool HasTag(ItemTag tag)
     {

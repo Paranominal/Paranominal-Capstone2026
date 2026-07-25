@@ -86,7 +86,12 @@ public class InteractionFocusController : MonoBehaviour
             IInteractable it = col.GetComponentInParent<IInteractable>();
             if (it == null) continue;
 
-            Vector3 point = col.ClosestPoint(camPos);
+            // ClosestPoint doesn't support non-convex MeshColliders; fall back to bounds.
+            Vector3 point;
+            if (col is MeshCollider mc && !mc.convex)
+                point = col.bounds.ClosestPoint(camPos);
+            else
+                point = col.ClosestPoint(camPos);
 
             float dist = Vector3.Distance(camPos, point);
             float proximity = Mathf.InverseLerp(outerRadius, innerRadius, dist);

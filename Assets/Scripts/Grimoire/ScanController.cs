@@ -40,6 +40,9 @@ public class ScanController : MonoBehaviour
             grimoire = FindAnyObjectByType<ALTGrimoire>();
         }
 
+        if (reticle == null)
+            reticle = FindAnyObjectByType<ScanReticle>();
+
         // EDIT (inventory system): find the new systems.
         if (inventory == null)
         {

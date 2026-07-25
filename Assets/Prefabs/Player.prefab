@@ -453,13 +453,11 @@ GameObject:
   - component: {fileID: 6226453563411988871}
   - component: {fileID: 404796220867514065}
   - component: {fileID: 388139220132730565}
-  - component: {fileID: 7580485715396838539}
-  - component: {fileID: 2345774501309732177}
+  - component: {fileID: 2370018794546818284}
   - component: {fileID: 99801912839501907}
   - component: {fileID: 569203713311215142}
   - component: {fileID: 6667253067816798334}
   - component: {fileID: 3153474681554931024}
-  - component: {fileID: 7544503042458876815}
   - component: {fileID: 5390135658927878162}
   m_Layer: 6
   m_Name: Player
@@ -591,10 +589,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd1f953deb3d93a4ba30f125e73c63ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatus
-  fearBar: {fileID: 2345774501309732177}
+  fearBar: {fileID: 0}
   inventory: {fileID: 0}
   discoveryLog: {fileID: 0}
---- !u!114 &7580485715396838539
+--- !u!114 &2370018794546818284
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -603,44 +601,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 2579260593497910125}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 223291d1c9e1d6348aa7c2477011f387, type: 3}
+  m_Script: {fileID: 11500000, guid: 83cca44b2b3861841b2d2520b7fe24a3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
-  weaponController: {fileID: 0}
-  pointsPerWeakpointHit: 10
-  ranks:
-  - label: D
-    pointThreshold: 50
-  - label: C
-    pointThreshold: 100
-  - label: B
-    pointThreshold: 200
-  - label: A
-    pointThreshold: 400
-  - label: S
-    pointThreshold: 800
-  currentScore: 0
---- !u!114 &2345774501309732177
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2579260593497910125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f86b1dc698e04ee42a06e6c7cebe018b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FearBar
-  weaponController: {fileID: 0}
-  maxFear: 30
-  fearLevel: 0
-  fearDamage: 10
-  fearHealPerShot: 5
-  tickRateFine: 0
-  tickRateLow: 0.5
-  tickRateMedium: 1
-  tickRateHigh: 2
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponController
+  activeWeapon: {fileID: 11400000, guid: 63663da3325679247a6fcb30c1c8bd3e, type: 2}
+  gunVisuals: {fileID: 6232948056006973311}
+  cameraRecoilController: {fileID: 2601122520336315906}
+  weakPointLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  ironActionName: ShootIron
+  silverActionName: ShootSilver
+  reloadActionName: Reload
 --- !u!114 &99801912839501907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -653,7 +625,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68ca9a0232f13c8418ce19d092bc458c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FearEffectsManager
-  fearBar: {fileID: 2345774501309732177}
+  fearBar: {fileID: 0}
   playerStatus: {fileID: 388139220132730565}
 --- !u!114 &569203713311215142
 MonoBehaviour:
@@ -711,7 +683,7 @@ AudioSource:
   m_GameObject: {fileID: 2579260593497910125}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 4260813918058868340, guid: 8338ae4582a9484468eb2864752dde7e, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
@@ -799,21 +771,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &7544503042458876815
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2579260593497910125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f84da51c004e6d4cbad5712112ecd80, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameOverHandler
-  fearBar: {fileID: 0}
-  scoreManager: {fileID: 0}
-  endScreenBuildIndex: 0
 --- !u!114 &5390135658927878162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -853,7 +810,7 @@ GameObject:
   - component: {fileID: 3501135748319477596}
   - component: {fileID: 2601122520336315906}
   - component: {fileID: 827315314202517041}
-  - component: {fileID: 6635368471109414555}
+  - component: {fileID: 4133873592017845999}
   - component: {fileID: 8732194677099092532}
   - component: {fileID: 4409494521562767530}
   - component: {fileID: 2438995608347411146}
@@ -1041,7 +998,7 @@ MonoBehaviour:
   enableStrafeTilt: 1
   maxTiltAngle: 1
   tiltSpeed: 2
---- !u!114 &6635368471109414555
+--- !u!114 &4133873592017845999
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1050,9 +1007,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 3524502881056351253}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e37c9416a20373047baa003d4160bde3, type: 3}
+  m_Script: {fileID: 11500000, guid: 1e3ff577d2717b847b36dc25287463d8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTALTScan
+  m_EditorClassIdentifier: Assembly-CSharp::ScanController
   scannable:
     serializedVersion: 2
     m_Bits: 256
@@ -2038,10 +1995,6 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2847827877754305373, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
-      propertyPath: fearBar
-      value: 
-      objectReference: {fileID: 2345774501309732177}
     - target: {fileID: 4252657371864461996, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: altGrimoire
       value: 
@@ -2389,27 +2342,6 @@ PrefabInstance:
       addedObject: {fileID: 6232948056006973311}
     - targetCorrespondingSourceObject: {fileID: 2745210396697858090, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 159771671408839915}
-    - targetCorrespondingSourceObject: {fileID: 2745210396697858090, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7342759667392061402}
-    - targetCorrespondingSourceObject: {fileID: 2745210396697858090, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1129320781834323432}
-    - targetCorrespondingSourceObject: {fileID: 2745210396697858090, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8228406316724665379}
-    - targetCorrespondingSourceObject: {fileID: 2745210396697858090, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1932850760429025134}
-    - targetCorrespondingSourceObject: {fileID: 2745210396697858090, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3861730752722264759}
-    - targetCorrespondingSourceObject: {fileID: 2745210396697858090, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1501135648904572666}
-    - targetCorrespondingSourceObject: {fileID: 2745210396697858090, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 57083871341486514}
     - targetCorrespondingSourceObject: {fileID: 2745210396697858090, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
       insertIndex: -1
@@ -2458,116 +2390,6 @@ MonoBehaviour:
   gunKickTime: 0.1
   gunReturnTime: 0.3
   muzzleFlashDuration: 0.05
---- !u!114 &159771671408839915
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5830324284131804507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6edcaaae36e1ce849ae17c0a0c321829, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ShotOrchestrator
-  weaponInputReader: {fileID: 7342759667392061402}
-  weaponFiringLogic: {fileID: 1932850760429025134}
-  weaponHitscan: {fileID: 3861730752722264759}
-  weakPointResolver: {fileID: 1501135648904572666}
-  weaponEvents: {fileID: 8228406316724665379}
-  cameraRecoilController: {fileID: 2601122520336315906}
-  gunVisuals: {fileID: 6232948056006973311}
-  weaponStateController: {fileID: 1129320781834323432}
-  postShotReloadDelay: 0.25
---- !u!114 &7342759667392061402
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5830324284131804507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4bc96a8fbc847d40af5c1c000ee6f72, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponInputReader
-  ironActionName: ShootIron
-  silverActionName: ShootSilver
-  reloadActionName: Reload
---- !u!114 &1129320781834323432
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5830324284131804507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99ba48bb0711d5745901e467d1ef3ee5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponStateController
-  gunVisuals: {fileID: 6232948056006973311}
-  weaponEnabled: 1
-  ironBarrelEnabled: 1
-  silverBarrelEnabled: 1
-  autoReloadEnabled: 1
-  shotGun: {fileID: 0}
---- !u!114 &8228406316724665379
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5830324284131804507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66722f93cd366054a9aa6a2b0658429e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponEvents
---- !u!114 &1932850760429025134
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5830324284131804507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2981b2cfd676e004594b2c18e3880329, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponAmmo
-  magazineSize: 3
-  reloadDuration: 2
-  shotCooldown: 0.2
---- !u!114 &3861730752722264759
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5830324284131804507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d624a85c0d73af43bba8a6690161177, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponHitscan
-  playerCamera: {fileID: 6654618607449089807}
-  weakPointLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  rayDistance: 20
---- !u!114 &1501135648904572666
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5830324284131804507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c44abd8e6c282fb48a26b5f398ac2d86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeakPointResolver
 --- !u!114 &57083871341486514
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2580,7 +2402,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e075aa421dd66a94ba3d810425537226, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponAudio
-  weaponController: {fileID: 0}
+  weaponController: {fileID: 2370018794546818284}
   fireSource: {fileID: 2326008784268234682}
   reloadSource: {fileID: 8263620249023761157}
   shotgunFire: {fileID: 11400000, guid: fb3c274af03cb9b4e9cba33fb64a27b3, type: 2}

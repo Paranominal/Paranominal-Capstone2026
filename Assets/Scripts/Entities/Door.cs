@@ -30,7 +30,6 @@ public class Door : MonoBehaviour, IInteractable
     private PlayerMover player;
 
     [Header("Interaction Prompt")]
-    // EDIT (inventory system): was requiredKeyName (string). Now a direct asset reference, so the Inspector enforces correctness and string mismatches are impossible.
     public ItemDefinition requiredKey;
     public bool consumesKey = true;         // whether using the key spends it from inventory
     public bool hideUntilAttempted;         // hide the world "Locked" label until the player first tries the door
@@ -43,6 +42,8 @@ public class Door : MonoBehaviour, IInteractable
     [SerializeField] private SoundDataSO openSound;
     [SerializeField] private SoundDataSO closeSound;
     [SerializeField] private SoundDataSO lockedSound;
+    // EDIT (ward system): dedicated unlock sound. Assign the Unlock.asset from Audio/lock/.
+    [SerializeField] private SoundDataSO unlockSound;
 
     void Start()
     {
@@ -114,12 +115,11 @@ public class Door : MonoBehaviour, IInteractable
     }
 
     // Summary: Context-aware interaction. Encounter-locked doors stay shut; a held key unlocks a
-    // key-locked door; an unlocked door toggles open/closed. Should only be called by the interaction system.
-    // EDIT (inventory system): now checks context.HasKey(ItemDefinition) instead of string matching.
+    // key-locked door; an unlocked door toggles open/closed.
+    // EDIT (ward system): plays unlockSound instead of lockedSound on successful unlock.
+    // Dynamic prompt format: "Unlock (Key Name)".
     public void Interact(InteractionContext context)
     {
-        Debug.Log($"requiredKey={requiredKey?.displayName} has={context?.HasKey(requiredKey)}");
-        
         // Encounter/arena lock is a hard gate: keys do nothing while it's active.
         if (isArenaLocked)
         {
@@ -136,7 +136,8 @@ public class Door : MonoBehaviour, IInteractable
                 {
                     context.ConsumeKey(requiredKey);
                 }
-                AudioManager.PlaySound(lockedSound, audioSource);   // TODO: a dedicated unlock sound would be nicer than reusing lockedSound
+                // EDIT (ward system): play the unlock sound, fall back to lockedSound if not assigned.
+                AudioManager.PlaySound(unlockSound != null ? unlockSound : lockedSound, audioSource);
             }
             else
             {
@@ -161,7 +162,7 @@ public class Door : MonoBehaviour, IInteractable
     }
 
     // Summary: Chooses which prompt to show for the current door + player state.
-    // EDIT (inventory system): checks context.HasKey(ItemDefinition) instead of string matching.
+    // EDIT (ward system): dynamic prompt format shows item name.
     public InteractionPrompt ResolvePrompt(InteractionContext context)
     {
         // Encounter/arena lock always reads as "Locked" and ignores keys.
@@ -177,7 +178,8 @@ public class Door : MonoBehaviour, IInteractable
 
         if (context != null && context.HasKey(requiredKey))
         {
-            return new InteractionPrompt { surface = PromptSurface.Hud, label = "Use Key", actionName = "Collect" };
+            string keyName = requiredKey != null ? requiredKey.displayName : "Key";
+            return new InteractionPrompt { surface = PromptSurface.Hud, label = $"Unlock ({keyName})", actionName = "Collect" };
         }
 
         // Locked, no key: optionally hidden until the player tries the door.
