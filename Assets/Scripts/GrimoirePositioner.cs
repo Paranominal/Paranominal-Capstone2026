@@ -18,6 +18,8 @@ public class GrimoirePositioner : MonoBehaviour
     [SerializeField] private Transform openPoint;
     [SerializeField] private Transform menuPoint;
     public bool debugMode;
+    public enum GrimoirePosition { origin, lowered, open, menu }
+    public GrimoirePosition position;
     void Start()
     {
         originPosition = targetObject.transform.localPosition;
@@ -30,24 +32,28 @@ public class GrimoirePositioner : MonoBehaviour
     public void Lower()
     {
         if (debugMode) Debug.Log($"[{this}] Lowering!");
+        position = GrimoirePosition.lowered;
         targetObject.transform.localPosition = Vector3.Lerp(targetObject.transform.localPosition, lowPoint.localPosition, speed * Time.deltaTime);
         targetObject.transform.localRotation = Quaternion.Slerp(targetObject.transform.localRotation, lowPoint.localRotation, speed * Time.deltaTime);
     }
     public void Open()
     {
         if (debugMode) Debug.Log($"[{this}] Opening!");
+        position = GrimoirePosition.open;
         targetObject.transform.localPosition = Vector3.Lerp(targetObject.transform.localPosition, openPoint.localPosition, speed * Time.deltaTime);
         targetObject.transform.localRotation = Quaternion.Slerp(targetObject.transform.localRotation, openPoint.localRotation, speed * Time.deltaTime);
     }
     public void Raise()
     {
         if (debugMode) Debug.Log($"[{this}] Raising!");
+        position = GrimoirePosition.origin;
         targetObject.transform.localPosition = Vector3.Lerp(targetObject.transform.localPosition, originPosition, speed * Time.deltaTime);
         targetObject.transform.localRotation = Quaternion.Slerp(targetObject.transform.localRotation, originRotation, speed * Time.deltaTime);
     }
     public void Menu()
     {
         if (debugMode) Debug.Log($"[{this}] Menuing!");
+        position = GrimoirePosition.menu;
         targetObject.transform.localPosition = Vector3.Lerp(targetObject.transform.localPosition, menuPoint.localPosition, speed * Time.unscaledDeltaTime);
         targetObject.transform.localRotation = Quaternion.Slerp(targetObject.transform.localRotation, menuPoint.localRotation, speed * Time.unscaledDeltaTime);
     }

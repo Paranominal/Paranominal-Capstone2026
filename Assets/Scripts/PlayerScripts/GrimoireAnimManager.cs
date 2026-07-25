@@ -41,6 +41,7 @@ public class GrimoireAnimManager : MonoBehaviour
 
         OpenOnScroll();
         CloseOnMove();
+        CloseOnShoot();
         CastOnHold();
         OpenIfMenuing();
         OpenOnCollect();
@@ -83,6 +84,16 @@ public class GrimoireAnimManager : MonoBehaviour
         if (stayOpen) return;
 
         if (isPlayerMoving) CloseGrimoire();
+    }
+    private void CloseOnShoot()
+    {   //return conditions
+        if (!isOpen) return;
+        if (isAnimating) return;
+        if (isMenuing) return;
+        if (isCasting) return;
+        if (stayOpen) return;
+
+        if (isPlayerShooting) CloseGrimoire();
     }
     private void CastOnHold()
     {   //return conditions

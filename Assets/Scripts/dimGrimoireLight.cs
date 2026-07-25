@@ -1,100 +1,32 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(Light))]
 public class dimGrimoireLight : MonoBehaviour
 {
-
-    [SerializeField] private ALTGrimoire grimoire;
-    [SerializeField] private float dimFactor = 1f;
-    [SerializeField] private float dimTime = 1f;
-    private AnimationCurve lightCurve;
-    private float cachedIntensity;
-    private float dimmedIntensity;
     private Light lightComponent;
-
-    private bool dimming;
-    private bool brightening;
-    private float currentChange;
-
-    [SerializeField] private bool debugMode = false;
+    [SerializeField] private GrimoirePositioner positioner;
+    private float cachedIntensity;
+    [SerializeField] private float raisedMulti = 0.3f;
+    [SerializeField] private float menuMulti = 0.2f;
+    [SerializeField] private float speed = 1f;
 
     void Start()
     {
-        lightComponent = gameObject.GetComponent<Light>();
+        lightComponent = GetComponent<Light>();
         cachedIntensity = lightComponent.intensity;
-        dimmedIntensity = lightComponent.intensity * dimFactor;
-
-        lightCurve = AnimationCurve.Linear(0, dimmedIntensity, dimTime, cachedIntensity);
     }
 
+    float targetIntensity;
     void Update()
     {
-        // if (grimoire.grimoireActive) lightComponent.intensity = dimmedIntensity;
-        // else lightComponent.intensity = cachedIntensity;
+        if (positioner.position == GrimoirePositioner.GrimoirePosition.lowered || positioner.position == GrimoirePositioner.GrimoirePosition.origin)// if lowered, target = cached intensity * 1
+        { targetIntensity = cachedIntensity; }
+        if (positioner.position == GrimoirePositioner.GrimoirePosition.open)// if raised, target = raisedIntensity
+        { targetIntensity = cachedIntensity * raisedMulti; }
+        if (positioner.position == GrimoirePositioner.GrimoirePosition.menu)// if open, target = openIntensity
+        { targetIntensity = cachedIntensity * menuMulti; }
 
-        if (lightComponent.intensity > dimmedIntensity && grimoire.grimoireActive)
-        {
-            DoDim();
-        }
-        else if (lightComponent.intensity < cachedIntensity && !grimoire.grimoireActive)
-        {
-            DoBrighten();
-        }
-
-        if (debugMode) doDebugLog();
-    }
-    void DoDim()
-    {
-        StartCoroutine(Dim());
-    }
-    void DoBrighten()
-    {
-        StartCoroutine(Brighten());
-    }
-    
-    private IEnumerator Dim()
-    {
-        if (dimming) yield break;
-        dimming = true;
-        if (debugMode) Debug.Log("start dimming");
-
-        while (lightComponent.intensity > dimmedIntensity && !brightening)
-        {
-            currentChange -= Time.unscaledDeltaTime;
-            lightComponent.intensity = lightCurve.Evaluate(currentChange);
-            yield return null;
-        }
-
-        if (debugMode) Debug.Log("end dimming");
-        dimming = false;
-        yield break;
-    }
-    private IEnumerator Brighten()
-    {
-        if (brightening) yield break;
-        brightening = true;
-        if (debugMode) Debug.Log("start brightening");
-
-        while (lightComponent.intensity < cachedIntensity && !dimming)
-        {
-            currentChange += Time.unscaledDeltaTime;
-            lightComponent.intensity = lightCurve.Evaluate(currentChange);
-            yield return null;
-        }
-
-        if (debugMode) Debug.Log("end brightening");
-        brightening = false;
-        yield break;
-    }
-
-    void doDebugLog()
-    {
-        Debug.Log($"current light intensity: [{lightComponent.intensity}]");
-        Debug.Log($"current change: [{currentChange}]");
-        Debug.Log($"cached intensity: [{cachedIntensity}]");
-        Debug.Log($"dimmed intensity: [{dimmedIntensity}]");
-        Debug.Log($"grimoire.grimoireActive: [{grimoire.grimoireActive}]");
-        Debug.Log($"dimming: [{dimming}]");
-        Debug.Log($"brightening: [{brightening}]");
+        lightComponent.intensity = Mathf.Lerp(lightComponent.intensity, targetIntensity, speed);
     }
 }
