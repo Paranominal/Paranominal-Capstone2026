@@ -3,16 +3,15 @@ using UnityEngine.InputSystem;
 
 // Summary: Finds the interactable the player is looking at (proximity + look direction + line-of-sight),
 // drives the HUD and world-space prompt presenters, and routes the interact button to that target.
-// Assumes a single focused interactable at a time.
 public class InteractionFocusController : MonoBehaviour
 {
     [Header("Detection")]
     [SerializeField] private LayerMask interactableMask;
-    [SerializeField] private LayerMask obstructionMask;      // geometry that blocks line-of-sight (walls etc.)
-    [SerializeField] private float outerRadius = 4f;         // prompt starts fading in at this distance
-    [SerializeField] private float innerRadius = 2f;         // prompt fully faded in at this distance (and closer)
+    [SerializeField] private LayerMask obstructionMask;
+    [SerializeField] private float outerRadius = 4f;
+    [SerializeField] private float innerRadius = 2f;
     [Range(0f, 1f)]
-    [SerializeField] private float lookThreshold = 0.6f;     // how directly you must look (1 = dead-on, lower = more forgiving)
+    [SerializeField] private float lookThreshold = 0.6f;
 
     [Header("Presenters")]
     [SerializeField] private HudPromptPresenter hudPresenter;
@@ -24,14 +23,19 @@ public class InteractionFocusController : MonoBehaviour
     private InputAction interactAction;
     private InteractionContext context;
     private Camera cam;
-    private bool suspended;   // true while the grimoire is open
+    private bool suspended;
 
     void Start()
     {
         cam = Camera.main;
         interactAction = InputSystem.actions.FindAction(interactActionName);
 
-        // EDIT (inventory system): context now carries an Inventory reference alongside the grimoire.
+        // EDIT (auto-resolve): fallback for cross-prefab references.
+        if (hudPresenter == null)
+            hudPresenter = FindAnyObjectByType<HudPromptPresenter>();
+        if (worldPresenter == null)
+            worldPresenter = FindAnyObjectByType<WorldSpacePromptPresenter>();
+
         Inventory inventory = FindAnyObjectByType<Inventory>();
 
         context = new InteractionContext
@@ -42,7 +46,6 @@ public class InteractionFocusController : MonoBehaviour
             inventory = inventory,
         };
 
-        // Prompts are meaningless while the grimoire is up, so mute both surfaces with it.
         if (ALTGrimoire.instance != null)
             ALTGrimoire.instance.OnGrimoireToggled += OnGrimoireToggled;
     }
@@ -53,7 +56,6 @@ public class InteractionFocusController : MonoBehaviour
             ALTGrimoire.instance.OnGrimoireToggled -= OnGrimoireToggled;
     }
 
-    // Summary: Mutes both prompt surfaces while the grimoire is open.
     private void OnGrimoireToggled(bool grimoireOpen)
     {
         suspended = grimoireOpen;
@@ -87,15 +89,14 @@ public class InteractionFocusController : MonoBehaviour
             Vector3 point = col.ClosestPoint(camPos);
 
             float dist = Vector3.Distance(camPos, point);
-            float proximity = Mathf.InverseLerp(outerRadius, innerRadius, dist);   // 0 at outer, 1 at inner
+            float proximity = Mathf.InverseLerp(outerRadius, innerRadius, dist);
 
             Vector3 dir = (point - camPos).normalized;
             float look = Mathf.InverseLerp(lookThreshold, 1f, Vector3.Dot(camFwd, dir));
 
             float strength = proximity * look;
-            if (strength <= bestStrength) continue;   // can't beat current best, skip the LOS cost
+            if (strength <= bestStrength) continue;
 
-            // Line-of-sight: blocked if any obstruction sits between camera and the point.
             if (Physics.Linecast(camPos, point, obstructionMask)) continue;
 
             best = it;
@@ -110,7 +111,6 @@ public class InteractionFocusController : MonoBehaviour
         }
     }
 
-    // Summary: Sends the focused prompt to whichever surface it wants and clears the other.
     private void DrivePresenters(IInteractable focused, float strength)
     {
         if (focused == null || strength <= 0f)

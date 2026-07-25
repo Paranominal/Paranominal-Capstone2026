@@ -21,9 +21,20 @@ public class GrimoireFearStates : MonoBehaviour
         }
     }
 
+    // EDIT (auto-resolve): fallback for cross-prefab references.
     private void Awake()
     {
-        fearBar.OnFearChanged += HandleFearChanged;
+        if (fearBar == null)
+            fearBar = FindAnyObjectByType<FearBar>();
+
+        if (fearBar != null)
+            fearBar.OnFearChanged += HandleFearChanged;
+    }
+
+    private void OnDestroy()
+    {
+        if (fearBar != null)
+            fearBar.OnFearChanged -= HandleFearChanged;
     }
 
     private void HandleFearChanged(FearBar.FearRank rank)

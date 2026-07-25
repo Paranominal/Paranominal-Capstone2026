@@ -4,29 +4,33 @@ using UnityEngine.UI;
 
 public class PlayerHUD : MonoBehaviour
 {
-    // EDIT (weapon consolidation): three weapon references collapsed into one WeaponController.
     [Header("References")]
     [SerializeField] private WeaponController weaponController;
 
-    // text readout for current ammo in magazine and magazine capacity
+    [Header("Canvas")]
+    [SerializeField] private Canvas hudCanvas;
+
     [Header("Ammo UI")]
     [SerializeField] private TMP_Text ammoText;
 
-    // reload progress bar, shown only while actively reloading
     [Header("Reload UI")]
     [SerializeField] private Slider reloadSlider;
 
-    // crosshair for aiming
     [Header("Crosshair UI")]
     [SerializeField] private Image crosshairImage;
 
-    // EDIT (interaction prompt system): HUD interaction prompt, toggled alongside the rest of the HUD.
     [Header("Interaction UI")]
     [SerializeField] private HudPromptPresenter interactionPrompt;
 
+    // EDIT (auto-resolve): fallback for cross-prefab references.
+    private void Awake()
+    {
+        if (weaponController == null)
+            weaponController = FindAnyObjectByType<WeaponController>();
+    }
+
     private void Start()
     {
-        // hide conditional UI at startup so HUD begins mostly blank
         if (reloadSlider != null)
             reloadSlider.gameObject.SetActive(false);
 
@@ -63,29 +67,18 @@ public class PlayerHUD : MonoBehaviour
 
     private void Update()
     {
-        // fallback polling if events aren't connected
         if (weaponController == null) return;
 
-        if (!HasEventSubscriptions())
+        RefreshAmmoDisplay();
+
+        if (reloadSlider != null)
         {
-            RefreshAmmoDisplay();
+            bool showReload = weaponController.IsReloading;
+            reloadSlider.gameObject.SetActive(showReload);
 
-            if (reloadSlider != null)
-            {
-                bool showReload = weaponController.IsReloading;
-                reloadSlider.gameObject.SetActive(showReload);
-
-                if (showReload)
-                    reloadSlider.value = weaponController.ReloadProgress;
-            }
+            if (showReload)
+                reloadSlider.value = weaponController.ReloadProgress;
         }
-    }
-
-    private bool HasEventSubscriptions()
-    {
-        // If OnEnable ran successfully, events are wired. This replaces the old
-        // "weaponEvents == null" check that gated the polling fallback.
-        return weaponController != null;
     }
 
     private void RefreshAmmoDisplay()
@@ -127,6 +120,8 @@ public class PlayerHUD : MonoBehaviour
         }
     }
 
+    // Summary: Toggles individual gameplay HUD elements. Used by the Grimoire to hide
+    // the crosshair/ammo/prompt while the full Grimoire UI is open.
     public void UIVisible(bool state)
     {
         if (crosshairImage != null) crosshairImage.gameObject.SetActive(state);
@@ -138,7 +133,13 @@ public class PlayerHUD : MonoBehaviour
             reloadSlider.gameObject.SetActive(showReload);
         }
 
-        // EDIT (interaction prompt system): mute/unmute the interaction prompt with the rest of the HUD.
         if (interactionPrompt != null) interactionPrompt.SetVisible(state);
+    }
+
+    // Summary: Toggles the entire HUD canvas on or off. Used by the pause menu.
+    public void SetHUDActive(bool active)
+    {
+        if (hudCanvas != null)
+            hudCanvas.gameObject.SetActive(active);
     }
 }

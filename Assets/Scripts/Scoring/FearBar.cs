@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class FearBar : MonoBehaviour
 {
-    // EDIT (weapon consolidation): was WeaponEvents, now WeaponController.
     [Header("References")]
     [SerializeField] private WeaponController weaponController;
 
@@ -31,21 +30,22 @@ public class FearBar : MonoBehaviour
 
     private bool isMaxed = false;
 
+    // EDIT (auto-resolve): fallback for cross-prefab references.
     public void Awake()
     {
         fearLevel = 0;
+
+        if (weaponController == null)
+            weaponController = FindAnyObjectByType<WeaponController>();
+
         if (weaponController != null)
-        {
             weaponController.ShotResolved += HandleShotResolved;
-        }
     }
 
     private void OnDestroy()
     {
         if (weaponController != null)
-        {
             weaponController.ShotResolved -= HandleShotResolved;
-        }
     }
 
     private void Update()
@@ -120,7 +120,7 @@ public class FearBar : MonoBehaviour
             CurrentRank = newRank;
         }
 
-        OnFearChanged?.Invoke(CurrentRank); // event for fearbarUI & spiritbar to update, happens every time player takes damage
+        OnFearChanged?.Invoke(CurrentRank);
     }
 
     private void HandleShotResolved(WeakPointType shotType, bool rewarded)

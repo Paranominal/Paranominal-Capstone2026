@@ -57,6 +57,12 @@ public class ALTGrimoire : MonoBehaviour
         {
             instance = this;
         }
+
+        // EDIT (auto-resolve): fallback for cross-prefab references.
+        if (screenUI == null)
+            screenUI = FindAnyObjectByType<PlayerHUD>();
+        if (playerInputReader == null)
+            playerInputReader = FindAnyObjectByType<PlayerInputReader>();
     }
 
     void Start()
@@ -124,7 +130,8 @@ public class ALTGrimoire : MonoBehaviour
                     Cursor.lockState = CursorLockMode.None;
                 }
 
-                screenUI.UIVisible(false);
+                if (screenUI != null)
+                    screenUI.UIVisible(false);
 
                 //disabling player input completely
                 InputSystem.actions.FindActionMap("Player").Disable();
@@ -149,7 +156,8 @@ public class ALTGrimoire : MonoBehaviour
                     Cursor.lockState = CursorLockMode.Locked;
                 }
 
-                screenUI.UIVisible(true);
+                if (screenUI != null)
+                    screenUI.UIVisible(true);
 
                 InputSystem.actions.FindActionMap("Player").Enable();
                 InputSystem.actions.FindActionMap("UI").Disable();

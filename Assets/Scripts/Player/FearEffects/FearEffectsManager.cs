@@ -14,22 +14,32 @@ public class FearEffectsManager : MonoBehaviour
     private float normalizedFear;
     private bool isInEncounter;
 
+    // EDIT (auto-resolve): fallback for cross-prefab references.
     private void Awake()
     {
         postProcessEffects = GetComponent<FearPostProcessEffects>();
         audioEffects = GetComponent<FearAudioEffects>();
         intrusiveEffects = GetComponent<FearIntrusiveEffects>();
 
-        fearBar.OnFearChanged += OnRankChanged;
+        if (fearBar == null)
+            fearBar = FindAnyObjectByType<FearBar>();
+        if (playerStatus == null)
+            playerStatus = FindAnyObjectByType<PlayerStatus>();
+
+        if (fearBar != null)
+            fearBar.OnFearChanged += OnRankChanged;
     }
 
     private void OnDestroy()
     {
-        fearBar.OnFearChanged -= OnRankChanged;
+        if (fearBar != null)
+            fearBar.OnFearChanged -= OnRankChanged;
     }
 
     private void Update()
     {
+        if (fearBar == null || playerStatus == null) return;
+
         normalizedFear = (float)fearBar.FearLevel / fearBar.MaxFear;
         isInEncounter = playerStatus.IsInEncounter;
 

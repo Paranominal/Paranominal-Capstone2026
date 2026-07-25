@@ -14,10 +14,17 @@ public class FearBarUI : MonoBehaviour
 
     private float fullWidth;
 
+    // EDIT (auto-resolve): fallbacks for cross-prefab references + null guards.
     private void Awake()
     {
         fullWidth = barRect.rect.width;
-        fearBar.OnFearChanged += HandleFearChanged;
+
+        if (fearBar == null)
+            fearBar = FindAnyObjectByType<FearBar>();
+
+        if (fearBar != null)
+            fearBar.OnFearChanged += HandleFearChanged;
+
         rankText.text = "Fine";
         SetBarWidth(0f);
     }
@@ -27,8 +34,21 @@ public class FearBarUI : MonoBehaviour
         if (grimoireOnlyVisibility)
         {
             gameObject.SetActive(false);
-            ALTGrimoire.instance.OnGrimoireToggled += gameObject.SetActive;
+
+            if (ALTGrimoire.instance != null)
+                ALTGrimoire.instance.OnGrimoireToggled += gameObject.SetActive;
+            else
+                Debug.LogWarning("[FearBarUI] ALTGrimoire.instance is null, grimoire visibility toggle won't work.");
         }
+    }
+
+    private void OnDestroy()
+    {
+        if (fearBar != null)
+            fearBar.OnFearChanged -= HandleFearChanged;
+
+        if (ALTGrimoire.instance != null)
+            ALTGrimoire.instance.OnGrimoireToggled -= gameObject.SetActive;
     }
 
     private void HandleFearChanged(FearBar.FearRank rank)

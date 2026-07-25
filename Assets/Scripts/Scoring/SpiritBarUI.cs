@@ -14,11 +14,20 @@ public class SpiritBarUI : MonoBehaviour
 
     private float fullWidth;
 
+    // EDIT (auto-resolve): fallbacks for cross-prefab references + null guards.
     private void Awake()
     {
         fullWidth = barRect.rect.width;
-        scoreManager.OnPointsAdded += HandlePointsAdded;
-        scoreManager.OnRankChanged += HandleRankChanged;
+
+        if (scoreManager == null)
+            scoreManager = FindAnyObjectByType<ScoreManager>();
+
+        if (scoreManager != null)
+        {
+            scoreManager.OnPointsAdded += HandlePointsAdded;
+            scoreManager.OnRankChanged += HandleRankChanged;
+        }
+
         SetBarWidth(0f);
     }
 
@@ -27,12 +36,31 @@ public class SpiritBarUI : MonoBehaviour
         if (grimoireOnlyVisibility)
         {
             gameObject.SetActive(false);
-            ALTGrimoire.instance.OnGrimoireToggled += gameObject.SetActive;
+
+            if (ALTGrimoire.instance != null)
+                ALTGrimoire.instance.OnGrimoireToggled += gameObject.SetActive;
+            else
+                Debug.LogWarning("[SpiritBarUI] ALTGrimoire.instance is null, grimoire visibility toggle won't work.");
         }
 
-        scoreText.text = scoreManager.currentScore.ToString();
-        rankText.text = scoreManager.CurrentRank;
-        SetBarWidth(scoreManager.GetProgressToNextRank()); // calls new function in scoremanager to get the float
+        if (scoreManager != null)
+        {
+            scoreText.text = scoreManager.currentScore.ToString();
+            rankText.text = scoreManager.CurrentRank;
+            SetBarWidth(scoreManager.GetProgressToNextRank());
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (scoreManager != null)
+        {
+            scoreManager.OnPointsAdded -= HandlePointsAdded;
+            scoreManager.OnRankChanged -= HandleRankChanged;
+        }
+
+        if (ALTGrimoire.instance != null)
+            ALTGrimoire.instance.OnGrimoireToggled -= gameObject.SetActive;
     }
 
     private void HandlePointsAdded(int newTotal)

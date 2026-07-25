@@ -4,8 +4,6 @@ public class PlayerStatus : MonoBehaviour, IDamageable
 {
     [SerializeField] private FearBar fearBar;
 
-    // EDIT (inventory system): player-side references to the new inventory and discovery systems.
-    // Add Inventory and DiscoveryLog as components on the same GameObject, or assign in Inspector.
     [Header("Inventory")]
     [SerializeField] private Inventory inventory;
     [SerializeField] private DiscoveryLog discoveryLog;
@@ -13,25 +11,29 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     public Inventory Inventory => inventory;
     public DiscoveryLog DiscoveryLog => discoveryLog;
 
-    public bool IsInEncounter { get; private set; } // Whether the player is currently inside an active enemy encounter.
+    public bool IsInEncounter { get; private set; }
 
     public void SetInEncounter(bool value)
     {
         IsInEncounter = value;
     }
 
-    // EDIT (inventory system): auto-find components if not assigned in Inspector.
+    // EDIT (auto-resolve): all cross-prefab references use FindAnyObjectByType fallbacks
+    // so they survive being on different prefabs or across scene loads.
     void Awake()
     {
+        if (fearBar == null)
+            fearBar = FindAnyObjectByType<FearBar>();
         if (inventory == null)
-            inventory = GetComponent<Inventory>();
+            inventory = FindAnyObjectByType<Inventory>();
         if (discoveryLog == null)
-            discoveryLog = GetComponent<DiscoveryLog>();
+            discoveryLog = FindAnyObjectByType<DiscoveryLog>();
     }
 
     public void TakeDamage(DamageInfo info)
     { // super duper basic just to allow the player to get damage
         Debug.Log($"[PlayerStatus] Player hit for {info.amount}.");
-        fearBar.TakeDamage(info.amount);
+        if (fearBar != null)
+            fearBar.TakeDamage(info.amount);
     }
 }
