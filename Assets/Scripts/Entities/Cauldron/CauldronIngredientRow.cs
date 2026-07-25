@@ -10,6 +10,7 @@ public class CauldronIngredientRow : MonoBehaviour, IPointerEnterHandler, IPoint
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text quantityText;
     [SerializeField] private Button addButton;
+    [SerializeField] private CanvasGroup addButtonGroup;   // controls visibility without affecting layout
     [SerializeField] private Color quantityColor = new Color(0.6f, 0.6f, 0.6f);
 
     private ItemDefinition item;
@@ -26,7 +27,9 @@ public class CauldronIngredientRow : MonoBehaviour, IPointerEnterHandler, IPoint
 
         addButton.onClick.RemoveAllListeners();
         addButton.onClick.AddListener(OnAddClicked);
-        addButton.gameObject.SetActive(false);
+
+        // Keep the button active for layout, but invisible until hovered.
+        SetAddButtonVisible(false);
     }
 
     public void UpdateQuantity(int availableCount)
@@ -42,11 +45,20 @@ public class CauldronIngredientRow : MonoBehaviour, IPointerEnterHandler, IPoint
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        addButton.gameObject.SetActive(true);
+        SetAddButtonVisible(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        addButton.gameObject.SetActive(false);
+        SetAddButtonVisible(false);
+    }
+
+    private void SetAddButtonVisible(bool visible)
+    {
+        if (addButtonGroup != null)
+        {
+            addButtonGroup.alpha = visible ? 1f : 0f;
+            addButtonGroup.blocksRaycasts = visible;
+        }
     }
 }
