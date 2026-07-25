@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class FearBar : MonoBehaviour
 {
+    // EDIT (weapon consolidation): was WeaponEvents, now WeaponController.
     [Header("References")]
-    [SerializeField] private WeaponEvents weaponEvents;
+    [SerializeField] private WeaponController weaponController;
 
     [Header("Fear")]
     [SerializeField] private float maxFear = 100f;
@@ -33,9 +34,17 @@ public class FearBar : MonoBehaviour
     public void Awake()
     {
         fearLevel = 0;
-        if (weaponEvents != null)
+        if (weaponController != null)
         {
-            weaponEvents.ShotResolved += HandleShotResolved;
+            weaponController.ShotResolved += HandleShotResolved;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (weaponController != null)
+        {
+            weaponController.ShotResolved -= HandleShotResolved;
         }
     }
 

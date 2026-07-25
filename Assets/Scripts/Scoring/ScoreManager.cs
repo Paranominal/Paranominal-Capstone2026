@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
+    // EDIT (weapon consolidation): was WeaponEvents, now WeaponController.
     [Header("References")]
-    [SerializeField] private WeaponEvents weaponEvents;
+    [SerializeField] private WeaponController weaponController;
 
     [Header("Scoring")]
     [SerializeField] private int pointsPerWeakpointHit = 10;
@@ -29,13 +30,24 @@ public class ScoreManager : MonoBehaviour
 
     private void Awake()
     {
-        if (weaponEvents == null)
+        if (weaponController == null)
         {
-            weaponEvents = GetComponent<WeaponEvents>(); // getting the weapon events from the current object (assuming Player) if not manually assigned
+            weaponController = FindAnyObjectByType<WeaponController>();
         }
-        weaponEvents.ShotResolved += HandleShotResolved;
+        if (weaponController != null)
+        {
+            weaponController.ShotResolved += HandleShotResolved;
+        }
 
         EvaluateRank();
+    }
+
+    private void OnDestroy()
+    {
+        if (weaponController != null)
+        {
+            weaponController.ShotResolved -= HandleShotResolved;
+        }
     }
 
     public void AddScore(int amount)

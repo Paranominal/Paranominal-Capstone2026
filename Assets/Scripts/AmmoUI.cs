@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+// EDIT (weapon consolidation): WeaponEvents + WeaponFiringLogic references replaced with WeaponController.
 public class AmmoUI : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private WeaponEvents weaponEvents;
-    [SerializeField] private WeaponFiringLogic weaponFiringLogic;
+    [SerializeField] private WeaponController weaponController;
 
     [Header("Ammo UI Game Objects")]
     [SerializeField] private Image[] ammoUiElements;
@@ -21,38 +21,35 @@ public class AmmoUI : MonoBehaviour
 
     private void Awake()
     {
-        if (weaponEvents == null)
-            weaponEvents = GetComponent<WeaponEvents>();
-
-        if (weaponFiringLogic == null)
-            weaponFiringLogic = GetComponent<WeaponFiringLogic>();
+        if (weaponController == null)
+            weaponController = FindAnyObjectByType<WeaponController>();
 
         CacheTemplate();
     }
 
     private void OnEnable()
     {
-        if (weaponEvents != null)
+        if (weaponController != null)
         {
-            weaponEvents.ShotResolved += OnShotResolved;
-            weaponEvents.ReloadFinished += ResetStrikes;
-            weaponEvents.AmmoChanged += OnAmmoChanged;
+            weaponController.ShotResolved += OnShotResolved;
+            weaponController.ReloadFinished += ResetStrikes;
+            weaponController.AmmoChanged += OnAmmoChanged;
         }
     }
 
     private void OnDisable()
     {
-        if (weaponEvents != null)
+        if (weaponController != null)
         {
-            weaponEvents.ShotResolved -= OnShotResolved;
-            weaponEvents.ReloadFinished -= ResetStrikes;
-            weaponEvents.AmmoChanged -= OnAmmoChanged;
+            weaponController.ShotResolved -= OnShotResolved;
+            weaponController.ReloadFinished -= ResetStrikes;
+            weaponController.AmmoChanged -= OnAmmoChanged;
         }
     }
 
     private void Start()
     {
-        int magazineSize = weaponFiringLogic != null ? weaponFiringLogic.MagazineSize : ammoUiElements.Length;
+        int magazineSize = weaponController != null ? weaponController.MagazineSize : ammoUiElements.Length;
         BuildAmmoUiElements(magazineSize);
         ResetStrikes();
     }

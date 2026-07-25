@@ -1,11 +1,12 @@
 using UnityEngine;
 
-// Listens to WeaponEvents and plays sounds for firing and reloading. Sits alongside the other weapon components on the weapon GameObject.
+// Listens to WeaponController events and plays sounds for firing and reloading.
+// EDIT (weapon consolidation): was referencing WeaponEvents, now references WeaponController directly.
 [RequireComponent(typeof(AudioSource))]
 public class WeaponAudio : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private WeaponEvents weaponEvents;
+    [SerializeField] private WeaponController weaponController;
     [SerializeField] private AudioSource fireSource;
     [SerializeField] private AudioSource reloadSource;
 
@@ -15,30 +16,28 @@ public class WeaponAudio : MonoBehaviour
 
     private void Reset()
     {
-        weaponEvents = GetComponent<WeaponEvents>();
-        // Pre-fill fireSource with the first AudioSource on this GameObject.
+        weaponController = GetComponent<WeaponController>();
         fireSource = GetComponent<AudioSource>();
-        // reloadSource must be wired up manually in the inspector (designer adds a second AudioSource and drags it into the slot).
     }
 
     private void Awake()
     {
-        if (weaponEvents == null) weaponEvents = GetComponent<WeaponEvents>();
+        if (weaponController == null) weaponController = GetComponent<WeaponController>();
         if (fireSource == null) fireSource = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
     {
-        if (weaponEvents == null) return;
-        weaponEvents.ShotFired += OnShotFired;
-        weaponEvents.ReloadStarted += OnReloadStarted;
+        if (weaponController == null) return;
+        weaponController.ShotFired += OnShotFired;
+        weaponController.ReloadStarted += OnReloadStarted;
     }
 
     private void OnDisable()
     {
-        if (weaponEvents == null) return;
-        weaponEvents.ShotFired -= OnShotFired;
-        weaponEvents.ReloadStarted -= OnReloadStarted;
+        if (weaponController == null) return;
+        weaponController.ShotFired -= OnShotFired;
+        weaponController.ReloadStarted -= OnReloadStarted;
     }
 
     private void OnShotFired(WeakPointType shotType)

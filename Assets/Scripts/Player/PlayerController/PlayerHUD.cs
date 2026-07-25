@@ -4,12 +4,9 @@ using UnityEngine.UI;
 
 public class PlayerHUD : MonoBehaviour
 {
-    // HUD reads state from these scripts each frame and mirrors it to UI elements
+    // EDIT (weapon consolidation): three weapon references collapsed into one WeaponController.
     [Header("References")]
-    [SerializeField] private WeaponFiringLogic weaponFiringLogic;
-    [SerializeField] private WeaponEvents weaponEvents;
-    [SerializeField] private WeaponStateController weaponStateController;
-    //[SerializeField] private Dashing dashing;
+    [SerializeField] private WeaponController weaponController;
 
     // text readout for current ammo in magazine and magazine capacity
     [Header("Ammo UI")]
@@ -18,10 +15,6 @@ public class PlayerHUD : MonoBehaviour
     // reload progress bar, shown only while actively reloading
     [Header("Reload UI")]
     [SerializeField] private Slider reloadSlider;
-
-    // dash cooldown bar, shown only while dash is unavailable
-    //[Header("Dash UI")]
-    //[SerializeField] private Slider dashSlider;
 
     // crosshair for aiming
     [Header("Crosshair UI")]
@@ -33,86 +26,72 @@ public class PlayerHUD : MonoBehaviour
 
     private void Start()
     {
-        if (weaponFiringLogic == null)
-            weaponFiringLogic = GetComponent<WeaponFiringLogic>();
-
-        if (weaponEvents == null)
-            weaponEvents = GetComponent<WeaponEvents>();
-
         // hide conditional UI at startup so HUD begins mostly blank
-        // these sliders are enabled only when their corresponding action is in progress/cooldown
         if (reloadSlider != null)
             reloadSlider.gameObject.SetActive(false);
 
-        //if (dashSlider != null)
-        //    dashSlider.gameObject.SetActive(false);
-
         RefreshAmmoDisplay();
 
-        if (weaponFiringLogic != null && weaponFiringLogic.IsReloading)
+        if (weaponController != null && weaponController.IsReloading)
         {
             OnReloadStarted();
-            OnReloadProgressChanged(weaponFiringLogic.ReloadProgress);
+            OnReloadProgressChanged(weaponController.ReloadProgress);
         }
     }
 
     private void OnEnable()
     {
-        if (weaponEvents == null)
-            weaponEvents = GetComponent<WeaponEvents>();
-
-        if (weaponEvents != null)
+        if (weaponController != null)
         {
-            weaponEvents.AmmoChanged += OnAmmoChanged;
-            weaponEvents.ReloadStarted += OnReloadStarted;
-            weaponEvents.ReloadProgressChanged += OnReloadProgressChanged;
-            weaponEvents.ReloadFinished += OnReloadFinished;
+            weaponController.AmmoChanged += OnAmmoChanged;
+            weaponController.ReloadStarted += OnReloadStarted;
+            weaponController.ReloadProgressChanged += OnReloadProgressChanged;
+            weaponController.ReloadFinished += OnReloadFinished;
         }
     }
 
     private void OnDisable()
     {
-        if (weaponEvents != null)
+        if (weaponController != null)
         {
-            weaponEvents.AmmoChanged -= OnAmmoChanged;
-            weaponEvents.ReloadStarted -= OnReloadStarted;
-            weaponEvents.ReloadProgressChanged -= OnReloadProgressChanged;
-            weaponEvents.ReloadFinished -= OnReloadFinished;
+            weaponController.AmmoChanged -= OnAmmoChanged;
+            weaponController.ReloadStarted -= OnReloadStarted;
+            weaponController.ReloadProgressChanged -= OnReloadProgressChanged;
+            weaponController.ReloadFinished -= OnReloadFinished;
         }
     }
 
     private void Update()
     {
-        // fallback if event source is missing
-        if (weaponEvents == null)
+        // fallback polling if events aren't connected
+        if (weaponController == null) return;
+
+        if (!HasEventSubscriptions())
         {
             RefreshAmmoDisplay();
 
-            if (reloadSlider != null && weaponFiringLogic != null)
+            if (reloadSlider != null)
             {
-                bool showReload = weaponFiringLogic.IsReloading;
+                bool showReload = weaponController.IsReloading;
                 reloadSlider.gameObject.SetActive(showReload);
 
                 if (showReload)
-                    reloadSlider.value = weaponFiringLogic.ReloadProgress;
+                    reloadSlider.value = weaponController.ReloadProgress;
             }
         }
+    }
 
-        // dash cooldown HUD updates
-        /*if (dashing != null && dashSlider != null)
-        {
-            bool showDashCooldown = dashing.IsDashOnCooldown;
-            dashSlider.gameObject.SetActive(showDashCooldown);
-
-            if (showDashCooldown)
-                dashSlider.value = dashing.DashCooldownProgress;
-        }*/
+    private bool HasEventSubscriptions()
+    {
+        // If OnEnable ran successfully, events are wired. This replaces the old
+        // "weaponEvents == null" check that gated the polling fallback.
+        return weaponController != null;
     }
 
     private void RefreshAmmoDisplay()
     {
-        if (ammoText != null && weaponFiringLogic != null)
-            ammoText.text = $"{weaponFiringLogic.CurrentAmmo}/{weaponFiringLogic.MagazineSize}";
+        if (ammoText != null && weaponController != null)
+            ammoText.text = $"{weaponController.CurrentAmmo}/{weaponController.MagazineSize}";
     }
 
     private void OnAmmoChanged(int currentAmmo, int magazineSize)
@@ -155,7 +134,7 @@ public class PlayerHUD : MonoBehaviour
 
         if (reloadSlider != null)
         {
-            bool showReload = state && weaponFiringLogic != null && weaponFiringLogic.IsReloading;
+            bool showReload = state && weaponController != null && weaponController.IsReloading;
             reloadSlider.gameObject.SetActive(showReload);
         }
 

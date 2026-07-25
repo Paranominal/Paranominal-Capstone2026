@@ -9,13 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d99eff6203dccd14d919a0763f61cc2b, type: 3}
+  m_Script: {fileID: 11500000, guid: 16cd823a153573b49b77e9bb92e2ed12, type: 3}
   m_Name: Shotgun
-  m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   id: 1
   displayName: The Norwych
-  description: 
-  flavourText: 
-  icon: {fileID: 0}
-  tags: 0
-  maxStack: 1
+  magazineSize: 3
+  reloadDuration: 2
+  autoReload: 1
+  postShotReloadDelay: 0.25
+  shotCooldown: 0.2
+  hitscanRange: 1000
+  ironBarrelAvailable: 1
+  silverBarrelAvailable: 1
