@@ -31,11 +31,15 @@ public class InteractionFocusController : MonoBehaviour
         cam = Camera.main;
         interactAction = InputSystem.actions.FindAction(interactActionName);
 
+        // EDIT (inventory system): context now carries an Inventory reference alongside the grimoire.
+        Inventory inventory = FindAnyObjectByType<Inventory>();
+
         context = new InteractionContext
         {
             player = transform,
             camera = cam,
             grimoire = ALTGrimoire.instance,
+            inventory = inventory,
         };
 
         // Prompts are meaningless while the grimoire is up, so mute both surfaces with it.
@@ -66,12 +70,7 @@ public class InteractionFocusController : MonoBehaviour
 
         context.camera = cam;
         if (context.grimoire == null) context.grimoire = ALTGrimoire.instance;
-
-        if (Keyboard.current.f1Key.wasPressedThisFrame && context.grimoire != null)
-        {
-            foreach (ALTGrimoireEntry e in context.grimoire.entries)
-                Debug.Log($"entryName=[{e.entryName}] collected={e.collected}");
-        }
+        if (context.inventory == null) context.inventory = FindAnyObjectByType<Inventory>();
 
         IInteractable best = null;
         float bestStrength = 0f;

@@ -1,14 +1,15 @@
-// EDIT: Deprecated, now using the ScanController script
-
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class ALTALTScan : MonoBehaviour
+// Summary: Handles the scan and collect mechanics. Hold the scan button to scan objects/enemies,
+// press collect to pick up collectable items. Renamed from ALTALTScan.
+// Scan registers discoveries in DiscoveryLog (items) or Bestiary (enemies, future).
+// Collect adds items to Inventory and bridges to the Grimoire for UI.
+public class ScanController : MonoBehaviour
 {
     public LayerMask scannable;
     InputAction scanAction;
-    InputAction collectAction;  // i started implementing collecting as a seperate set of scripts and then realised it was going to either be so wrapped up in this as to be problematic or duplicate so much code it would be incredibly questionable. so. voila.
+    InputAction collectAction;
     private ALTGrimoire grimoire;
     private ALTScannableObject currentTarget;
 
@@ -18,10 +19,14 @@ public class ALTALTScan : MonoBehaviour
     private float scanProgress = 0f;
     public float scanRange = 20f;
 
+    // EDIT (inventory system): references to the new inventory and discovery systems.
+    private Inventory inventory;
+    private DiscoveryLog discoveryLog;
+
     [Header("Sounds")]
     [SerializeField] private SoundDataSO itemPickupSound;
     [SerializeField] private SoundDataSO scanSound;
-    [SerializeField] private AudioSource audioSource; // add Miriam's AudioSource here (she should have two but either one, it doesn't matter lmao)
+    [SerializeField] private AudioSource audioSource;
 
     // Tracks whether the looping scan sound is currently playing on the AudioSource.
     private bool scanSoundPlaying;
@@ -34,13 +39,23 @@ public class ALTALTScan : MonoBehaviour
         {
             grimoire = FindAnyObjectByType<ALTGrimoire>();
         }
+
+        // EDIT (inventory system): find the new systems.
+        if (inventory == null)
+        {
+            inventory = FindAnyObjectByType<Inventory>();
+        }
+        if (discoveryLog == null)
+        {
+            discoveryLog = FindAnyObjectByType<DiscoveryLog>();
+        }
     }
 
     void Update()
     {
         if (grimoire.grimoireActive)
         {
-            ClearHover(); // hide any active hover outline when grimoire opens
+            ClearHover();
             return;
         }
 
@@ -60,24 +75,12 @@ public class ALTALTScan : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, scanRange, scannable))
         {
-            // Debug.DrawLine(transform.position, hit.point, Color.cyan, 10); // can view this in gizmos mode to help with debugging
             ALTScannableObject target = hit.collider.GetComponent<ALTScannableObject>();
-            //Debug.Log("Hit " + tempScan);
 
-            // runs regardless of scan mode
-            if (collectAction.WasReleasedThisFrame() && target.collectable)
+            // Collection runs regardless of scan mode.
+            if (collectAction.WasReleasedThisFrame() && target != null && target.collectable)
             {
-                // item gets collected here
-                if (!grimoire.CompareEntry(target.entry))
-                {
-                    grimoire.AddEntry(target.entry, true);
-                }
-                else
-                {
-                    grimoire.CollectEntry(target.entry);
-                }
-                Debug.Log("Destroyed " + target.gameObject);
-                AudioManager.PlaySound(itemPickupSound);
+                CollectItem(target);
 
                 if (target == currentTarget)
                 {
@@ -87,10 +90,10 @@ public class ALTALTScan : MonoBehaviour
                 }
                 Destroy(target.gameObject);
                 UpdateScanSound(wantScanSoundThisFrame);
-                return; // nothing left to scan this frame
+                return;
             }
 
-            // show white outline on whatever we're looking at; hide the previous target
+            // Show white outline on whatever we're looking at; hide the previous target.
             if (target != currentTarget)
             {
                 if (currentTarget != null)
@@ -99,16 +102,19 @@ public class ALTALTScan : MonoBehaviour
                 }
                 scanProgress = 0f;
                 currentTarget = target;
-                currentTarget.SetOutlineVisible(true);
-                currentTarget.SetOutlineColor(Color.white);
-
-                if (inScanMode && grimoire.CompareEntry(currentTarget.entry)) // open existing entry when hovering in scan mode
+                if (currentTarget != null)
                 {
-                    grimoire.SelectEntry(grimoire.GetEntryID(currentTarget.entry.entryName));
+                    currentTarget.SetOutlineVisible(true);
+                    currentTarget.SetOutlineColor(Color.white);
+
+                    if (inScanMode && grimoire.CompareEntry(currentTarget.entry))
+                    {
+                        grimoire.SelectEntry(grimoire.GetEntryID(currentTarget.entry.entryName));
+                    }
                 }
             }
 
-            if (inScanMode)
+            if (inScanMode && currentTarget != null)
             {
                 bool alreadyScanned = grimoire.CompareEntry(currentTarget.entry);
                 EnemyStagger scannedEnemy = hit.collider.GetComponentInParent<EnemyStagger>();
@@ -120,14 +126,13 @@ public class ALTALTScan : MonoBehaviour
 
                     currentTarget.SetOutlineColor(new Color(0.0f, 0.941f, 0.459f));
 
-                    // Mark that we want the looping scan sound this frame.
                     wantScanSoundThisFrame = true;
 
                     if (scanProgress >= 1f)
                     {
                         if (!alreadyScanned)
                         {
-                            grimoire.AddEntry(currentTarget.entry);
+                            CompleteScan(currentTarget);
                         }
 
                         if (scannedEnemy != null)
@@ -135,7 +140,7 @@ public class ALTALTScan : MonoBehaviour
                             scannedEnemy.OnEnemyScanned();
                         }
 
-                        currentTarget.SetOutlineColor(Color.white); // scan complete, back to plain hover white
+                        currentTarget.SetOutlineColor(Color.white);
                         scanProgress = 0f;
                     }
                 }
@@ -153,14 +158,55 @@ public class ALTALTScan : MonoBehaviour
         UpdateScanSound(wantScanSoundThisFrame);
     }
 
+    // Summary: Registers a completed scan in the Grimoire and DiscoveryLog.
+    private void CompleteScan(ALTScannableObject target)
+    {
+        grimoire.AddEntry(target.entry);
+
+        // EDIT (inventory system): also register in the new discovery system.
+        if (target.itemDefinition != null && discoveryLog != null)
+        {
+            Texture2D snapshot = grimoire.snapshotHandler != null ? grimoire.snapshotHandler.TakeSnapshot() : null;
+            discoveryLog.Add(target.itemDefinition, snapshot);
+        }
+    }
+
+    // Summary: Collects an item into Inventory and registers in Grimoire + DiscoveryLog.
+    private void CollectItem(ALTScannableObject target)
+    {
+        // Grimoire bridge: add or mark as collected.
+        if (!grimoire.CompareEntry(target.entry))
+        {
+            grimoire.AddEntry(target.entry, true);
+        }
+        else
+        {
+            grimoire.CollectEntry(target.entry);
+        }
+
+        // EDIT (inventory system): add to inventory and auto-discover.
+        if (target.itemDefinition != null)
+        {
+            if (inventory != null)
+                inventory.Add(target.itemDefinition, 1);
+
+            if (discoveryLog != null && !discoveryLog.HasDiscovered(target.itemDefinition))
+            {
+                Texture2D snapshot = grimoire.snapshotHandler != null ? grimoire.snapshotHandler.TakeSnapshot() : null;
+                discoveryLog.Add(target.itemDefinition, snapshot);
+            }
+        }
+
+        Debug.Log("Collected " + target.gameObject);
+        AudioManager.PlaySound(itemPickupSound);
+    }
+
     private void SetScanMode(bool active)
     {
         inScanMode = active;
 
         if (!active)
         {
-            // keep hover outline visible if we're still looking at something,
-            // just reset scan progress and revert to plain white
             if (currentTarget != null)
             {
                 currentTarget.SetOutlineColor(Color.white);

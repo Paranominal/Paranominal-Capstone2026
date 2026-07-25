@@ -29,10 +29,10 @@ public class Door : MonoBehaviour, IInteractable
     public float ajarDistance = 3;
     private PlayerMover player;
 
-    // EDIT (interaction prompt system): key + prompt configuration.
     [Header("Interaction Prompt")]
-    public string requiredKeyName;          // Grimoire entry name that unlocks this door
-    public bool consumesKey = true;         // whether using the key spends it from the Grimoire
+    // EDIT (inventory system): was requiredKeyName (string). Now a direct asset reference, so the Inspector enforces correctness and string mismatches are impossible.
+    public ItemDefinition requiredKey;
+    public bool consumesKey = true;         // whether using the key spends it from inventory
     public bool hideUntilAttempted;         // hide the world "Locked" label until the player first tries the door
     public Transform promptAnchor;          // where the world-space "Locked" label floats (place over the lock)
     [HideInInspector] public bool revealed; // set once the player has attempted a hidden-lock door
@@ -46,8 +46,6 @@ public class Door : MonoBehaviour, IInteractable
 
     void Start()
     {
-        // EDIT (interaction prompt system): removed collectAction / raycaster lookups; the focus
-        // controller now owns interaction input and raycasting.
         targetRotation = transform.rotation;
         startAngle = transform.rotation;
         actualSpeed = speed;
@@ -68,7 +66,6 @@ public class Door : MonoBehaviour, IInteractable
     }
 
     // Lerps the door toward its target rotation and handles auto-ajar.
-    // EDIT (interaction prompt system): removed the raycast/input block; input is handled by InteractionFocusController.
     void Update()
     {
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, actualSpeed * Time.deltaTime);
@@ -118,14 +115,11 @@ public class Door : MonoBehaviour, IInteractable
 
     // Summary: Context-aware interaction. Encounter-locked doors stay shut; a held key unlocks a
     // key-locked door; an unlocked door toggles open/closed. Should only be called by the interaction system.
-    // EDIT (interaction prompt system): was Interact(); now takes a context and folds in the old TryDoor + key-use logic.
+    // EDIT (inventory system): now checks context.HasKey(ItemDefinition) instead of string matching.
     public void Interact(InteractionContext context)
     {
-        Debug.Log($"required=[{requiredKeyName}] hasKey={context?.HasKey(requiredKeyName)}");
-        if (context?.grimoire != null)
-            foreach (ALTGrimoireEntry e in context.grimoire.entries)
-                Debug.Log($"  entry=[{e.entryName}] collected={e.collected}");
-
+        Debug.Log($"requiredKey={requiredKey?.displayName} has={context?.HasKey(requiredKey)}");
+        
         // Encounter/arena lock is a hard gate: keys do nothing while it's active.
         if (isArenaLocked)
         {
@@ -135,12 +129,12 @@ public class Door : MonoBehaviour, IInteractable
 
         if (!unlocked)
         {
-            if (context != null && context.HasKey(requiredKeyName))
+            if (context != null && context.HasKey(requiredKey))
             {
                 unlocked = true;
                 if (consumesKey)
                 {
-                    context.ConsumeKey(requiredKeyName);
+                    context.ConsumeKey(requiredKey);
                 }
                 AudioManager.PlaySound(lockedSound, audioSource);   // TODO: a dedicated unlock sound would be nicer than reusing lockedSound
             }
@@ -167,7 +161,7 @@ public class Door : MonoBehaviour, IInteractable
     }
 
     // Summary: Chooses which prompt to show for the current door + player state.
-    // EDIT (interaction prompt system): added for the prompt system.
+    // EDIT (inventory system): checks context.HasKey(ItemDefinition) instead of string matching.
     public InteractionPrompt ResolvePrompt(InteractionContext context)
     {
         // Encounter/arena lock always reads as "Locked" and ignores keys.
@@ -181,7 +175,7 @@ public class Door : MonoBehaviour, IInteractable
             return new InteractionPrompt { surface = PromptSurface.Hud, label = "Open", actionName = "Collect" };
         }
 
-        if (context != null && context.HasKey(requiredKeyName))
+        if (context != null && context.HasKey(requiredKey))
         {
             return new InteractionPrompt { surface = PromptSurface.Hud, label = "Use Key", actionName = "Collect" };
         }
@@ -252,7 +246,6 @@ public class Door : MonoBehaviour, IInteractable
     }
 
     // Unlocks the door.
-    // EDIT (interaction prompt system): no longer routes through Interact (which now needs a context); unlocks directly.
     public void Unlock()
     {
         unlocked = true;

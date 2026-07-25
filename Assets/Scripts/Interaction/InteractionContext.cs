@@ -1,37 +1,33 @@
 using UnityEngine;
 
 // Summary: Per-interaction snapshot of the player side, passed into IInteractable calls so
-// objects can query and spend inventory (currently the Grimoire) without knowing about it directly.
+// objects can query and spend inventory without knowing about it directly.
 public class InteractionContext
 {
     public Transform player;
     public Camera camera;
     public ALTGrimoire grimoire;
 
-    // Summary: True if the Grimoire holds a collected entry whose name matches keyName.
-    // Searches all entries, not just the currently-open page, so a prompt can react the
-    // instant a key is picked up.
-    public bool HasKey(string keyName)
+    // EDIT (inventory system): the context now reads from Inventory instead of the Grimoire.
+    // This is the source of truth for item ownership. The grimoire reference is kept for
+    // legacy scripts (Container, InteractionObject) that still read from it.
+    public Inventory inventory;
+
+    // Summary: True if the player is carrying the given item.
+    public bool HasKey(ItemDefinition item)
     {
-        if (string.IsNullOrEmpty(keyName) || grimoire == null || grimoire.entries == null)
+        if (item == null || inventory == null)
             return false;
 
-        foreach (ALTGrimoireEntry e in grimoire.entries)
-        {
-            if (e != null && e.collected && e.entryName == keyName)
-                return true;
-        }
-        return false;
+        return inventory.Has(item);
     }
 
-    // Summary: Marks the matching key entry as no longer collected (spends the key).
-    public void ConsumeKey(string keyName)
+    // Summary: Removes one of the given item from inventory (spends the key).
+    public void ConsumeKey(ItemDefinition item)
     {
-        if (string.IsNullOrEmpty(keyName) || grimoire == null)
+        if (item == null || inventory == null)
             return;
 
-        ALTGrimoireEntry entry = grimoire.GetEntry(keyName);
-        if (entry != null)
-            grimoire.CollectEntry(entry, false);
+        inventory.Remove(item, 1);
     }
 }

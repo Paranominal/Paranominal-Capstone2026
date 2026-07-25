@@ -1,3 +1,5 @@
+// EDIT: Deprecated, now using the ScanController script
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,6 +12,10 @@ public class ALTScan : MonoBehaviour
     private ALTGrimoire grimoire;
     private ALTScannableObject scannedNow;
     private Raycaster raycaster;
+
+    // EDIT (inventory system): references to the new inventory and discovery systems.
+    private Inventory inventory;
+    private DiscoveryLog discoveryLog;
 
     [Header("Sounds")]
     [SerializeField] private SoundDataSO itemPickupSound;
@@ -27,6 +33,16 @@ public class ALTScan : MonoBehaviour
         if (raycaster == null)
         {
             raycaster = FindAnyObjectByType<Raycaster>();
+        }
+
+        // EDIT (inventory system): find the new systems on the player.
+        if (inventory == null)
+        {
+            inventory = FindAnyObjectByType<Inventory>();
+        }
+        if (discoveryLog == null)
+        {
+            discoveryLog = FindAnyObjectByType<DiscoveryLog>();
         }
     }
 
@@ -68,6 +84,13 @@ public class ALTScan : MonoBehaviour
                 {
                     //Debug.Log(scannedNow.entry);
                     grimoire.AddEntry(scannedNow.entry);
+
+                    // EDIT (inventory system): also register the discovery in the new system.
+                    if (scannedNow.itemDefinition != null && discoveryLog != null)
+                    {
+                        Texture2D snapshot = grimoire.snapshotHandler != null ? grimoire.snapshotHandler.TakeSnapshot() : null;
+                        discoveryLog.Add(scannedNow.itemDefinition, snapshot);
+                    }
                 }
             }
             if (scannedNow != null && collectAction.WasReleasedThisFrame() && scannedNow.collectable)
@@ -81,6 +104,20 @@ public class ALTScan : MonoBehaviour
                 else
                 {
                     grimoire.CollectEntry(scannedNow.entry);
+                }
+
+                // EDIT (inventory system): add to inventory and discovery log alongside the grimoire.
+                if (scannedNow.itemDefinition != null)
+                {
+                    if (inventory != null)
+                        Debug.Log($"itemDef={scannedNow.itemDefinition} inventory={inventory}");
+                        inventory.Add(scannedNow.itemDefinition, 1);
+
+                    if (discoveryLog != null && !discoveryLog.HasDiscovered(scannedNow.itemDefinition))
+                    {
+                        Texture2D snapshot = grimoire.snapshotHandler != null ? grimoire.snapshotHandler.TakeSnapshot() : null;
+                        discoveryLog.Add(scannedNow.itemDefinition, snapshot);
+                    }
                 }
 
                 Debug.Log("Destroyed " + scannedNow.gameObject);

@@ -7,6 +7,12 @@ public class ALTScannableObject : MonoBehaviour
     public bool collectable;
     public float scanDuration = 2f; // how long should this object take to scan?
 
+    // EDIT (inventory system): the new item definition asset for this object.
+    // This is the source of truth for the inventory and discovery systems.
+    // The old 'entry' field is kept temporarily so the grimoire UI can bridge.
+    [Header("Item Definition")]
+    public ItemDefinition itemDefinition;
+
     public bool usesMeshOutline = false;
     public Renderer outlineRenderer; // used for objects that DO have a mesh outline
     public int outlineMaterialIndex = 1;

@@ -12,4 +12,6 @@ public class ALTGrimoireEntry
     public bool collected = false;
     public Texture2D snapshotImage;
 
+    // EDIT (inventory system): backref to the new item definition asset, used to bridge the grimoire UI to the new inventory system. Null for entries created the old way.
+    [NonSerialized] public ItemDefinition itemDefinition;
 }
