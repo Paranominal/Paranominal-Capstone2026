@@ -8,6 +8,8 @@ public class WeaponInputReader : MonoBehaviour
     [SerializeField] private InputActionReference shootIronAction;
     [SerializeField] private InputActionReference shootSilverAction;
     [SerializeField] private InputActionReference reloadAction;
+    public bool canShoot = true;
+    public bool CanShoot => canShoot;
 
     public bool WasIronPressedThisFrame() => shootIronAction != null && shootIronAction.action.WasPressedThisFrame();
     public bool WasSilverPressedThisFrame() => shootSilverAction != null && shootSilverAction.action.WasPressedThisFrame();

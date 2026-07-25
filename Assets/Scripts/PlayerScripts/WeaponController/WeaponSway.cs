@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class WeaponSway : MonoBehaviour
 {
     [Header("Input Actions")]
+    [SerializeField] private PlayerInputReader playerInputReader;
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference lookAction;
 
@@ -47,6 +48,7 @@ public class WeaponSway : MonoBehaviour
     // These are blended smoothly to keep first-person weapon motion readable
     void Update()
     {
+        enableSway = playerInputReader.canMove;
         if (enableSway)
         {
             // read look input from the Input System action and scale to serialized input

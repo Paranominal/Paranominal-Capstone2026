@@ -38,7 +38,7 @@ public class PlayerLook : MonoBehaviour
         if (Time.timeScale == 0f)
             return;
 
-        if (playerMover != null && !playerMover.CanMove)
+        if (playerMover != null && !inputReader.CanMove)
             return;
 
         Vector2 rawLookInput = inputReader != null ? inputReader.LookInput : Vector2.zero;

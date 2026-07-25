@@ -8,6 +8,8 @@ public class PlayerInputReader : MonoBehaviour
     [SerializeField] private InputActionReference sprintAction;
     [SerializeField] private InputActionReference slowWalkAction;
     [SerializeField] private InputActionReference lookAction;
+    public bool canMove = true;
+    public bool CanMove => canMove;
 
     [Header("Cursor")]
     [SerializeField] private CursorLockMode startLockMode = CursorLockMode.Locked;

@@ -169,6 +169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 911c86f751db6c94081de9b03a599a92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSway
+  playerInputReader: {fileID: 8956652460274281639}
   moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookAction: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   enableSway: 1
@@ -496,9 +497,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8013496993476994936}
   - component: {fileID: 1267710674955157816}
-  - component: {fileID: 8240368774250594449}
   - component: {fileID: 8956652460274281639}
   - component: {fileID: 404796220867514065}
+  - component: {fileID: 8240368774250594449}
   - component: {fileID: 388139220132730565}
   - component: {fileID: 1642531195737763663}
   - component: {fileID: 2395450753178358459}
@@ -551,28 +552,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 2
+  m_Height: 1.6
   m_Radius: 0.3
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &8240368774250594449
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2579260593497910125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd30b5d39a07c7b45b135c75afab90ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerGravity
-  playerMover: {fileID: 404796220867514065}
-  gravity: -25
-  groundedStickForce: -2
+  m_Center: {x: 0, y: 0.8, z: 0}
 --- !u!114 &8956652460274281639
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -589,6 +575,7 @@ MonoBehaviour:
   sprintAction: {fileID: 6790621974129141125, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   slowWalkAction: {fileID: 4707686780592785771, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookAction: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  canMove: 1
   startLockMode: 1
   startCursorVisible: 0
 --- !u!114 &404796220867514065
@@ -610,7 +597,22 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   playerFootstep: {fileID: 0}
   footstepInterval: 0.45
-  canMove: 1
+--- !u!114 &8240368774250594449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd30b5d39a07c7b45b135c75afab90ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerGravity
+  playerInputReader: {fileID: 8956652460274281639}
+  playerMover: {fileID: 404796220867514065}
+  gravity: -25
+  groundedStickForce: -2
 --- !u!114 &388139220132730565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2085,7 +2087,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 21751
+    m_Bits: 21719
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: ba0fe6e5b85e03841b791463339920a8, type: 2}
   m_TargetDisplay: 0
@@ -2187,7 +2189,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   inventory: []
-  doDuplicateEntries: 1
+  doDuplicates: 0
+  grimoire: {fileID: 446425657346133023}
+  dialogueManager: {fileID: 0}
 --- !u!1 &8480272664644083455
 GameObject:
   m_ObjectHideFlags: 0
@@ -2267,6 +2271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 911c86f751db6c94081de9b03a599a92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSway
+  playerInputReader: {fileID: 8956652460274281639}
   moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookAction: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   enableSway: 1
@@ -2623,6 +2628,10 @@ PrefabInstance:
       propertyPath: grimoireMenu
       value: 
       objectReference: {fileID: 1041928120879739539, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+    - target: {fileID: 7649480553947373842, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
+      propertyPath: playerInputReader
+      value: 
+      objectReference: {fileID: 8956652460274281639}
     - target: {fileID: 7926319934065651701, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: combinedCam
       value: 

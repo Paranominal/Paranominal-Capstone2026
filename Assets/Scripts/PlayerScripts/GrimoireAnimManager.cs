@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 
 public class GrimoireAnimManager : MonoBehaviour
 {
+    [SerializeField] private PlayerInputReader playerInputReader;
     [SerializeField] private Animator grimoireAnimator;
     [SerializeField] private ALTGrimoire altGrimoire;
     [SerializeField] private InputActionReference grimoireScroll;
@@ -34,6 +35,8 @@ public class GrimoireAnimManager : MonoBehaviour
     }
     void Update()
     {
+        if (!playerInputReader.canMove) return;
+        
         ControlBools();
 
         OpenOnScroll();

@@ -17,9 +17,6 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private float footstepInterval = 0.45f;
     private float footstepTimer;
 
-    public bool canMove = true;
-    public bool CanMove => canMove;
-
     private CharacterController characterController;
 
     private void Awake()
@@ -32,7 +29,7 @@ public class PlayerMover : MonoBehaviour
 
     private void Update()
     {
-        if (!canMove)
+        if (!inputReader.canMove)
             return;
 
         Vector2 moveInput = inputReader != null ? inputReader.MoveInput : Vector2.zero;
