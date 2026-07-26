@@ -170,7 +170,7 @@ public class ScanController : MonoBehaviour
         if (target.itemDefinition == null) return;
 
         if (inventory != null)
-            inventory.Add(target.itemDefinition, 1);
+            inventory.Add(target.itemDefinition, target.pickupQuantity);
 
         if (discoveryLog != null && !discoveryLog.HasDiscovered(target.itemDefinition))
         {

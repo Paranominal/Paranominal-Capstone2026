@@ -93,7 +93,6 @@ public class WeaponController : MonoBehaviour
         shootSilverAction = InputSystem.actions.FindAction(silverActionName);
         reloadAction = InputSystem.actions.FindAction(reloadActionName);
 
-        if (gunVisuals == null) gunVisuals = GetComponent<GunVisuals>();
         if (cameraRecoilController == null) cameraRecoilController = FindAnyObjectByType<CameraRecoilController>();
         if (raycaster == null) raycaster = FindAnyObjectByType<Raycaster>();
 
@@ -103,6 +102,15 @@ public class WeaponController : MonoBehaviour
 
     private void Start()
     {
+        // EDIT (weapon manager): if no weapon is assigned at start, disable weapon
+        // and wait for WeaponManager to equip one.
+        if (activeWeapon == null)
+        {
+            weaponEnabled = false;
+            isWeaponActive = false;
+            return;
+        }
+
         isWeaponActive = !weaponEnabled;
         SetWeaponEnabled(weaponEnabled);
 
@@ -173,10 +181,35 @@ public class WeaponController : MonoBehaviour
     // Summary: Equip a new weapon definition. Resets ammo and state to match the new weapon's stats.
     public void EquipWeapon(WeaponDefinition weapon)
     {
+        EquipWeapon(weapon, gunVisuals);
+    }
+
+    // Summary: Equip a weapon with a specific GunVisuals reference. Used by WeaponManager
+    // when activating a weapon slot.
+    // EDIT (weapon manager): added overload so WeaponManager can set both definition and visuals.
+    public void EquipWeapon(WeaponDefinition weapon, GunVisuals visuals)
+    {
         CancelActiveState();
         activeWeapon = weapon;
-        InitFromDefinition(weapon);
-        AmmoChanged?.Invoke(currentAmmo, MagazineSize);
+        gunVisuals = visuals;
+
+        if (weapon != null)
+        {
+            InitFromDefinition(weapon);
+            isWeaponActive = false;   // force SetWeaponEnabled to run
+            SetWeaponEnabled(true);
+            AmmoChanged?.Invoke(currentAmmo, MagazineSize);
+        }
+    }
+
+    // Summary: Unequips the current weapon. Hides visuals and disables firing.
+    // EDIT (weapon manager): added so WeaponManager can clear the active weapon.
+    public void UnequipWeapon()
+    {
+        CancelActiveState();
+        SetWeaponEnabled(false);
+        activeWeapon = null;
+        gunVisuals = null;
     }
 
     private void InitFromDefinition(WeaponDefinition def)

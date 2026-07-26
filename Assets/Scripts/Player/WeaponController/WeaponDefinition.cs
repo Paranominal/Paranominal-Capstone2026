@@ -1,15 +1,11 @@
 using UnityEngine;
 
-// Summary: Per-weapon-type stats. Create one asset per gun. The WeaponController reads from
-// whichever definition is currently equipped. Adding a new gun is "create SO, set up prefab, assign."
+// Summary: Per-weapon-type stats. Extends ItemDefinition so weapons can be stored in the
+// Inventory like any other item while also carrying weapon-specific configuration.
+// Create one asset per gun via Create > Game > Weapon Definition.
 [CreateAssetMenu(fileName = "NewWeapon", menuName = "Game/Weapon Definition")]
-public class WeaponDefinition : ScriptableObject
+public class WeaponDefinition : ItemDefinition
 {
-    [Tooltip("Stable unique identifier for save/load.")]
-    public string id;
-
-    public string displayName;
-
     [Header("Ammo")]
     public int magazineSize = 6;
     public float reloadDuration = 2f;
@@ -25,4 +21,8 @@ public class WeaponDefinition : ScriptableObject
     [Header("Ammo Types")]
     public bool ironBarrelAvailable = true;
     public bool silverBarrelAvailable = true;
+
+    [Header("Equipment")]
+    [Tooltip("The first-person weapon model prefab. Instantiated under the hand transform when equipped.")]
+    public GameObject equippedPrefab;
 }

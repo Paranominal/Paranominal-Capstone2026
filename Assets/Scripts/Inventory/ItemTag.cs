@@ -12,4 +12,5 @@ public enum ItemTag
     Throwable   = 1 << 3,
     Spell       = 1 << 4,
     Enemy       = 1 << 5,
+    Weapon      = 1 << 6,
 }

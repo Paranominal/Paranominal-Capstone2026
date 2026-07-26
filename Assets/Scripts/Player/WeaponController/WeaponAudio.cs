@@ -16,13 +16,14 @@ public class WeaponAudio : MonoBehaviour
 
     private void Reset()
     {
-        weaponController = GetComponent<WeaponController>();
         fireSource = GetComponent<AudioSource>();
     }
 
+    // EDIT (weapon manager): WeaponController is on the Player, not on the weapon prefab.
+    // Use FindAnyObjectByType instead of GetComponent.
     private void Awake()
     {
-        if (weaponController == null) weaponController = GetComponent<WeaponController>();
+        if (weaponController == null) weaponController = FindAnyObjectByType<WeaponController>();
         if (fireSource == null) fireSource = GetComponent<AudioSource>();
     }
 

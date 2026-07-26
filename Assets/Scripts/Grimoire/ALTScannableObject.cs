@@ -9,6 +9,8 @@ public class ALTScannableObject : MonoBehaviour
     public Outline outline; // used for objects that DO NOT have a mesh outline
     public bool collectable;
     public float scanDuration = 2f; // how long should this object take to scan?
+    [Tooltip("How many of this item the player receives on pickup.")]
+    public int pickupQuantity = 1;
 
     public bool usesMeshOutline = false;
     public Renderer outlineRenderer; // used for objects that DO have a mesh outline
