@@ -997,6 +997,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3593870966330494692, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+      propertyPath: m_RenderPostProcessing
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3607936452381580198, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2760,7 +2764,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0, g: 1, b: 0.2045455, a: 1}
     m_PressedColor: {r: 0.3375893, g: 0.18627627, b: 0.4339623, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.4566037, g: 0.23347092, b: 0.3527648, a: 0.7764706}
+    m_DisabledColor: {r: 0, g: 0, b: 0, a: 0}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -2779,9 +2783,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 367169832}
-        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
-        m_MethodName: ChangeScene
+      - m_Target: {fileID: 4302207120811932538, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: QuitGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2948,7 +2952,7 @@ GameObject:
   - component: {fileID: 2019828286}
   - component: {fileID: 2019828285}
   m_Layer: 5
-  m_Name: StartButton
+  m_Name: AboutButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
