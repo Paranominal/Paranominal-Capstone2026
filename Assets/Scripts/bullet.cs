@@ -9,7 +9,7 @@ public class Bullet : MonoBehaviour
     [SerializeField] private Rigidbody bulletRigidbody;
     public float speed = 1;
     public bool stuck;
-    [SerializeField] private List<RotateEffect> rotationEffects;
+    [SerializeField] private List<FloatAndRotate> rotationEffects;
     private void Start()
     {
         SetSpeed();
@@ -51,7 +51,7 @@ public class Bullet : MonoBehaviour
         bulletRigidbody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ;
         stuck = true;
         bulletCollider.enabled = false;
-        foreach (RotateEffect rotate in rotationEffects)
+        foreach (FloatAndRotate rotate in rotationEffects)
         {
             rotate.enabled = false;
         }
