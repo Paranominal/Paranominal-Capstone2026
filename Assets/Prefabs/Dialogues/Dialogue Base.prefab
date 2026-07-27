@@ -313,12 +313,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8283e6e80b2870149bed84f51959e99e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RotateEffect
-  xSpeed: 0
-  ySpeed: 0
-  zSpeed: 0
-  worldXSpeed: 0
-  worldYSpeed: 25
-  worldZSpeed: 0
+  rotateLocalXSpeed: 0
+  rotateLocalYSpeed: 0
+  rotateLocalZSpeed: 0
+  rotateWorldXSpeed: 0
+  rotateWorldYSpeed: 25
+  rotateWorldZSpeed: 0
+  floatLocalXAmplitude: 0
+  floatLocalXFrequency: 0
+  floatLocalYAmplitude: 0
+  floatLocalYFrequency: 0
+  floatLocalZAmplitude: 0
+  floatLocalZFrequency: 0
+  floatWorldXAmplitude: 0
+  floatWorldXFrequency: 0
+  floatWorldYAmplitude: 0
+  floatWorldYFrequency: 0
+  floatWorldZAmplitude: 0
+  floatWorldZFrequency: 0
 --- !u!1 &4197093162170286174
 GameObject:
   m_ObjectHideFlags: 0
@@ -641,7 +653,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8686141058165096568}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2169175314f6d214c927bde8e12a078d, type: 3}
   m_Name: 
@@ -650,6 +662,7 @@ MonoBehaviour:
   itemName: {fileID: 6884071032359513546}
   description: {fileID: 5907143231128102568}
   itemDisplay: {fileID: 2271271945137899092}
+  cursorLockOnClose: 1
 --- !u!1001 &6919939711273588865
 PrefabInstance:
   m_ObjectHideFlags: 0

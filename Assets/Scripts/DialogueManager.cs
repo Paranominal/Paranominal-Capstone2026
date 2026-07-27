@@ -4,8 +4,8 @@ using UnityEngine;
 public class DialogueManager : MonoBehaviour
 {
     //[SerializeField] private PauseManager
-    // [HideInInspector] public Dialogue dialogue;
-    private GameObject dialogue;
+    //[HideInInspector] public Dialogue dialogue;
+    private GameObject dialogueObject;
     [SerializeField] private GameObject dialogueCanvas;
     public PlayerInputReader playerInputReader;
     public WeaponInputReader weaponInputReader;
@@ -19,8 +19,8 @@ public class DialogueManager : MonoBehaviour
         UpdateDialogue(pickupDialogue);
         //Time.timeScale = 0f; //pause game
         dialogueCanvas.SetActive(true); //activate UI
-        playerInputReader.canMove = false;
-        weaponInputReader.canShoot = false;
+        if (playerInputReader != null) playerInputReader.canMove = false;
+        if (playerInputReader != null) weaponInputReader.canShoot = false;
         SetCursorModeLocked(false); //unlock cursor
     }
 
@@ -33,30 +33,18 @@ public class DialogueManager : MonoBehaviour
 
     public void CloseDialogue() // public for menu button presses to activate
     {
-        SetCursorModeLocked(true); //lock cursor again
-        playerInputReader.canMove = true;
-        weaponInputReader.canShoot = true;
+        if (dialogueObject != null) SetCursorModeLocked(dialogueObject.GetComponent<Dialogue>().cursorLockOnClose); //lock cursor again
+        if (playerInputReader != null) playerInputReader.canMove = true;
+        if (weaponInputReader != null) weaponInputReader.canShoot = true;
         dialogueCanvas.gameObject.SetActive(false); //deactivate dialogue
-        //Time.timeScale = 1f; //resume game
+        // Time.timeScale = 1f; //resume game
     }
 
     public void UpdateDialogue(GameObject pickupDialogue)
     {
-        // // do text
-        // dialogue.action.text = newDialogue.action.text;
-        // dialogue.itemName.text = newDialogue.itemName.text;
-        // dialogue.description.text = newDialogue.description.text;
-        // dialogue.button.text = newDialogue.button.text;
-        // //do item display
-        // // Instantiate(newDialogue.itemDisplay, dialogue.itemDisplay.transform.position, dialogue.itemDisplay.transform.rotation);
-        // Instantiate(newDialogue.itemDisplay, dialogue.itemDisplay.transform.parent, false);
-        // Destroy(dialogue.itemDisplay);
-        // dialogue.itemDisplay = newDialogue.itemDisplay;
-
         GameObject newDialogue = Instantiate(pickupDialogue, dialogueCanvas.transform, false);
-        if (dialogue != null) Destroy(dialogue);
-        dialogue = newDialogue;
-
+        if (dialogueObject != null) Destroy(dialogueObject);
+        dialogueObject = newDialogue;
     }
 
     void SetCursorModeLocked(bool mode) //true for locked, false for unlocked

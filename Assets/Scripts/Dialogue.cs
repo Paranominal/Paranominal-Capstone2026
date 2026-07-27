@@ -8,4 +8,5 @@ public class Dialogue : MonoBehaviour
     public TextMeshProUGUI itemName;
     public TextMeshProUGUI description;
     public GameObject itemDisplay;
+    public bool cursorLockOnClose;
 }
