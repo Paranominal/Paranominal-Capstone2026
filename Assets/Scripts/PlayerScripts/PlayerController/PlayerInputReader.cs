@@ -39,4 +39,16 @@ public class PlayerInputReader : MonoBehaviour
         Cursor.lockState = lockMode;
         Cursor.visible = visible;
     }
+    private void Update()
+    {
+        AnyInput();
+    }
+    public bool AnyInput()
+    {
+        if (moveAction.action.IsPressed()) return true;
+        else if (sprintAction.action.IsPressed()) return true;
+        else if (slowWalkAction.action.IsPressed()) return true;
+        else if (lookAction.action.IsPressed()) return true;
+        else return false;
+    }
 }

@@ -14,4 +14,17 @@ public class WeaponInputReader : MonoBehaviour
     public bool WasIronPressedThisFrame() => shootIronAction != null && shootIronAction.action.WasPressedThisFrame();
     public bool WasSilverPressedThisFrame() => shootSilverAction != null && shootSilverAction.action.WasPressedThisFrame();
     public bool WasReloadPressedThisFrame() => reloadAction != null && reloadAction.action.WasPressedThisFrame();
+
+    
+    private void Update()
+    {
+        AnyInput();
+    }
+    public bool AnyInput()
+    {
+        if (shootIronAction.action.IsPressed()) return true;
+        else if (shootSilverAction.action.IsPressed()) return true;
+        else if (reloadAction.action.IsPressed()) return true;
+        else return false;
+    }
 }
