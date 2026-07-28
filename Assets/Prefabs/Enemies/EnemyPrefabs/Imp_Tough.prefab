@@ -276,6 +276,12 @@ PrefabInstance:
       addedObject: {fileID: 890572175738831275}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6780255270900913490, guid: 90cad4ddb320cd544b4c63f73d0b5fa3, type: 3}
+      insertIndex: 9
+      addedObject: {fileID: 3576452156375014637}
+    - targetCorrespondingSourceObject: {fileID: 6780255270900913490, guid: 90cad4ddb320cd544b4c63f73d0b5fa3, type: 3}
+      insertIndex: 10
+      addedObject: {fileID: 7028624654398769897}
+    - targetCorrespondingSourceObject: {fileID: 6780255270900913490, guid: 90cad4ddb320cd544b4c63f73d0b5fa3, type: 3}
       insertIndex: -1
       addedObject: {fileID: -5983561293988471563}
     - targetCorrespondingSourceObject: {fileID: 1755855089570520852, guid: 90cad4ddb320cd544b4c63f73d0b5fa3, type: 3}
@@ -367,6 +373,36 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6780255270900913490, guid: 90cad4ddb320cd544b4c63f73d0b5fa3, type: 3}
   m_PrefabInstance: {fileID: 3320200518859871110}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3576452156375014637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8073818306319025876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3746d996ef944e499d8322f1529af6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanTarget
+  enemyDefinition: {fileID: 11400000, guid: 5be0be4a46f10a049b8a83a2432ffd6f, type: 2}
+  scanDuration: 3
+--- !u!114 &7028624654398769897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8073818306319025876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c70cc4452b93ef647bbcb3e478c7ba25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanOutline
+  outline: {fileID: 8884985544142034726}
+  usesMeshOutline: 0
+  outlineRenderer: {fileID: 0}
+  outlineMaterialIndex: 1
 --- !u!114 &-5983561293988471563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -380,3 +416,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ToTough
   hitsToStagger: 3
+--- !u!114 &8884985544142034726 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6151485535973328032, guid: 90cad4ddb320cd544b4c63f73d0b5fa3, type: 3}
+  m_PrefabInstance: {fileID: 3320200518859871110}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8073818306319025876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline

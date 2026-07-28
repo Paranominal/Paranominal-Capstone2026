@@ -1,17 +1,20 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Summary: Finds the interactable the player is looking at (proximity + look direction + line-of-sight),
-// drives the HUD and world-space prompt presenters, and routes the interact button to that target.
+// Summary: Two-pass interaction detection.
+// Pass 1 (proximity): OverlapSphere finds nearby interactables, drives WorldSpace prompts.
+// Pass 2 (aim): reads the shared Raycaster hit, drives HUD prompts and routes interact input.
+// EDIT (raycaster-consolidation): aim detection uses Raycaster.Instance instead of its own ray.
+// EDIT (interaction-rework): proximity and aim are now independent; both presenters can show simultaneously.
 public class InteractionFocusController : MonoBehaviour
 {
-    [Header("Detection")]
+    [Header("Proximity Detection (WorldSpace Prompts)")]
     [SerializeField] private LayerMask interactableMask;
     [SerializeField] private LayerMask obstructionMask;
-    [SerializeField] private float outerRadius = 4f;
-    [SerializeField] private float innerRadius = 2f;
-    [Range(0f, 1f)]
-    [SerializeField] private float lookThreshold = 0.6f;
+    [SerializeField] private float proximityRadius = 4f;
+
+    [Header("Aim Detection (HUD Prompts)")]
+    [SerializeField] private float interactionRange = 10f;
 
     [Header("Presenters")]
     [SerializeField] private HudPromptPresenter hudPresenter;
@@ -30,7 +33,6 @@ public class InteractionFocusController : MonoBehaviour
         cam = Camera.main;
         interactAction = InputSystem.actions.FindAction(interactActionName);
 
-        // EDIT (auto-resolve): fallback for cross-prefab references.
         if (hudPresenter == null)
             hudPresenter = FindAnyObjectByType<HudPromptPresenter>();
         if (worldPresenter == null)
@@ -42,7 +44,6 @@ public class InteractionFocusController : MonoBehaviour
         {
             player = transform,
             camera = cam,
-            grimoire = ALTGrimoire.instance,
             inventory = inventory,
         };
 
@@ -71,22 +72,36 @@ public class InteractionFocusController : MonoBehaviour
         if (cam == null) return;
 
         context.camera = cam;
-        if (context.grimoire == null) context.grimoire = ALTGrimoire.instance;
         if (context.inventory == null) context.inventory = FindAnyObjectByType<Inventory>();
 
-        IInteractable best = null;
-        float bestStrength = 0f;
-
         Vector3 camPos = cam.transform.position;
-        Vector3 camFwd = cam.transform.forward;
 
-        Collider[] hits = Physics.OverlapSphere(camPos, outerRadius, interactableMask);
+        // -- Pass 1: Proximity (WorldSpace prompts) --
+        DriveWorldPrompt(camPos);
+
+        // -- Pass 2: Aim via Raycaster (HUD prompts + interact input) --
+        DriveAimPrompt();
+    }
+
+    // Summary: OverlapSphere for nearby interactables. Shows the nearest WorldSpace prompt.
+    private void DriveWorldPrompt(Vector3 camPos)
+    {
+        IInteractable bestWorld = null;
+        float bestProximity = 0f;
+        InteractionPrompt bestPrompt = InteractionPrompt.None;
+
+        Collider[] hits = Physics.OverlapSphere(camPos, proximityRadius, interactableMask);
         foreach (Collider col in hits)
         {
-            IInteractable it = col.GetComponentInParent<IInteractable>();
+            IInteractable it = col.GetComponent<IInteractable>();
+            if (it == null)
+                it = col.GetComponentInParent<IInteractable>();
             if (it == null) continue;
 
-            // ClosestPoint doesn't support non-convex MeshColliders; fall back to bounds.
+            InteractionPrompt prompt = it.ResolvePrompt(context);
+            if (prompt.surface != PromptSurface.WorldSpace) continue;
+
+            // ClosestPoint fallback for non-convex MeshColliders.
             Vector3 point;
             if (col is MeshCollider mc && !mc.convex)
                 point = col.bounds.ClosestPoint(camPos);
@@ -94,60 +109,76 @@ public class InteractionFocusController : MonoBehaviour
                 point = col.ClosestPoint(camPos);
 
             float dist = Vector3.Distance(camPos, point);
-            float proximity = Mathf.InverseLerp(outerRadius, innerRadius, dist);
+            float proximity = Mathf.InverseLerp(proximityRadius, 0f, dist);
 
-            Vector3 dir = (point - camPos).normalized;
-            float look = Mathf.InverseLerp(lookThreshold, 1f, Vector3.Dot(camFwd, dir));
-
-            float strength = proximity * look;
-            if (strength <= bestStrength) continue;
-
+            if (proximity <= bestProximity) continue;
             if (Physics.Linecast(camPos, point, obstructionMask)) continue;
 
-            best = it;
-            bestStrength = strength;
+            bestWorld = it;
+            bestProximity = proximity;
+            bestPrompt = prompt;
         }
 
-        DrivePresenters(best, bestStrength);
-
-        if (best != null && bestStrength > 0f && interactAction != null && interactAction.WasReleasedThisFrame())
+        if (bestWorld != null && bestProximity > 0f)
         {
-            best.Interact(context);
+            worldPresenter?.SetTarget(bestPrompt, bestProximity);
+        }
+        else
+        {
+            worldPresenter?.Clear();
         }
     }
 
-    private void DrivePresenters(IInteractable focused, float strength)
+    // Summary: Reads the shared Raycaster hit. Shows HUD prompt for the aimed interactable
+    // and routes interact input to it.
+    private void DriveAimPrompt()
     {
-        if (focused == null || strength <= 0f)
+        Raycaster raycaster = Raycaster.Instance;
+        if (raycaster == null || !raycaster.HasHit)
         {
             hudPresenter?.Clear();
-            worldPresenter?.Clear();
             return;
         }
 
-        InteractionPrompt prompt = focused.ResolvePrompt(context);
-        switch (prompt.surface)
+        // Range check against our own interaction distance.
+        if (raycaster.Hit.distance > interactionRange)
         {
-            case PromptSurface.Hud:
-                hudPresenter?.SetTarget(prompt, strength);
-                worldPresenter?.Clear();
-                break;
-            case PromptSurface.WorldSpace:
-                worldPresenter?.SetTarget(prompt, strength);
-                hudPresenter?.Clear();
-                break;
-            default:
-                hudPresenter?.Clear();
-                worldPresenter?.Clear();
-                break;
+            hudPresenter?.Clear();
+            return;
+        }
+
+        // EDIT (interaction-rework): check the hit collider's own object first,
+        // then walk up. Prevents parent-shadowing (e.g. Lock on a Door child object).
+        IInteractable aimed = raycaster.Hit.collider.GetComponent<IInteractable>();
+        if (aimed == null)
+            aimed = raycaster.Hit.collider.GetComponentInParent<IInteractable>();
+
+        if (aimed == null)
+        {
+            hudPresenter?.Clear();
+            return;
+        }
+
+        InteractionPrompt prompt = aimed.ResolvePrompt(context);
+        if (prompt.surface == PromptSurface.Hud)
+        {
+            hudPresenter?.SetTarget(prompt, 1f);
+        }
+        else
+        {
+            hudPresenter?.Clear();
+        }
+
+        // Route interact input regardless of prompt surface.
+        if (interactAction != null && interactAction.WasReleasedThisFrame())
+        {
+            aimed.Interact(context);
         }
     }
 
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, outerRadius);
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, innerRadius);
+        Gizmos.DrawWireSphere(transform.position, proximityRadius);
     }
 }

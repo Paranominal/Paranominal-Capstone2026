@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 5425350769874602465}
   - component: {fileID: 8192007907820673360}
   - component: {fileID: 4206877478203493182}
-  - component: {fileID: 97054203973693678}
+  - component: {fileID: 3980192960975906712}
+  - component: {fileID: 693902759421716283}
   - component: {fileID: -4000586417156685449}
   - component: {fileID: 2480451604828081716}
   m_Layer: 8
@@ -134,7 +135,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &97054203973693678
+--- !u!114 &3980192960975906712
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,18 +144,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 272941483086651391}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Script: {fileID: 11500000, guid: f3746d996ef944e499d8322f1529af6a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry:
-    entryName: Ghost
-    flavourText: A hostile spirit.
-    hintText: I was wondering where all the hotel's residents went...
-    completeText: 
-    snapshotImage: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::ScanTarget
+  enemyDefinition: {fileID: 11400000, guid: deaba3c996ec16e448e95af9dafa2520, type: 2}
+  scanDuration: 2
+--- !u!114 &693902759421716283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272941483086651391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c70cc4452b93ef647bbcb3e478c7ba25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanOutline
   outline: {fileID: -4000586417156685449}
-  collectable: 0
-  scanDuration: 0.3
   usesMeshOutline: 0
   outlineRenderer: {fileID: 0}
   outlineMaterialIndex: 1

@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5842611078977597605}
   - component: {fileID: 8693804829234289788}
-  - component: {fileID: 582665823660914100}
+  - component: {fileID: 8166021078136222951}
+  - component: {fileID: 2403981676289648271}
   - component: {fileID: 5259456795974910808}
   - component: {fileID: 7618677114904720666}
   m_Layer: 8
@@ -45,7 +46,7 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4684668044347904038}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &582665823660914100
+--- !u!114 &8166021078136222951
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -54,20 +55,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 4684668044347904038}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Script: {fileID: 11500000, guid: 9d0707b1595ce6a4597ddd91d0fee311, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry:
-    entryName: Staffroom Key
-    flavourText: Key to the Staff Only area
-    hintText: 
-    completeText: 
-    collected: 0
-    snapshotImage: {fileID: 0}
-  outline: {fileID: 5259456795974910808}
-  collectable: 1
-  scanDuration: 2
+  m_EditorClassIdentifier: Assembly-CSharp::WorldItem
   itemDefinition: {fileID: 11400000, guid: 7616ebefbf5843e409e14c5e6225311d, type: 2}
+  pickupQuantity: 1
+  collectable: 1
+  requiresScan: 0
+  scanDuration: 2
+  pickupSound: {fileID: 0}
+--- !u!114 &2403981676289648271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4684668044347904038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c70cc4452b93ef647bbcb3e478c7ba25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanOutline
+  outline: {fileID: 5259456795974910808}
   usesMeshOutline: 0
   outlineRenderer: {fileID: 0}
   outlineMaterialIndex: 1

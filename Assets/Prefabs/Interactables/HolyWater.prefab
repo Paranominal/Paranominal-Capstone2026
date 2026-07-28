@@ -68,6 +68,9 @@ PrefabInstance:
       addedObject: {fileID: 5842817947237861027}
     - targetCorrespondingSourceObject: {fileID: 5777984343822318398, guid: a3567df644e2a2a4eae2b9059b1b424e, type: 3}
       insertIndex: -1
+      addedObject: {fileID: -5762407879501105462}
+    - targetCorrespondingSourceObject: {fileID: 5777984343822318398, guid: a3567df644e2a2a4eae2b9059b1b424e, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1667012741680549836}
     - targetCorrespondingSourceObject: {fileID: 5777984343822318398, guid: a3567df644e2a2a4eae2b9059b1b424e, type: 3}
       insertIndex: -1
@@ -90,20 +93,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry:
-    entryName: Holy Water
-    flavourText: Holy water. A part of many sacred rituals.
-    hintText: Could be capable of cleansing demonic wards.
-    completeText: 
-    collected: 0
-    snapshotImage: {fileID: 0}
+  itemDefinition: {fileID: 11400000, guid: 66f9fbbbdda2f8942adb5ca8cd217f09, type: 2}
   outline: {fileID: 1667012741680549836}
   collectable: 1
   scanDuration: 2
-  itemDefinition: {fileID: 11400000, guid: 66f9fbbbdda2f8942adb5ca8cd217f09, type: 2}
+  pickupQuantity: 1
   usesMeshOutline: 0
   outlineRenderer: {fileID: 0}
   outlineMaterialIndex: 1
+--- !u!114 &-5762407879501105462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5995851088844131008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d0707b1595ce6a4597ddd91d0fee311, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldItem
+  itemDefinition: {fileID: 11400000, guid: 66f9fbbbdda2f8942adb5ca8cd217f09, type: 2}
+  pickupQuantity: 1
+  collectable: 1
+  requiresScan: 1
+  scanDuration: 2
+  pickupSound: {fileID: 0}
 --- !u!114 &1667012741680549836
 MonoBehaviour:
   m_ObjectHideFlags: 0

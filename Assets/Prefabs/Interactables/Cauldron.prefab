@@ -132,6 +132,7 @@ MonoBehaviour:
   outline: {fileID: 5501344799788246202}
   collectable: 0
   scanDuration: 2
+  pickupQuantity: 1
   usesMeshOutline: 0
   outlineRenderer: {fileID: 0}
   outlineMaterialIndex: 1
@@ -309,10 +310,13 @@ PrefabInstance:
       addedObject: {fileID: 6039610639696648841}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5d8352d50ce8e4d4fbd741000c0bbcea, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 263424438954455215}
+      addedObject: {fileID: 3703492279825902000}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5d8352d50ce8e4d4fbd741000c0bbcea, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3703492279825902000}
+      addedObject: {fileID: 7017145099641363054}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5d8352d50ce8e4d4fbd741000c0bbcea, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4709806943547116257}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5d8352d50ce8e4d4fbd741000c0bbcea, type: 3}
       insertIndex: -1
       addedObject: {fileID: 9076875559891293055}
@@ -347,25 +351,6 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   brewSuccessSound: {fileID: 0}
   brewFailSound: {fileID: 0}
---- !u!114 &263424438954455215
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7989190696244721844}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  itemDefinition: {fileID: 0}
-  outline: {fileID: 9076875559891293055}
-  collectable: 0
-  scanDuration: 1.5
-  usesMeshOutline: 0
-  outlineRenderer: {fileID: 0}
-  outlineMaterialIndex: 1
 --- !u!64 &3703492279825902000
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -388,6 +373,38 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 72713781330414003, guid: 5d8352d50ce8e4d4fbd741000c0bbcea, type: 3}
+--- !u!114 &7017145099641363054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7989190696244721844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d0707b1595ce6a4597ddd91d0fee311, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldItem
+  itemDefinition: {fileID: 11400000, guid: 9adb8e48ed4e0094fb9faadb3cd5ada2, type: 2}
+  pickupQuantity: 0
+  collectable: 0
+  scanDuration: 1
+--- !u!114 &4709806943547116257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7989190696244721844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c70cc4452b93ef647bbcb3e478c7ba25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanOutline
+  outline: {fileID: 9076875559891293055}
+  usesMeshOutline: 0
+  outlineRenderer: {fileID: 0}
+  outlineMaterialIndex: 1
 --- !u!114 &9076875559891293055
 MonoBehaviour:
   m_ObjectHideFlags: 0

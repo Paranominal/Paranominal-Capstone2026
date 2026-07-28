@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1238455157926057541}
   - component: {fileID: 2499918054773310183}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,9 +101,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1688630303797848335}
   - component: {fileID: 8919746013310607801}
-  - component: {fileID: 7806677775689557063}
+  - component: {fileID: 7300822974017035107}
+  - component: {fileID: 2205994167204054998}
   - component: {fileID: 9150378358247883501}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: Note
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -147,7 +148,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.27
   m_Center: {x: 0, y: 0, z: -0.08}
---- !u!114 &7806677775689557063
+--- !u!114 &7300822974017035107
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -156,17 +157,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 5100173732120776299}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Script: {fileID: 11500000, guid: 9d0707b1595ce6a4597ddd91d0fee311, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry:
-    entryName: Note
-    flavourText: This is what the note says.
-    hintText: This is what Miriam thinks about the note.
-    completeText: 
-    snapshotImage: {fileID: 0}
-  outline: {fileID: 9150378358247883501}
+  m_EditorClassIdentifier: Assembly-CSharp::WorldItem
+  itemDefinition: {fileID: 0}
+  pickupQuantity: 1
   collectable: 1
+  scanDuration: 1
+--- !u!114 &2205994167204054998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5100173732120776299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c70cc4452b93ef647bbcb3e478c7ba25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanOutline
+  outline: {fileID: 9150378358247883501}
+  usesMeshOutline: 0
+  outlineRenderer: {fileID: 0}
+  outlineMaterialIndex: 1
 --- !u!114 &9150378358247883501
 MonoBehaviour:
   m_ObjectHideFlags: 0

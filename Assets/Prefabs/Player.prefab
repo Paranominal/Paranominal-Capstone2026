@@ -805,9 +805,8 @@ MonoBehaviour:
   obstructionMask:
     serializedVersion: 2
     m_Bits: 20480
-  outerRadius: 4
-  innerRadius: 2
-  lookThreshold: 0.6
+  proximityRadius: 4
+  interactionRange: 3
   hudPresenter: {fileID: 0}
   worldPresenter: {fileID: 0}
   interactActionName: Collect
@@ -1026,12 +1025,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e3ff577d2717b847b36dc25287463d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScanController
-  scannable:
-    serializedVersion: 2
-    m_Bits: 256
   reticle: {fileID: 0}
   scanRange: 20
-  itemPickupSound: {fileID: 11400000, guid: 730fb5d232b4f4f4583007432f52eef5, type: 2}
   scanSound: {fileID: 11400000, guid: 03fb4babbd4bfe3498e8f2c4383b0daf, type: 2}
   audioSource: {fileID: 3153474681554931024}
 --- !u!114 &8732194677099092532

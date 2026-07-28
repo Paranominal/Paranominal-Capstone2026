@@ -69,14 +69,61 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6780255270900913490, guid: 90cad4ddb320cd544b4c63f73d0b5fa3, type: 3}
+      insertIndex: 11
+      addedObject: {fileID: 508139474161219992}
+    - targetCorrespondingSourceObject: {fileID: 6780255270900913490, guid: 90cad4ddb320cd544b4c63f73d0b5fa3, type: 3}
+      insertIndex: 12
+      addedObject: {fileID: 7372905572603804006}
+    - targetCorrespondingSourceObject: {fileID: 6780255270900913490, guid: 90cad4ddb320cd544b4c63f73d0b5fa3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2021400115077911762}
   m_SourcePrefab: {fileID: 100100000, guid: 90cad4ddb320cd544b4c63f73d0b5fa3, type: 3}
+--- !u!114 &434535487660214245 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6151485535973328032, guid: 90cad4ddb320cd544b4c63f73d0b5fa3, type: 3}
+  m_PrefabInstance: {fileID: 6006025339299234629}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 955323903346595351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
 --- !u!1 &955323903346595351 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6780255270900913490, guid: 90cad4ddb320cd544b4c63f73d0b5fa3, type: 3}
   m_PrefabInstance: {fileID: 6006025339299234629}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &508139474161219992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 955323903346595351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3746d996ef944e499d8322f1529af6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanTarget
+  enemyDefinition: {fileID: 11400000, guid: 9af7c344b0505ac46ac70db915b51f24, type: 2}
+  scanDuration: 1
+--- !u!114 &7372905572603804006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 955323903346595351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c70cc4452b93ef647bbcb3e478c7ba25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanOutline
+  outline: {fileID: 434535487660214245}
+  usesMeshOutline: 0
+  outlineRenderer: {fileID: 0}
+  outlineMaterialIndex: 1
 --- !u!114 &2021400115077911762
 MonoBehaviour:
   m_ObjectHideFlags: 0

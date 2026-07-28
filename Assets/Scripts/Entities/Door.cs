@@ -1,6 +1,10 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// Summary: Door with open/close/ajar/slam states and arena-lock support.
+// EDIT (lock-extraction): key-lock logic moved to the Lock component.
+// Door is now purely a door: it knows whether it's unlocked, but the key-checking
+// and unlocking mechanism lives on Lock (or Ward, or ScannableLock).
 [RequireComponent(typeof(AudioSource))]
 public class Door : MonoBehaviour, IInteractable
 {
@@ -11,10 +15,8 @@ public class Door : MonoBehaviour, IInteractable
         Closed,
     }
 
-    public LayerMask interactable;  // NOTE: no longer used by Door itself; interaction now runs through InteractionFocusController. Left in case it's referenced elsewhere.
-
-    public bool unlocked;   // at the moment the door can theoretically be "locked" open but thats neither here nor there
-    public bool isEncounterLocked;  // This is just for specifying that the door was locked by an encounter/arena - basically only needed if specific visuals will be implemented
+    public bool unlocked;
+    public bool isEncounterLocked;
     public DoorState state;
     public float speed = 10;
     public float slamSpeed = 20;
@@ -29,12 +31,10 @@ public class Door : MonoBehaviour, IInteractable
     public float ajarDistance = 3;
     private PlayerMover player;
 
-    [Header("Interaction Prompt")]
-    public ItemDefinition requiredKey;
-    public bool consumesKey = true;         // whether using the key spends it from inventory
-    public bool hideUntilAttempted;         // hide the world "Locked" label until the player first tries the door
-    public Transform promptAnchor;          // where the world-space "Locked" label floats (place over the lock)
-    [HideInInspector] public bool revealed; // set once the player has attempted a hidden-lock door
+    [Header("Prompt")]
+    public Transform promptAnchor;
+    public bool hideUntilAttempted;
+    [HideInInspector] public bool revealed;
 
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
@@ -42,7 +42,6 @@ public class Door : MonoBehaviour, IInteractable
     [SerializeField] private SoundDataSO openSound;
     [SerializeField] private SoundDataSO closeSound;
     [SerializeField] private SoundDataSO lockedSound;
-    // EDIT (ward system): dedicated unlock sound. Assign the Unlock.asset from Audio/lock/.
     [SerializeField] private SoundDataSO unlockSound;
 
     void Start()
@@ -52,21 +51,15 @@ public class Door : MonoBehaviour, IInteractable
         actualSpeed = speed;
 
         if (doorCollider == null)
-        {
             doorCollider = GetComponentInChildren<Collider>();
-        }
 
         if (audioSource == null)
-        {
             audioSource = GetComponent<AudioSource>();
-        }
+
         if (player == null)
-        {
-            player = FindAnyObjectByType<PlayerMover>();    //there is no failsafe here if there's more than one playermover in the scene. don't fuck this up.
-        }
+            player = FindAnyObjectByType<PlayerMover>();
     }
 
-    // Lerps the door toward its target rotation and handles auto-ajar.
     void Update()
     {
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, actualSpeed * Time.deltaTime);
@@ -80,7 +73,7 @@ public class Door : MonoBehaviour, IInteractable
             doorCollider.enabled = true;
         }
 
-        if (transform.rotation == targetRotation && actualSpeed != speed)   // used to reset speed whenever the door comes to a stop
+        if (transform.rotation == targetRotation && actualSpeed != speed)
         {
             actualSpeed = speed;
         }
@@ -89,6 +82,66 @@ public class Door : MonoBehaviour, IInteractable
         {
             Ajar();
         }
+    }
+
+    // EDIT (lock-extraction): Interact no longer checks keys.
+    // Arena lock is a hard gate. Locked doors play lockedSound and reveal the label.
+    // Unlocked doors toggle open/closed.
+    public void Interact(InteractionContext context)
+    {
+        if (isArenaLocked)
+        {
+            AudioManager.PlaySound(lockedSound, audioSource);
+            return;
+        }
+
+        if (!unlocked)
+        {
+            AudioManager.PlaySound(lockedSound, audioSource);
+            if (hideUntilAttempted)
+                revealed = true;
+            return;
+        }
+
+        if (state == DoorState.Open)
+            Ajar();
+        else
+            Open();
+    }
+
+    // EDIT (lock-extraction): ResolvePrompt no longer checks for keys.
+    // Locked state shows WorldSpace "Locked". Unlocked shows Hud "Open".
+    public InteractionPrompt ResolvePrompt(InteractionContext context)
+    {
+        if (isArenaLocked)
+        {
+            return new InteractionPrompt
+            {
+                surface = PromptSurface.WorldSpace,
+                label = "Locked",
+                anchor = promptAnchor,
+            };
+        }
+
+        if (!unlocked)
+        {
+            if (hideUntilAttempted && !revealed)
+                return InteractionPrompt.None;
+
+            return new InteractionPrompt
+            {
+                surface = PromptSurface.WorldSpace,
+                label = "Locked",
+                anchor = promptAnchor,
+            };
+        }
+
+        return new InteractionPrompt
+        {
+            surface = PromptSurface.Hud,
+            label = "Open",
+            actionName = "Collect",
+        };
     }
 
     public void Open()
@@ -101,7 +154,7 @@ public class Door : MonoBehaviour, IInteractable
         }
     }
 
-    public void ForceOpen() //this will unlock the door in the process. does not play unlocking sound
+    public void ForceOpen()
     {
         unlocked = true;
         Open();
@@ -111,100 +164,17 @@ public class Door : MonoBehaviour, IInteractable
     {
         targetRotation = startAngle * Quaternion.AngleAxis(ajarAngle, transform.up);
         state = DoorState.Ajar;
-        AudioManager.PlaySound(closeSound, audioSource);    //a seperate ajar and closed sound would be ideal
+        AudioManager.PlaySound(closeSound, audioSource);
     }
 
-    // Summary: Context-aware interaction. Encounter-locked doors stay shut; a held key unlocks a
-    // key-locked door; an unlocked door toggles open/closed.
-    // EDIT (ward system): plays unlockSound instead of lockedSound on successful unlock.
-    // Dynamic prompt format: "Unlock (Key Name)".
-    public void Interact(InteractionContext context)
+    public void TryDoor()
     {
-        // Encounter/arena lock is a hard gate: keys do nothing while it's active.
-        if (isArenaLocked)
-        {
-            AudioManager.PlaySound(lockedSound, audioSource);
-            return;
-        }
-
-        if (!unlocked)
-        {
-            if (context != null && context.HasKey(requiredKey))
-            {
-                unlocked = true;
-                if (consumesKey)
-                {
-                    context.ConsumeKey(requiredKey);
-                }
-                // EDIT (ward system): play the unlock sound, fall back to lockedSound if not assigned.
-                AudioManager.PlaySound(unlockSound != null ? unlockSound : lockedSound, audioSource);
-            }
-            else
-            {
-                AudioManager.PlaySound(lockedSound, audioSource);
-                if (hideUntilAttempted)
-                {
-                    revealed = true;   // from now on the world "Locked" label resolves
-                }
-            }
-            return;
-        }
-
-        // Unlocked: toggle open/closed.
-        if (state == DoorState.Open)
-        {
-            Ajar();
-        }
-        else
-        {
-            Open();
-        }
-    }
-
-    // Summary: Chooses which prompt to show for the current door + player state.
-    // EDIT (ward system): dynamic prompt format shows item name.
-    public InteractionPrompt ResolvePrompt(InteractionContext context)
-    {
-        // Encounter/arena lock always reads as "Locked" and ignores keys.
-        if (isArenaLocked)
-        {
-            return new InteractionPrompt { surface = PromptSurface.WorldSpace, label = "Locked", anchor = promptAnchor };
-        }
-
-        if (unlocked)
-        {
-            return new InteractionPrompt { surface = PromptSurface.Hud, label = "Open", actionName = "Collect" };
-        }
-
-        if (context != null && context.HasKey(requiredKey))
-        {
-            string keyName = requiredKey != null ? requiredKey.displayName : "Key";
-            return new InteractionPrompt { surface = PromptSurface.Hud, label = $"Unlock ({keyName})", actionName = "Collect" };
-        }
-
-        // Locked, no key: optionally hidden until the player tries the door.
-        if (hideUntilAttempted && !revealed)
-        {
-            return InteractionPrompt.None;
-        }
-
-        return new InteractionPrompt { surface = PromptSurface.WorldSpace, label = "Locked", anchor = promptAnchor };
-    }
-
-    public void TryDoor()   //attempts to toggle the door's state
-    {
-        // NOTE (interaction prompt system): no longer the interaction entry point (Interact handles that).
-        // Left intact in case other scripts call it directly.
         if (unlocked)
         {
             if (state == DoorState.Open)
-            {
                 Ajar();
-            }
             else
-            {
                 Open();
-            }
         }
         else
         {
@@ -214,22 +184,19 @@ public class Door : MonoBehaviour, IInteractable
 
     public void Slam()
     {
-        Close(true, true);    //this can be set to false depending on what you want the default behaviour to be
+        Close(true, true);
     }
 
     public void Close()
     {
-        Close(false, false);    //by default this closes calm and chill and nothing bad happens
+        Close(false, false);
     }
 
-    public void Close(bool locked, bool fast)  //locked bool determines if door locks on close, fast bool determines if the speed is multiplied or not
+    public void Close(bool locked, bool fast)
     {
         targetRotation = startAngle * Quaternion.AngleAxis(closedAngle, transform.up);
         state = DoorState.Closed;
-        if (locked)
-        {
-            unlocked = false;
-        }
+        if (locked) unlocked = false;
         if (fast)
         {
             actualSpeed = slamSpeed;
@@ -241,13 +208,11 @@ public class Door : MonoBehaviour, IInteractable
         }
     }
 
-    // Locks the door.
     public void Lock()
     {
         unlocked = false;
     }
 
-    // Unlocks the door.
     public void Unlock()
     {
         unlocked = true;
@@ -280,5 +245,4 @@ public class Door : MonoBehaviour, IInteractable
             Debug.LogWarning("Door is not in Arena mode. Did you mean StartArena()?");
         }
     }
-
 }

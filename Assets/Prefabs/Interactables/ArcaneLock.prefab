@@ -282,7 +282,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1049075044129349683}
   - component: {fileID: 3038331375921785943}
-  - component: {fileID: 3650826178074886653}
+  - component: {fileID: -4345898212346568711}
+  - component: {fileID: 1222760744917912178}
   - component: {fileID: 8270761705309787215}
   - component: {fileID: 6745670558241303960}
   m_Layer: 8
@@ -332,7 +333,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3650826178074886653
+--- !u!114 &-4345898212346568711
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -341,13 +342,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 5964849342888895002}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Script: {fileID: 11500000, guid: 9d0707b1595ce6a4597ddd91d0fee311, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
+  m_EditorClassIdentifier: Assembly-CSharp::WorldItem
   itemDefinition: {fileID: 11400000, guid: 0aaf96940d1e1164ba2da797e2b28498, type: 2}
-  outline: {fileID: 8270761705309787215}
+  pickupQuantity: 0
   collectable: 0
   scanDuration: 2
+--- !u!114 &1222760744917912178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5964849342888895002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c70cc4452b93ef647bbcb3e478c7ba25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanOutline
+  outline: {fileID: 8270761705309787215}
   usesMeshOutline: 0
   outlineRenderer: {fileID: 0}
   outlineMaterialIndex: 1

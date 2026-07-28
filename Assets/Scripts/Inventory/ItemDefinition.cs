@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewItem", menuName = "Game/Item Definition")]
 public class ItemDefinition : ScriptableObject
 {
-    [Tooltip("Stable unique identifier. Used for save files and debugging. Never change once shipped.")]
+    [Tooltip("Stable unique identifier. Used for save files and debugging. Never change once shipped. Prefix the ID with the deifnition type (i.e. item_, weapon_, recipe_, enemy_)")]
     public string id;
 
     [Tooltip("Name shown to the player in the UI.")]

@@ -56,7 +56,7 @@ public class Ward : MonoBehaviour, IInteractable
             if (targetDoor != null)
                 targetDoor.Unlock();
 
-            Debug.Log("Ward destroyed: " + gameObject.name);
+            Debug.Log("Glyph destroyed: " + gameObject.name);
             Destroy(gameObject);
         }
     }

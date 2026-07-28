@@ -57,6 +57,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 272941483086651391, guid: 48a2ed1fa60a203419aec9ddadced168, type: 3}
+      insertIndex: 6
+      addedObject: {fileID: 4516275272702747957}
+    - targetCorrespondingSourceObject: {fileID: 272941483086651391, guid: 48a2ed1fa60a203419aec9ddadced168, type: 3}
+      insertIndex: 7
+      addedObject: {fileID: 6534621529330104112}
+    - targetCorrespondingSourceObject: {fileID: 272941483086651391, guid: 48a2ed1fa60a203419aec9ddadced168, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2141574864755861437}
   m_SourcePrefab: {fileID: 100100000, guid: 48a2ed1fa60a203419aec9ddadced168, type: 3}
@@ -65,6 +71,36 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 272941483086651391, guid: 48a2ed1fa60a203419aec9ddadced168, type: 3}
   m_PrefabInstance: {fileID: 4466218923533977220}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4516275272702747957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4481816822500809083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3746d996ef944e499d8322f1529af6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanTarget
+  enemyDefinition: {fileID: 11400000, guid: deaba3c996ec16e448e95af9dafa2520, type: 2}
+  scanDuration: 2
+--- !u!114 &6534621529330104112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4481816822500809083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c70cc4452b93ef647bbcb3e478c7ba25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanOutline
+  outline: {fileID: 8466835104814155763}
+  usesMeshOutline: 0
+  outlineRenderer: {fileID: 0}
+  outlineMaterialIndex: 1
 --- !u!114 &2141574864755861437
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,3 +115,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ToMinion
   scaleMultiplier: 1
   disableWeakpoints: 1
+--- !u!114 &8466835104814155763 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -4000586417156685449, guid: 48a2ed1fa60a203419aec9ddadced168, type: 3}
+  m_PrefabInstance: {fileID: 4466218923533977220}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4481816822500809083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline

@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &12964720284303029
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6383598462377232051}
+  m_Layer: 10
+  m_Name: PromptAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6383598462377232051
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 12964720284303029}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 0.4633, z: 0.0199}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2630130119673641620}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7088541232471948246
 GameObject:
   m_ObjectHideFlags: 0
@@ -423,18 +454,50 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1830444769040900428, guid: 24637c882e70c5b429c1814fc0bfd835, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 2024736541532497854, guid: 24637c882e70c5b429c1814fc0bfd835, type: 3}
       propertyPath: m_Name
       value: LockedDoorway
       objectReference: {fileID: 0}
+    - target: {fileID: 2024736541532497854, guid: 24637c882e70c5b429c1814fc0bfd835, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3316557093738072247, guid: 24637c882e70c5b429c1814fc0bfd835, type: 3}
+      propertyPath: unlockSound
+      value: 
+      objectReference: {fileID: 11400000, guid: b6eddbb109c10e74aa1968fecb61a6b8, type: 2}
+    - target: {fileID: 3316557093738072247, guid: 24637c882e70c5b429c1814fc0bfd835, type: 3}
+      propertyPath: promptAnchor
+      value: 
+      objectReference: {fileID: 6383598462377232051}
+    - target: {fileID: 4455792061808718267, guid: 24637c882e70c5b429c1814fc0bfd835, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8392623431334979283, guid: 24637c882e70c5b429c1814fc0bfd835, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 3094371134402273628, guid: 24637c882e70c5b429c1814fc0bfd835, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6383598462377232051}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 24637c882e70c5b429c1814fc0bfd835, type: 3}
 --- !u!4 &1811551831454295756 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1680581003124178180, guid: 24637c882e70c5b429c1814fc0bfd835, type: 3}
+  m_PrefabInstance: {fileID: 1040739768909355976}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2630130119673641620 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3094371134402273628, guid: 24637c882e70c5b429c1814fc0bfd835, type: 3}
   m_PrefabInstance: {fileID: 1040739768909355976}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1394772527405109508
@@ -1259,7 +1322,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1632672864571115532, guid: 02b9e03b184e02544b60397049d504b6, type: 3}
       propertyPath: m_VersionIndex
-      value: 2181
+      value: 2358
       objectReference: {fileID: 0}
     - target: {fileID: 1857444730747878634, guid: 02b9e03b184e02544b60397049d504b6, type: 3}
       propertyPath: encounterManager
@@ -1267,11 +1330,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2259916330876416656, guid: 02b9e03b184e02544b60397049d504b6, type: 3}
       propertyPath: m_VersionIndex
-      value: 2746
+      value: 2923
       objectReference: {fileID: 0}
     - target: {fileID: 2544799745314412074, guid: 02b9e03b184e02544b60397049d504b6, type: 3}
       propertyPath: m_VersionIndex
-      value: 5248
+      value: 5425
       objectReference: {fileID: 0}
     - target: {fileID: 3244893212557090030, guid: 02b9e03b184e02544b60397049d504b6, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -1287,7 +1350,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4267953201735526656, guid: 02b9e03b184e02544b60397049d504b6, type: 3}
       propertyPath: m_VersionIndex
-      value: 10012
+      value: 10189
       objectReference: {fileID: 0}
     - target: {fileID: 5371648652326385173, guid: 02b9e03b184e02544b60397049d504b6, type: 3}
       propertyPath: m_VersionIndex
@@ -1299,11 +1362,11 @@ PrefabInstance:
       objectReference: {fileID: 23800000, guid: 8dbc01e4022392d41a8d4af25830bd0b, type: 2}
     - target: {fileID: 5871291400526620587, guid: 02b9e03b184e02544b60397049d504b6, type: 3}
       propertyPath: m_VersionIndex
-      value: 4783
+      value: 4960
       objectReference: {fileID: 0}
     - target: {fileID: 7157672786618359373, guid: 02b9e03b184e02544b60397049d504b6, type: 3}
       propertyPath: m_VersionIndex
-      value: 2851
+      value: 3028
       objectReference: {fileID: 0}
     - target: {fileID: 7327904657930687953, guid: 02b9e03b184e02544b60397049d504b6, type: 3}
       propertyPath: m_Enabled
@@ -1311,7 +1374,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7467308763445820097, guid: 02b9e03b184e02544b60397049d504b6, type: 3}
       propertyPath: m_VersionIndex
-      value: 2079
+      value: 2256
       objectReference: {fileID: 0}
     - target: {fileID: 7647847478927510611, guid: 02b9e03b184e02544b60397049d504b6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1511,6 +1574,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Note
       objectReference: {fileID: 0}
+    - target: {fileID: 7300822974017035107, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
+      propertyPath: itemDefinition
+      value: 
+      objectReference: {fileID: 11400000, guid: b5e31d1080f9081498870dddd62f91b4, type: 2}
     - target: {fileID: 7806677775689557063, guid: e60a6d4c13972ae41ab32ed29279febd, type: 3}
       propertyPath: entry.hintText
       value: Guess I'm looking for a key somewhere in the east block...

@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 7821080396727411323}
   - component: {fileID: 6780551909819684249}
   - component: {fileID: 2927172717479782980}
-  - component: {fileID: 7498452376605533094}
+  - component: {fileID: 3842214128841543525}
+  - component: {fileID: 9045340238829689734}
   - component: {fileID: 4542798892874204606}
   m_Layer: 10
   m_Name: GreenHerb
@@ -68,7 +69,7 @@ CapsuleCollider:
   m_Height: 0.4
   m_Direction: 1
   m_Center: {x: 0, y: 0.2, z: 0}
---- !u!114 &7498452376605533094
+--- !u!114 &3842214128841543525
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -77,20 +78,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 2712750430603896413}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Script: {fileID: 11500000, guid: 9d0707b1595ce6a4597ddd91d0fee311, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry:
-    entryName: Green Herb
-    flavourText: A sour smelling herb
-    hintText: It might not be a good idea to mix this herb with other herbs.
-    completeText: 
-    collected: 0
-    snapshotImage: {fileID: 0}
-  outline: {fileID: 4542798892874204606}
-  collectable: 1
-  scanDuration: 2
+  m_EditorClassIdentifier: Assembly-CSharp::WorldItem
   itemDefinition: {fileID: 11400000, guid: 9e10067b6f46e3d4aa47323bc0d078dc, type: 2}
+  pickupQuantity: 1
+  collectable: 1
+  requiresScan: 0
+  scanDuration: 2
+  pickupSound: {fileID: 0}
+--- !u!114 &9045340238829689734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2712750430603896413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c70cc4452b93ef647bbcb3e478c7ba25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanOutline
+  outline: {fileID: 4542798892874204606}
   usesMeshOutline: 0
   outlineRenderer: {fileID: 0}
   outlineMaterialIndex: 1

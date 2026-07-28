@@ -1,15 +1,13 @@
 using UnityEngine;
 
-// Summary: A world event that unlocks a door when the player has discovered a specific item.
-// EDIT (grimoire migration): checks DiscoveryLog instead of grimoire.CompareEntry.
+// Summary: Unlocks a door when the player discovers a specific item.
+// EDIT (event-driven): subscribes to DiscoveryLog.OnDiscoveryChanged instead of polling every frame.
 public class ScannableLock : MonoBehaviour
 {
-    // EDIT (grimoire migration): was ALTScannableObject. Now holds an ItemDefinition directly,
-    // since we're checking discovery status, not grimoire entries.
     public ItemDefinition requiredDiscovery;
     public Door targetDoor;
     public bool destroysItem;
-    [SerializeField] private GameObject itemToDestroy;   // the world object to destroy (if destroysItem is true)
+    [SerializeField] private GameObject itemToDestroy;
 
     private DiscoveryLog discoveryLog;
     private bool hasFired = false;
@@ -20,14 +18,21 @@ public class ScannableLock : MonoBehaviour
             discoveryLog = FindAnyObjectByType<DiscoveryLog>();
         if (targetDoor == null)
             targetDoor = GetComponentInChildren<Door>();
+
+        if (discoveryLog != null)
+            discoveryLog.OnDiscoveryChanged += CheckDiscovery;
     }
 
-    void Update()
+    void OnDestroy()
+    {
+        if (discoveryLog != null)
+            discoveryLog.OnDiscoveryChanged -= CheckDiscovery;
+    }
+
+    private void CheckDiscovery()
     {
         if (hasFired || targetDoor == null || requiredDiscovery == null || discoveryLog == null)
-        {
             return;
-        }
 
         if (discoveryLog.HasDiscovered(requiredDiscovery))
         {
@@ -35,9 +40,7 @@ public class ScannableLock : MonoBehaviour
             hasFired = true;
 
             if (destroysItem && itemToDestroy != null)
-            {
                 Destroy(itemToDestroy);
-            }
         }
     }
 }

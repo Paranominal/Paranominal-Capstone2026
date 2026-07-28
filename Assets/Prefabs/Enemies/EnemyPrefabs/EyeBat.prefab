@@ -123,7 +123,8 @@ GameObject:
   - component: {fileID: -8427896845508226490}
   - component: {fileID: 4280961717600154479}
   - component: {fileID: 2522395779099145161}
-  - component: {fileID: -357270100409380465}
+  - component: {fileID: 4379071262644150394}
+  - component: {fileID: 7106497006464515721}
   - component: {fileID: 697487408336731762}
   - component: {fileID: -7151052709924787694}
   - component: {fileID: 4505595464840246474}
@@ -269,7 +270,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-357270100409380465
+--- !u!114 &4379071262644150394
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -278,19 +279,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 7915909615733791053}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Script: {fileID: 11500000, guid: f3746d996ef944e499d8322f1529af6a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry:
-    entryName: Eye Bat
-    flavourText: A lesser demon from lower realms.
-    hintText: According to all known laws of aviation, there is no way that a bat
-      should be able to eye...
-    completeText: 
-    snapshotImage: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::ScanTarget
+  enemyDefinition: {fileID: 11400000, guid: 506466a672fcb8e47a42cfbc07ff4fdb, type: 2}
+  scanDuration: 2
+--- !u!114 &7106497006464515721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915909615733791053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c70cc4452b93ef647bbcb3e478c7ba25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanOutline
   outline: {fileID: 697487408336731762}
-  collectable: 0
-  scanDuration: 0.5
   usesMeshOutline: 0
   outlineRenderer: {fileID: 0}
   outlineMaterialIndex: 1

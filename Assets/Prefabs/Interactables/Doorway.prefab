@@ -453,20 +453,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40af0772d050ae141836531215a6b999, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
-  interactable:
-    serializedVersion: 2
-    m_Bits: 1024
   unlocked: 1
+  isEncounterLocked: 0
   state: 2
   speed: 5
+  slamSpeed: 20
   openAngle: -90
   ajarAngle: -20
   closedAngle: 0
   doorCollider: {fileID: 4673658326038389776}
+  isArenaLocked: 0
+  ajarDistance: 3
+  promptAnchor: {fileID: 0}
+  hideUntilAttempted: 0
+  revealed: 0
+  audioSource: {fileID: 6773300287428133880}
+  slamSound: {fileID: 0}
   openSound: {fileID: 11400000, guid: 39081fb5e77d0d1499f32aef94801810, type: 2}
   closeSound: {fileID: 11400000, guid: 6ae4d41d52ea1a14c86f86637c1ff372, type: 2}
   lockedSound: {fileID: 11400000, guid: 0d5b67f303feaba46815290174c815d8, type: 2}
-  audioSource: {fileID: 6773300287428133880}
+  unlockSound: {fileID: 0}
 --- !u!65 &4673658326038389776
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -128,12 +128,12 @@ GameObject:
   - component: {fileID: 6064368626902276524}
   - component: {fileID: 7256983414231218104}
   - component: {fileID: 7666949824764973486}
-  - component: {fileID: -8196229125008853200}
   - component: {fileID: 3398322363394716667}
-  - component: {fileID: 7715542274334475992}
+  - component: {fileID: 46313756525875345}
+  - component: {fileID: 6669015987960900822}
   - component: {fileID: 6151485535973328032}
   m_Layer: 8
-  m_Name: Imp
+  m_Name: imp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -234,7 +234,6 @@ MonoBehaviour:
   vision: {fileID: 2880104385379219663}
   navAgent: {fileID: 2688743458007262411}
   followSpeed: 3
-  stopDistance: 1
   meleeAttack: {fileID: 2613330379652825894}
   attackRange: 2
   repositionRange: 2.5
@@ -313,6 +312,7 @@ MonoBehaviour:
   scanStunDuration: 2
   maxScanStaggers: -1
   scanStaggerCooldown: 1.5
+  extensionPerHit: 0.5
 --- !u!114 &7666949824764973486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -327,19 +327,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyKnockback
   knockbackForce: 10
   movementLockDuration: 0.15
---- !u!114 &-8196229125008853200
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6780255270900913490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7fd8d9b4bb13db4b88d2c3e5a12150d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StaggerColorEffect
-  staggerColor: {r: 0, g: 1, b: 0.57860494, a: 1}
 --- !u!114 &3398322363394716667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -355,7 +342,7 @@ MonoBehaviour:
   vision: {fileID: 2880104385379219663}
   teleportDistance: 0
   debugMode: 0
---- !u!114 &7715542274334475992
+--- !u!114 &46313756525875345
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -364,18 +351,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 6780255270900913490}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
+  m_Script: {fileID: 11500000, guid: f3746d996ef944e499d8322f1529af6a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry:
-    entryName: Imp
-    flavourText: A subordinate minion to a devilish entity.
-    hintText: These freaky things piss me off.
-    completeText: 
-    snapshotImage: {fileID: 0}
-  outline: {fileID: 6151485535973328032}
-  collectable: 0
+  m_EditorClassIdentifier: Assembly-CSharp::ScanTarget
+  enemyDefinition: {fileID: 11400000, guid: 9af7c344b0505ac46ac70db915b51f24, type: 2}
   scanDuration: 2
+--- !u!114 &6669015987960900822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6780255270900913490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c70cc4452b93ef647bbcb3e478c7ba25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanOutline
+  outline: {fileID: 6151485535973328032}
   usesMeshOutline: 0
   outlineRenderer: {fileID: 0}
   outlineMaterialIndex: 1

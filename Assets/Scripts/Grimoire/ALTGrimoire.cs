@@ -83,6 +83,9 @@ public class ALTGrimoire : MonoBehaviour
         if (inventory != null)
             inventory.OnInventoryChanged += RefreshCurrentEntry;
 
+        // EDIT (grimoire-decoupling): subscribe to scan hover event.
+        ScanController.OnScannableHovered += SelectByItem;
+
         RebuildEntryList();
 
         if (displayEntries.Count == 0)
@@ -97,6 +100,9 @@ public class ALTGrimoire : MonoBehaviour
             discoveryLog.OnDiscoveryChanged -= RebuildEntryList;
         if (inventory != null)
             inventory.OnInventoryChanged -= RefreshCurrentEntry;
+
+        // EDIT (grimoire-decoupling): unsubscribe from scan hover event.
+        ScanController.OnScannableHovered -= SelectByItem;
     }
 
     void Update()
