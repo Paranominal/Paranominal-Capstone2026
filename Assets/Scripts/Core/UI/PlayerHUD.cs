@@ -52,6 +52,9 @@ public class PlayerHUD : MonoBehaviour
             weaponController.ReloadProgressChanged += OnReloadProgressChanged;
             weaponController.ReloadFinished += OnReloadFinished;
         }
+
+        // EDIT (weapon system): hide weapon HUD when in empty hand mode.
+        WeaponManager.OnWeaponModeChanged += OnWeaponModeChanged;
     }
 
     private void OnDisable()
@@ -63,6 +66,16 @@ public class PlayerHUD : MonoBehaviour
             weaponController.ReloadProgressChanged -= OnReloadProgressChanged;
             weaponController.ReloadFinished -= OnReloadFinished;
         }
+
+        WeaponManager.OnWeaponModeChanged -= OnWeaponModeChanged;
+    }
+
+    // EDIT (weapon system): toggle ammo and reload UI based on weapon mode.
+    // Crosshair stays visible in empty hand since the player is still aiming.
+    private void OnWeaponModeChanged(bool weaponEquipped)
+    {
+        if (ammoText != null) ammoText.gameObject.SetActive(weaponEquipped);
+        if (reloadSlider != null && !weaponEquipped) reloadSlider.gameObject.SetActive(false);
     }
 
     private void Update()

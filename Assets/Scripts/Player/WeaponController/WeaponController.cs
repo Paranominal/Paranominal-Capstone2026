@@ -3,16 +3,15 @@ using UnityEngine.InputSystem;
 using System;
 using System.Collections;
 
-// Summary: Consolidated weapon system. Handles input, state, ammo, hitscan, hit resolution,
-// and shot orchestration. Reads stats from the active WeaponDefinition so new guns are data, not code.
-// Replaces: WeaponInputReader, WeaponEvents, WeaponFiringLogic, WeaponHitscan,
-// WeakPointResolver, ShotOrchestrator, WeaponStateController.
+// Summary: Ranged weapon system. Handles input, state, ammo, hitscan, hit resolution,
+// and shot orchestration. Reads stats from the active RangedWeaponDefinition so new guns are data, not code.
+// EDIT (weapon system): now uses RangedWeaponDefinition instead of WeaponDefinition.
 public class WeaponController : MonoBehaviour
 {
     // ---- Configuration ----
 
     [Header("Weapon")]
-    [SerializeField] private WeaponDefinition activeWeapon;
+    [SerializeField] private RangedWeaponDefinition activeWeapon;
 
     [Header("References")]
     [SerializeField] private GunVisuals gunVisuals;
@@ -46,7 +45,8 @@ public class WeaponController : MonoBehaviour
     public bool IsIronBarrelEnabled => weaponEnabled && ironBarrelEnabled;
     public bool IsSilverBarrelEnabled => weaponEnabled && silverBarrelEnabled;
     public bool AutoReloadEnabled => weaponEnabled && autoReloadEnabled;
-    public WeaponDefinition ActiveWeapon => activeWeapon;
+    // EDIT (weapon system): typed as RangedWeaponDefinition.
+    public RangedWeaponDefinition ActiveWeapon => activeWeapon;
 
     public float ReloadProgress
     {
@@ -179,15 +179,16 @@ public class WeaponController : MonoBehaviour
     // ---- Weapon Switching ----
 
     // Summary: Equip a new weapon definition. Resets ammo and state to match the new weapon's stats.
-    public void EquipWeapon(WeaponDefinition weapon)
+    // EDIT (weapon system): now takes RangedWeaponDefinition.
+    public void EquipWeapon(RangedWeaponDefinition weapon)
     {
         EquipWeapon(weapon, gunVisuals);
     }
 
     // Summary: Equip a weapon with a specific GunVisuals reference. Used by WeaponManager
-    // when activating a weapon slot.
-    // EDIT (weapon manager): added overload so WeaponManager can set both definition and visuals.
-    public void EquipWeapon(WeaponDefinition weapon, GunVisuals visuals)
+    // when activating a ranged weapon slot for the first time.
+    // EDIT (weapon system): now takes RangedWeaponDefinition.
+    public void EquipWeapon(RangedWeaponDefinition weapon, GunVisuals visuals)
     {
         CancelActiveState();
         activeWeapon = weapon;
@@ -197,6 +198,30 @@ public class WeaponController : MonoBehaviour
         {
             InitFromDefinition(weapon);
             isWeaponActive = false;   // force SetWeaponEnabled to run
+            SetWeaponEnabled(true);
+            AmmoChanged?.Invoke(currentAmmo, MagazineSize);
+        }
+    }
+
+    // EDIT (weapon system): Resume a previously equipped weapon with cached ammo state.
+    // Used by WeaponManager when re-equipping a holstered weapon. Does not reset ammo.
+    // If mid-reload was interrupted, the weapon will need a manual reload.
+    public void ResumeWeapon(RangedWeaponDefinition weapon, GunVisuals visuals, int cachedAmmo)
+    {
+        CancelActiveState();
+        activeWeapon = weapon;
+        gunVisuals = visuals;
+
+        if (weapon != null)
+        {
+            currentAmmo = cachedAmmo;
+            ironBarrelEnabled = weapon.ironBarrelAvailable;
+            silverBarrelEnabled = weapon.silverBarrelAvailable;
+            autoReloadEnabled = weapon.autoReload;
+            cachedIronBarrelEnabled = ironBarrelEnabled;
+            cachedSilverBarrelEnabled = silverBarrelEnabled;
+
+            isWeaponActive = false;
             SetWeaponEnabled(true);
             AmmoChanged?.Invoke(currentAmmo, MagazineSize);
         }
@@ -212,7 +237,7 @@ public class WeaponController : MonoBehaviour
         gunVisuals = null;
     }
 
-    private void InitFromDefinition(WeaponDefinition def)
+    private void InitFromDefinition(RangedWeaponDefinition def)
     {
         currentAmmo = def.magazineSize;
         ironBarrelEnabled = def.ironBarrelAvailable;
@@ -321,7 +346,8 @@ public class WeaponController : MonoBehaviour
     {
         if (activeWeapon == null) yield break;
         onCooldown = true;
-        yield return new WaitForSeconds(activeWeapon.shotCooldown);
+        // EDIT (weapon system): attackCooldown lives on the base WeaponDefinition now.
+        yield return new WaitForSeconds(activeWeapon.attackCooldown);
         onCooldown = false;
     }
 
@@ -371,9 +397,21 @@ public class WeaponController : MonoBehaviour
             IDamageable damageable = targetHit.collider.GetComponent<IDamageable>();
             if (damageable == null) damageable = targetHit.collider.GetComponentInParent<IDamageable>();
 
+            // EDIT (weapon system): build a proper DamageInfo from the weapon's stats.
             if (damageable != null)
             {
-                damageable.TakeDamage(new DamageInfo());
+                Vector3 hitDir = (targetHit.collider.transform.position - transform.position);
+                hitDir.y = 0f;
+                if (hitDir.sqrMagnitude > 0.0001f) hitDir.Normalize();
+
+                DamageInfo info = new DamageInfo(
+                    0,
+                    targetHit.point,
+                    hitDir,
+                    gameObject,
+                    activeWeapon.knockbackForce
+                );
+                damageable.TakeDamage(info);
                 return false;
             }
         }

@@ -1,149 +1,198 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 using UnityEngine.InputSystem;
-using NUnit.Framework;
-using Unity.VisualScripting;
 
+// Summary: Drives the Minimised Grimoire's open/close animations.
+// When in empty hand mode, the grimoire auto-closes on movement so the
+// fear-state book cover is visible. When a weapon is equipped, the grimoire
+// stays open so quick slots are visible.
+// Animation event callbacks (StartAnimation, EndAnimation, SetOpenTrue,
+// SetOpenFalse, SetCastingTrue, SetCastingFalse) are called from the Animator.
 public class GrimoireAnimManager : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private Animator grimoireAnimator;
-    private bool isAnimating;
     [SerializeField] private ALTGrimoire altGrimoire;
-    [SerializeField] private InputActionReference grimoireScroll;
+
+    [Header("Input")]
     [SerializeField] private InputActionReference playerMove;
     [SerializeField] private InputActionReference scanAction;
     [SerializeField] private InputActionReference collectAction;
-    [Tooltip("The duration in seconds, that the grimoire ignores the Close function after being opened")]
-    [SerializeField] float stayOpenDuration = 1;
-    private bool stayOpen;
-    private bool playerIsMoving;
+
+    [Header("Timing")]
+    [Tooltip("Duration in seconds the grimoire ignores close after being opened.")]
+    [SerializeField] private float stayOpenDuration = 1f;
+
+    [Header("Debug")]
+    [SerializeField] private bool debugMode;
+
+    private bool isAnimating;
     private bool isOpen;
     private bool isCasting;
-    public bool debugMode;
+    private bool stayOpen;
 
-    void Start()
+    // EDIT (weapon system): when true, the grimoire is forced open and auto-close is suppressed.
+    private bool weaponEquipped;
+
+    // EDIT (minimised grimoire): when the full grimoire is open, GrimoireAnimManager
+    // stops all open/close behaviour to avoid fighting ALTGrimoire's animations.
+    private bool fullGrimoireOpen;
+
+    private void OnEnable()
     {
-        
+        WeaponManager.OnWeaponModeChanged += HandleWeaponModeChanged;
+
+        if (altGrimoire != null)
+            altGrimoire.OnGrimoireToggled += HandleGrimoireToggled;
     }
 
-    void Update()
+    private void OnDisable()
     {
+        WeaponManager.OnWeaponModeChanged -= HandleWeaponModeChanged;
+
+        if (altGrimoire != null)
+            altGrimoire.OnGrimoireToggled -= HandleGrimoireToggled;
+    }
+
+    private void Update()
+    {
+        // When the full grimoire is open, ALTGrimoire owns the book state.
+        if (fullGrimoireOpen) return;
+
         CheckPlayerMovement();
-        OpenOnScroll();
         CheckCast();
-        CheckIsMenuing();
         CheckScan();
         CheckCollect();
 
         if (debugMode) DoDebugLog();
     }
-    private void OpenOnScroll()
+
+    // ---- Full Grimoire ----
+
+    // EDIT (minimised grimoire): when the full grimoire opens, force the book open.
+    // When it closes, restore the correct minimised state based on weapon mode.
+    private void HandleGrimoireToggled(bool opened)
     {
-        if (Mathf.Abs(grimoireScroll.action.ReadValue<Vector2>().y) > 0) OpenGrimoire();
+        if (opened)
+        {
+            // Full grimoire opening. Force the book pages open.
+            if (!isOpen && !isAnimating)
+                grimoireAnimator.SetTrigger("open");
+        }
+
+        fullGrimoireOpen = opened;
+
+        if (!opened)
+        {
+            // Full grimoire just closed. Restore minimised state.
+            if (weaponEquipped)
+                TryOpen();
+            else
+                TryClose();
+        }
     }
-    void OpenGrimoire()
+
+    // ---- Weapon Mode ----
+
+    // EDIT (weapon system): force grimoire open when weapon is equipped,
+    // allow normal close behavior when in empty hand.
+    private void HandleWeaponModeChanged(bool equipped)
     {
-        StartCoroutine(DoOpen());
+        weaponEquipped = equipped;
+
+        if (weaponEquipped)
+            TryOpen();
+        else
+            TryClose();
     }
-    private IEnumerator DoOpen()
+
+    // ---- Open / Close ----
+
+    private void TryOpen()
     {
-        if (isAnimating) yield break;
-        if (isOpen) yield break;
+        if (fullGrimoireOpen) return;
+        if (isAnimating) return;
+        if (isOpen) return;
 
         grimoireAnimator.SetTrigger("open");
-        StartCoroutine(StayOpen());
+        StartCoroutine(StayOpenTimer());
     }
-    void CloseGrimoire()
+
+    private void TryClose()
     {
-        StartCoroutine(DoClose());
-    }
-    private IEnumerator DoClose()
-    {
-        if (isAnimating) yield break;
-        if (!isOpen) yield break;
-        if (stayOpen) yield break;
-        if (isCasting) yield break;
+        if (fullGrimoireOpen) return;
+        if (isAnimating) return;
+        if (!isOpen) return;
+        if (stayOpen) return;
+        if (isCasting) return;
+        if (weaponEquipped) return;
 
         grimoireAnimator.SetTrigger("close");
     }
-    private IEnumerator StayOpen()
+
+    private IEnumerator StayOpenTimer()
     {
         stayOpen = true;
         yield return new WaitForSeconds(stayOpenDuration);
         stayOpen = false;
     }
+
+    // ---- Input Checks ----
+
+    private void CheckPlayerMovement()
+    {
+        bool moving = playerMove.action.ReadValue<Vector2>().sqrMagnitude > 0f;
+
+        if (moving && !isCasting)
+            TryClose();
+    }
+
     private void CheckCast()
     {
         grimoireAnimator.SetBool("isCasting", isCasting);
 
-        if (scanAction.action.IsPressed()) Cast();
-        else isCasting = false;
+        if (scanAction.action.IsPressed())
+        {
+            if (!isOpen)
+            {
+                TryOpen();
+                return;
+            }
+            isCasting = true;
+        }
+        else
+        {
+            isCasting = false;
+        }
     }
+
     private void CheckScan()
     {
-        if (scanAction.action.WasPressedThisFrame()) OpenGrimoire();
+        if (scanAction.action.WasPressedThisFrame())
+            TryOpen();
     }
+
     private void CheckCollect()
     {
-        if (collectAction.action.WasPressedThisFrame()) OpenGrimoire();
+        if (collectAction.action.WasPressedThisFrame())
+            TryOpen();
     }
-    private void Cast()
-    {
-        StartCoroutine(DoCasting());
-    }
-    private IEnumerator DoCasting()
-    {
-        if (!scanAction.action.IsPressed()) yield break;
-        if (!isOpen)
-        {
-            OpenGrimoire();
-            yield break;
-        }
 
-        isCasting = true;
-    }
-    private void CheckPlayerMovement()
-    {
-        if (playerMove.action.ReadValue<Vector2>() != new Vector2(0, 0)) playerIsMoving = true;
-        else playerIsMoving = false;
+    // ---- Animation Event Callbacks ----
+    // Called by the Animator. Do not rename or remove.
 
-        if (playerIsMoving && !isCasting) CloseGrimoire();
-    }
-    private void CheckIsMenuing()
-    {
-        if (altGrimoire.grimoireActive && !isOpen) OpenGrimoire();
-        //Debug.Log(altGrimoire.grimoireActive);
-    }
-    private void StartAnimation()
-    {
-        isAnimating = true;
-    }
-    private void EndAnimation()
-    {
-        isAnimating = false;
-    }
-    private void SetOpenTrue()
-    {
-        isOpen = true;
-    }
-    private void SetOpenFalse()
-    {
-        isOpen = false;
-    }
-    private void SetCastingTrue()
-    {
-        isCasting = true;
-    }
-    private void SetCastingFalse()
-    {
-        isCasting = false;
-    }
+    private void StartAnimation() { isAnimating = true; }
+    private void EndAnimation() { isAnimating = false; }
+    private void SetOpenTrue() { isOpen = true; }
+    private void SetOpenFalse() { isOpen = false; }
+    private void SetCastingTrue() { isCasting = true; }
+    private void SetCastingFalse() { isCasting = false; }
+
+    // ---- Debug ----
+
     private void DoDebugLog()
     {
-        Debug.Log("isOpen: " + isOpen);
-        Debug.Log("isAnimating: " + isAnimating);
-        Debug.Log("Casting is pressed: " + scanAction.action.IsPressed());
-        Debug.Log("isCasting: " + isCasting);
-        Debug.Log("stayOpen: " + stayOpen);
+        Debug.Log($"[GrimoireAnim] isOpen={isOpen} isAnimating={isAnimating} " +
+                  $"isCasting={isCasting} stayOpen={stayOpen} weaponEquipped={weaponEquipped}");
     }
 }

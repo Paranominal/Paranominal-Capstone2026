@@ -55,9 +55,13 @@ public class ToTough : MonoBehaviour, IDamageable
         //ignore regular damage, only weakpoints can be shot
         if (isStaggered) return; 
 
+        // EDIT (weapon system): pass hit direction and force from DamageInfo.
         if (knockback != null)
         {
-            knockback.ApplyKnockback();
+            if (info.knockbackForce > 0f)
+                knockback.ApplyKnockback(info.hitDirection, info.knockbackForce);
+            else
+                knockback.ApplyKnockback();
         }
 
         currentHits--;

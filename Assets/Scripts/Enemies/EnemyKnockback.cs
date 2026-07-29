@@ -5,8 +5,15 @@ using UnityEngine.AI;
 public class EnemyKnockback : MonoBehaviour
 {
     [Header("Knockback")]
-    [SerializeField] private float knockbackForce = 15f; 
+    // EDIT (weapon system): knockbackForce is now supplied per-hit via DamageInfo.
+    // This field is kept as a fallback for the parameterless overload.
+    [SerializeField] private float fallbackKnockbackForce = 15f;
     [SerializeField] private float movementLockDuration = 0.12f;
+
+    // EDIT (weapon system): resistance multiplier. 0 = full knockback, 1 = immune.
+    [Header("Resistance")]
+    [Tooltip("0 = takes full knockback, 1 = completely immune. Set per prefab variant.")]
+    [SerializeField, Range(0f, 1f)] private float knockbackResistance = 0f;
 
     private NavMeshAgent navAgent;
     private Rigidbody rb;
@@ -15,87 +22,83 @@ public class EnemyKnockback : MonoBehaviour
 
     private void Awake()
     {
-        //cache references before play starts
         navAgent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
         enemyBehaviours = GetComponents<EnemyBehaviourBase>();
     }
 
+    // EDIT (weapon system): parameterless overload kept for backward compatibility.
+    // Uses fallback force and the enemy's own -forward as direction.
     public void ApplyKnockback()
     {
-        //calculate knockback direction opposite to enemy's facing direction
         Vector3 knockDir = -transform.forward;
         knockDir.y = 0f;
-
-        //fallback to backward direction if forward is invalid
-        if (knockDir.sqrMagnitude < 0.0001f)
-        {
-            knockDir = Vector3.back;
-        }
-
+        if (knockDir.sqrMagnitude < 0.0001f) knockDir = Vector3.back;
         knockDir.Normalize();
 
-        //stop any pending movement restoration coroutine
+        ApplyKnockback(knockDir, fallbackKnockbackForce);
+    }
+
+    // EDIT (weapon system): new overload accepting direction and force from DamageInfo.
+    // Force is scaled by (1 - knockbackResistance).
+    public void ApplyKnockback(Vector3 direction, float force)
+    {
+        float effectiveForce = force * (1f - knockbackResistance);
+        if (effectiveForce <= 0f) return;
+
+        direction.y = 0f;
+        if (direction.sqrMagnitude < 0.0001f) direction = Vector3.back;
+        direction.Normalize();
+
         if (restoreCoroutine != null)
         {
             StopCoroutine(restoreCoroutine);
         }
 
-        //disable all behaviors during knockback
         SetBehavioursEnabled(false);
-
-        //start the controlled knockback slide
-        restoreCoroutine = StartCoroutine(KnockbackRoutine(knockDir));
+        restoreCoroutine = StartCoroutine(KnockbackRoutine(direction, effectiveForce));
     }
 
-    private IEnumerator KnockbackRoutine(Vector3 knockDir)
+    private IEnumerator KnockbackRoutine(Vector3 knockDir, float force)
     {
         float elapsedTime = 0f;
 
         if (navAgent != null && navAgent.isOnNavMesh)
         {
-            //interrupt any active navigation
             navAgent.isStopped = true;
             navAgent.ResetPath();
 
-            //smoothly push the enemy without leaving the navmesh
             while (elapsedTime < movementLockDuration)
             {
-                navAgent.Move(knockDir * (knockbackForce * Time.deltaTime));
+                navAgent.Move(knockDir * (force * Time.deltaTime));
                 elapsedTime += Time.deltaTime;
-                //wait for the next frame
-                yield return null; 
+                yield return null;
             }
 
             navAgent.isStopped = false;
         }
         else if (rb != null && !rb.isKinematic)
         {
-            //disable the navmeshagent entirely so physics work properly (yes, this is a fallback)
             if (navAgent != null) navAgent.enabled = false;
-            
+
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-            rb.AddForce(knockDir * knockbackForce, ForceMode.VelocityChange);
+            rb.AddForce(knockDir * force, ForceMode.VelocityChange);
 
-            //wait for knockback lock duration to expire
             yield return new WaitForSeconds(movementLockDuration);
-            
+
             rb.linearVelocity = Vector3.zero;
             if (navAgent != null) navAgent.enabled = true;
         }
 
-        //re-enable all behavior components
         SetBehavioursEnabled(true);
         restoreCoroutine = null;
     }
 
     private void SetBehavioursEnabled(bool isEnabled)
     {
-        //guard against missing or empty behavior array
         if (enemyBehaviours == null || enemyBehaviours.Length == 0) return;
 
-        //iterate through all behaviors and apply enabled state
         for (int i = 0; i < enemyBehaviours.Length; i++)
         {
             if (enemyBehaviours[i] != null)

@@ -18,7 +18,11 @@ public class ScanController : MonoBehaviour
     public float scanRange = 20f;
 
     private PhotoSnapshots snapshotHandler;
-    private bool suspended;
+
+    // EDIT (weapon system): two suspension sources tracked separately.
+    private bool suspendedByGrimoire;
+    private bool suspendedByWeapon;
+    private bool suspended => suspendedByGrimoire || suspendedByWeapon;
 
     // EDIT (grimoire-decoupling): fired when hovering an already-discovered WorldItem in scan mode.
     // The grimoire (or any future UI) subscribes to this instead of being called directly.
@@ -42,6 +46,9 @@ public class ScanController : MonoBehaviour
         ALTGrimoire grimoire = FindAnyObjectByType<ALTGrimoire>();
         if (grimoire != null)
             grimoire.OnGrimoireToggled += OnGrimoireToggled;
+
+        // EDIT (weapon system): suspend scanning when a weapon is equipped.
+        WeaponManager.OnWeaponModeChanged += OnWeaponModeChanged;
     }
 
     void OnDestroy()
@@ -49,12 +56,23 @@ public class ScanController : MonoBehaviour
         ALTGrimoire grimoire = FindAnyObjectByType<ALTGrimoire>();
         if (grimoire != null)
             grimoire.OnGrimoireToggled -= OnGrimoireToggled;
+
+        WeaponManager.OnWeaponModeChanged -= OnWeaponModeChanged;
     }
 
     private void OnGrimoireToggled(bool grimoireOpen)
     {
-        suspended = grimoireOpen;
-        if (suspended)
+        // EDIT (weapon system): use named flag instead of shared bool.
+        suspendedByGrimoire = grimoireOpen;
+        if (suspendedByGrimoire)
+            ClearHover();
+    }
+
+    // EDIT (weapon system): suspend scanning while a weapon is equipped.
+    private void OnWeaponModeChanged(bool weaponEquipped)
+    {
+        suspendedByWeapon = weaponEquipped;
+        if (suspendedByWeapon)
             ClearHover();
     }
 

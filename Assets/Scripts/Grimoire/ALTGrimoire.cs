@@ -1,13 +1,13 @@
 using UnityEngine;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
+using TMPro;
 
-// EDIT (grimoire migration): no longer owns data. Reads from DiscoveryLog (what has been seen)
-// and Inventory (what is carried). Subscribes to change events to rebuild the display.
-// ALTGrimoireEntry is retired; display data comes from ItemDefinition + DiscoveryLog.DiscoveryEntry.
+// Summary: Full Grimoire UI controller. Handles open/close toggle (Tab key),
+// time pause, cursor state, action map switching, and main tab navigation.
+// Content is delegated to per-tab panel scripts (GrimoireInventoryPanel, etc.)
+// which all write into the shared ScrollView on BookL and detail view on BookR.
+// EDIT (grimoire redesign): reworked from flat discovery list to tabbed panel architecture.
 public class ALTGrimoire : MonoBehaviour
 {
     public static ALTGrimoire instance;
@@ -16,335 +16,264 @@ public class ALTGrimoire : MonoBehaviour
 
     public event System.Action<bool> OnGrimoireToggled;
 
-    [Header("UI References: Content")]
-    [SerializeField] private TextMeshProUGUI entryNameDisplay;
-    [SerializeField] private TextMeshProUGUI collectedDisplay;
-    [SerializeField] private TextMeshProUGUI flavourTextDisplay;
-    [SerializeField] private TextMeshProUGUI hintCompletedTextDisplay;
-    [SerializeField] private RawImage displayImage;
-    [SerializeField] private RawImage imageFrameParent;
+    [Header("Panels")]
+    [Tooltip("Empty GameObjects holding the panel scripts. Not visual elements.")]
+    [SerializeField] private GameObject inventoryPanel;
+    [SerializeField] private GameObject spellsPanel;
+    [SerializeField] private GameObject weaponsPanel;
+    [SerializeField] private GameObject recipesPanel;
+    [SerializeField] private GameObject bestiaryPanel;
 
-    [Header("UI References: Navigation")]
-    [SerializeField] private GameObject listContentParent;
-    [SerializeField] private GameObject entryButtonPrefab;
+    [Header("Main Tab Buttons (left edge of BookL)")]
+    [SerializeField] private Button inventoryTabButton;
+    [SerializeField] private Button spellsTabButton;
+    [SerializeField] private Button weaponsTabButton;
+    [SerializeField] private Button recipesTabButton;
+    [SerializeField] private Button bestiaryTabButton;
+
+    [Header("Tab Visuals")]
+    [SerializeField] private Color tabNormalColor = new Color(1f, 1f, 1f, 0.5f);
+    [SerializeField] private Color tabActiveColor = new Color(1f, 1f, 1f, 1f);
+
+    [Header("Shared UI")]
+    [Tooltip("Heading text on BookL. Updated to show the active tab name.")]
+    [SerializeField] private TMP_Text headingText;
+
+    [Header("Content Containers")]
+    [Tooltip("Parent of all Full Grimoire UI elements on BookL.")]
+    [SerializeField] private GameObject fullContentL;
+    [Tooltip("Parent of all Full Grimoire UI elements on BookR.")]
+    [SerializeField] private GameObject fullContentR;
+    [Tooltip("Parent of minimised UI elements on BookL (spirit meter).")]
+    [SerializeField] private GameObject minimisedContentL;
+    [Tooltip("Parent of minimised UI elements on BookR (quick-slots).")]
+    [SerializeField] private GameObject minimisedContentR;
+
+    [Header("Animation")]
     [SerializeField] private Animator grimoireAnim;
 
     [Header("External Systems")]
     [SerializeField] private PlayerInputReader playerInputReader;
-    public PlayerHUD screenUI;
+    [SerializeField] private PlayerHUD screenUI;
 
-    // Internal state
-    private int currentEntry;
-    private List<DiscoveryLog.DiscoveryEntry> displayEntries = new List<DiscoveryLog.DiscoveryEntry>();
-    private List<GameObject> entryButtons = new List<GameObject>();
-    private Vector2 polaroidBasePosition;
-
-    // System references
-    private DiscoveryLog discoveryLog;
-    private Inventory inventory;
-
-    // Input Actions
-    private InputAction scrollGrimoireAction;
+    private GrimoireTab activeTab = GrimoireTab.Inventory;
     private InputAction grimoireUIAction;
+
+    private GameObject[] panels;
+    private Button[] tabButtons;
+
+    private static readonly string[] tabNames = { "Inventory", "Spells", "Weapons", "Recipes", "Bestiary" };
 
     private void Awake()
     {
         if (instance != null)
-        {
             Debug.LogWarning("Found more than one Grimoire in the scene");
-        }
         else
-        {
             instance = this;
-        }
 
         if (screenUI == null)
             screenUI = FindAnyObjectByType<PlayerHUD>();
         if (playerInputReader == null)
             playerInputReader = FindAnyObjectByType<PlayerInputReader>();
-        if (discoveryLog == null)
-            discoveryLog = FindAnyObjectByType<DiscoveryLog>();
-        if (inventory == null)
-            inventory = FindAnyObjectByType<Inventory>();
+        if (grimoireAnim == null)
+            grimoireAnim = GetComponentInChildren<Animator>();
+
+        panels = new GameObject[] { inventoryPanel, spellsPanel, weaponsPanel, recipesPanel, bestiaryPanel };
+        tabButtons = new Button[] { inventoryTabButton, spellsTabButton, weaponsTabButton, recipesTabButton, bestiaryTabButton };
     }
 
-    void Start()
+    private void Start()
     {
-        scrollGrimoireAction = InputSystem.actions.FindAction("ScrollGrimoire");
         grimoireUIAction = InputSystem.actions.FindAction("GrimoireUI");
-
         InputSystem.actions.FindActionMap("UI").Disable();
 
-        polaroidBasePosition = imageFrameParent.rectTransform.anchoredPosition;
+        SetupTabButtons();
 
-        // Subscribe to data changes so the display rebuilds automatically.
-        if (discoveryLog != null)
-            discoveryLog.OnDiscoveryChanged += RebuildEntryList;
-        if (inventory != null)
-            inventory.OnInventoryChanged += RefreshCurrentEntry;
-
-        // EDIT (grimoire-decoupling): subscribe to scan hover event.
-        ScanController.OnScannableHovered += SelectByItem;
-
-        RebuildEntryList();
-
-        if (displayEntries.Count == 0)
+        // Start with all panels disabled.
+        for (int i = 0; i < panels.Length; i++)
         {
-            imageFrameParent.gameObject.SetActive(false);
+            if (panels[i] != null)
+                panels[i].SetActive(false);
+        }
+
+        // Start in minimised mode (full grimoire is closed).
+        SetContentMode(full: false);
+    }
+
+    private void Update()
+    {
+        if (grimoireUIAction != null && grimoireUIAction.WasPressedThisFrame())
+        {
+            if (!grimoireActive)
+                OpenGrimoire();
+            else
+                CloseGrimoire();
         }
     }
 
-    private void OnDestroy()
-    {
-        if (discoveryLog != null)
-            discoveryLog.OnDiscoveryChanged -= RebuildEntryList;
-        if (inventory != null)
-            inventory.OnInventoryChanged -= RefreshCurrentEntry;
+    // ---- Open / Close ----
 
-        // EDIT (grimoire-decoupling): unsubscribe from scan hover event.
-        ScanController.OnScannableHovered -= SelectByItem;
+    private void OpenGrimoire()
+    {
+        SetGrimoireUnscaledTime(true);
+
+        if (grimoireAnim != null)
+            grimoireAnim.Play("up");
+
+        grimoireActive = true;
+        OnGrimoireToggled?.Invoke(true);
+        Time.timeScale = 0f;
+
+        if (playerInputReader != null)
+            playerInputReader.SetCursorState(CursorLockMode.None, true);
+        else
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+
+        if (screenUI != null)
+            screenUI.UIVisible(false);
+
+        // Show full grimoire content, hide minimised content.
+        SetContentMode(full: true);
+
+        InputSystem.actions.FindActionMap("Player").Disable();
+        InputSystem.actions.FindActionMap("UI").Enable();
+
+        SwitchTab(activeTab);
     }
 
-    void Update()
+    private void CloseGrimoire()
     {
-        Vector2 grimoireScroll = scrollGrimoireAction.ReadValue<Vector2>();
-        if (!grimoireActive)
+        // Disable active panel before closing so it clears the list.
+        int activeIndex = (int)activeTab;
+        if (activeIndex < panels.Length && panels[activeIndex] != null)
+            panels[activeIndex].SetActive(false);
+
+        SetGrimoireUnscaledTime(false);
+
+        if (grimoireAnim != null)
+            grimoireAnim.Play("down");
+
+        grimoireActive = false;
+        OnGrimoireToggled?.Invoke(false);
+        Time.timeScale = 1f;
+
+        if (playerInputReader != null)
+            playerInputReader.SetCursorState(CursorLockMode.Locked, false);
+        else
         {
-            if (grimoireScroll.y < 0)
-            {
-                TurnPage(true);
-            }
-            else if (grimoireScroll.y > 0)
-            {
-                TurnPage(false);
-            }
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
-        if (grimoireUIAction.WasPressedThisFrame())
+        if (screenUI != null)
+            screenUI.UIVisible(true);
+
+        // Show minimised content, hide full grimoire content.
+        SetContentMode(full: false);
+
+        InputSystem.actions.FindActionMap("Player").Enable();
+        InputSystem.actions.FindActionMap("UI").Disable();
+    }
+
+    // Summary: Force-close when the pause menu opens.
+    public void ForceCloseForPause()
+    {
+        if (!grimoireActive) return;
+
+        int activeIndex = (int)activeTab;
+        if (activeIndex < panels.Length && panels[activeIndex] != null)
+            panels[activeIndex].SetActive(false);
+
+        SetGrimoireUnscaledTime(false);
+
+        if (grimoireAnim != null)
+            grimoireAnim.Play("down");
+
+        grimoireActive = false;
+        OnGrimoireToggled?.Invoke(false);
+
+        if (screenUI != null)
+            screenUI.UIVisible(true);
+
+        SetContentMode(full: false);
+
+        InputSystem.actions.FindActionMap("UI")?.Disable();
+    }
+
+    // ---- Tab Switching ----
+
+    private void SetupTabButtons()
+    {
+        if (inventoryTabButton != null)
+            inventoryTabButton.onClick.AddListener(() => SwitchTab(GrimoireTab.Inventory));
+        if (spellsTabButton != null)
+            spellsTabButton.onClick.AddListener(() => SwitchTab(GrimoireTab.Spells));
+        if (weaponsTabButton != null)
+            weaponsTabButton.onClick.AddListener(() => SwitchTab(GrimoireTab.Weapons));
+        if (recipesTabButton != null)
+            recipesTabButton.onClick.AddListener(() => SwitchTab(GrimoireTab.Recipes));
+        if (bestiaryTabButton != null)
+            bestiaryTabButton.onClick.AddListener(() => SwitchTab(GrimoireTab.Bestiary));
+    }
+
+    // Summary: Show the selected tab's panel and hide the others.
+    // All panels are disabled first to ensure the old panel's OnDisable (which clears
+    // the shared list) runs before the new panel's OnEnable (which rebuilds it).
+    public void SwitchTab(GrimoireTab tab)
+    {
+        activeTab = tab;
+        int activeIndex = (int)tab;
+
+        // Disable all panels first.
+        for (int i = 0; i < panels.Length; i++)
         {
-            if (!grimoireActive) // GRIMOIRE ACTIVATE!
-            {
-                SetGrimoireUnscaledTime(true);
-                if (grimoireAnim != null)
-                {
-                    grimoireAnim.Play("up");
-                }
-                grimoireActive = true;
-                OnGrimoireToggled?.Invoke(true);
-                Time.timeScale = 0f;
-
-                if (playerInputReader != null)
-                    playerInputReader.SetCursorState(CursorLockMode.None, true);
-                else
-                {
-                    Cursor.visible = true;
-                    Cursor.lockState = CursorLockMode.None;
-                }
-
-                if (screenUI != null)
-                    screenUI.UIVisible(false);
-
-                InputSystem.actions.FindActionMap("Player").Disable();
-                InputSystem.actions.FindActionMap("UI").Enable();
-            }
-            else // GRIMOIRE AWAY!!
-            {
-                SetGrimoireUnscaledTime(false);
-                if (grimoireAnim != null)
-                {
-                    grimoireAnim.Play("down");
-                }
-                grimoireActive = false;
-                OnGrimoireToggled?.Invoke(false);
-                Time.timeScale = 1f;
-
-                if (playerInputReader != null)
-                    playerInputReader.SetCursorState(CursorLockMode.Locked, false);
-                else
-                {
-                    Cursor.visible = false;
-                    Cursor.lockState = CursorLockMode.Locked;
-                }
-
-                if (screenUI != null)
-                    screenUI.UIVisible(true);
-
-                InputSystem.actions.FindActionMap("Player").Enable();
-                InputSystem.actions.FindActionMap("UI").Disable();
-            }
+            if (panels[i] != null)
+                panels[i].SetActive(false);
         }
 
-        if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject == null)
+        // Then enable the target panel.
+        if (activeIndex < panels.Length && panels[activeIndex] != null)
+            panels[activeIndex].SetActive(true);
+
+        if (headingText != null && activeIndex < tabNames.Length)
+            headingText.SetText(tabNames[activeIndex]);
+
+        UpdateTabButtonVisuals(activeIndex);
+    }
+
+    private void UpdateTabButtonVisuals(int activeIndex)
+    {
+        for (int i = 0; i < tabButtons.Length; i++)
         {
-            if (entryButtons.Count > 0 && currentEntry < entryButtons.Count)
-            {
-                EventSystem.current.SetSelectedGameObject(entryButtons[currentEntry]);
-            }
+            if (tabButtons[i] == null) continue;
+
+            Image btnImage = tabButtons[i].GetComponent<Image>();
+            if (btnImage != null)
+                btnImage.color = (i == activeIndex) ? tabActiveColor : tabNormalColor;
         }
+    }
+
+    // ---- Utilities ----
+
+    // Summary: Toggle between full grimoire content and minimised content.
+    // Full = tabs, lists, detail view. Minimised = quick-slots, spirit meter.
+    private void SetContentMode(bool full)
+    {
+        if (fullContentL != null) fullContentL.SetActive(full);
+        if (fullContentR != null) fullContentR.SetActive(full);
+        if (minimisedContentL != null) minimisedContentL.SetActive(!full);
+        if (minimisedContentR != null) minimisedContentR.SetActive(!full);
     }
 
     private void SetGrimoireUnscaledTime(bool useUnscaledTime)
     {
         Animator[] animators = GetComponentsInChildren<Animator>(true);
         foreach (Animator animator in animators)
-        {
-            animator.updateMode = useUnscaledTime ? AnimatorUpdateMode.UnscaledTime : AnimatorUpdateMode.Normal;
-        }
-    }
-
-    public void ForceCloseForPause()
-    {
-        if (!grimoireActive)
-        {
-            return;
-        }
-
-        SetGrimoireUnscaledTime(false);
-        if (grimoireAnim != null)
-        {
-            grimoireAnim.Play("down");
-        }
-
-        grimoireActive = false;
-        OnGrimoireToggled?.Invoke(false);
-
-        if (screenUI != null)
-        {
-            screenUI.UIVisible(true);
-        }
-
-        InputSystem.actions.FindActionMap("UI")?.Disable();
-    }
-
-    // Summary: Rebuilds the entire entry button list from DiscoveryLog.
-    private void RebuildEntryList()
-    {
-        // Clear old buttons.
-        foreach (GameObject btn in entryButtons)
-        {
-            if (btn != null) Destroy(btn);
-        }
-        entryButtons.Clear();
-
-        // Rebuild from discovery data.
-        if (discoveryLog != null)
-            displayEntries = discoveryLog.GetAllEntries();
-        else
-            displayEntries.Clear();
-
-        for (int i = 0; i < displayEntries.Count; i++)
-        {
-            int entryIndex = i;
-            DiscoveryLog.DiscoveryEntry entry = displayEntries[i];
-
-            GameObject newEntryButton = Instantiate(entryButtonPrefab, listContentParent.transform);
-            newEntryButton.GetComponentInChildren<TMP_Text>().text = entry.item.displayName;
-            newEntryButton.GetComponent<Button>().onClick.AddListener(() => SelectEntry(entryIndex));
-            entryButtons.Add(newEntryButton);
-        }
-
-        if (displayEntries.Count == 0)
-        {
-            imageFrameParent.gameObject.SetActive(false);
-        }
-        else
-        {
-            currentEntry = Mathf.Clamp(currentEntry, 0, displayEntries.Count - 1);
-            SelectEntry(currentEntry);
-        }
-    }
-
-    // Summary: Refreshes the current entry display (e.g. when inventory changes and "collected" status updates).
-    private void RefreshCurrentEntry()
-    {
-        if (displayEntries.Count > 0 && currentEntry < displayEntries.Count)
-            UpdateText();
-    }
-
-    // Summary: Called by ScanController to auto-select the grimoire page for a given item.
-    public void SelectByItem(ItemDefinition item)
-    {
-        if (item == null) return;
-
-        for (int i = 0; i < displayEntries.Count; i++)
-        {
-            if (displayEntries[i].item == item)
-            {
-                SelectEntry(i);
-                return;
-            }
-        }
-    }
-
-    public void TurnPage(bool forwards)
-    {
-        if (displayEntries.Count != 0)
-        {
-            if (forwards)
-            {
-                if (currentEntry != displayEntries.Count - 1)
-                {
-                    currentEntry++;
-                    SelectEntry(currentEntry);
-                }
-            }
-            else
-            {
-                if (currentEntry != 0)
-                {
-                    currentEntry--;
-                    SelectEntry(currentEntry);
-                }
-            }
-        }
-    }
-
-    // Summary: Updates the grimoire display from DiscoveryLog + Inventory data.
-    public void UpdateText()
-    {
-        if (displayEntries.Count == 0 || currentEntry >= displayEntries.Count) return;
-
-        DiscoveryLog.DiscoveryEntry entry = displayEntries[currentEntry];
-        ItemDefinition item = entry.item;
-
-        imageFrameParent.gameObject.SetActive(true);
-
-        entryNameDisplay.SetText(item.displayName);
-
-        // "collected" now means "currently in inventory".
-        if (inventory != null && inventory.Has(item))
-        {
-            collectedDisplay.SetText("collected");
-        }
-        else
-        {
-            collectedDisplay.SetText("");
-        }
-
-        flavourTextDisplay.SetText(item.flavourText);
-        hintCompletedTextDisplay.SetText(item.hintText);
-
-        if (entry.snapshot != null)
-            displayImage.texture = entry.snapshot;
-
-        // random polaroid position/rotation
-        Random.InitState(currentEntry);
-        float offsetX = Random.Range(-8f, 8);
-        float offsetY = Random.Range(-15f, 15);
-        float rotation = Random.Range(-20f, 20f);
-        imageFrameParent.rectTransform.anchoredPosition = polaroidBasePosition + new Vector2(offsetX, offsetY);
-        imageFrameParent.rectTransform.localEulerAngles = new Vector3(0f, 0f, rotation);
-    }
-
-    public void SelectEntry(int index)
-    {
-        if (displayEntries.Count == 0) return;
-
-        currentEntry = Mathf.Clamp(index, 0, displayEntries.Count - 1);
-        if (entryButtons.Count > currentEntry)
-        {
-            EventSystem.current.SetSelectedGameObject(entryButtons[currentEntry]);
-        }
-        UpdateText();
+            animator.updateMode = useUnscaledTime
+                ? AnimatorUpdateMode.UnscaledTime
+                : AnimatorUpdateMode.Normal;
     }
 }

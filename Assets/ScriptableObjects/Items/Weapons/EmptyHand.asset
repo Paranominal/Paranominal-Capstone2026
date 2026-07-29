@@ -9,24 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16cd823a153573b49b77e9bb92e2ed12, type: 3}
+  m_Script: {fileID: 11500000, guid: 5b304f4aff4d13944b090661b309b880, type: 3}
   m_Name: EmptyHand
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeWeaponDefinition
   id: item_EmptyHand
   displayName: Empty Hand
   description: 
-  flavourText: You don't got nothin'!
+  flavourText: Ol' timey fisticuffs, eh?
   hintText: 
   icon: {fileID: 0}
   tags: 64
   maxStack: 1
   tintColor: {r: 1, g: 1, b: 1, a: 1}
-  magazineSize: 0
-  reloadDuration: 0
-  autoReload: 0
-  postShotReloadDelay: 0
-  shotCooldown: 0
-  hitscanRange: 0
-  ironBarrelAvailable: 0
-  silverBarrelAvailable: 0
+  attackCooldown: 0.2
+  knockbackForce: 3
   equippedPrefab: {fileID: 8766396168757975875, guid: d92e0e1a18a0450499d440c395248fbd, type: 3}
+  damage: 0
+  attackRange: 1.5

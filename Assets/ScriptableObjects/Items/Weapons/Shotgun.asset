@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16cd823a153573b49b77e9bb92e2ed12, type: 3}
+  m_Script: {fileID: 11500000, guid: ec9f03bfe2f544449b63872883772609, type: 3}
   m_Name: Shotgun
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
+  m_EditorClassIdentifier: Assembly-CSharp::RangedWeaponDefinition
   id: item_Shotgun
   displayName: Shotgun
   description: 
@@ -21,12 +21,13 @@ MonoBehaviour:
   tags: 64
   maxStack: 1
   tintColor: {r: 1, g: 1, b: 1, a: 1}
+  attackCooldown: 0.2
+  knockbackForce: 1
+  equippedPrefab: {fileID: 2745210396697858090, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}
   magazineSize: 4
   reloadDuration: 2
   autoReload: 1
   postShotReloadDelay: 0.25
-  shotCooldown: 0.2
   hitscanRange: 1000
   ironBarrelAvailable: 1
   silverBarrelAvailable: 1
-  equippedPrefab: {fileID: 2745210396697858090, guid: 0279a45d0e328284f96f4d0d5a83ab96, type: 3}

@@ -1,27 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-    /// Summary:
-/// Reusable damage-dealing trigger volume. Sits on a child GameObject of an
-/// attacker (e.g. a "HitBox" sphere on the Eye-bat). Attacks activate the
-/// hitbox for a window, supplying the damage payload; the hitbox handles
-/// trigger detection and routes hits to anything implementing IDamageable.
-///
-/// Activation patterns this supports:
-///   - One-shot strike (Statue AoE: activate, deactivate after strikeDuration)
-///   - Time-bounded (Eye-bat dive: activate during dive, deactivate at end)
-///   - Always-on contact (Ghost: activate on spawn, never deactivate)
-///   - Lingering DoT (configure allowMultipleHitsPerTarget + retriggerInterval)
-/// Reusable damage-dealing trigger volume. Sits on a child GameObject of an
-/// attacker (e.g. a "HitBox" sphere on the Eye-bat). Attacks activate the
-/// hitbox for a window, supplying the damage payload; the hitbox handles
-/// trigger detection and routes hits to anything implementing IDamageable.
-///
-/// Activation patterns this supports:
-///   - One-shot strike (Statue AoE: activate, deactivate after strikeDuration)
-///   - Time-bounded (Eye-bat dive: activate during dive, deactivate at end)
-///   - Always-on contact (Ghost: activate on spawn, never deactivate)
-///   - Lingering DoT (configure allowMultipleHitsPerTarget + retriggerInterval)
+// Summary: Reusable damage-dealing trigger volume. Sits on a child GameObject of an
+// attacker (e.g. a "HitBox" sphere on the Eye-bat). Attacks activate the
+// hitbox for a window, supplying the damage payload; the hitbox handles
+// trigger detection and routes hits to anything implementing IDamageable.
+//
+// Activation patterns this supports:
+//   - One-shot strike (Statue AoE: activate, deactivate after strikeDuration)
+//   - Time-bounded (Eye-bat dive: activate during dive, deactivate at end)
+//   - Always-on contact (Ghost: activate on spawn, never deactivate)
+//   - Lingering DoT (configure allowMultipleHitsPerTarget + retriggerInterval)
 
 [RequireComponent(typeof(Collider))]
 public class Hitbox : MonoBehaviour
@@ -51,17 +40,13 @@ public class Hitbox : MonoBehaviour
 
     public bool IsActive => isActive;
 
-    /// Summary:
-    /// Fires whenever the hitbox makes contact with a collider on hitLayers, regardless of
-    /// whether damage was actually dealt. Use this when an enemy needs to react to *any*
-    /// contact - e.g. the Ghost destroying itself on touch even before PlayerStatus exists.
-
+    // Fires whenever the hitbox makes contact with a collider on hitLayers, regardless of
+    // whether damage was actually dealt. Use this when an enemy needs to react to *any*
+    // contact, e.g. the Ghost destroying itself on touch even before PlayerStatus exists.
     public event System.Action<Collider> OnContact;
 
-    /// Summary:
-    /// Fires only when damage is successfully dealt to an IDamageable. Use this for hit
-    /// reactions that depend on the damage actually landing - flashes, sound effects, etc.
-
+    // Fires only when damage is successfully dealt to an IDamageable. Use this for hit
+    // reactions that depend on the damage actually landing.
     public event System.Action<IDamageable, DamageInfo> OnHit;
 
     private void Awake()
@@ -78,10 +63,8 @@ public class Hitbox : MonoBehaviour
         triggerCollider.enabled = false;
     }
 
-    /// Summary:
-    /// Begin dealing damage. Targets entering or already inside the trigger
-    /// will be hit (subject to the per-target hit rules).
-
+    // Summary: Begin dealing damage. Targets entering or already inside the trigger
+    // will be hit (subject to the per-target hit rules).
     public void Activate(DamageInfo damage)
     {
         currentDamage = damage;
@@ -93,9 +76,7 @@ public class Hitbox : MonoBehaviour
             Debug.Log($"[Hitbox] Activated on {gameObject.name} (damage: {damage.amount}).", this);
     }
 
-    /// Summary:
-    /// Stop dealing damage. The collider is disabled and hit history is cleared.
-
+    // Summary: Stop dealing damage. The collider is disabled and hit history is cleared.
     public void Deactivate()
     {
         isActive = false;
@@ -154,18 +135,14 @@ public class Hitbox : MonoBehaviour
             if (Time.time - lastHitTime < retriggerInterval) return;
         }
 
-        //fill in hit-point data based on where the target actually is now
-        Vector3 hitPoint = other.ClosestPoint(transform.position);
+        // EDIT (weapon system): copy the full activation payload, then override only the
+        // per-hit spatial fields. New fields on DamageInfo pass through automatically.
+        DamageInfo info = currentDamage;
+        info.hitPoint = other.ClosestPoint(transform.position);
         Vector3 hitDirection = (other.transform.position - transform.position);
         hitDirection.y = 0f;
         if (hitDirection.sqrMagnitude > 0.0001f) hitDirection.Normalize();
-
-        DamageInfo info = new DamageInfo(
-            currentDamage.amount,
-            hitPoint,
-            hitDirection,
-            currentDamage.source
-        );
+        info.hitDirection = hitDirection;
 
         damageable.TakeDamage(info);
         hitHistory[damageable] = Time.time;

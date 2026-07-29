@@ -35,6 +35,9 @@ public class AmmoUI : MonoBehaviour
             weaponController.ReloadFinished += ResetStrikes;
             weaponController.AmmoChanged += OnAmmoChanged;
         }
+
+        // EDIT (weapon system): hide ammo icons when in empty hand mode.
+        WeaponManager.OnWeaponModeChanged += OnWeaponModeChanged;
     }
 
     private void OnDisable()
@@ -44,6 +47,19 @@ public class AmmoUI : MonoBehaviour
             weaponController.ShotResolved -= OnShotResolved;
             weaponController.ReloadFinished -= ResetStrikes;
             weaponController.AmmoChanged -= OnAmmoChanged;
+        }
+
+        WeaponManager.OnWeaponModeChanged -= OnWeaponModeChanged;
+    }
+
+    // EDIT (weapon system): toggle ammo icon visibility based on weapon mode.
+    // Toggles individual elements instead of own gameObject to keep event subscriptions alive.
+    private void OnWeaponModeChanged(bool weaponEquipped)
+    {
+        for (int i = 0; i < ammoUiElements.Length; i++)
+        {
+            if (ammoUiElements[i] != null)
+                ammoUiElements[i].gameObject.SetActive(weaponEquipped);
         }
     }
 
