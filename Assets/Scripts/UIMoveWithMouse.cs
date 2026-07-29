@@ -9,13 +9,13 @@ public class UIMoveWithMouse : MonoBehaviour
     private Quaternion cachedRotation;
     void Start()
     {
-        cachedRotation = transform.rotation;
+        cachedRotation = transform.localRotation;
     }
     void Update()
     {
         mousePos = GetViewportPosition();
 
-        transform.rotation = Quaternion.Euler(cachedRotation.eulerAngles + (new Vector3(mousePos.y, mousePos.x * -1, 0) * rotationStrength));
+        transform.localRotation = Quaternion.Euler(cachedRotation.eulerAngles + (new Vector3(mousePos.y, mousePos.x * -1, 0) * rotationStrength));
     }
     private float2 GetViewportPosition()
     {
