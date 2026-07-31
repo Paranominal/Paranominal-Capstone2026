@@ -79,20 +79,44 @@ public class QuickSlotManager : MonoBehaviour
 
     // ---- Assignment ----
 
-    // Summary: Assign an item to a slot. Clears any existing contents.
+    // Summary: Assign an item to a slot. Clears any existing contents, and removes
+    // the item from any other slot it was previously in.
     public void AssignItem(int index, ItemDefinition item)
     {
         if (!ValidIndex(index)) return;
+
+        // Remove this item from any other slot first.
+        for (int i = 0; i < SlotCount; i++)
+        {
+            if (i == index) continue;
+            if (slots[i].item == item)
+            {
+                slots[i].Clear();
+                OnSlotChanged?.Invoke(i, slots[i]);
+            }
+        }
 
         slots[index].Clear();
         slots[index].item = item;
         OnSlotChanged?.Invoke(index, slots[index]);
     }
 
-    // Summary: Assign a spell to a slot. Clears any existing contents.
+    // Summary: Assign a spell to a slot. Clears any existing contents, and removes
+    // the spell from any other slot it was previously in.
     public void AssignSpell(int index, SpellDefinition spell)
     {
         if (!ValidIndex(index)) return;
+
+        // Remove this spell from any other slot first.
+        for (int i = 0; i < SlotCount; i++)
+        {
+            if (i == index) continue;
+            if (slots[i].spell == spell)
+            {
+                slots[i].Clear();
+                OnSlotChanged?.Invoke(i, slots[i]);
+            }
+        }
 
         slots[index].Clear();
         slots[index].spell = spell;

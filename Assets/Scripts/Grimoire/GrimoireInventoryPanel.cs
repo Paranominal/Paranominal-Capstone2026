@@ -42,10 +42,13 @@ public class GrimoireInventoryPanel : MonoBehaviour
         if (quickSlotManager == null)
             quickSlotManager = FindAnyObjectByType<QuickSlotManager>();
 
-        slot1Action = InputSystem.actions.FindAction("QuickSlot1");
-        slot2Action = InputSystem.actions.FindAction("QuickSlot2");
-        slot3Action = InputSystem.actions.FindAction("QuickSlot3");
-        slot4Action = InputSystem.actions.FindAction("QuickSlot4");
+        // EDIT (input): find actions from the GrimoireUI map specifically, since the
+        // same action names exist in the Player map for gameplay use.
+        var grimoireMap = InputSystem.actions.FindActionMap("GrimoireUI");
+        slot1Action = grimoireMap?.FindAction("QuickSlot1");
+        slot2Action = grimoireMap?.FindAction("QuickSlot2");
+        slot3Action = grimoireMap?.FindAction("QuickSlot3");
+        slot4Action = grimoireMap?.FindAction("QuickSlot4");
 
         SetupSubTabs();
     }

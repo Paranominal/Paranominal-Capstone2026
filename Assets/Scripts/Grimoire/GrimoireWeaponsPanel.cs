@@ -30,8 +30,10 @@ public class GrimoireWeaponsPanel : MonoBehaviour
         if (weaponManager == null)
             weaponManager = FindAnyObjectByType<WeaponManager>();
 
-        slot1Action = InputSystem.actions.FindAction("QuickSlot1");
-        slot2Action = InputSystem.actions.FindAction("QuickSlot2");
+        // EDIT (input): find actions from the GrimoireUI map specifically.
+        var grimoireMap = InputSystem.actions.FindActionMap("GrimoireUI");
+        slot1Action = grimoireMap?.FindAction("QuickSlot1");
+        slot2Action = grimoireMap?.FindAction("QuickSlot2");
     }
 
     private void OnEnable()

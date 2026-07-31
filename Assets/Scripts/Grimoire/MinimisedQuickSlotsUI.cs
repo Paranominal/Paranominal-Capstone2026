@@ -2,8 +2,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// Summary: Displays the 4 quick-slots on the right page of the minimised grimoire.
-// Each slot shows its number, item/spell icon, and quantity (for consumables/throwables).
+// Summary: Displays the 4 quick-slots on the right page of the minimised grimoire,
+// arranged in a plus shape. Matches the CauldronSlot visual pattern: square background,
+// icon image with preserveAspect, quantity in the lower-right corner.
 // Subscribes to QuickSlotManager.OnSlotChanged for updates.
 public class MinimisedQuickSlotsUI : MonoBehaviour
 {
@@ -16,14 +17,14 @@ public class MinimisedQuickSlotsUI : MonoBehaviour
     [System.Serializable]
     public class SlotDisplay
     {
-        [Tooltip("The slot number label (displays 1-4).")]
+        [Tooltip("Always-visible slot number label (1-4).")]
         public TMP_Text numberLabel;
-        [Tooltip("The item/spell icon.")]
-        public RawImage icon;
-        [Tooltip("The quantity label. Hidden for spells and empty slots.")]
-        public TMP_Text quantityLabel;
-        [Tooltip("Container for the entire slot. Dimmed when empty.")]
-        public CanvasGroup canvasGroup;
+        [Tooltip("Parent of icon + quantity. Hidden when the slot is empty.")]
+        public GameObject filledGroup;
+        [Tooltip("The item/spell icon. Uses Image with preserveAspect.")]
+        public Image icon;
+        [Tooltip("Quantity text in the lower-right corner. Shown for consumables/throwables.")]
+        public TMP_Text quantityText;
     }
 
     private void Awake()
@@ -70,7 +71,6 @@ public class MinimisedQuickSlotsUI : MonoBehaviour
         SlotDisplay display = slots[index];
         if (display == null) return;
 
-        // Always show the slot number.
         if (display.numberLabel != null)
             display.numberLabel.SetText((index + 1).ToString());
 
@@ -80,7 +80,8 @@ public class MinimisedQuickSlotsUI : MonoBehaviour
 
         if (slot == null || slot.IsEmpty)
         {
-            SetEmpty(display);
+            if (display.filledGroup != null)
+                display.filledGroup.SetActive(false);
             return;
         }
 
@@ -88,14 +89,15 @@ public class MinimisedQuickSlotsUI : MonoBehaviour
         {
             SetIcon(display, slot.item.icon);
             SetQuantity(display, slot.item);
-            SetFilled(display);
         }
         else if (slot.spell != null)
         {
             SetIcon(display, slot.spell.icon);
             HideQuantity(display);
-            SetFilled(display);
         }
+
+        if (display.filledGroup != null)
+            display.filledGroup.SetActive(true);
     }
 
     private void SetIcon(SlotDisplay display, Sprite icon)
@@ -104,52 +106,37 @@ public class MinimisedQuickSlotsUI : MonoBehaviour
 
         if (icon != null)
         {
-            display.icon.texture = icon.texture;
-            display.icon.gameObject.SetActive(true);
+            display.icon.sprite = icon;
+            display.icon.preserveAspect = true;
+            display.icon.enabled = true;
         }
         else
         {
-            display.icon.gameObject.SetActive(false);
+            display.icon.enabled = false;
         }
     }
 
     private void SetQuantity(SlotDisplay display, ItemDefinition item)
     {
-        if (display.quantityLabel == null) return;
+        if (display.quantityText == null) return;
 
         bool showQuantity = item.tags.HasFlag(ItemTag.Consumable) || item.tags.HasFlag(ItemTag.Throwable);
 
         if (showQuantity && inventory != null)
         {
             int count = inventory.GetCount(item);
-            display.quantityLabel.SetText(count.ToString());
-            display.quantityLabel.gameObject.SetActive(true);
+            display.quantityText.SetText("x " + count);
+            display.quantityText.gameObject.SetActive(true);
         }
         else
         {
-            display.quantityLabel.gameObject.SetActive(false);
+            display.quantityText.gameObject.SetActive(false);
         }
     }
 
     private void HideQuantity(SlotDisplay display)
     {
-        if (display.quantityLabel != null)
-            display.quantityLabel.gameObject.SetActive(false);
-    }
-
-    private void SetFilled(SlotDisplay display)
-    {
-        if (display.canvasGroup != null)
-            display.canvasGroup.alpha = 1f;
-    }
-
-    private void SetEmpty(SlotDisplay display)
-    {
-        if (display.icon != null)
-            display.icon.gameObject.SetActive(false);
-        HideQuantity(display);
-
-        if (display.canvasGroup != null)
-            display.canvasGroup.alpha = 0.3f;
+        if (display.quantityText != null)
+            display.quantityText.gameObject.SetActive(false);
     }
 }
