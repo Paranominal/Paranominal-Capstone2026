@@ -4,6 +4,7 @@ using UnityEngine;
 // Implements IScannable for the scan system and IInteractable for the interaction system.
 // EDIT (collection-decoupling): collection moved here from ScanController.
 // The requiresScan flag controls whether scanning is needed or the item is pickup-only.
+// EDIT (prompt-simplification): surface removed from ResolvePrompt.
 public class WorldItem : MonoBehaviour, IScannable, IInteractable
 {
     [Header("Item")]
@@ -105,7 +106,6 @@ public class WorldItem : MonoBehaviour, IScannable, IInteractable
 
         return new InteractionPrompt
         {
-            surface = PromptSurface.Hud,
             label = "Pick Up",
             actionName = "Collect",
         };

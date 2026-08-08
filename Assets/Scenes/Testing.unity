@@ -288,6 +288,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7822667305289106115, guid: 24637c882e70c5b429c1814fc0bfd835, type: 3}
+      propertyPath: targetDoor
+      value: 
+      objectReference: {fileID: 718192543}
+    - target: {fileID: 7822667305289106115, guid: 24637c882e70c5b429c1814fc0bfd835, type: 3}
       propertyPath: requiredKey
       value: 
       objectReference: {fileID: 11400000, guid: 7616ebefbf5843e409e14c5e6225311d, type: 2}
@@ -896,6 +900,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c28c6c46d0c32d749a35649a36d26780, type: 3}
+--- !u!114 &718192543 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3316557093738072247, guid: 24637c882e70c5b429c1814fc0bfd835, type: 3}
+  m_PrefabInstance: {fileID: 87947190}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40af0772d050ae141836531215a6b999, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door
 --- !u!114 &722818279 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1519046486113192626, guid: 5453a7bcd76fffd43aa2419247328e70, type: 3}
@@ -2372,15 +2387,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5021404530314425685, guid: 6b157577a32ddfb4d9b9f4a0edecdbba, type: 3}
       propertyPath: m_fontSize
-      value: 42
+      value: 58
       objectReference: {fileID: 0}
     - target: {fileID: 5021404530314425685, guid: 6b157577a32ddfb4d9b9f4a0edecdbba, type: 3}
       propertyPath: m_fontSizeBase
-      value: 42
+      value: 58
       objectReference: {fileID: 0}
     - target: {fileID: 5980749732772026159, guid: 6b157577a32ddfb4d9b9f4a0edecdbba, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6000520155148055369, guid: 6b157577a32ddfb4d9b9f4a0edecdbba, type: 3}
       propertyPath: m_SizeDelta.x
@@ -2408,7 +2423,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6073504020658493977, guid: 6b157577a32ddfb4d9b9f4a0edecdbba, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 240
+      value: 320
       objectReference: {fileID: 0}
     - target: {fileID: 6073504020658493977, guid: 6b157577a32ddfb4d9b9f4a0edecdbba, type: 3}
       propertyPath: m_SizeDelta.y
@@ -2468,7 +2483,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7826492335158425489, guid: 6b157577a32ddfb4d9b9f4a0edecdbba, type: 3}
       propertyPath: m_PresetInfoIsWorld
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:

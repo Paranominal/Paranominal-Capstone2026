@@ -1,8 +1,10 @@
 using UnityEngine;
 
 // Summary: A destructible ward (e.g. a glyph on a door). The player needs a specific item
-// to destroy it, unlocking the door behind it. Follows the same prompt pattern as Door:
-// world-space "Warded" label when the player lacks the item, HUD action prompt when they have it.
+// to destroy it, unlocking the door behind it.
+// EDIT (label-split): no longer shows a floating "Warded" label. Visual indicators on
+// the ward itself communicate its presence. Only shows a HUD prompt when the player
+// has the required item.
 [RequireComponent(typeof(Collider))]
 public class Ward : MonoBehaviour, IInteractable
 {
@@ -12,9 +14,6 @@ public class Ward : MonoBehaviour, IInteractable
 
     [Header("Door")]
     [SerializeField] private Door targetDoor;
-
-    [Header("Prompt")]
-    [SerializeField] private Transform promptAnchor;
 
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
@@ -27,18 +26,12 @@ public class Ward : MonoBehaviour, IInteractable
             string itemName = requiredItem != null ? requiredItem.displayName : "Item";
             return new InteractionPrompt
             {
-                surface = PromptSurface.Hud,
                 label = $"Destroy Ward ({itemName})",
-                actionName = "Collect"
+                actionName = "Collect",
             };
         }
 
-        return new InteractionPrompt
-        {
-            surface = PromptSurface.WorldSpace,
-            label = "Warded",
-            anchor = promptAnchor
-        };
+        return InteractionPrompt.None;
     }
 
     public void Interact(InteractionContext context)

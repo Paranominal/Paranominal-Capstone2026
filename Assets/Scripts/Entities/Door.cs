@@ -3,10 +3,8 @@ using UnityEngine.InputSystem;
 
 // Summary: Door with open/close/ajar/slam states and arena-lock support.
 // EDIT (lock-extraction): key-lock logic moved to the Lock component.
-// Door is now purely a door: it knows whether it's unlocked, but the key-checking
-// and unlocking mechanism lives on Lock (or Ward, or ScannableLock).
-// EDIT (prompt-simplification): ResolvePrompt no longer sets surface or anchor.
-// Presentation is inferred by the controller from actionName + PromptAnchor component.
+// EDIT (label-split): locked doors no longer return a prompt. Visual indicators
+// on the door itself communicate locked state. Only unlocked doors show a HUD prompt.
 [RequireComponent(typeof(AudioSource))]
 public class Door : MonoBehaviour, IInteractable
 {
@@ -32,10 +30,6 @@ public class Door : MonoBehaviour, IInteractable
     public bool isArenaLocked;
     public float ajarDistance = 3;
     private PlayerMover player;
-
-    [Header("Prompt")]
-    public bool hideUntilAttempted;
-    [HideInInspector] public bool revealed;
 
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
@@ -96,8 +90,6 @@ public class Door : MonoBehaviour, IInteractable
         if (!unlocked)
         {
             AudioManager.PlaySound(lockedSound, audioSource);
-            if (hideUntilAttempted)
-                revealed = true;
             return;
         }
 
@@ -107,20 +99,12 @@ public class Door : MonoBehaviour, IInteractable
             Open();
     }
 
-    // EDIT (prompt-simplification): locked = informational label (no actionName).
-    // Unlocked = actionable label (actionName set). Controller infers the rest.
+    // EDIT (label-split): locked/arena-locked doors return no prompt.
+    // Only unlocked doors show the HUD "Open" action.
     public InteractionPrompt ResolvePrompt(InteractionContext context)
     {
-        if (isArenaLocked)
-            return new InteractionPrompt { label = "Locked" };
-
-        if (!unlocked)
-        {
-            if (hideUntilAttempted && !revealed)
-                return InteractionPrompt.None;
-
-            return new InteractionPrompt { label = "Locked" };
-        }
+        if (isArenaLocked || !unlocked)
+            return InteractionPrompt.None;
 
         return new InteractionPrompt
         {

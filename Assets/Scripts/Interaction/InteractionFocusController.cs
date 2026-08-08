@@ -1,19 +1,18 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Summary: Two-pass interaction detection.
-// Pass 1 (proximity): OverlapSphere finds nearby interactables, drives floating prompts
-//   for informational labels (no actionName) on objects that have a PromptAnchor.
+// Summary: Two-pass detection each frame.
+// Pass 1 (proximity): OverlapSphere finds nearby WorldLabel components and feeds their
+//   names to the ScreenSpacePromptPool as floating labels.
 // Pass 2 (aim): reads the shared Raycaster hit, drives HUD prompts for actionable
-//   labels (has actionName) and routes interact input.
+//   interactions and routes interact input.
 // EDIT (raycaster-consolidation): aim detection uses Raycaster.Instance instead of its own ray.
-// EDIT (interaction-rework): proximity and aim are now independent; both can show simultaneously.
+// EDIT (interaction-rework): proximity and aim are independent; both can show simultaneously.
 // EDIT (screen-space-prompts): floating prompts use a pooled screen-space system.
-// EDIT (prompt-simplification): presentation inferred from prompt fields + PromptAnchor
-//   instead of an explicit PromptSurface enum.
+// EDIT (label-split): floating labels now come from WorldLabel, not IInteractable.
 public class InteractionFocusController : MonoBehaviour
 {
-    [Header("Proximity Detection (Floating Prompts)")]
+    [Header("Proximity Detection (Floating Labels)")]
     [SerializeField] private LayerMask interactableMask;
     [SerializeField] private LayerMask obstructionMask;
     [SerializeField] private float proximityRadius = 4f;
@@ -78,32 +77,26 @@ public class InteractionFocusController : MonoBehaviour
 
         Vector3 camPos = cam.transform.position;
 
-        // -- Pass 1: Proximity (floating prompts for informational labels) --
-        DriveWorldPrompt(camPos);
+        // -- Pass 1: Proximity (floating name labels from WorldLabel components) --
+        DriveWorldLabels(camPos);
 
         // -- Pass 2: Aim via Raycaster (HUD prompts + interact input) --
         DriveAimPrompt();
     }
 
-    // Summary: OverlapSphere for nearby interactables. For each one that resolves an
-    // informational prompt (no actionName) and has a PromptAnchor, shows a floating label.
-    private void DriveWorldPrompt(Vector3 camPos)
+    // Summary: OverlapSphere for nearby WorldLabel components. Shows a floating name
+    // label for each one, keyed by instance ID.
+    // EDIT (label-split): no longer queries IInteractable; uses WorldLabel directly.
+    private void DriveWorldLabels(Vector3 camPos)
     {
         Collider[] hits = Physics.OverlapSphere(camPos, proximityRadius, interactableMask);
         foreach (Collider col in hits)
         {
-            IInteractable it = col.GetComponent<IInteractable>();
-            if (it == null)
-                it = col.GetComponentInParent<IInteractable>();
-            if (it == null) continue;
-
-            InteractionPrompt prompt = it.ResolvePrompt(context);
-            if (!prompt.HasPrompt) continue;
-            // Actionable prompts are handled by aim, not proximity.
-            if (!string.IsNullOrEmpty(prompt.actionName)) continue;
-
-            PromptAnchor anchor = it.gameObject.GetComponentInChildren<PromptAnchor>();
-            if (anchor == null) continue;
+            WorldLabel label = col.GetComponent<WorldLabel>();
+            if (label == null)
+                label = col.GetComponentInChildren<WorldLabel>();
+            if (label == null) continue;
+            if (string.IsNullOrEmpty(label.displayName)) continue;
 
             // ClosestPoint fallback for non-convex MeshColliders.
             Vector3 point;
@@ -118,17 +111,17 @@ public class InteractionFocusController : MonoBehaviour
             if (Physics.Linecast(camPos, point, obstructionMask)) continue;
 
             promptPool?.Show(
-                it.gameObject.GetInstanceID(),
-                anchor.transform.position,
-                prompt.label,
+                label.GetInstanceID(),
+                label.transform.position,
+                label.displayName,
                 proximity);
         }
 
         promptPool?.Flush();
     }
 
-    // Summary: Reads the shared Raycaster hit. Shows HUD prompt for actionable labels
-    // and routes interact input.
+    // Summary: Reads the shared Raycaster hit. Shows HUD prompt for actionable
+    // interactions and routes interact input.
     private void DriveAimPrompt()
     {
         Raycaster raycaster = Raycaster.Instance;
@@ -155,7 +148,7 @@ public class InteractionFocusController : MonoBehaviour
         }
 
         InteractionPrompt prompt = aimed.ResolvePrompt(context);
-        if (prompt.HasPrompt && !string.IsNullOrEmpty(prompt.actionName))
+        if (prompt.HasPrompt)
         {
             hudPresenter?.SetTarget(prompt, 1f);
         }
@@ -164,7 +157,7 @@ public class InteractionFocusController : MonoBehaviour
             hudPresenter?.Clear();
         }
 
-        // Route interact input regardless of prompt type.
+        // Route interact input regardless of prompt.
         if (interactAction != null && interactAction.WasReleasedThisFrame())
         {
             aimed.Interact(context);

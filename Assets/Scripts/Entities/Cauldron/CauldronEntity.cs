@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 // Summary: The world-space cauldron. Implements IInteractable so the focus controller
 // detects it and shows "E - Brew". Opening the UI disables player input (no pause).
 // Queries the player's RecipeBook for matching recipes rather than holding its own list.
+// EDIT (prompt-simplification): surface removed from ResolvePrompt.
 public class CauldronEntity : MonoBehaviour, IInteractable
 {
     [Header("Visuals")]
@@ -47,9 +48,8 @@ public class CauldronEntity : MonoBehaviour, IInteractable
 
         return new InteractionPrompt
         {
-            surface = PromptSurface.Hud,
             label = "Brew",
-            actionName = "Collect"
+            actionName = "Collect",
         };
     }
 
