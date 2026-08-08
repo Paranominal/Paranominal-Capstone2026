@@ -93,6 +93,14 @@ public class WorldItem : MonoBehaviour, IScannable, IInteractable
             discoveryLog.Add(itemDefinition, snapshot);
         }
 
+        // EDIT (grimoire recipes): Register recipe on pickup if this item has one.
+        if (itemDefinition.recipe != null)
+        {
+            RecipeBook recipeBook = FindAnyObjectByType<RecipeBook>();
+            if (recipeBook != null)
+                recipeBook.Discover(itemDefinition.recipe);
+        }
+
         if (pickupSound != null)
             AudioManager.PlaySound(pickupSound);
 

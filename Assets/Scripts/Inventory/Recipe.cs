@@ -14,6 +14,9 @@ public class Recipe : ScriptableObject
     }
 
     public string recipeName;
+    // EDIT (grimoire recipes): Flavour text for display in the Grimoire Recipes tab.
+    [TextArea(2, 4)]
+    public string flavourText;
     public Ingredient[] inputs;
     public GameObject outputPrefab;
 

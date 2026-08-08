@@ -20,6 +20,10 @@ public class ItemDefinition : ScriptableObject
     [TextArea(2, 4)]
     public string hintText;
 
+    [Header("Recipe")]
+    [HideInInspector]
+    public Recipe recipe;
+
     public Sprite icon;
 
     public ItemTag tags;

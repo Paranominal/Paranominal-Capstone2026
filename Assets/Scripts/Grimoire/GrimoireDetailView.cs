@@ -84,6 +84,13 @@ public class GrimoireDetailView : MonoBehaviour
             nameText.SetText(name ?? "");
         }
 
+        // EDIT (grimoire recipes): Show flavour text from Recipe SO.
+        if (flavourText != null)
+        {
+            flavourText.gameObject.SetActive(true);
+            flavourText.SetText(recipe != null ? recipe.flavourText ?? "" : "");
+        }
+
         ShowIngredients(recipe);
     }
 
@@ -126,6 +133,11 @@ public class GrimoireDetailView : MonoBehaviour
             TMP_Text rowText = row.GetComponentInChildren<TMP_Text>();
             if (rowText != null)
                 rowText.SetText($"{ingredient.item.displayName} x{ingredient.quantity}");
+
+            // EDIT (grimoire recipes): Display ingredient icon from ItemDefinition.
+            Image rowIcon = row.GetComponentInChildren<Image>();
+            if (rowIcon != null && ingredient.item.icon != null)
+                rowIcon.sprite = ingredient.item.icon;
         }
     }
 
