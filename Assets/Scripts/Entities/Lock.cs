@@ -3,6 +3,7 @@ using UnityEngine;
 // Summary: Key-lock interactable placed on a child object of a door (keyhole, padlock, etc.).
 // Mirrors the Ward pattern: holds a reference to the target Door and unlocks it when
 // the player interacts with the correct key. Non-interactive without the key.
+// EDIT (prompt-simplification): ResolvePrompt no longer sets surface or anchor.
 [RequireComponent(typeof(AudioSource))]
 public class Lock : MonoBehaviour, IInteractable
 {
@@ -41,23 +42,22 @@ public class Lock : MonoBehaviour, IInteractable
         Destroy(gameObject);
     }
 
+    // EDIT (prompt-simplification): actionable prompt when the player has the key,
+    // nothing otherwise (Door's own informational label handles discovery).
     public InteractionPrompt ResolvePrompt(InteractionContext context)
     {
         if (isUnlocked) return InteractionPrompt.None;
 
-        // Only show a HUD prompt when the player has the key.
         if (context != null && context.HasKey(requiredKey))
         {
             string keyName = requiredKey != null ? requiredKey.displayName : "Key";
             return new InteractionPrompt
             {
-                surface = PromptSurface.Hud,
                 label = $"Unlock ({keyName})",
                 actionName = "Collect",
             };
         }
 
-        // No key: return nothing. The Door's WorldSpace "Locked" prompt handles discovery.
         return InteractionPrompt.None;
     }
 }

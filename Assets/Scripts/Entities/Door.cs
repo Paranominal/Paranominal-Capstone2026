@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 // EDIT (lock-extraction): key-lock logic moved to the Lock component.
 // Door is now purely a door: it knows whether it's unlocked, but the key-checking
 // and unlocking mechanism lives on Lock (or Ward, or ScannableLock).
+// EDIT (prompt-simplification): ResolvePrompt no longer sets surface or anchor.
+// Presentation is inferred by the controller from actionName + PromptAnchor component.
 [RequireComponent(typeof(AudioSource))]
 public class Door : MonoBehaviour, IInteractable
 {
@@ -32,7 +34,6 @@ public class Door : MonoBehaviour, IInteractable
     private PlayerMover player;
 
     [Header("Prompt")]
-    public Transform promptAnchor;
     public bool hideUntilAttempted;
     [HideInInspector] public bool revealed;
 
@@ -84,9 +85,6 @@ public class Door : MonoBehaviour, IInteractable
         }
     }
 
-    // EDIT (lock-extraction): Interact no longer checks keys.
-    // Arena lock is a hard gate. Locked doors play lockedSound and reveal the label.
-    // Unlocked doors toggle open/closed.
     public void Interact(InteractionContext context)
     {
         if (isArenaLocked)
@@ -109,36 +107,23 @@ public class Door : MonoBehaviour, IInteractable
             Open();
     }
 
-    // EDIT (lock-extraction): ResolvePrompt no longer checks for keys.
-    // Locked state shows WorldSpace "Locked". Unlocked shows Hud "Open".
+    // EDIT (prompt-simplification): locked = informational label (no actionName).
+    // Unlocked = actionable label (actionName set). Controller infers the rest.
     public InteractionPrompt ResolvePrompt(InteractionContext context)
     {
         if (isArenaLocked)
-        {
-            return new InteractionPrompt
-            {
-                surface = PromptSurface.WorldSpace,
-                label = "Locked",
-                anchor = promptAnchor,
-            };
-        }
+            return new InteractionPrompt { label = "Locked" };
 
         if (!unlocked)
         {
             if (hideUntilAttempted && !revealed)
                 return InteractionPrompt.None;
 
-            return new InteractionPrompt
-            {
-                surface = PromptSurface.WorldSpace,
-                label = "Locked",
-                anchor = promptAnchor,
-            };
+            return new InteractionPrompt { label = "Locked" };
         }
 
         return new InteractionPrompt
         {
-            surface = PromptSurface.Hud,
             label = "Open",
             actionName = "Collect",
         };
