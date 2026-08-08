@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// EDIT (camera-shake): integrated Perlin noise camera shake. Applied additively
+// after head bob and strafe tilt so all three effects layer cleanly.
 public class CameraEffects : MonoBehaviour
 {
     [Header("References")]
@@ -18,13 +20,31 @@ public class CameraEffects : MonoBehaviour
     [SerializeField] private float maxTiltAngle = 2.5f;
     [SerializeField] private float tiltSpeed = 5f;
 
+    [Header("Camera Shake")]
+    [SerializeField] private float defaultShakeIntensity = 0.3f;
+    [SerializeField] private float defaultShakeDuration = 0.25f;
+    [Tooltip("How much positional offset (X/Y) to apply at full intensity.")]
+    [SerializeField] private float shakePositionScale = 0.08f;
+    [Tooltip("How much Z roll (degrees) to apply at full intensity.")]
+    [SerializeField] private float shakeRollScale = 2f;
+    [Tooltip("Perlin noise sample speed. Higher = faster wobble.")]
+    [SerializeField] private float shakeFrequency = 25f;
+
     private float bobTimer;
     private Vector3 initialCameraPosition;
     private float currentTilt;
 
+    // Shake state
+    private float shakeIntensity;
+    private float shakeDuration;
+    private float shakeElapsed;
+    private float seedX;
+    private float seedY;
+    private float seedR;
+    private bool isShaking;
+
     private void Awake()
     {
-        // Try to automatically find references if they are not assigned in the inspector
         if (playerCamera == null) playerCamera = Camera.main;
         if (inputReader == null) inputReader = GetComponentInParent<PlayerInputReader>();
         if (characterController == null) characterController = GetComponentInParent<CharacterController>();
@@ -44,13 +64,13 @@ public class CameraEffects : MonoBehaviour
 
         UpdateHeadBob();
         UpdateStrafeTilt();
+        UpdateShake();
     }
 
     private void UpdateHeadBob()
     {
         if (!enableHeadBob || characterController == null || inputReader == null) return;
 
-        // Use input magnitude as speed since characterController.velocity gets overwritten by multiple Move calls
         float speed = inputReader.MoveInput.magnitude;
 
         Vector3 targetPosition = initialCameraPosition;
@@ -62,12 +82,9 @@ public class CameraEffects : MonoBehaviour
         }
         else
         {
-            // Keep bobTimer where it was, but let targetPosition be initialCameraPosition
-            // meaning it will smoothly lerp back to the center when stopped.
             bobTimer = 0f;
         }
 
-        // Smoothly move the camera to the target bob position
         playerCamera.transform.localPosition = Vector3.Lerp(playerCamera.transform.localPosition, targetPosition, Time.deltaTime * bobResetSpeed);
     }
 
@@ -80,19 +97,68 @@ public class CameraEffects : MonoBehaviour
         if (characterController != null && characterController.isGrounded)
         {
             float strafeInput = inputReader.MoveInput.x;
-
-            // Negative tilt for right movement, positive for left.
             targetTilt = -strafeInput * maxTiltAngle;
         }
 
-        // Smooth tilt value
         currentTilt = Mathf.Lerp(currentTilt, targetTilt, Time.deltaTime * tiltSpeed);
 
-        // Apply roll (Z axis) on top of the existing pitch and yaw set by PlayerLook.cs
         Vector3 currentEuler = playerCamera.transform.localRotation.eulerAngles;
         currentEuler.z = currentTilt;
-
         playerCamera.transform.localRotation = Quaternion.Euler(currentEuler);
+    }
+
+    // Summary: Applies Perlin noise shake additively on top of head bob and strafe tilt.
+    private void UpdateShake()
+    {
+        if (!isShaking) return;
+
+        shakeElapsed += Time.deltaTime;
+
+        if (shakeElapsed >= shakeDuration)
+        {
+            isShaking = false;
+            return;
+        }
+
+        float t = shakeElapsed / shakeDuration;
+        float decay = 1f - t * t;
+        float scale = shakeIntensity * decay;
+
+        float time = shakeElapsed * shakeFrequency;
+
+        float offsetX = (Mathf.PerlinNoise(seedX + time, 0f) - 0.5f) * 2f;
+        float offsetY = (Mathf.PerlinNoise(seedY + time, 0f) - 0.5f) * 2f;
+        float roll    = (Mathf.PerlinNoise(seedR + time, 0f) - 0.5f) * 2f;
+
+        // Additive: layer on top of whatever head bob set.
+        playerCamera.transform.localPosition += new Vector3(
+            offsetX * shakePositionScale * scale,
+            offsetY * shakePositionScale * scale,
+            0f);
+
+        // Additive: layer roll on top of whatever strafe tilt set.
+        Vector3 euler = playerCamera.transform.localRotation.eulerAngles;
+        euler.z += roll * shakeRollScale * scale;
+        playerCamera.transform.localRotation = Quaternion.Euler(euler);
+    }
+
+    // Summary: Start a shake with default intensity and duration. Restarts if already shaking.
+    public void Shake()
+    {
+        Shake(defaultShakeIntensity, defaultShakeDuration);
+    }
+
+    // Summary: Start a shake with custom intensity and duration. Restarts if already shaking.
+    public void Shake(float intensity, float duration)
+    {
+        shakeIntensity = intensity;
+        shakeDuration = duration;
+        shakeElapsed = 0f;
+        isShaking = true;
+
+        seedX = Random.Range(0f, 1000f);
+        seedY = Random.Range(0f, 1000f);
+        seedR = Random.Range(0f, 1000f);
     }
 
     public void ToggleCameraEffects(bool toggle)
@@ -100,5 +166,4 @@ public class CameraEffects : MonoBehaviour
         enableHeadBob = toggle;
         enableStrafeTilt = toggle;
     }
-    
 }

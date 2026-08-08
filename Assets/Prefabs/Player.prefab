@@ -608,6 +608,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatus
   fearBar: {fileID: 0}
+  cameraEffects: {fileID: 0}
 --- !u!114 &8595492109998012071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -678,10 +679,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuickSlotManager
   inventory: {fileID: 0}
-  slot1ActionName: Equipped1
-  slot2ActionName: Equipped2
-  slot3ActionName: Equipped3
-  slot4ActionName: Equipped4
+  slot1ActionName: QuickSlot1
+  slot2ActionName: QuickSlot2
+  slot3ActionName: QuickSlot3
+  slot4ActionName: QuickSlot4
 --- !u!114 &99801912839501907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -861,7 +862,7 @@ MonoBehaviour:
   proximityRadius: 4
   interactionRange: 3
   hudPresenter: {fileID: 0}
-  worldPresenter: {fileID: 0}
+  promptPool: {fileID: 0}
   interactActionName: Collect
 --- !u!1 &3524502881056351253
 GameObject:
@@ -1066,6 +1067,11 @@ MonoBehaviour:
   enableStrafeTilt: 1
   maxTiltAngle: 1
   tiltSpeed: 2
+  defaultShakeIntensity: 0.5
+  defaultShakeDuration: 0.25
+  shakePositionScale: 0.08
+  shakeRollScale: 2
+  shakeFrequency: 25
 --- !u!114 &4133873592017845999
 MonoBehaviour:
   m_ObjectHideFlags: 0
