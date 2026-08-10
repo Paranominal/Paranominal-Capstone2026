@@ -20,7 +20,7 @@ public class DialogueManager : MonoBehaviour
         //Time.timeScale = 0f; //pause game
         dialogueCanvas.SetActive(true); //activate UI
         if (playerInputReader != null) playerInputReader.canMove = false;
-        if (playerInputReader != null) weaponInputReader.canShoot = false;
+        if (weaponInputReader != null) weaponInputReader.canShoot = false;
         SetCursorModeLocked(false); //unlock cursor
     }
 
