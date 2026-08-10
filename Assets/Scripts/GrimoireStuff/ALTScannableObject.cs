@@ -30,8 +30,6 @@ public class ALTScannableObject : MonoBehaviour
             // create a per-object instance so colour changes don't affect other objects
             instancedOutlineMaterial = new Material(sharedOutlineMaterial);
         }
-
-        ScanModeVisuals.instance.RegisterScannable(this);
     }
 
     public void SetOutlineColor(Color color)

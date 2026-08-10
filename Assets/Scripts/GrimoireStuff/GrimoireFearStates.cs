@@ -3,7 +3,7 @@ using UnityEngine;
 public class GrimoireFearStates : MonoBehaviour
 {
     [SerializeField] Material grimoireMaterial;
-    [SerializeField] Texture fineTexture, fineEmission, medTexture, medEmission, woundedTexture, woundedEmission;
+    [SerializeField] Texture fineTexture, fineEmission, medTexture, medEmission, highTexture, highEmission;
     [SerializeField] FearBar fearBar;
     public bool debugMode;
 
@@ -34,17 +34,20 @@ public class GrimoireFearStates : MonoBehaviour
         switch (rank) // ek, meet switch statement
         {
             case FearBar.FearRank.Fine:
-            case FearBar.FearRank.High:
                 grimoireMaterial.SetTexture("_BaseMap", fineTexture);
                 grimoireMaterial.SetTexture("_EmissionMap", fineEmission); // this emission map
                 break;
+            case FearBar.FearRank.Low:
+                grimoireMaterial.SetTexture("_BaseMap", medTexture);
+                grimoireMaterial.SetTexture("_EmissionMap", medEmission);
+                break;
             case FearBar.FearRank.Medium:
                 grimoireMaterial.SetTexture("_BaseMap", medTexture);
-                grimoireMaterial.SetTexture("_EmissionMap", medEmission); // and this one were swapped initally - i assume it was a mistake?
+                grimoireMaterial.SetTexture("_EmissionMap", medEmission);
                 break;
-            case FearBar.FearRank.Low:
-                grimoireMaterial.SetTexture("_BaseMap", woundedTexture);
-                grimoireMaterial.SetTexture("_EmissionMap", woundedEmission);
+            case FearBar.FearRank.High:
+                grimoireMaterial.SetTexture("_BaseMap", highTexture);
+                grimoireMaterial.SetTexture("_EmissionMap", highEmission);
                 break;
         }
 

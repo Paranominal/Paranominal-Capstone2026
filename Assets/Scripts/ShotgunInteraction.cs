@@ -4,14 +4,13 @@ public class ShotgunInteraction : MonoBehaviour
 {
     [SerializeField] private ALTGrimoire grimoire;
     [SerializeField] private WeaponStateController stateController;
-    private ShotgunCollection currentItem;
-    private ALTGrimoireEntry shotgunEntry;
+    [SerializeField] private string shotgunName;
     private bool collected;
 
 
     void Update()
     {
-        collected = grimoire.entries.Exists(shotgunEntry => shotgunEntry.entryName == "shotgun");
+        collected = grimoire.entries.Exists(shotgunEntry => shotgunEntry.entryName == shotgunName);
         CollectShotgun();
     }
 

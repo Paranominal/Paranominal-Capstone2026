@@ -25,6 +25,9 @@ public class Raycaster : MonoBehaviour
 
     void Update()
     {
-        ray = Camera.main.ScreenPointToRay(Pointer.current.position.ReadValue());
+        if (Camera.main != null)
+        {
+            ray = Camera.main.ScreenPointToRay(Pointer.current.position.ReadValue());
+        }
     }
 }

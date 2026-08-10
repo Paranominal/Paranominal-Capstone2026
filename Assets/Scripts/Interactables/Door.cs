@@ -68,7 +68,7 @@ public class Door : MonoBehaviour, IInteractable
     // Handles interaction input and lerps the door toward its target rotation.
     void Update()
     {
-        if (Physics.Raycast(raycaster.Ray, out RaycastHit hit, 1000f, interactable))
+        if (Physics.Raycast(raycaster.Ray, out RaycastHit hit, ajarDistance, interactable))
         {
             if (collectAction.WasReleasedThisFrame() && GetComponentInChildren<Collider>() == hit.collider)
             {
