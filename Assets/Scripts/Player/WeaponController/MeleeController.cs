@@ -1,11 +1,9 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 // Summary: Handles melee attack input, cooldown, and Hitbox activation.
-// Used for both the empty-hand shove (via the "Fists" MeleeWeaponDefinition)
-// and dedicated melee weapons. WeaponManager sets the active definition
+// Used for dedicated melee weapons. WeaponManager sets the active definition
 // and enables/disables this component based on the current weapon mode.
 public class MeleeController : MonoBehaviour
 {
@@ -66,17 +64,6 @@ public class MeleeController : MonoBehaviour
         hitbox = null;
     }
 
-    // Summary: Fire a single knockback attack without player input, then invoke
-    // the callback when the strike finishes. Used by WeaponManager during the
-    // quick shove sequence. Resolves the Hitbox from the weapon root.
-    // Does not apply cooldown (the weapon switch animation serves as recovery).
-    public void PerformQuickShove(MeleeWeaponDefinition shoveWeapon, GameObject weaponRoot, Action onComplete)
-    {
-        CancelAttack();
-        hitbox = weaponRoot != null ? weaponRoot.GetComponentInChildren<Hitbox>() : null;
-        attackRoutine = StartCoroutine(QuickShoveRoutine(shoveWeapon, onComplete));
-    }
-
     public void CancelAttack()
     {
         if (attackRoutine != null)
@@ -108,22 +95,6 @@ public class MeleeController : MonoBehaviour
         onCooldown = false;
 
         attackRoutine = null;
-    }
-
-    private IEnumerator QuickShoveRoutine(MeleeWeaponDefinition shoveWeapon, Action onComplete)
-    {
-        isAttacking = true;
-
-        DamageInfo info = BuildDamageInfo(shoveWeapon);
-        hitbox.Activate(info);
-
-        yield return new WaitForSeconds(strikeDuration);
-
-        hitbox.Deactivate();
-        isAttacking = false;
-        attackRoutine = null;
-
-        onComplete?.Invoke();
     }
 
     private DamageInfo BuildDamageInfo(MeleeWeaponDefinition weapon)

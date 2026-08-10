@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 // Summary: Manages weapon equipping, loadout, mode switching, and input routing.
 // All weapons entering inventory are instantiated and tracked. Only weapons assigned
 // to the 2-slot loadout are available in the scroll rotation during gameplay.
-// Q toggles empty hand. Scroll cycles loadout weapons. Spacebar performs a quick shove.
+// Q toggles empty hand. Scroll cycles loadout weapons.
 // EDIT (loadout system): scroll rotation now driven by loadout, not the full weapons list.
 // Auto-assigns to empty loadout slots on pickup. Validates loadout on grimoire close.
 public class WeaponManager : MonoBehaviour
@@ -21,14 +21,9 @@ public class WeaponManager : MonoBehaviour
     [SerializeField] private WeaponSwitchAnimator switchAnimator;
     [SerializeField] private GameObject defaultHand;
 
-    [Header("Empty Hand")]
-    [Tooltip("MeleeWeaponDefinition for the unarmed shove. Assign the 'Fists' asset here.")]
-    [SerializeField] private MeleeWeaponDefinition emptyHandDefinition;
-
     [Header("Input")]
     [SerializeField] private string holsterActionName = "Holster";
     [SerializeField] private string scrollActionName = "ScrollWeapon";
-    [SerializeField] private string quickShoveActionName = "QuickShove";
 
     // Summary: Fires when the weapon mode changes. true = weapon equipped, false = empty hand.
     // GrimoireAnimManager and ScanController subscribe to this.
@@ -41,7 +36,6 @@ public class WeaponManager : MonoBehaviour
     private Inventory inventory;
     private InputAction holsterAction;
     private InputAction scrollAction;
-    private InputAction quickShoveAction;
 
     private class EquippedWeapon
     {
@@ -75,7 +69,6 @@ public class WeaponManager : MonoBehaviour
 
         holsterAction = InputSystem.actions.FindAction(holsterActionName);
         scrollAction = InputSystem.actions.FindAction(scrollActionName);
-        quickShoveAction = InputSystem.actions.FindAction(quickShoveActionName);
     }
 
     void Start()
@@ -128,12 +121,6 @@ public class WeaponManager : MonoBehaviour
                 CycleWeapon(1);
             else if (scrollValue < 0f)
                 CycleWeapon(-1);
-        }
-
-        // Spacebar: quick shove (only while a weapon is equipped).
-        if (!isEmptyHand && quickShoveAction != null && quickShoveAction.WasPressedThisFrame())
-        {
-            StartCoroutine(QuickShoveSequence());
         }
     }
 
@@ -327,65 +314,6 @@ public class WeaponManager : MonoBehaviour
         Debug.Log("Entered empty hand mode.");
     }
 
-    private IEnumerator QuickShoveSequence()
-    {
-        isTransitioning = true;
-
-        int returnSlot = activeLoadoutIndex;
-        EquippedWeapon returnWeapon = loadout[returnSlot];
-
-        // 1. Lower current weapon.
-        bool lowerDone = false;
-        if (switchAnimator != null)
-        {
-            switchAnimator.Lower(() => lowerDone = true);
-            while (!lowerDone) yield return null;
-        }
-
-        // 2. Swap to empty hand visuals.
-        DeactivateCurrentVisuals();
-        if (defaultHand != null) defaultHand.SetActive(true);
-
-        // 3. Raise empty hand.
-        bool raiseDone = false;
-        if (switchAnimator != null)
-        {
-            switchAnimator.Raise(() => raiseDone = true);
-            while (!raiseDone) yield return null;
-        }
-
-        // 4. Fire the knockback attack.
-        bool shoveDone = false;
-        if (meleeController != null && emptyHandDefinition != null)
-        {
-            meleeController.PerformQuickShove(emptyHandDefinition, defaultHand, () => shoveDone = true);
-            while (!shoveDone) yield return null;
-        }
-
-        // 5. Lower empty hand.
-        lowerDone = false;
-        if (switchAnimator != null)
-        {
-            switchAnimator.Lower(() => lowerDone = true);
-            while (!lowerDone) yield return null;
-        }
-
-        // 6. Swap back to the previous weapon.
-        if (defaultHand != null) defaultHand.SetActive(false);
-        if (returnWeapon.instance != null) returnWeapon.instance.SetActive(true);
-        RouteToController(returnWeapon);
-
-        // 7. Raise weapon.
-        raiseDone = false;
-        if (switchAnimator != null)
-        {
-            switchAnimator.Raise(() => raiseDone = true);
-            while (!raiseDone) yield return null;
-        }
-
-        isTransitioning = false;
-    }
-
     // ---- State Helpers ----
 
     private void EnterEmptyHand(bool animated = true)
@@ -411,10 +339,10 @@ public class WeaponManager : MonoBehaviour
             weaponController.enabled = false;
         }
 
-        if (meleeController != null && emptyHandDefinition != null)
+        if (meleeController != null)
         {
-            meleeController.enabled = true;
-            meleeController.EquipWeapon(emptyHandDefinition, defaultHand);
+            meleeController.UnequipWeapon();
+            meleeController.enabled = false;
         }
     }
 

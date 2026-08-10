@@ -42,8 +42,7 @@ public class GrimoireInventoryPanel : MonoBehaviour
         if (quickSlotManager == null)
             quickSlotManager = FindAnyObjectByType<QuickSlotManager>();
 
-        // EDIT (input): find actions from the GrimoireUI map specifically, since the
-        // same action names exist in the Player map for gameplay use.
+        // Find actions from the GrimoireUI map specifically, since the same action names exist in the Player map for gameplay use.
         var grimoireMap = InputSystem.actions.FindActionMap("GrimoireUI");
         slot1Action = grimoireMap?.FindAction("QuickSlot1");
         slot2Action = grimoireMap?.FindAction("QuickSlot2");
@@ -116,8 +115,9 @@ public class GrimoireInventoryPanel : MonoBehaviour
         else
             currentItems = inventory.GetItems(currentFilter);
 
-        // Filter out weapons since they have their own management system.
+        // Filter out weapons and recipes since they have their own management system.
         currentItems.RemoveAll(item => item is WeaponDefinition);
+        currentItems.RemoveAll(item => item.HasTag(ItemTag.Recipe));
 
         for (int i = 0; i < currentItems.Count; i++)
         {
