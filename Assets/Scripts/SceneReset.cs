@@ -18,6 +18,7 @@ public class SceneReset : MonoBehaviour
     void Start()
     {
         cachedResetTextColor = resettingText.color;
+        TimerText(); // trigger once to turn off at start
         weaponInput = FindAnyObjectByType<WeaponInputReader>();
         playerInput = FindAnyObjectByType<PlayerInputReader>();
         Debug.Log(weaponInput, playerInput);

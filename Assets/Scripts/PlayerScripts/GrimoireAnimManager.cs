@@ -27,6 +27,7 @@ public class GrimoireAnimManager : MonoBehaviour
     private bool isMenuing;
     [SerializeField] private bool startOpen;
     [SerializeField] private GrimoirePositioner lowerGrimoire;
+    public bool openOnInteract;
     public bool debugMode;
 
     void Start()
@@ -44,7 +45,7 @@ public class GrimoireAnimManager : MonoBehaviour
         CloseOnShoot();
         CastOnHold();
         OpenIfMenuing();
-        OpenOnCollect();
+        if (openOnInteract) OpenOnCollect();
         MenuOpen();
         MenuClose();
 
