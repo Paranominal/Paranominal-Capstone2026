@@ -11,10 +11,13 @@ using UnityEngine.InputSystem;
 public class GrimoirePositioner : MonoBehaviour
 {
     [SerializeField] private GameObject targetObject;
+    [SerializeField] private GameObject handsObject;
     [SerializeField] private float speed = 1f;
     private Vector3 originPosition;
+    private Vector3 originPositionHands;
     private Quaternion originRotation;
     [SerializeField] private Transform lowPoint;
+    [SerializeField] private Transform lowPointHands;
     [SerializeField] private Transform openPoint;
     [SerializeField] private Transform menuPoint;
     public bool debugMode;
@@ -24,6 +27,8 @@ public class GrimoirePositioner : MonoBehaviour
     {
         originPosition = targetObject.transform.localPosition;
         originRotation = targetObject.transform.localRotation;
+        
+        if (handsObject != null) originPositionHands = handsObject.transform.localPosition;
     }
     // void Update()
     // {
@@ -35,6 +40,8 @@ public class GrimoirePositioner : MonoBehaviour
         position = GrimoirePosition.lowered;
         targetObject.transform.localPosition = Vector3.Lerp(targetObject.transform.localPosition, lowPoint.localPosition, speed * Time.deltaTime);
         targetObject.transform.localRotation = Quaternion.Slerp(targetObject.transform.localRotation, lowPoint.localRotation, speed * Time.deltaTime);
+
+        if (handsObject != null) handsObject.transform.localPosition = Vector3.Lerp(handsObject.transform.localPosition, originPositionHands, speed * Time.deltaTime);
     }
     public void Open()
     {
@@ -42,6 +49,8 @@ public class GrimoirePositioner : MonoBehaviour
         position = GrimoirePosition.open;
         targetObject.transform.localPosition = Vector3.Lerp(targetObject.transform.localPosition, openPoint.localPosition, speed * Time.deltaTime);
         targetObject.transform.localRotation = Quaternion.Slerp(targetObject.transform.localRotation, openPoint.localRotation, speed * Time.deltaTime);
+
+        if (handsObject != null) handsObject.transform.localPosition = Vector3.Lerp(handsObject.transform.localPosition, lowPointHands.localPosition, speed * Time.deltaTime);
     }
     public void Raise()
     {

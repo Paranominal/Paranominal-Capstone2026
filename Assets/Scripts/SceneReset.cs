@@ -25,7 +25,7 @@ public class SceneReset : MonoBehaviour
     void Update()
     {
         PressReset();
-        TimeoutTimer();
+        if (timeOutSeconds > 0) TimeoutTimer();
 
         if (logTimer) Debug.Log(time);
     }
