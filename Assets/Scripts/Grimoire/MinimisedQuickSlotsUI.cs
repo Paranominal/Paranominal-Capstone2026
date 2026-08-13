@@ -85,16 +85,14 @@ public class MinimisedQuickSlotsUI : MonoBehaviour
             return;
         }
 
-        if (slot.item != null)
-        {
-            SetIcon(display, slot.item.icon);
-            SetQuantity(display, slot.item);
-        }
-        else if (slot.spell != null)
-        {
-            SetIcon(display, slot.spell.icon);
+        // EDIT (SO consolidation): icon lives on GameDefinition base, shared by all types.
+        SetIcon(display, slot.definition.icon);
+
+        // Show quantity for consumables/throwables, hide for spells and everything else.
+        if (slot.definition is ItemDefinition item)
+            SetQuantity(display, item);
+        else
             HideQuantity(display);
-        }
 
         if (display.filledGroup != null)
             display.filledGroup.SetActive(true);
@@ -120,7 +118,7 @@ public class MinimisedQuickSlotsUI : MonoBehaviour
     {
         if (display.quantityText == null) return;
 
-        bool showQuantity = item.tags.HasFlag(ItemTag.Consumable) || item.tags.HasFlag(ItemTag.Throwable);
+        bool showQuantity = item.HasTag(ItemTag.Consumable) || item.HasTag(ItemTag.Throwable);
 
         if (showQuantity && inventory != null)
         {

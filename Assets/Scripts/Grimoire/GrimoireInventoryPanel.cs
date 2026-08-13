@@ -173,10 +173,10 @@ public class GrimoireInventoryPanel : MonoBehaviour
         QuickSlotManager.QuickSlot existing = quickSlotManager.GetSlot(slotIndex);
 
         // Toggle: same item in same slot clears it.
-        if (existing != null && existing.item == item)
+        if (existing != null && existing.definition == item)
             quickSlotManager.ClearSlot(slotIndex);
         else
-            quickSlotManager.AssignItem(slotIndex, item);
+            quickSlotManager.Assign(slotIndex, item);
 
         RefreshAllBadges();
     }
@@ -199,7 +199,7 @@ public class GrimoireInventoryPanel : MonoBehaviour
         for (int s = 0; s < QuickSlotManager.SlotCount; s++)
         {
             QuickSlotManager.QuickSlot slot = quickSlotManager.GetSlot(s);
-            if (slot != null && slot.item == item)
+            if (slot != null && slot.definition == item)
             {
                 assignedSlot = s;
                 break;

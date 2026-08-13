@@ -56,6 +56,14 @@ public class WeaponManager : MonoBehaviour
     private bool isEmptyHand = true;
     private bool isTransitioning;
 
+    // EDIT (throwable system): Public read-only state for external systems (ThrowableHandler, etc.).
+    public bool IsEmptyHand => isEmptyHand;
+    public bool IsTransitioning => isTransitioning;
+
+    // EDIT (throwable system): When true, WeaponManager ignores its own input polling.
+    // Set by ThrowableHandler while in throwable mode to prevent input conflicts.
+    public bool InputLocked { get; set; }
+
     void Awake()
     {
         if (weaponController == null)
@@ -97,6 +105,7 @@ public class WeaponManager : MonoBehaviour
     void Update()
     {
         if (isTransitioning) return;
+        if (InputLocked) return; // EDIT (throwable system): external system owns input.
 
         // Q: toggle holster.
         if (holsterAction != null && holsterAction.WasPressedThisFrame())
@@ -248,6 +257,30 @@ public class WeaponManager : MonoBehaviour
             StartCoroutine(SwitchToLoadoutSlot(nextSlot));
         else
             StartCoroutine(SwitchToEmptyHand());
+    }
+
+    // ---- External Holster API (ThrowableHandler, etc.) ----
+
+    // EDIT (throwable system): Holster the current weapon (animated).
+    // No-op if already holstered or mid-transition.
+    public void RequestHolster()
+    {
+        if (isEmptyHand || isTransitioning) return;
+        StartCoroutine(SwitchToEmptyHand());
+    }
+
+    // EDIT (throwable system): Re-equip the last loadout weapon (animated).
+    // No-op if already equipped or mid-transition.
+    public void RequestUnholster()
+    {
+        if (!isEmptyHand || isTransitioning) return;
+
+        int index = activeLoadoutIndex >= 0 && loadout[activeLoadoutIndex] != null
+            ? activeLoadoutIndex
+            : FindFirstLoadoutWeapon();
+
+        if (index >= 0)
+            StartCoroutine(SwitchToLoadoutSlot(index));
     }
 
     // ---- Animated Transitions ----

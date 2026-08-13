@@ -2,10 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Summary: Manages 4 quick-slots that can hold either an ItemDefinition or a SpellDefinition.
-// Handles 1-4 key input for using the slotted item/spell, and fires dispatch events
-// for external systems to handle the actual effects (ConsumableHandler, ThrowableHandler,
-// casting system, etc.).
+// Summary: Manages 4 quick-slots that can hold any GameDefinition (items or spells).
+// Handles 1-4 key input for using the slotted definition, and fires typed dispatch
+// events for external systems (ConsumableHandler, ThrowableHandler, casting system, etc.).
 // Lives on the player alongside Inventory.
 public class QuickSlotManager : MonoBehaviour
 {
@@ -20,20 +19,18 @@ public class QuickSlotManager : MonoBehaviour
     [SerializeField] private string slot3ActionName = "QuickSlot3";
     [SerializeField] private string slot4ActionName = "QuickSlot4";
 
-    // Summary: Holds the contents of a single quick-slot. Only one of item/spell
-    // should be non-null at a time.
+    // Summary: Holds the contents of a single quick-slot. Stores a single
+    // GameDefinition reference; use pattern matching to determine the type.
     [Serializable]
     public class QuickSlot
     {
-        public ItemDefinition item;
-        public SpellDefinition spell;
+        public GameDefinition definition;
 
-        public bool IsEmpty => item == null && spell == null;
+        public bool IsEmpty => definition == null;
 
         public void Clear()
         {
-            item = null;
-            spell = null;
+            definition = null;
         }
     }
 
@@ -44,12 +41,11 @@ public class QuickSlotManager : MonoBehaviour
     public event Action<int, QuickSlot> OnSlotChanged;
 
     // Summary: Fired when the player uses a slot containing an item.
-    // External systems (ConsumableHandler, ThrowableHandler, etc.) subscribe
-    // and handle the actual effect based on ItemTag.
+    // External systems (ConsumableHandler, ThrowableHandler, etc.) subscribe.
     public event Action<int, ItemDefinition> OnItemUsed;
 
     // Summary: Fired when the player uses a slot containing a spell.
-    // The casting system (once built) subscribes to handle the cast.
+    // The casting system subscribes to handle the cast.
     public event Action<int, SpellDefinition> OnSpellUsed;
 
     private void Awake()
@@ -79,17 +75,17 @@ public class QuickSlotManager : MonoBehaviour
 
     // ---- Assignment ----
 
-    // Summary: Assign an item to a slot. Clears any existing contents, and removes
-    // the item from any other slot it was previously in.
-    public void AssignItem(int index, ItemDefinition item)
+    // Summary: Assign a definition (item or spell) to a slot. Clears any existing
+    // contents, and removes the definition from any other slot it was previously in.
+    public void Assign(int index, GameDefinition def)
     {
-        if (!ValidIndex(index)) return;
+        if (!ValidIndex(index) || def == null) return;
 
-        // Remove this item from any other slot first.
+        // Remove from any other slot first.
         for (int i = 0; i < SlotCount; i++)
         {
             if (i == index) continue;
-            if (slots[i].item == item)
+            if (slots[i].definition == def)
             {
                 slots[i].Clear();
                 OnSlotChanged?.Invoke(i, slots[i]);
@@ -97,29 +93,7 @@ public class QuickSlotManager : MonoBehaviour
         }
 
         slots[index].Clear();
-        slots[index].item = item;
-        OnSlotChanged?.Invoke(index, slots[index]);
-    }
-
-    // Summary: Assign a spell to a slot. Clears any existing contents, and removes
-    // the spell from any other slot it was previously in.
-    public void AssignSpell(int index, SpellDefinition spell)
-    {
-        if (!ValidIndex(index)) return;
-
-        // Remove this spell from any other slot first.
-        for (int i = 0; i < SlotCount; i++)
-        {
-            if (i == index) continue;
-            if (slots[i].spell == spell)
-            {
-                slots[i].Clear();
-                OnSlotChanged?.Invoke(i, slots[i]);
-            }
-        }
-
-        slots[index].Clear();
-        slots[index].spell = spell;
+        slots[index].definition = def;
         OnSlotChanged?.Invoke(index, slots[index]);
     }
 
@@ -140,7 +114,8 @@ public class QuickSlotManager : MonoBehaviour
 
     // ---- Use ----
 
-    // Summary: Use the item/spell in the given slot. Validates availability before firing.
+    // Summary: Use the definition in the given slot. Validates availability before
+    // firing the appropriate typed event.
     public void UseSlot(int index)
     {
         if (!ValidIndex(index)) return;
@@ -148,14 +123,14 @@ public class QuickSlotManager : MonoBehaviour
         QuickSlot slot = slots[index];
         if (slot.IsEmpty) return;
 
-        if (slot.item != null)
+        if (slot.definition is ItemDefinition item)
         {
-            if (!CanUseItem(slot.item)) return;
-            OnItemUsed?.Invoke(index, slot.item);
+            if (!CanUseItem(item)) return;
+            OnItemUsed?.Invoke(index, item);
         }
-        else if (slot.spell != null)
+        else if (slot.definition is SpellDefinition spell)
         {
-            OnSpellUsed?.Invoke(index, slot.spell);
+            OnSpellUsed?.Invoke(index, spell);
         }
     }
 
@@ -168,15 +143,14 @@ public class QuickSlotManager : MonoBehaviour
         if (!ValidIndex(index)) return 0;
 
         QuickSlot slot = slots[index];
-        if (slot.item != null && inventory != null)
-            return inventory.GetCount(slot.item);
-        if (slot.spell != null)
+        if (slot.definition is ItemDefinition item && inventory != null)
+            return inventory.GetCount(item);
+        if (slot.definition is SpellDefinition)
             return -1;
 
         return 0;
     }
 
-    // Summary: Returns true if the item is in inventory and available to use.
     private bool CanUseItem(ItemDefinition item)
     {
         return inventory != null && inventory.Has(item);

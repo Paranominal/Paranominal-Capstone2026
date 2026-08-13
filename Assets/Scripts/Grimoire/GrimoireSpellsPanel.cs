@@ -129,10 +129,10 @@ public class GrimoireSpellsPanel : MonoBehaviour
         SpellDefinition spell = currentSpells[selectedIndex];
         QuickSlotManager.QuickSlot existing = quickSlotManager.GetSlot(slotIndex);
 
-        if (existing != null && existing.spell == spell)
+        if (existing != null && existing.definition == spell)
             quickSlotManager.ClearSlot(slotIndex);
         else
-            quickSlotManager.AssignSpell(slotIndex, spell);
+            quickSlotManager.Assign(slotIndex, spell);
 
         RefreshAllBadges();
     }
@@ -155,7 +155,7 @@ public class GrimoireSpellsPanel : MonoBehaviour
         for (int s = 0; s < QuickSlotManager.SlotCount; s++)
         {
             QuickSlotManager.QuickSlot slot = quickSlotManager.GetSlot(s);
-            if (slot != null && slot.spell == spell)
+            if (slot != null && slot.definition == spell)
             {
                 assignedSlot = s;
                 break;

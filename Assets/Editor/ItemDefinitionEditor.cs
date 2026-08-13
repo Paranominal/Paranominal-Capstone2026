@@ -1,9 +1,10 @@
 using UnityEditor;
 using UnityEngine;
 
-// Summary: Custom editor for ItemDefinition. Conditionally shows the Recipe
-// reference field only when the Recipe tag is set.
-[CustomEditor(typeof(ItemDefinition))]
+// Summary: Unified editor for ItemDefinition and all subclasses (WeaponDefinition,
+// RangedWeaponDefinition, MeleeWeaponDefinition). Conditionally shows tag-gated
+// composition fields based on which ItemTags are set.
+[CustomEditor(typeof(ItemDefinition), editorForChildClasses: true)]
 public class ItemDefinitionEditor : Editor
 {
     public override void OnInspectorGUI()
@@ -12,11 +13,18 @@ public class ItemDefinitionEditor : Editor
 
         ItemDefinition item = (ItemDefinition)target;
 
+        bool hasTagGatedFields = item.HasTag(ItemTag.Recipe) || item.HasTag(ItemTag.Throwable);
+        if (!hasTagGatedFields) return;
+
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Tag-Gated Data", EditorStyles.boldLabel);
+
         if (item.HasTag(ItemTag.Recipe))
-        {
-            SerializedProperty recipeProp = serializedObject.FindProperty("recipe");
-            EditorGUILayout.PropertyField(recipeProp, new GUIContent("Recipe"));
-            serializedObject.ApplyModifiedProperties();
-        }
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("recipe"), new GUIContent("Recipe"));
+
+        if (item.HasTag(ItemTag.Throwable))
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("throwableData"), new GUIContent("Throwable Data"));
+
+        serializedObject.ApplyModifiedProperties();
     }
 }
