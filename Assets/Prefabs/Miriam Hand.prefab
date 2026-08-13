@@ -48,6 +48,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4667867726781560014, guid: ef8381f92e4211d4a8017db5fb97517e, type: 3}
+      propertyPath: ironBarrelEnabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5466451141561666599, guid: ef8381f92e4211d4a8017db5fb97517e, type: 3}
+      propertyPath: shotsPerSecond
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 8766396168757975875, guid: ef8381f92e4211d4a8017db5fb97517e, type: 3}
       propertyPath: m_Name
       value: Miriam's Hand of Doom
@@ -62,17 +70,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1336698035065223554, guid: ef8381f92e4211d4a8017db5fb97517e, type: 3}
   m_PrefabInstance: {fileID: 1209506130664545810}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5754726288550818453 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6851631426950311047, guid: ef8381f92e4211d4a8017db5fb97517e, type: 3}
-  m_PrefabInstance: {fileID: 1209506130664545810}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66722f93cd366054a9aa6a2b0658429e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponEvents
 --- !u!114 &5768723672432503516 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4667867726781560014, guid: ef8381f92e4211d4a8017db5fb97517e, type: 3}
@@ -100,6 +97,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 0.00019793575
       objectReference: {fileID: 0}
+    - target: {fileID: 1449982339782834691, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: positioner
+      value: 
+      objectReference: {fileID: 4252369204898146090}
     - target: {fileID: 2061965797763481598, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -111,18 +112,30 @@ PrefabInstance:
     - target: {fileID: 2395450753178358459, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: weaponEvents
       value: 
-      objectReference: {fileID: 5754726288550818453}
+      objectReference: {fileID: 0}
     - target: {fileID: 2579260593497910125, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_Name
       value: Miriam Hand
+      objectReference: {fileID: 0}
+    - target: {fileID: 3088562447150067955, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: positioner
+      value: 
+      objectReference: {fileID: 4252369204898146090}
+    - target: {fileID: 3614694985984837223, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: grimoire
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6039473646779409632, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7735218202545343683, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: m_Cameras.Array.size
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8013496993476994936, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.711
+      value: -10.94
       objectReference: {fileID: 0}
     - target: {fileID: 8013496993476994936, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_LocalPosition.y
@@ -130,7 +143,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8013496993476994936, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -6.519
+      value: -7.05
       objectReference: {fileID: 0}
     - target: {fileID: 8013496993476994936, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_LocalRotation.w
@@ -174,6 +187,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 536699545516337382, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+    - {fileID: 2487491788695362657, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+    - {fileID: 1822622895965474925, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
     m_RemovedGameObjects:
     - {fileID: 6039473646779409632, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
     - {fileID: 6512141147138285135, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
@@ -183,6 +198,17 @@ PrefabInstance:
       addedObject: {fileID: 163783995235805072}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+--- !u!114 &4252369204898146090 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8217175011381459220, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+  m_PrefabInstance: {fileID: 5263078908757548606}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c52b46f8d7a44fb4d91fd0fc83a76e4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LowerGrimoire
 --- !u!4 &6311176811387678406 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2206759139523817720, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
