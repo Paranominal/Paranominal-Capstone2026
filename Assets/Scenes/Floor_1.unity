@@ -2721,6 +2721,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2327140762187746727, guid: 7e24065cc662cd04d9cf38b33f6aa89a, type: 3}
   m_PrefabInstance: {fileID: 7797784570479148106}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &158617751 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6145340607783456225, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+  m_PrefabInstance: {fileID: 721273275}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4bc96a8fbc847d40af5c1c000ee6f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponInputReader
 --- !u!43 &177578992
 Mesh:
   m_ObjectHideFlags: 0
@@ -10044,6 +10055,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 536699545516337382, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1225896433048851612, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -10058,6 +10073,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1642531195737763663, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: tickRateMedium
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2061965797763481598, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2061965797763481598, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2358186202558148451, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
@@ -10096,6 +10119,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7735218202545343683, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: m_Cameras.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7735218202545343683, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: 'm_Cameras.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2033420516}
     - target: {fileID: 8013496993476994936, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_LocalPosition.x
       value: 11.84
@@ -10138,6 +10169,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8584229915469001095, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8931028048626215500, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8931028048626215500, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8931028048626215500, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -19109,6 +19152,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f84da51c004e6d4cbad5712112ecd80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameOverHandler
+--- !u!114 &1539268848 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8956652460274281639, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+  m_PrefabInstance: {fileID: 721273275}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1539268823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 355507da6e9a0ca419d0d8d11a0ff80c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInputReader
 --- !u!43 &1542962729
 Mesh:
   m_ObjectHideFlags: 0
@@ -26600,6 +26654,11 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!20 &2033420516 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 3307265655166600156, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+  m_PrefabInstance: {fileID: 8723667617613130007}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &2042537417
 Mesh:
   m_ObjectHideFlags: 0
@@ -30985,6 +31044,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+      propertyPath: doTimeout
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+      propertyPath: playerInput
+      value: 
+      objectReference: {fileID: 1539268848}
+    - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+      propertyPath: weaponInput
+      value: 
+      objectReference: {fileID: 158617751}
     - target: {fileID: 9041544226671817565, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: m_Name
       value: SceneEssentialsBundle
