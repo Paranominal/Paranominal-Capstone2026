@@ -2,13 +2,19 @@ using UnityEngine;
 
 public class DistanceScale : MonoBehaviour
 {
-    public float FixedSize = .01f;
+    [Range(0,1)]
+    [SerializeField] private float influence = 1;
+    private Vector3 cachedScale;
+    void Awake()
+    {
+        cachedScale = transform.localScale;
+    }
 
     void Update ()
     {
-        var distance = (Camera.main.transform.position - transform.position).magnitude;
-        var size = distance * FixedSize * Camera.main.fieldOfView;
-        transform.localScale = Vector3.one * size;
+        float distance = (Camera.main.transform.position - transform.position).magnitude;
+        float size = distance * Camera.main.fieldOfView * 0.01f;
+        transform.localScale = cachedScale + (Vector3.one * size * influence);
         transform.forward = transform.position - Camera.main.transform.position;
     }
 }
