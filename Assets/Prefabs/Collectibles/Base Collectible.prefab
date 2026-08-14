@@ -123,12 +123,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8283e6e80b2870149bed84f51959e99e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RotateEffect
-  xSpeed: 0
-  ySpeed: 0
-  zSpeed: 0
-  worldXSpeed: 0
-  worldYSpeed: 25
-  worldZSpeed: 0
+  rotateLocalXSpeed: 0
+  rotateLocalYSpeed: 0
+  rotateLocalZSpeed: 0
+  rotateWorldXSpeed: 0
+  rotateWorldYSpeed: 0
+  rotateWorldZSpeed: 0
+  floatLocalXAmplitude: 0
+  floatLocalXFrequency: 0
+  floatLocalYAmplitude: 0
+  floatLocalYFrequency: 0
+  floatLocalZAmplitude: 0
+  floatLocalZFrequency: 0
+  floatWorldXAmplitude: 0
+  floatWorldXFrequency: 0
+  floatWorldYAmplitude: 0
+  floatWorldYFrequency: 0
+  floatWorldZAmplitude: 0
+  floatWorldZFrequency: 0
 --- !u!1 &4245117009066482222
 GameObject:
   m_ObjectHideFlags: 0
@@ -269,7 +281,7 @@ GameObject:
   - component: {fileID: 4965768979949849087}
   - component: {fileID: 1346632394192855191}
   m_Layer: 10
-  m_Name: StaffKey (New)
+  m_Name: Base Collectible
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -342,7 +354,6 @@ MonoBehaviour:
     completeText: 
     snapshotImage: {fileID: 0}
   pickupDialogue: {fileID: 1390969595278299323, guid: 2d2be56983b409f4a9495f642be1f88a, type: 3}
-  dialogue: {fileID: 0}
   outline: {fileID: 345798100693208773}
 --- !u!1001 &4483041374416905633
 PrefabInstance:
