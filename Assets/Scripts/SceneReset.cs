@@ -8,6 +8,7 @@ public class SceneReset : MonoBehaviour
     [SerializeField] private InputActionReference resetInput;
     [Tooltip("the Build Index of the scene you want to load. Typically 0")]
     [SerializeField] private int sceneBuildIndex;
+    [SerializeField] private bool doTimeout = true;
     [SerializeField] private float timeOutSeconds = 30;
     [SerializeField] private WeaponInputReader weaponInput;
     [SerializeField] private PlayerInputReader playerInput;
@@ -24,7 +25,7 @@ public class SceneReset : MonoBehaviour
     void Update()
     {
         PressReset();
-        if (timeOutSeconds > 0) TimeoutTimer();
+        if (doTimeout) TimeoutTimer();
 
         if (logTimer) Debug.Log(time);
     }
@@ -48,7 +49,7 @@ public class SceneReset : MonoBehaviour
     }
     void TimerText()
     {
-        if (time > timeOutSeconds - 5f) cachedResetTextColor.a += Time.unscaledDeltaTime / 5f;
+        if (doTimeout && time > timeOutSeconds - 5f) cachedResetTextColor.a += Time.unscaledDeltaTime / 5f;
         else cachedResetTextColor.a = 0;
         resettingText.color = cachedResetTextColor;
     }
