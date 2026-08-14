@@ -236,7 +236,6 @@ GameObject:
   - component: {fileID: 8325665426074419931}
   - component: {fileID: 1378227693022400216}
   - component: {fileID: 6924014765454415162}
-  - component: {fileID: -6242825993279238921}
   - component: {fileID: 5925632851110987253}
   - component: {fileID: 8194848053869983242}
   - component: {fileID: -3830337907838001936}
@@ -332,23 +331,6 @@ MonoBehaviour:
     m_Bits: 4294967295
   eyeHeight: 1.6
   targetHeight: 1.2
---- !u!114 &-6242825993279238921
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7585221046304408112}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0a9593ec9a12b84f9bc28bc378a92c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HauntedStatueBehaviour_PrototypeAoE
-  vision: {fileID: 6924014765454415162}
-  turnSpeed: 0
-  aoeAttack: {fileID: 5925632851110987253}
-  attackCooldown: 3
-  aimToleranceDegrees: 10
 --- !u!114 &5925632851110987253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -587,6 +569,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5787369184196353134}
   - component: {fileID: 7110404303780363383}
+  - component: {fileID: 986313288656267483}
+  - component: {fileID: 8945131142289209623}
   m_Layer: 8
   m_Name: Display
   m_TagString: Untagged
@@ -675,6 +659,43 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &986313288656267483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9060832233878377879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 875e8c249219829468c559b51fdade0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyVisionSensor
+  viewDistance: 14
+  viewAngle: 90
+  chaseDistance: 12
+  visionBlockers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  eyeHeight: 1.6
+  targetHeight: 1.2
+--- !u!114 &8945131142289209623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9060832233878377879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0a9593ec9a12b84f9bc28bc378a92c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HauntedStatueBehaviour_PrototypeAoE
+  vision: {fileID: 6924014765454415162}
+  turnSpeed: 1000
+  aoeAttack: {fileID: 5925632851110987253}
+  attackCooldown: 3
+  aimToleranceDegrees: 10
 --- !u!1001 &2020523274771080418
 PrefabInstance:
   m_ObjectHideFlags: 0
