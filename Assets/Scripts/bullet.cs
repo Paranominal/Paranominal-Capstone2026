@@ -36,7 +36,7 @@ public class Bullet : MonoBehaviour
     }
     void HitWeakpoint(WeakPoint weakPoint)
     {
-        weakPoint.OnHit(WeakPointType.Iron);
+        //weakPoint.OnHit(WeakPointType.Iron);
     }
     private DamageInfo damageInfo;
     void HitEnemy(ToTough enemy)

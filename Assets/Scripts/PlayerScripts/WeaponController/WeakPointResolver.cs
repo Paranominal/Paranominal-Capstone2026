@@ -2,13 +2,15 @@ using UnityEngine;
 
 public class WeakPointResolver : MonoBehaviour
 {
-    public bool ResolveWeakPointHit(WeakPoint weakPoint, WeakPointType shotType, string colliderName)
+    public bool ResolveWeakPointHit(WeakPoint weakPoint, WeakPointType shotType, string colliderName, Vector3 hitpoint)
     {
         if (weakPoint == null)
             return false;
 
         bool correctType = weakPoint.weakPointType == shotType;
-        weakPoint.OnHit(shotType);
+        weakPoint.OnHit(shotType, hitpoint);
+
+        //Debug.LogError(Vector3.Distance(transform.position, hitpoint));
 
         bool isTough = weakPoint.IsTough;
         bool isWarded = weakPoint.IsWarded;

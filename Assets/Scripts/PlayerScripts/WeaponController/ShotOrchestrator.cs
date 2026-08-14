@@ -124,7 +124,7 @@ public class ShotOrchestrator : MonoBehaviour
         if (weaponHitscan.TryGetWeakPointHit(out WeakPoint weakPoint, out RaycastHit hitWeak))
         {
             if (weakPointResolver != null)
-                return weakPointResolver.ResolveWeakPointHit(weakPoint, shotType, hitWeak.collider.name);
+                return weakPointResolver.ResolveWeakPointHit(weakPoint, shotType, hitWeak.collider.name, hitWeak.point);
 
             return false;
         }

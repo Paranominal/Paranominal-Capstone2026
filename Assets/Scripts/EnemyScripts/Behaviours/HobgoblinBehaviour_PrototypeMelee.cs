@@ -37,6 +37,29 @@ public class HobgoblinBehaviour_PrototypeMelee : EnemyBehaviourBase
     private bool isHolding;
     private float cooldownTimer;
 
+    public void bigslowenemy()
+    {
+        if (followSpeed > 2)
+        {
+            followSpeed -=2f;
+        }
+        else
+        {
+            followSpeed -=0.1f;
+        }
+    }
+    public void smallslowenemy()
+    {
+        if (followSpeed > 2)
+        {
+            followSpeed -=1.5f;
+        }
+        else
+        {
+            followSpeed -=0.1f;
+        }
+    }
+
     //cache references before play starts
     protected override void Awake()
     {
@@ -73,6 +96,12 @@ public class HobgoblinBehaviour_PrototypeMelee : EnemyBehaviourBase
     //update ai every frame
     private void Update()
     {
+        if (followSpeed < 4.5f)
+        {
+            followSpeed += Time.deltaTime;
+        }
+
+
         //paused or dying enemies skip all logic
         if (IsPaused || IsDying) return;
 

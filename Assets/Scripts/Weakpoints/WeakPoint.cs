@@ -28,7 +28,7 @@ public class WeakPoint : MonoBehaviour
     private GameObject currentElement;
     private SpriteRenderer[] currentRenderers;
     private SpriteRenderer[] allRenderers;
-    private SphereCollider weakPointCollider;
+    private BoxCollider weakPointCollider;
 
     // isShown tracks whether this weakpoint is the currently active target in the weakpoint sequence
     // currentAlpha is smoothed over time to avoid hard pop-in transitions
@@ -49,7 +49,7 @@ public class WeakPoint : MonoBehaviour
     private void Awake()
     {
         // cache expensive lookups once at startup for performance and cleaner updating
-        weakPointCollider = GetComponent<SphereCollider>();
+        weakPointCollider = GetComponent<BoxCollider>();
         allRenderers = GetComponentsInChildren<SpriteRenderer>(true);
 
         // Decide which visual branch this weakpoint should use based on its type
@@ -157,7 +157,7 @@ public class WeakPoint : MonoBehaviour
         currentAlpha = 0f;
     }
 
-    public void OnHit(WeakPointType type)
+    public void OnHit(WeakPointType type, Vector3 hitpos)
     {
         // Ignore mismatched bullet types to enforce iron/silver behavior
         if (type != weakPointType) return;
@@ -165,16 +165,27 @@ public class WeakPoint : MonoBehaviour
         // Warded weakpoints cannot be destroyed until unlocked externally
         if (isWarded) return;
 
-        if (manager != null)
-        {
-            manager.OnWeakPointHit();
-        }
+        
 
         // Tough weakpoints require multiple successful hits
         remainingShots -= 1;
         if (remainingShots > 0) return;
 
         // Correct hit: hide this point and advance sequence to the next one
+        Debug.LogError(Vector3.Distance (transform.position, hitpos));
+        if (Vector3.Distance (transform.position, hitpos) < 0.2f)
+        {
+            manager.BigHit();
+            if (manager != null)
+            {
+                manager.OnWeakPointHit();
+            }
+        }
+        else
+        {
+            manager.Smallhit();
+        }
+
         Hide();
         manager.NextWeakPoint();
     }

@@ -8,6 +8,8 @@ public class WeakPointManager : MonoBehaviour
     private EnemyStagger staggerComponent;
     private EnemyKnockback knockbackComponent;
 
+    private float health = 8;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -27,6 +29,34 @@ public class WeakPointManager : MonoBehaviour
         weakpoints[0].GetComponent<WeakPoint>().Show(weakpoints[0].GetComponent<WeakPoint>().weakPointType); // activate the first weakpoint in the index
     }
 
+    public void Smallhit()
+    {
+        health -=1.5f;
+        GetComponent<HobgoblinBehaviour_PrototypeMelee>().smallslowenemy();
+
+        Debug.Log("smallhit");
+
+        if (health <= 0)
+        {
+            Debug.Log("Enemy Killed!");
+            Destroy(gameObject);
+        }
+    }
+
+    public void BigHit()
+    {
+        health -= 2;
+        GetComponent<HobgoblinBehaviour_PrototypeMelee>().bigslowenemy();
+
+        Debug.Log("bighit");
+
+        if (health <= 0)
+        {
+            Debug.Log("Enemy Killed!");
+            Destroy(gameObject);
+        }
+    }
+
     public void NextWeakPoint()
     {
         //extend time when weakpoints are destroyed
@@ -42,6 +72,8 @@ public class WeakPointManager : MonoBehaviour
         }
         else
         {
+            currentWeakpoint = 0;
+            weakpoints[currentWeakpoint].GetComponent<WeakPoint>().Show(weakpoints[0].GetComponent<WeakPoint>().weakPointType);
             //checks for miniboss cycles
             ToMiniBoss miniBoss = GetComponentInParent<ToMiniBoss>();
             if (miniBoss != null)
@@ -51,7 +83,7 @@ public class WeakPointManager : MonoBehaviour
             else
             {
                 Debug.Log("Enemy Killed!");
-                Destroy(gameObject);
+                //Destroy(gameObject);
             }
         }
     }
