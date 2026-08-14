@@ -62,6 +62,7 @@ public class Door : MonoBehaviour, IInteractable
         if (raycaster == null)
         {
             raycaster = FindAnyObjectByType<Raycaster>();
+            if (raycaster == null) Debug.LogWarning("There is no Raycast Manager in this scene!");
         }
     }
 
