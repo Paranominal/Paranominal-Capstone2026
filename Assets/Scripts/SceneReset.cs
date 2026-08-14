@@ -19,9 +19,7 @@ public class SceneReset : MonoBehaviour
     {
         cachedResetTextColor = resettingText.color;
         TimerText(); // trigger once to turn off at start
-        weaponInput = FindAnyObjectByType<WeaponInputReader>();
-        playerInput = FindAnyObjectByType<PlayerInputReader>();
-        Debug.Log(weaponInput, playerInput);
+        CheckForInputReaders();
     }
     void Update()
     {
@@ -44,8 +42,8 @@ public class SceneReset : MonoBehaviour
     }
     private bool AnyInput()
     {
-        if (playerInput.AnyInput()) return true;
-        else if (weaponInput.AnyInput()) return true;
+        if (playerInput != null && playerInput.AnyInput()) return true;
+        else if (weaponInput != null &&weaponInput.AnyInput()) return true;
         else return false;
     }
     void TimerText()
@@ -58,5 +56,22 @@ public class SceneReset : MonoBehaviour
     {
         Debug.Log($"Resetting Scene to [Scene: {sceneBuildIndex}]!");
         SceneManager.LoadScene(sceneBuildIndex);
+    }
+    void CheckForInputReaders()
+    {
+        if (playerInput == null)
+        {
+            Debug.LogWarning($"[{this}] No playerInput was set! This may be a mistake. Attempting to find one...");
+            playerInput = FindAnyObjectByType<PlayerInputReader>();
+            if (playerInput == null) Debug.LogWarning("[Reset Manager] No playerInput found.");
+            else Debug.LogWarning($"[Reset Manager] playerInput found! [{playerInput}]");
+        }
+        if (weaponInput == null)
+        {
+            Debug.LogWarning($"[{this}] No weaponInput was set! This may be a mistake. Attempting to find one...");
+            weaponInput = FindAnyObjectByType<WeaponInputReader>();
+            if (weaponInput == null) Debug.LogWarning("[Reset Manager] No weaponInput found.");
+            else Debug.LogWarning($"[Reset Manager] weaponInput found! [{weaponInput}]");
+        }
     }
 }
