@@ -8,13 +8,13 @@ using UnityEngine;
 public class EnemyAttack_Melee : EnemyAttack
 {
     public enum AttackState { Ready, WindUp, Attacking, Cooldown }
-    [HideInInspector]public AttackState attackState = AttackState.Ready;
+    public AttackState attackState = AttackState.Ready;
     [SerializeField] private LayerMask targetLayers;
     [SerializeField] private int damage = 10;
     [Tooltip("Time between each attack in Seconds")]
     [SerializeField] private float coolDownTime = 2f;
     [Tooltip("Wind Up time in Seconds")]
-    [SerializeField] private float windUpTime = 1f;
+    public float windUpTime = 1f;
     [SerializeField] private SpriteRenderer attackIndicator;
     [Header("Damage Field")]
     [SerializeField] private GameObject damageFieldPrefab;
