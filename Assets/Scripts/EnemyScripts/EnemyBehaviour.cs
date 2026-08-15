@@ -95,7 +95,7 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (attack.attackState == EnemyAttack_Melee.AttackState.Ready)
         {
-        attack.DoAttack();
+        attack.InitiateAttack();
         if (debugMode) Debug.Log($"[{this}] Doing attack: [{attack}]");
         }
     }

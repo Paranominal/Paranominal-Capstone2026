@@ -43,7 +43,7 @@ public class DamageField : MonoBehaviour
     {
         damageOnHit = damage;
         persistTime = damageWindow;
-        transform.localScale = new Vector3(radius, height, radius);
+        transform.localScale = new Vector3(radius*2, height, radius*2);
         layerMask = targetLayers;
         attackProgenitor = origin;
         StartCoroutine(PersistTimer());
@@ -51,11 +51,12 @@ public class DamageField : MonoBehaviour
     IEnumerator PersistTimer()
     {
         yield return new WaitForSeconds(persistTime);
-        DisableHurtbox();
+        ClearDamageField();
     }
-    void DisableHurtbox()
+    void ClearDamageField()
     {
         gameObject.SetActive(false);
+        Destroy(gameObject);
     }
     void OnTriggerEnter(Collider other)
     {
@@ -68,6 +69,6 @@ public class DamageField : MonoBehaviour
             attackProgenitor.gameObject
         );
         other.GetComponentInParent<IDamageable>().TakeDamage(damageInfo);
-        DisableHurtbox();
+        ClearDamageField();
     }
 }

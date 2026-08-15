@@ -19,17 +19,15 @@ public class EnemyAttack_Melee : EnemyAttack
     [Header("Damage Field")]
     [SerializeField] private GameObject damageFieldPrefab;
     public float attackRange = 1f;
-    [SerializeField] private float damageFieldRadius = 1f;
     [SerializeField] private float damageFieldHeight = 0.5f;
     [Tooltip("Number of seconds the Damage Field persists after appearing")]
     [SerializeField] private float damageWindow = 1f;
     // [SerializeField] private bool doInterrupt = true;
-    [HideInInspector] public List<DamageField> damageFields;
     void Start()
     {
         SetAttackIndicator(false);
     }
-    public void DoAttack()
+    public void InitiateAttack()
     {
         if (attackState != AttackState.Ready) return;
         StartCoroutine(WindUp());
@@ -51,9 +49,7 @@ public class EnemyAttack_Melee : EnemyAttack
     }
     private void DoDamageField()
     {
-        DamageField damageField = Instantiate(damageFieldPrefab, transform.position + (transform.forward * attackRange) + (Vector3.up * damageFieldHeight * 0.5f), transform.rotation).GetComponent<DamageField>();
-        damageFields.Add(damageField);
-        damageField.DoDamageField(damage, damageWindow, damageFieldRadius, damageFieldHeight, targetLayers, this);
+        Instantiate(damageFieldPrefab, transform.position + (transform.forward * attackRange/2) + (Vector3.up * damageFieldHeight * 0.5f), transform.rotation).GetComponent<DamageField>().DoDamageField(damage, damageWindow, attackRange/2, damageFieldHeight, targetLayers, this);
     }    
     private void SetAttackIndicator(bool warn)
     {
