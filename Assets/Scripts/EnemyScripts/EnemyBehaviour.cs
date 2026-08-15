@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class EnemyBehaviour : MonoBehaviour
 {
-    private enum EnemyState {Idle, Engaging, Spawning, Dying, Inactive};
-    private EnemyState attackState = EnemyState.Inactive;
+    private enum BehaviourState {Idle, Engaging, Attacking, Stunned, Spawning, Dying, Inactive};
+    private BehaviourState behaviourState = BehaviourState.Inactive;
 
     [Header("Enemy Options")]
     [SerializeField] private bool alwaysAggro;
@@ -25,29 +25,34 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void Start()
     {
-        if (skipSpawn) attackState = EnemyState.Idle;
+        if (skipSpawn) behaviourState = BehaviourState.Idle;
         else DoSpawn();
     }
 
     void Update()
     {
-        if (debugMode) Debug.Log($"[{this}] EnemyState: [{attackState}]");
-        switch (attackState)
+        if (debugMode) Debug.Log($"[{this}] BehaviourState: [{behaviourState}]");
+        switch (behaviourState)
         {
-            case EnemyState.Idle:
-                if (PlayerInAggroRange()) attackState = EnemyState.Engaging;
+            case BehaviourState.Idle:
+                if (PlayerInAggroRange()) behaviourState = BehaviourState.Engaging;
                 return;
-            case EnemyState.Engaging:
+            case BehaviourState.Engaging:
                 LookAtPlayer();
                 if (chasePlayer) ChasePlayer();
                 if (debugMode) Debug.Log($"[{this}] PlayerInAttackRange: [{PlayerInAttackRange()}] | attack: [{attack}]");
                 if (PlayerInAttackRange() && attack != null) DoAttack();
                 return;
-            case EnemyState.Spawning:
+            case BehaviourState.Attacking:
+                if (!IsAttacking()) behaviourState = BehaviourState.Idle;
                 return;
-            case EnemyState.Dying:
+            case BehaviourState.Stunned:
                 return;
-            case EnemyState.Inactive:
+            case BehaviourState.Spawning:
+                return;
+            case BehaviourState.Dying:
+                return;
+            case BehaviourState.Inactive:
                 return;
         }
     }
@@ -69,6 +74,12 @@ public class EnemyBehaviour : MonoBehaviour
         if ((transform.position - playerTransform.position).magnitude < attack.attackRange) return true;
         else return false;
     }
+    bool IsAttacking()
+    {
+        if (attack.attackState == EnemyAttack_Melee.AttackState.Attacking) return true;
+        else if (attack.attackState == EnemyAttack_Melee.AttackState.WindUp) return true;
+        else return false;
+    }
     void DoSpawn()
     {
         StartCoroutine(Spawn());
@@ -76,7 +87,7 @@ public class EnemyBehaviour : MonoBehaviour
     IEnumerator Spawn()
     {
         if (debugMode) Debug.Log($"[{this}] Spawning...");
-        attackState = EnemyState.Spawning;
+        behaviourState = BehaviourState.Spawning;
 
             Color color = Color.black;
         GetComponentInChildren<SpriteRenderer>().color = color;
@@ -86,17 +97,16 @@ public class EnemyBehaviour : MonoBehaviour
             color = Color.white;
         GetComponentInChildren<SpriteRenderer>().color = color;
 
-        if (PlayerInAggroRange()) attackState = EnemyState.Engaging;
-        else attackState = EnemyState.Idle;
+        if (PlayerInAggroRange()) behaviourState = BehaviourState.Engaging;
+        else behaviourState = BehaviourState.Idle;
         if (debugMode) Debug.Log($"[{this}] Spawning complete");
         yield break;
     }
     void DoAttack()
     {
-        if (attack.attackState == EnemyAttack_Melee.AttackState.Ready)
-        {
+        if (attack.attackState != EnemyAttack_Melee.AttackState.Ready) return;
+        behaviourState = BehaviourState.Attacking;
         attack.InitiateAttack();
         if (debugMode) Debug.Log($"[{this}] Doing attack: [{attack}]");
-        }
     }
 }
