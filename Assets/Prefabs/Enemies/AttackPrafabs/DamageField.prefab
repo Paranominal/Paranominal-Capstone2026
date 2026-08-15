@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 5439268973627282721}
   - component: {fileID: 4142536126922372865}
   - component: {fileID: 6947553074351593735}
-  m_Layer: 0
+  - component: {fileID: 5792883796589563391}
+  m_Layer: 15
   m_Name: DamageField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.87747, y: 0.125, z: 1.45214}
-  m_LocalScale: {x: 2, y: 0.1, z: 2}
+  m_LocalScale: {x: 2, y: 0.53914, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -67,7 +68,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ab8c60cd38257c4478c2924cc75513dd, type: 2}
+  - {fileID: 2100000, guid: 4b8753b6e8e73ab4782c40af6932a5a1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -113,3 +114,20 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &5792883796589563391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3510181086188099830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7e981e4edf98cc4b9015e5f55546ac8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  progenitorAttack: {fileID: 0}
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  attackDuration: 0
