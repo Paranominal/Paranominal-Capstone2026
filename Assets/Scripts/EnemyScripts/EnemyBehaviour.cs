@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class EnemyBehaviour : MonoBehaviour
 {
-    private enum State {Idle, Engaging, Spawning, Dying, Inactive};
-    private State state = State.Inactive;
+    private enum EnemyState {Idle, Engaging, Spawning, Dying, Inactive};
+    private EnemyState attackState = EnemyState.Inactive;
 
     [Header("Enemy Options")]
     [SerializeField] private bool alwaysAggro;
@@ -14,37 +14,40 @@ public class EnemyBehaviour : MonoBehaviour
     
     public Transform playerTransform;
     [SerializeField] private float aggroRange = 10;
-    [SerializeField] private float attackRange = 3;
-    [SerializeField] private bool skipSpawnAnim;
-    [Tooltip("Time in seconds it takes before the enemy will engage the Player after spawning")]
-    [SerializeField] private float engageDelay;
-    float engageTimer;
+    // [SerializeField] private float attackRange = 3;
+    [SerializeField] private bool skipSpawn;
+    [Tooltip("Time in seconds it takes the enemy to spawn")]
+    [SerializeField] private float spawnDelay = 3;
+    [Header("Debugging")]
+    bool debugMode;
+    // [Tooltip("Time in seconds it takes the enemy to engage the Player after getting aggro'd")]
+    // [SerializeField] private float engageDelay = 1;
 
     private void Start()
     {
-        if (skipSpawnAnim) state = State.Idle;
+        if (skipSpawn) attackState = EnemyState.Idle;
         else DoSpawn();
     }
 
     void Update()
     {
-        Debug.Log($"[{this}] State: [{state}]");
-        switch (state)
+        if (debugMode) Debug.Log($"[{this}] EnemyState: [{attackState}]");
+        switch (attackState)
         {
-            case State.Idle:
-                if (PlayerInAggroRange()) state = State.Engaging;
+            case EnemyState.Idle:
+                if (PlayerInAggroRange()) attackState = EnemyState.Engaging;
                 return;
-            case State.Engaging:
+            case EnemyState.Engaging:
                 LookAtPlayer();
                 if (chasePlayer) ChasePlayer();
-                Debug.Log($"[{this}] PlayerInAttackRange: [{PlayerInAttackRange()}] | attack: [{attack}]");
+                if (debugMode) Debug.Log($"[{this}] PlayerInAttackRange: [{PlayerInAttackRange()}] | attack: [{attack}]");
                 if (PlayerInAttackRange() && attack != null) DoAttack();
                 return;
-            case State.Spawning:
+            case EnemyState.Spawning:
                 return;
-            case State.Dying:
+            case EnemyState.Dying:
                 return;
-            case State.Inactive:
+            case EnemyState.Inactive:
                 return;
         }
     }
@@ -63,7 +66,7 @@ public class EnemyBehaviour : MonoBehaviour
     }
     bool PlayerInAttackRange()
     {
-        if ((transform.position - playerTransform.position).magnitude < attackRange) return true;
+        if ((transform.position - playerTransform.position).magnitude < attack.attackRange) return true;
         else return false;
     }
     void DoSpawn()
@@ -72,19 +75,28 @@ public class EnemyBehaviour : MonoBehaviour
     }
     IEnumerator Spawn()
     {
-        Debug.Log($"[{this}] Spawning...");
-        state = State.Spawning;
-        yield return new WaitForSeconds(engageDelay);
+        if (debugMode) Debug.Log($"[{this}] Spawning...");
+        attackState = EnemyState.Spawning;
+
+            Color color = Color.black;
+        GetComponentInChildren<SpriteRenderer>().color = color;
+
+        yield return new WaitForSeconds(spawnDelay);
         
-        if (PlayerInAggroRange()) state = State.Engaging;
-        else state = State.Idle;
-        Debug.Log($"[{this}] Spawning complete");
+            color = Color.white;
+        GetComponentInChildren<SpriteRenderer>().color = color;
+
+        if (PlayerInAggroRange()) attackState = EnemyState.Engaging;
+        else attackState = EnemyState.Idle;
+        if (debugMode) Debug.Log($"[{this}] Spawning complete");
         yield break;
     }
     void DoAttack()
     {
-        if (attack.isOnCooldown) return;
-        Debug.Log($"[{this}] Doing attack: [{attack}]");
+        if (attack.attackState == EnemyAttack_Melee.AttackState.Ready)
+        {
         attack.DoAttack();
+        if (debugMode) Debug.Log($"[{this}] Doing attack: [{attack}]");
+        }
     }
 }

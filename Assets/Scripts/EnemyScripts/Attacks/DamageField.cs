@@ -1,41 +1,60 @@
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class DamageField : MonoBehaviour
 {
-    [HideInInspector] public EnemyAttack progenitorAttack;
     [HideInInspector] public bool hitRegistered;
     [HideInInspector] public bool attackComplete;
-    private float attackDuration = 1;
-    private int damageOnHit;
-    private float persistTime;
+    private EnemyAttack attackProgenitor;
+    private int damageOnHit = 10;
+    private float persistTime = 1;
     private LayerMask layerMask;
-
-    void Update()
+    public void DoDamageField(LayerMask targetLayers)
     {
-        if (isActiveAndEnabled) DoTimer();
+        DoDamageField(damageOnHit, persistTime, 1f, targetLayers, 1f, null);
+    }
+    public void DoDamageField(int damage, LayerMask targetLayers)
+    {
+        DoDamageField(damage, persistTime, 1f, targetLayers, 1f, null);
     }
     public void DoDamageField(int damage, float damageWindow, LayerMask targetLayers)
     {
-        DoDamageField(damage, damageWindow, targetLayers, 1f);
+        DoDamageField(damage, damageWindow, 1f, targetLayers, 1f, null);
     }
-    public void DoDamageField(int damage, float damageWindow, LayerMask targetLayers, float radius)
+    public void DoDamageField(int damage, float damageWindow, float radius, LayerMask targetLayers)
     {
-        transform.localScale = Vector3.one * radius;
+        DoDamageField(damage, damageWindow, radius, targetLayers, 1f, null);
+    }
+    public void DoDamageField(int damage, float damageWindow, LayerMask targetLayers, EnemyAttack origin)
+    {
+        DoDamageField(damage, damageWindow, 1f, targetLayers, 1f, origin);
+    }
+    public void DoDamageField(int damage, float damageWindow, float radius, LayerMask targetLayers, float height)
+    {
+        DoDamageField(damage, damageWindow, radius, targetLayers, height, null);
+    }
+    public void DoDamageField(int damage, float damageWindow, float radius, LayerMask targetLayers, EnemyAttack origin)
+    {
+        DoDamageField(damage, damageWindow, radius, targetLayers, 1f, origin);
+    }
+    public void DoDamageField(int damage, float damageWindow, float radius, LayerMask targetLayers, float height, EnemyAttack origin)
+    {
+        transform.localScale = new Vector3(radius, height, radius);
         damageOnHit = damage;
         persistTime = damageWindow;
         layerMask = targetLayers;
+        attackProgenitor = origin;
+        StartCoroutine(PersistTimer());
+    }
+    IEnumerator PersistTimer()
+    {
+        yield return new WaitForSeconds(persistTime);
+        DisableHurtbox();
     }
     void DisableHurtbox()
     {
         gameObject.SetActive(false);
-        //Destroy(gameObject);
-    }
-    float timer = 0;
-    void DoTimer()
-    {
-        if (timer >= attackDuration) DisableHurtbox();
-        else timer += Time.deltaTime;
     }
     void OnTriggerEnter(Collider other)
     {

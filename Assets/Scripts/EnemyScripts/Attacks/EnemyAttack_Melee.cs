@@ -1,62 +1,61 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyAttack_Melee : EnemyAttack
 {
-    [Header("Preferences")]
+    public enum AttackState { Ready, WindUp, Attacking, Cooldown }
+    [HideInInspector]public AttackState attackState = AttackState.Ready;
     [SerializeField] private LayerMask targetLayers;
     [SerializeField] private int damage = 10;
+    [Tooltip("Time between each attack in Seconds")]
     [SerializeField] private float coolDownTime = 2f;
+    [Tooltip("Wind Up time in Seconds")]
+    [SerializeField] private float windUpTime = 1f;
+    [SerializeField] private SpriteRenderer attackIndicator;
     [Header("Damage Field")]
     [SerializeField] private GameObject damageFieldPrefab;
-    [SerializeField] private float attackDistance = 1f;
+    public float attackRange = 1f;
     [SerializeField] private float damageFieldRadius = 1f;
+    [SerializeField] private float damageFieldHeight = 0.5f;
     [Tooltip("Number of seconds the Damage Field persists after appearing")]
     [SerializeField] private float damageWindow = 1f;
-    [Header("Windup")]
-    [Tooltip("Wind Up time in Seconds")]
-    [SerializeField] private SpriteRenderer attackIndicator;
-    [SerializeField] private float windUpTime = 1f;
-    [SerializeField] private bool doInterrupt = true;
-
-    // other variables
+    // [SerializeField] private bool doInterrupt = true;
     [HideInInspector] public List<DamageField> damageFields;
-    [HideInInspector] public bool isWindingUp;
-    [HideInInspector] public bool isOnCooldown;
-    [HideInInspector] public bool isAttacking;
+    void Start()
+    {
+        SetAttackIndicator(false);
+    }
     public void DoAttack()
     {
-        if (isOnCooldown) return;
-        DoWindUp();
-    }
-    private void DoWindUp()
-    {
+        if (attackState != AttackState.Ready) return;
         StartCoroutine(WindUp());
     }
     IEnumerator WindUp()
     {
-        WindUpIndicator(true);
+        attackState = AttackState.WindUp;
+        SetAttackIndicator(true);
         yield return new WaitForSeconds(windUpTime);
         DoDamageField();
         StartCoroutine(Cooldown());
-        WindUpIndicator(false);
+        SetAttackIndicator(false);
     }
     IEnumerator Cooldown()
     {
-        isOnCooldown = true;
+        attackState = AttackState.Cooldown;
         yield return new WaitForSeconds(coolDownTime);
-        isOnCooldown = false;
+        attackState = AttackState.Ready;
     }
     private void DoDamageField()
     {
-        DamageField damageField = Instantiate(damageFieldPrefab, transform.position + (transform.forward * attackDistance), transform.rotation).GetComponent<DamageField>();
+        DamageField damageField = Instantiate(damageFieldPrefab, transform.position + (transform.forward * attackRange) + (Vector3.up * damageFieldHeight * 0.5f), transform.rotation).GetComponent<DamageField>();
         damageFields.Add(damageField);
-        damageField.progenitorAttack = this;
-        damageField.DoDamageField(damage, damageWindow, targetLayers, damageFieldRadius);
+        damageField.DoDamageField(damage, damageWindow, damageFieldRadius, targetLayers, damageFieldHeight, this);
     }    
-    private void WindUpIndicator(bool warn)
+    private void SetAttackIndicator(bool warn)
     {
         attackIndicator.enabled = warn;
     }
