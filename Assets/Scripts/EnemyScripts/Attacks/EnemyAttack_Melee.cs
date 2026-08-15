@@ -53,7 +53,7 @@ public class EnemyAttack_Melee : EnemyAttack
     {
         DamageField damageField = Instantiate(damageFieldPrefab, transform.position + (transform.forward * attackRange) + (Vector3.up * damageFieldHeight * 0.5f), transform.rotation).GetComponent<DamageField>();
         damageFields.Add(damageField);
-        damageField.DoDamageField(damage, damageWindow, damageFieldRadius, targetLayers, damageFieldHeight, this);
+        damageField.DoDamageField(damage, damageWindow, damageFieldRadius, damageFieldHeight, targetLayers, this);
     }    
     private void SetAttackIndicator(bool warn)
     {
