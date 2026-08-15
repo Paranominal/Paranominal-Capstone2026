@@ -1,9 +1,5 @@
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using Unity.VisualScripting;
-using UnityEditor.EditorTools;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class EnemyBehaviour : MonoBehaviour
 {
@@ -14,12 +10,12 @@ public class EnemyBehaviour : MonoBehaviour
     [SerializeField] private bool alwaysAggro;
     [SerializeField] private bool chasePlayer;
     [SerializeField] private bool onlyEngageIfAttackReadied;
-    [SerializeField] private List<EnemyAttack> attacktypes;
+    [SerializeField] private EnemyAttack_Melee attack;
     
     public Transform playerTransform;
-    [SerializeField] private float aggroRange;
+    [SerializeField] private float aggroRange = 10;
+    [SerializeField] private float attackRange = 3;
     [SerializeField] private bool skipSpawnAnim;
-    [SerializeField] private float attackCooldown;
     [Tooltip("Time in seconds it takes before the enemy will engage the Player after spawning")]
     [SerializeField] private float engageDelay;
     float engageTimer;
@@ -32,14 +28,17 @@ public class EnemyBehaviour : MonoBehaviour
 
     void Update()
     {
+        Debug.Log($"[{this}] State: [{state}]");
         switch (state)
         {
             case State.Idle:
-                if (CheckForPlayer()) state = State.Engaging;
+                if (PlayerInAggroRange()) state = State.Engaging;
                 return;
             case State.Engaging:
                 LookAtPlayer();
                 if (chasePlayer) ChasePlayer();
+                Debug.Log($"[{this}] PlayerInAttackRange: [{PlayerInAttackRange()}] | attack: [{attack}]");
+                if (PlayerInAttackRange() && attack != null) DoAttack();
                 return;
             case State.Spawning:
                 return;
@@ -57,23 +56,35 @@ public class EnemyBehaviour : MonoBehaviour
     {
         return; // chase code would go here
     }
-    bool CheckForPlayer()
+    bool PlayerInAggroRange()
     {
         if ((transform.position - playerTransform.position).magnitude < aggroRange) return true;
         else return false;
     }
+    bool PlayerInAttackRange()
+    {
+        if ((transform.position - playerTransform.position).magnitude < attackRange) return true;
+        else return false;
+    }
     void DoSpawn()
     {
-        state = State.Spawning;
-        while (engageTimer < engageDelay)
-        {
-            engageTimer += Time.deltaTime;
-        }
-        if (CheckForPlayer()) state = State.Engaging;
-        else state = State.Idle;
+        StartCoroutine(Spawn());
     }
-    void DoEngageDelay()
+    IEnumerator Spawn()
     {
+        Debug.Log($"[{this}] Spawning...");
+        state = State.Spawning;
+        yield return new WaitForSeconds(engageDelay);
         
+        if (PlayerInAggroRange()) state = State.Engaging;
+        else state = State.Idle;
+        Debug.Log($"[{this}] Spawning complete");
+        yield break;
+    }
+    void DoAttack()
+    {
+        if (attack.isOnCooldown) return;
+        Debug.Log($"[{this}] Doing attack: [{attack}]");
+        attack.DoAttack();
     }
 }
