@@ -140,7 +140,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         damageTaken++;
         if (damageTaken >= AdjustedHitsToStagger()) TriggerStagger();
     }
-    public bool windingUp;
+    [HideInInspector] public bool windingUp;
     int AdjustedHitsToStagger()
     {
         if (!stunOnWindup) return hitsToStagger;
