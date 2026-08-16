@@ -16,7 +16,7 @@ public class EnemyBehaviour : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private Animator animator;
     
-    public Transform playerTransform;
+    private Transform playerTransform;
     [SerializeField] private float aggroRange = 10;
     // [SerializeField] private float attackRange = 3;
     [SerializeField] private bool skipSpawn;
@@ -31,6 +31,7 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (skipSpawn) behaviourState = BehaviourState.Idle;
         else DoSpawn();
+        playerTransform = GameObject.FindWithTag("Player").transform;
     }
 
     void Update()
@@ -50,8 +51,8 @@ public class EnemyBehaviour : MonoBehaviour
             case BehaviourState.Chase:
                 LookAtPlayer();
                 if (chasePlayer) ChasePlayer();
-                if (!AttackReady() && PlayerInAttackRange() && attack != null) behaviourState = BehaviourState.Waiting;
-                else if (AttackReady() && PlayerInAttackRange() && attack != null) DoAttack();
+                if (!AttackReady() && AttackEnabled() && PlayerInAttackRange()) behaviourState = BehaviourState.Waiting;
+                else if (AttackReady() && PlayerInAttackRange()) DoAttack();
                 //exit state
                 if (!neverGiveUpChase && !PlayerInAggroRange()) behaviourState = BehaviourState.Idle;
                 return;
@@ -64,6 +65,7 @@ public class EnemyBehaviour : MonoBehaviour
             case BehaviourState.Waiting:
                 if (AttackReady() && PlayerInAttackRange()) DoAttack();
                 else if (AttackReady() || !PlayerInAttackRange()) behaviourState = BehaviourState.Chase;
+                else if (!AttackEnabled()) behaviourState = BehaviourState.Idle;
                 return;
             case BehaviourState.Stunned:
                 return;
@@ -128,18 +130,25 @@ public class EnemyBehaviour : MonoBehaviour
     }
     bool AttackReady()
     {
-        if (attack.attackState == EnemyAttack_Melee.AttackState.Ready) return true;
+        if (!AttackEnabled()) return false;
+        if (AttackEnabled() && attack.attackState == EnemyAttack_Melee.AttackState.Ready) return true;
         else return false;
+    }
+    bool AttackEnabled()
+    {
+        if (attack == null) return false;
+        if (!attack.isActiveAndEnabled) return false;
+        else return true;
     }
     void Animations()
     {
         if (behaviourState == BehaviourState.Idle || behaviourState == BehaviourState.Waiting) animator.SetTrigger("idle");
-        else if (attack != null && attack.attackState == EnemyAttack_Melee.AttackState.WindUp) animator.SetTrigger("windUp");
+        else if (AttackEnabled() && attack.attackState == EnemyAttack_Melee.AttackState.WindUp) animator.SetTrigger("windUp");
         else if (behaviourState == BehaviourState.Chase) animator.SetTrigger("aggro");
         else if (behaviourState == BehaviourState.Spawning) animator.SetTrigger("spawn");
 
         if (behaviourState == BehaviourState.Spawning) animator.speed = 1 / spawnDelay;
-        else if (attack.attackState == EnemyAttack_Melee.AttackState.WindUp) animator.speed = 1 / attack.windUpTime;
+        else if (AttackEnabled() && attack.attackState == EnemyAttack_Melee.AttackState.WindUp) animator.speed = 1 / attack.windUpTime;
         else animator.speed = 1;
     }
 }
