@@ -6,27 +6,31 @@ using UnityEngine.UI;
 public class EnemyStagger : MonoBehaviour, IDamageable
 {
     [SerializeField] private Slider staggerBar;
+    [SerializeField] private Image staggerBarFill;
+    [SerializeField] private Color barColor = new Color(1f, 1f, 1f, 1f);
+    [SerializeField] private Color barResetColor = new Color(1f, 3f, 5f, 1f);
     [SerializeField] private WeakPointManager weakPointManager;
     [HideInInspector] public bool canBeHit = true;
     private bool isStaggered = false;
     [SerializeField] private int hitsToStagger = 2;
+    public int HitsToStagger => hitsToStagger;
+    [SerializeField] private bool stunOnWindup = true;
     [Range(0,2)]
     [Tooltip("The degree to which the enemy resists being Staggered. (i.e: The rate the Stagger Bar goes down).")]
     [SerializeField] private float staggerResistance = 0.3f;
-    public int HitsToStagger => hitsToStagger;
     [Range(0.5f,5f)]
     [SerializeField] private float staggerTime = 2;
     [SerializeField] private float timeAddedOnHit = 0.5f;
     private float currentStaggerTimeRemaining;
     // public event Action OnStaggerEnd;
-    [SerializeField] private bool doStaggerColor = true;
-    [SerializeField] private Color staggerColor = new Color(0.5f, 0.5f, 0.5f, 1f);
+    // [SerializeField] private bool doStaggerColor = true;
+    // [SerializeField] private Color staggerColor = new Color(0.5f, 0.5f, 0.5f, 1f);
     public bool debugMode;
     public bool IsStaggered => isStaggered; //returns whether the enemy is staggered
     private Coroutine currentStagger;
     void Start()
     {
-        if (doStaggerColor) InitializeColor();
+        // if (doStaggerColor) InitializeColor();
     }
     void Update()
     {
@@ -64,7 +68,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         if (debugMode) Debug.Log($"[EnemyStagger] {gameObject.name} was staggered!", gameObject);
         isStaggered = true;
         if (weakPointManager != null) weakPointManager.StartSequence();
-        if (doStaggerColor) DoColor(staggerColor);
+        // if (doStaggerColor) DoColor(staggerColor);
     }
     public void ExtendStagger() //extends stagger on Weakpoint hit while staggered.
     {
@@ -78,52 +82,52 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         if (debugMode) Debug.Log($"[EnemyStagger] {gameObject.name} recovered from stagger", gameObject);
         isStaggered = false;
         if (weakPointManager != null) weakPointManager.EndSequence();
-        if (doStaggerColor) UndoColor();
+        // if (doStaggerColor) UndoColor();
         damageTaken = 0;
     }
     private SpriteRenderer[] spriteRenderers;
     private Color[] cachedColors;
     private bool isInitialized;
 
-    private void InitializeColor()
-    {
-        if (isInitialized) return;
+    // private void InitializeColor()
+    // {
+    //     if (isInitialized) return;
 
-        spriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
-        Debug.Log($"[{this}] Sprite Renderers {spriteRenderers}");
-        if (spriteRenderers != null && spriteRenderers.Length > 0)
-        {
-            cachedColors = new Color[spriteRenderers.Length];
+    //     spriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+    //     Debug.Log($"[{this}] Sprite Renderers {spriteRenderers}");
+    //     if (spriteRenderers != null && spriteRenderers.Length > 0)
+    //     {
+    //         cachedColors = new Color[spriteRenderers.Length];
 
-            for (int i = 0; i < spriteRenderers.Length; i++)
-            {
-                cachedColors[i] = spriteRenderers[i].color;
-            }
+    //         for (int i = 0; i < spriteRenderers.Length; i++)
+    //         {
+    //             cachedColors[i] = spriteRenderers[i].color;
+    //         }
 
-            isInitialized = true;
-        }
-    }
+    //         isInitialized = true;
+    //     }
+    // }
 
-    //apply color effect to sprites
-    public void DoColor(Color color)
-    {
-        InitializeColor();
-        // if (!isInitialized) return;
-        foreach (SpriteRenderer renderer in spriteRenderers)
-        {
-            if (renderer.gameObject.tag != "WeakPoint") renderer.color = color;
-        }
-    }
-    //restore  sprites to  original colors
-    public void UndoColor()
-    {
-        InitializeColor();
-        // if (!isInitialized) return;
-        foreach (SpriteRenderer renderer in spriteRenderers)
-        {
-            if (renderer.gameObject.tag != "WeakPoint") renderer.color = cachedColors[Array.IndexOf(spriteRenderers, renderer)];
-        }
-    }
+    // //apply color effect to sprites
+    // public void DoColor(Color color)
+    // {
+    //     InitializeColor();
+    //     // if (!isInitialized) return;
+    //     foreach (SpriteRenderer renderer in spriteRenderers)
+    //     {
+    //         if (renderer.gameObject.tag != "WeakPoint") renderer.color = color;
+    //     }
+    // }
+    // //restore  sprites to  original colors
+    // public void UndoColor()
+    // {
+    //     InitializeColor();
+    //     // if (!isInitialized) return;
+    //     foreach (SpriteRenderer renderer in spriteRenderers)
+    //     {
+    //         if (renderer.gameObject.tag != "WeakPoint") renderer.color = cachedColors[Array.IndexOf(spriteRenderers, renderer)];
+    //     }
+    // }
     float damageTaken = 0;
     public void TakeDamage(DamageInfo info)
     {
@@ -131,11 +135,19 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         //ignore regular damage, only weakpoints can be shot
         if (isStaggered) return;
         if (!canBeHit) return;
-        
+
         // if (knockback != null) knockback.ApplyKnockback();
         damageTaken++;
-        if (damageTaken >= hitsToStagger) TriggerStagger();
+        if (damageTaken >= AdjustedHitsToStagger()) TriggerStagger();
     }
+    public bool windingUp;
+    int AdjustedHitsToStagger()
+    {
+        if (!stunOnWindup) return hitsToStagger;
+        else if (windingUp) return 1;
+        else return hitsToStagger;
+    }
+
     private void StaggerBar()
     {
         // if (isStaggered) staggerBar.enabled = false;
@@ -144,7 +156,16 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         else damageTaken = 0;
         if (staggerBar.value == 0) staggerBar.gameObject.SetActive(false);
         else staggerBar.gameObject.SetActive(true);
-        if (isStaggered) staggerBar.value = currentStaggerTimeRemaining / staggerTime;
-        else staggerBar.value = damageTaken / hitsToStagger;
+        if (isStaggered)
+        {
+            staggerBar.value = currentStaggerTimeRemaining / staggerTime;
+            staggerBarFill.color = barResetColor;
+        }
+        else
+        {
+            staggerBar.value = damageTaken / hitsToStagger;
+            staggerBarFill.color = barColor;
+        } 
+        
     }
 }

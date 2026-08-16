@@ -75,6 +75,8 @@ public class EnemyBehaviour : MonoBehaviour
                 if (!neverGiveUpChase && !PlayerInAggroRange()) behaviourState = BehaviourState.Idling;
                 return;
             case BehaviourState.Attacking:
+                if (IsWindingUp()) stagger.windingUp = true;
+                else if (stagger != null) stagger.windingUp = false;
                 if (!IsAttacking() && PlayerInAttackRange()) behaviourState = BehaviourState.Waiting;
                 else if (!IsAttacking() && PlayerInAggroRange() && permitEngage) behaviourState = BehaviourState.Chasing;
                 else if (!IsAttacking()) behaviourState = BehaviourState.Idling;
@@ -141,8 +143,14 @@ public class EnemyBehaviour : MonoBehaviour
     }
     bool IsAttacking()
     {
-        if (attack.attackState == EnemyAttack_Melee.AttackState.Attacking) return true;
-        else if (attack.attackState == EnemyAttack_Melee.AttackState.WindUp) return true;
+        if (attack == null) return false;
+        if (attack.attackState == EnemyAttack_Melee.AttackState.Attacking || IsWindingUp()) return true;
+        else return false;
+    }
+    bool IsWindingUp()
+    {
+        if (attack == null) return false;
+        if (attack.attackState == EnemyAttack_Melee.AttackState.WindUp) return true;
         else return false;
     }
     void DoSpawn()
