@@ -137,7 +137,7 @@ public class ShotOrchestrator : MonoBehaviour
         if (weaponHitscan.TryGetDamageableHit(out IDamageable damageable, out RaycastHit damageHit))
         {
             damageable.TakeDamage(new DamageInfo());
-            return false; 
+            return true; 
         }
 
         weaponHitscan.LogWorldHitOrMiss();
