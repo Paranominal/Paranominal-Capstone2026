@@ -3,14 +3,14 @@ using UnityEngine;
 
 public class EnemyBehaviour : MonoBehaviour
 {
-    private enum BehaviourState {Idle, Engaging, Attacking, Waiting, Stunned, Spawning, Dying, Inactive};
+    private enum BehaviourState {Idle, Chase, Attacking, Waiting, Stunned, Spawning, Dying, Inactive};
     private BehaviourState behaviourState = BehaviourState.Inactive;
 
     [Header("Enemy Options")]
     [SerializeField] private bool alwaysAggro;
     [SerializeField] private bool chasePlayer;
     [SerializeField] private bool neverGiveUpChase;
-    [SerializeField] private bool onlyEngageIfAttackReadied;
+    [SerializeField] private bool onlyChaseIfAttackReadied;
     [SerializeField] private EnemyAttack_Melee attack;
 
     [Header("Animation")]
@@ -35,25 +35,19 @@ public class EnemyBehaviour : MonoBehaviour
 
     void Update()
     {
-        BehaviourStates();
+        StateControl();
+        OnlyChaseIfAttackReadied();
         if (animator != null) Animations();
     }
-    bool permitEngage = true;
-    void BehaviourStates()
+    void StateControl()
     {
-        if (onlyEngageIfAttackReadied && !AttackReady()) permitEngage = false;
-        else permitEngage = true;
         if (debugMode) Debug.Log($"[{this}] BehaviourState: [{behaviourState}]");
         switch (behaviourState)
         {
             case BehaviourState.Idle:
-                //exit state
-                // if (!AttackReady() && PlayerInAttackRange() && attack != null) behaviourState = BehaviourState.Waiting; // some of this code is repeated, could be cleaned up for sure
-                // else if (AttackReady() && PlayerInAttackRange() && attack != null) DoAttack();                          // but without it it tries to play chase anims after every attack
-                // else 
-                if (PlayerInAggroRange() && permitEngage) behaviourState = BehaviourState.Engaging;
+                if (PlayerInAggroRange() && permitEngage) behaviourState = BehaviourState.Chase;
                 return;
-            case BehaviourState.Engaging:
+            case BehaviourState.Chase:
                 LookAtPlayer();
                 if (chasePlayer) ChasePlayer();
                 if (!AttackReady() && PlayerInAttackRange() && attack != null) behaviourState = BehaviourState.Waiting;
@@ -64,12 +58,12 @@ public class EnemyBehaviour : MonoBehaviour
             case BehaviourState.Attacking:
                 //exit state
                 if (!IsAttacking() && PlayerInAttackRange()) behaviourState = BehaviourState.Waiting;
-                else if (!IsAttacking() && PlayerInAggroRange() && permitEngage) behaviourState = BehaviourState.Engaging;
+                else if (!IsAttacking() && PlayerInAggroRange() && permitEngage) behaviourState = BehaviourState.Chase;
                 else if (!IsAttacking()) behaviourState = BehaviourState.Idle;
                 return;
             case BehaviourState.Waiting:
                 if (AttackReady() && PlayerInAttackRange()) DoAttack();
-                else if (AttackReady() || !PlayerInAttackRange()) behaviourState = BehaviourState.Engaging;
+                else if (AttackReady() || !PlayerInAttackRange()) behaviourState = BehaviourState.Chase;
                 return;
             case BehaviourState.Stunned:
                 return;
@@ -81,13 +75,19 @@ public class EnemyBehaviour : MonoBehaviour
                 return;
         }
     }
+    bool permitEngage = true;
+    void OnlyChaseIfAttackReadied()
+    {
+        if (onlyChaseIfAttackReadied && !AttackReady()) permitEngage = false;
+        else permitEngage = true;
+    }
     void LookAtPlayer()
     {
         transform.LookAt(playerTransform);
     }
     void ChasePlayer()
     {
-        return; // chase code would go here
+        return;
     }
     bool PlayerInAggroRange()
     {
@@ -114,7 +114,7 @@ public class EnemyBehaviour : MonoBehaviour
         if (debugMode) Debug.Log($"[{this}] Spawning...");
         behaviourState = BehaviourState.Spawning;
         yield return new WaitForSeconds(spawnDelay);
-        if (PlayerInAggroRange()) behaviourState = BehaviourState.Engaging;
+        if (PlayerInAggroRange()) behaviourState = BehaviourState.Chase;
         else behaviourState = BehaviourState.Idle;
         if (debugMode) Debug.Log($"[{this}] Spawning complete");
         yield break;
@@ -135,7 +135,7 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (behaviourState == BehaviourState.Idle || behaviourState == BehaviourState.Waiting) animator.SetTrigger("idle");
         else if (attack != null && attack.attackState == EnemyAttack_Melee.AttackState.WindUp) animator.SetTrigger("windUp");
-        else if (behaviourState == BehaviourState.Engaging) animator.SetTrigger("aggro");
+        else if (behaviourState == BehaviourState.Chase) animator.SetTrigger("aggro");
         else if (behaviourState == BehaviourState.Spawning) animator.SetTrigger("spawn");
 
         if (behaviourState == BehaviourState.Spawning) animator.speed = 1 / spawnDelay;
