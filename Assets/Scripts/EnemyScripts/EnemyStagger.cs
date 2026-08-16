@@ -1,151 +1,150 @@
 using UnityEngine;
-using UnityEngine.AI;
 using System.Collections;
 using System;
+using UnityEngine.UI;
 
-public class EnemyStagger : MonoBehaviour
+public class EnemyStagger : MonoBehaviour, IDamageable
 {
-    [Header("Stagger Settings")]
-    [SerializeField] private float staggerDuration = 1f;
-    [SerializeField] private bool debugMode = false;
-
-    [Header("Scan Settings")]
-    [SerializeField] private float scanStunDuration = 2f; 
-    [SerializeField] private int maxScanStaggers = -1; 
-    [SerializeField] private float scanStaggerCooldown = 1.5f; 
-
-    [Header("Weakpoint Stagger Extension")]
-    [SerializeField] private float extensionPerHit = 0.5f;
-    private float currentStaggerRemaining;
-
-    public event Action OnStaggerEnd;
-
-    private NavMeshAgent navAgent;
-    private Rigidbody rb;
-    private EnemyBehaviourBase[] enemyBehaviours;
-    private StaggerColorEffect colorEffect;
+    [SerializeField] private Slider staggerBar;
+    [SerializeField] private WeakPointManager weakPointManager;
+    [HideInInspector] public bool canBeHit = true;
     private bool isStaggered = false;
-    private bool hasBeenScanned = false;
-    private int scanStaggerCount = 0;
-    private float nextAllowedScanStaggerTime = 0f;
-    private Coroutine staggerCoroutine;
-
-    private void Awake()
+    [SerializeField] private int hitsToStagger = 2;
+    [Range(0,2)]
+    [Tooltip("The degree to which the enemy resists being Staggered. (i.e: The rate the Stagger Bar goes down).")]
+    [SerializeField] private float staggerResistance = 0.3f;
+    public int HitsToStagger => hitsToStagger;
+    [Range(0.5f,5f)]
+    [SerializeField] private float staggerTime = 2;
+    [SerializeField] private float timeAddedOnHit = 0.5f;
+    private float currentStaggerTimeRemaining;
+    // public event Action OnStaggerEnd;
+    [SerializeField] private bool doStaggerColor = true;
+    [SerializeField] private Color staggerColor = new Color(0.5f, 0.5f, 0.5f, 1f);
+    public bool debugMode;
+    public bool IsStaggered => isStaggered; //returns whether the enemy is staggered
+    private Coroutine currentStagger;
+    void Start()
     {
-        //cache the main movement components
-        navAgent = GetComponent<NavMeshAgent>();
-        rb = GetComponent<Rigidbody>();
-        enemyBehaviours = GetComponents<EnemyBehaviourBase>();
-        colorEffect = GetComponent<StaggerColorEffect>();
+        if (doStaggerColor) InitializeColor();
     }
-
-    //called by the grimoire scan system to mark this enemy as scanned
-    public void OnEnemyScanned()
+    void Update()
     {
-        if (Time.time < nextAllowedScanStaggerTime)
-        {
-            if (debugMode) Debug.Log($"[EnemyStagger] {gameObject.name} scan stagger is on cooldown for {nextAllowedScanStaggerTime - Time.time:0.00}s.", gameObject);
-            return;
-        }
-
-        if (maxScanStaggers >= 0 && scanStaggerCount >= maxScanStaggers)
-        {
-            if (debugMode) Debug.Log($"[EnemyStagger] {gameObject.name} reached scan stagger limit ({maxScanStaggers}).", gameObject);
-            return;
-        }
-
-        hasBeenScanned = true;
-        scanStaggerCount++;
-        nextAllowedScanStaggerTime = Time.time + Mathf.Max(0f, scanStaggerCooldown);
-
-        if (debugMode) Debug.Log($"[EnemyStagger] {gameObject.name} scanned ({scanStaggerCount})! Triggering stun.", gameObject);
-
-        //trigger an initial stun with longer duration when scanned
-        TriggerStagger(scanStunDuration);
+        // if (WeakpointWasHit()) weakPointManager.NextInSequence();
+        StaggerBar();
     }
-
-    //stagger disables enemy movement for a set duration
-    public void TriggerStagger(float duration = -1f)
+    bool WeakpointWasHit()
     {
-        if (duration <= 0) duration = staggerDuration; //use default if not specified
-        if (debugMode) Debug.Log($"[EnemyStagger] {gameObject.name} is STAGGERED for {duration}s!", gameObject);
-
-        //stops stagger coroutine from running 
-        if (staggerCoroutine != null) StopCoroutine(staggerCoroutine);
-        staggerCoroutine = StartCoroutine(PerformStagger(duration));
+        if (weakPointManager == null) return false;
+        if (weakPointManager.weakpoints[weakPointManager.currentWeakpoint].hasBeenHit) return true;
+        else return false;
     }
-
-    //extends stagger per hit
-    public void ExtendStagger()
+    public void TriggerStagger()
     {
-        if (isStaggered)
-        {
-            currentStaggerRemaining += extensionPerHit;
-            Debug.Log($"[EnemyStagger] Stagger extended! Duration: {currentStaggerRemaining:F2}s", gameObject);
-        }
+        //stops any previous stagger coroutine from running and starts a new one
+        if (currentStagger != null) StopCoroutine(currentStagger);
+        currentStaggerTimeRemaining = staggerTime;
+        currentStagger = StartCoroutine(DoStagger());
     }
-
-    //handles duration and recovery
-    private IEnumerator PerformStagger(float duration)
-    {
-        isStaggered = true;
-        //duration of current stagger remaining
-        currentStaggerRemaining = (duration > 0) ? duration : staggerDuration;
-        SetMovementState(false);
-
-        //wait for the duration to end
-        while (currentStaggerRemaining > 0)
+    int cachedCurrentWeakpoint;
+    private IEnumerator DoStagger() //handles duration and recovery
+    {      
+        EnterStagger();  
+        while (currentStaggerTimeRemaining > 0)  //wait for the duration to end
         {
+            if (weakPointManager.currentWeakpoint > cachedCurrentWeakpoint) ExtendStagger();
+            if (debugMode) Debug.Log($"[{this}] Stagger Time Remaining for {gameObject}: {currentStaggerTimeRemaining}");
+            currentStaggerTimeRemaining -= Time.deltaTime;
             yield return null;
-            currentStaggerRemaining -= Time.deltaTime;
         }
-       
-        SetMovementState(true);
-        isStaggered = false;
-
+        ExitStagger();
+    }
+    private void EnterStagger()
+    {
+        if (debugMode) Debug.Log($"[EnemyStagger] {gameObject.name} was staggered!", gameObject);
+        isStaggered = true;
+        if (weakPointManager != null) weakPointManager.StartSequence();
+        if (doStaggerColor) DoColor(staggerColor);
+    }
+    public void ExtendStagger() //extends stagger on Weakpoint hit while staggered.
+    {
+        if (!isStaggered) return;
+        currentStaggerTimeRemaining += timeAddedOnHit;
+        cachedCurrentWeakpoint = weakPointManager.currentWeakpoint;
+        if (debugMode) Debug.Log($"[EnemyStagger] Stagger extended! Duration: {currentStaggerTimeRemaining:F2}s", gameObject);
+    }
+    private void ExitStagger()
+    {
         if (debugMode) Debug.Log($"[EnemyStagger] {gameObject.name} recovered from stagger", gameObject);
-        OnStaggerEnd?.Invoke();
+        isStaggered = false;
+        if (weakPointManager != null) weakPointManager.EndSequence();
+        if (doStaggerColor) UndoColor();
+        damageTaken = 0;
+    }
+    private SpriteRenderer[] spriteRenderers;
+    private Color[] cachedColors;
+    private bool isInitialized;
+
+    private void InitializeColor()
+    {
+        if (isInitialized) return;
+
+        spriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+        Debug.Log($"[{this}] Sprite Renderers {spriteRenderers}");
+        if (spriteRenderers != null && spriteRenderers.Length > 0)
+        {
+            cachedColors = new Color[spriteRenderers.Length];
+
+            for (int i = 0; i < spriteRenderers.Length; i++)
+            {
+                cachedColors[i] = spriteRenderers[i].color;
+            }
+
+            isInitialized = true;
+        }
     }
 
-    // Consolidated state handler that respects all your original functionality
-    private void SetMovementState(bool dynamic)
+    //apply color effect to sprites
+    public void DoColor(Color color)
     {
-        SetBehavioursEnabled(dynamic);
-
-        if (navAgent != null && navAgent.isOnNavMesh)
+        InitializeColor();
+        // if (!isInitialized) return;
+        foreach (SpriteRenderer renderer in spriteRenderers)
         {
-            navAgent.isStopped = !dynamic;
-        }
-
-        if (rb != null && !dynamic)
-        {
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-        }
-
-        //apply stagger color effect / restore original sprite color
-        if (colorEffect != null)
-        {
-            if (!dynamic) colorEffect.ApplyStaggerColor();
-            else colorEffect.RestoreOriginalColor();
+            if (renderer.gameObject.tag != "WeakPoint") renderer.color = color;
         }
     }
-
-    //returns whether the enemy is staggered
-    public bool IsStaggered => isStaggered;
-
-    //returns whether the enemy has been scanned
-    public bool HasBeenScanned => hasBeenScanned;
-
-    //returns how many scan staggers have been applied
-    public int ScanStaggerCount => scanStaggerCount;
-
-    private void SetBehavioursEnabled(bool isEnabled)
+    //restore  sprites to  original colors
+    public void UndoColor()
     {
-        if (enemyBehaviours == null || enemyBehaviours.Length == 0) return;
-        for (int i = 0; i < enemyBehaviours.Length; i++)
+        InitializeColor();
+        // if (!isInitialized) return;
+        foreach (SpriteRenderer renderer in spriteRenderers)
         {
-            if (enemyBehaviours[i] != null) enemyBehaviours[i].enabled = isEnabled;
+            if (renderer.gameObject.tag != "WeakPoint") renderer.color = cachedColors[Array.IndexOf(spriteRenderers, renderer)];
         }
+    }
+    float damageTaken = 0;
+    public void TakeDamage(DamageInfo info)
+    {
+        //nak code from ToTough.cs
+        //ignore regular damage, only weakpoints can be shot
+        if (isStaggered) return;
+        if (!canBeHit) return;
+        
+        // if (knockback != null) knockback.ApplyKnockback();
+        damageTaken++;
+        if (damageTaken >= hitsToStagger) TriggerStagger();
+    }
+    private void StaggerBar()
+    {
+        // if (isStaggered) staggerBar.enabled = false;
+        // else 
+        if (damageTaken > 0) damageTaken -= Time.deltaTime * staggerResistance;
+        else damageTaken = 0;
+        if (staggerBar.value == 0) staggerBar.gameObject.SetActive(false);
+        else staggerBar.gameObject.SetActive(true);
+        if (isStaggered) staggerBar.value = currentStaggerTimeRemaining / staggerTime;
+        else staggerBar.value = damageTaken / hitsToStagger;
     }
 }

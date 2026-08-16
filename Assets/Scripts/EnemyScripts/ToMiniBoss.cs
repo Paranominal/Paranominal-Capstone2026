@@ -44,20 +44,20 @@ public class ToMiniBoss : MonoBehaviour, IDamageable
 
         HideWeakpoints();
 
-        //monitors stagger, if it ends, hide weakpoints
-        if (stagger != null)
-        {
-            stagger.OnStaggerEnd += StaggerTimeout;
-        }
+        // //monitors stagger, if it ends, hide weakpoints
+        // if (stagger != null)
+        // {
+        //     stagger.OnStaggerEnd += StaggerTimeout;
+        // }
     }
 
     //prevent leakage 
     private void OnDestroy()
     {
-        if (stagger != null)
-        {
-            stagger.OnStaggerEnd -= StaggerTimeout;
-        }
+        // if (stagger != null)
+        // {
+        //     stagger.OnStaggerEnd -= StaggerTimeout;
+        // }
     }
 
     private void HideWeakpoints()
@@ -94,13 +94,13 @@ public class ToMiniBoss : MonoBehaviour, IDamageable
         isStaggered = true;
         Debug.Log($"Miniboss staggered! Weakpoints exposed.");
 
-        gameObject.Trigger();
+        // gameObject.Trigger();
 
         if (wpManager != null)
         {
             wpManager.enabled = true;
             //add to wpm next
-            wpManager.ResetWeakpoints();
+            wpManager.SetupWeakpoints();
         }
     }
 
