@@ -137,6 +137,7 @@ public class ShotOrchestrator : MonoBehaviour
         if (weaponHitscan.TryGetDamageableHit(out IDamageable damageable, out RaycastHit damageHit))
         {
             damageable.TakeDamage(new DamageInfo());
+            if (damageHit.collider.gameObject.GetComponent<EnemyStagger>().IsStaggered) return false;
             return true; 
         }
 
