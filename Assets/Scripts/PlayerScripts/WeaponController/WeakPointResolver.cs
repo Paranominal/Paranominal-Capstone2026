@@ -2,40 +2,36 @@ using UnityEngine;
 
 public class WeakPointResolver : MonoBehaviour
 {
-    public bool ResolveWeakPointHit(WeakPoint weakPoint, WeakPointType shotType, string colliderName)
+    public ShotOutcome ResolveWeakPointHit(WeakPoint weakPoint, WeakPointType shotType, string colliderName)
     {
         if (weakPoint == null)
-            return false;
+            return ShotOutcome.Miss;
 
         bool correctType = weakPoint.weakPointType == shotType;
         weakPoint.OnHit(shotType);
 
-        bool isTough = weakPoint.IsTough;
-        bool isWarded = weakPoint.IsWarded;
-
-        if (!isWarded)
+        if (!correctType)
         {
-            if (correctType && isTough)
-            {
-                Debug.Log("Successful tough weakpoint hit (ammo preserved)! " + colliderName +
-                    " | Remaining shots: " + weakPoint.RemainingShotsToDestroy);
-                return true;
-            }
-
-            if (correctType)
-            {
-                Debug.Log("Successful weakpoint hit (ammo preserved)! " + colliderName);
-                return true;
-            }
+            Debug.Log("Weakpoint hit, wrong shot type (ammo consumed). " + colliderName);
+            return ShotOutcome.WrongAmmo;
         }
-        else if (correctType && isWarded)
+
+        if (weakPoint.IsWarded)
         {
             Debug.Log("Weakpoint hit with correct type, but is warded. (ammo consumed)! " + colliderName);
-            return false;
-
+            return ShotOutcome.EnemyHit; // neutral, doesn't break the combo
         }
 
-        Debug.Log("Weakpoint hit, wrong shot type (ammo consumed). " + colliderName);
-        return false;
+        if (weakPoint.IsTough)
+        {
+            Debug.Log("Successful tough weakpoint hit (ammo preserved)! " + colliderName +
+                " | Remaining shots: " + weakPoint.RemainingShotsToDestroy);
+        }
+        else
+        {
+            Debug.Log("Successful weakpoint hit (ammo preserved)! " + colliderName);
+        }
+
+        return ShotOutcome.WeakPointHit;
     }
 }
