@@ -41,7 +41,6 @@ public class ToMiniBoss : MonoBehaviour
     {
         if (wpManager != null)
         {
-            wpManager.enabled = false;
             WeakPoint[] points = wpManager.GetComponentsInChildren<WeakPoint>(true);
             foreach (WeakPoint p in points)
             {
