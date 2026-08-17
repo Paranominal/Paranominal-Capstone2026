@@ -2,12 +2,11 @@ using UnityEngine;
 using UnityEngine.AI;
 using System;
 
-public class ToMiniBoss : MonoBehaviour, IDamageable
+public class ToMiniBoss : MonoBehaviour
 {
     [SerializeField, Min(0.01f)] private float scaleMultiplier = 1.5f;
 
     [Header("Stagger & Cycle Settings")]
-    [SerializeField] private int hitsToStagger = 5;
     [SerializeField] private int cyclesRequired = 3;
 
     [Header("Minion Spawn Settings")]
@@ -94,7 +93,7 @@ public class ToMiniBoss : MonoBehaviour, IDamageable
         for (int i = 0; i < minionsToSpawn; i++)
         {
             //circle around miniboss
-            Vector2 randomCircle = UnityEngineRandom.insideUnitCircle * spawnRadius;
+            Vector2 randomCircle = UnityEngine.Random.insideUnitCircle * spawnRadius;
             Vector3 spawnOffset = new Vector3(randomCircle.x, 0f, randomCircle.y);
             Vector3 targetSpawnPos = transform.position + spawnOffset;
 

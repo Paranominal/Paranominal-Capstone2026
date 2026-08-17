@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ToTough : MonoBehaviour, IDamageable
+public class ToTough : MonoBehaviour
 {
     private WeakPointManager wpManager;
 

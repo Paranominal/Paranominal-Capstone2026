@@ -28,21 +28,35 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     public bool debugMode;
     public bool IsStaggered => isStaggered; //returns whether the enemy is staggered
     private Coroutine currentStagger;
+    
+    //i'll jsut comment out the kb stuff for now, dk what you really want to do with it ek
+    //moved in from the miniboss and tough scripts to standardise this process more easily
+    // private EnemyKnockback knockback;
+
+    // private void Awake()
+    // {
+    //     knockback = GetComponent<EnemyKnockback>();
+    //     if (knockback == null) knockback = GetComponentInParent<EnemyKnockback>();
+    // }
+
     void Start()
     {
         // if (doStaggerColor) InitializeColor();
     }
+
     void Update()
     {
         // if (WeakpointWasHit()) weakPointManager.NextInSequence();
         StaggerBar();
     }
+
     bool WeakpointWasHit()
     {
         if (weakPointManager == null) return false;
         if (weakPointManager.weakpoints[weakPointManager.currentWeakpoint].hasBeenHit) return true;
         else return false;
     }
+
     public void TriggerStagger()
     {
         //stops any previous stagger coroutine from running and starts a new one
@@ -50,7 +64,9 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         currentStaggerTimeRemaining = staggerTime;
         currentStagger = StartCoroutine(DoStagger());
     }
+
     int cachedCurrentWeakpoint;
+
     private IEnumerator DoStagger() //handles duration and recovery
     {      
         EnterStagger();  
@@ -63,6 +79,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         }
         ExitStagger();
     }
+
     private void EnterStagger()
     {
         if (debugMode) Debug.Log($"[EnemyStagger] {gameObject.name} was staggered!", gameObject);
@@ -70,6 +87,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         if (weakPointManager != null) weakPointManager.StartSequence();
         // if (doStaggerColor) DoColor(staggerColor);
     }
+
     public void ExtendStagger() //extends stagger on Weakpoint hit while staggered.
     {
         if (!isStaggered) return;
@@ -77,6 +95,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         cachedCurrentWeakpoint = weakPointManager.currentWeakpoint;
         if (debugMode) Debug.Log($"[EnemyStagger] Stagger extended! Duration: {currentStaggerTimeRemaining:F2}s", gameObject);
     }
+
     private void ExitStagger()
     {
         if (debugMode) Debug.Log($"[EnemyStagger] {gameObject.name} recovered from stagger", gameObject);
@@ -85,6 +104,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         // if (doStaggerColor) UndoColor();
         damageTaken = 0;
     }
+
     private SpriteRenderer[] spriteRenderers;
     private Color[] cachedColors;
     private bool isInitialized;
@@ -118,6 +138,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     //         if (renderer.gameObject.tag != "WeakPoint") renderer.color = color;
     //     }
     // }
+    
     // //restore  sprites to  original colors
     // public void UndoColor()
     // {
@@ -128,7 +149,9 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     //         if (renderer.gameObject.tag != "WeakPoint") renderer.color = cachedColors[Array.IndexOf(spriteRenderers, renderer)];
     //     }
     // }
+
     float damageTaken = 0;
+
     public void TakeDamage(DamageInfo info)
     {
         //nak code from ToTough.cs
@@ -140,7 +163,9 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         damageTaken++;
         if (damageTaken >= AdjustedHitsToStagger()) TriggerStagger();
     }
+
     [HideInInspector] public bool windingUp;
+
     int AdjustedHitsToStagger()
     {
         if (!stunOnWindup) return hitsToStagger;
