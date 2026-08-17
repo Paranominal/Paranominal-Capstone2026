@@ -20,6 +20,9 @@ public class ScoreManager : MonoBehaviour
         new RankDefinition { label = "A", pointThreshold = 400 },
         new RankDefinition { label = "S", pointThreshold = 800 },
     };
+    
+    [Header("Debug")]
+    [SerializeField] private bool debugMode = true;
 
     public string CurrentRank { get; private set; } = string.Empty;
     public event System.Action<string> OnRankChanged;
@@ -52,7 +55,7 @@ public class ScoreManager : MonoBehaviour
         }
 
         currentScore += amount;
-        Debug.Log($"Final score: {currentScore}"); // printing this in console for now, will be displayed on end screen
+        if (debugMode) Debug.Log($"Current score: {currentScore}"); // printing this in console for now, will be displayed on end screen
         OnPointsAdded?.Invoke(currentScore);
 
         EvaluateRank();
@@ -89,15 +92,27 @@ public class ScoreManager : MonoBehaviour
         {
             CurrentRank = newRank;
             OnRankChanged?.Invoke(CurrentRank);
+            if (debugMode) Debug.Log($"Rank up! New rank: {CurrentRank}");
         }
+    }
+
+    // kinda combos stuff below this point but pulling it into combosystem felt worse
+
+    private void AwardWeakPointHit()
+    {
+        float multiplier = comboSystem != null ? comboSystem.Multiplier : 0f;
+        int points = Mathf.RoundToInt(pointsPerWeakpointHit * (1f + multiplier));
+
+        if (debugMode) Debug.Log($"Weakpoint hit: {pointsPerWeakpointHit} x {1f + multiplier:0.0} = {points} points");
+        AddScore(points);
     }
 
     private void HandleShotResolved(WeakPointType shotType, ShotOutcome outcome)
     {
-        switch (outcome) // still not sure if i should pull this out tbh. maybe i shalllll
+        switch (outcome)
         {
             case ShotOutcome.WeakPointHit:
-                AddScore(pointsPerWeakpointHit);
+                AwardWeakPointHit();
                 comboSystem.RegisterWeakPointHit();
                 break;
 
