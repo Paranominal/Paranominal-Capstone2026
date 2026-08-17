@@ -311,6 +311,9 @@ MonoBehaviour:
   - {fileID: 7043722451827396031}
   - {fileID: 2210490052569513767}
   - {fileID: 4331166013458019792}
+  currentWeakpoint: 0
+  resetSequenceEveryStagger: 1
+  debugMode: 0
 --- !u!114 &6924014765454415162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -408,12 +411,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d49d50defecf244d9e2d39fcffcdd3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
-  staggerDuration: 3
+  staggerBar: {fileID: 0}
+  staggerBarFill: {fileID: 0}
+  barColor: {r: 1, g: 1, b: 1, a: 1}
+  barResetColor: {r: 1, g: 3, b: 5, a: 1}
+  weakPointManager: {fileID: 0}
+  canBeHit: 1
+  hitsToStagger: 2
+  stunOnWindup: 1
+  staggerResistance: 0.3
+  staggerTime: 2
+  timeAddedOnHit: 0.5
   debugMode: 0
-  scanStunDuration: 3
-  maxScanStaggers: -1
-  scanStaggerCooldown: 1.5
-  extensionPerHit: 0.5
+  windingUp: 0
 --- !u!114 &7291461537017937302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -426,7 +436,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7fd8d9b4bb13db4b88d2c3e5a12150d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StaggerColorEffect
-  staggerColor: {r: 0.6528301, g: 0.43234596, b: 0.62532383, a: 1}
 --- !u!114 &2398684021574337764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -443,7 +452,7 @@ MonoBehaviour:
   hitsToStagger: 5
   cyclesRequired: 3
   enableSpawning: 1
-  spawnMinionsOnCycle: 1
+  spawnMinionsCycle: 01000000
   minionPrefab: {fileID: 4481816822500809083, guid: 6ba720e3918fa62459236d58982b09af, type: 3}
   minionsToSpawn: 3
   spawnRadius: 3
