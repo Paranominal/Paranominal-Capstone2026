@@ -15,7 +15,10 @@ public class InteractionFocusController : MonoBehaviour
     [Header("Proximity Detection (Floating Labels)")]
     [SerializeField] private LayerMask interactableMask;
     [SerializeField] private LayerMask obstructionMask;
+    [Tooltip("Maximum distance at which floating labels begin to fade in.")]
     [SerializeField] private float proximityRadius = 4f;
+    [Tooltip("Distance at which floating labels reach full opacity.")]
+    [SerializeField] private float labelFullOpacityDistance = 1.5f;
 
     [Header("Aim Detection (HUD Prompts)")]
     [SerializeField] private float interactionRange = 10f;
@@ -106,7 +109,7 @@ public class InteractionFocusController : MonoBehaviour
                 point = col.ClosestPoint(camPos);
 
             float dist = Vector3.Distance(camPos, point);
-            float proximity = Mathf.InverseLerp(proximityRadius, 0f, dist);
+            float proximity = Mathf.Clamp01(Mathf.InverseLerp(proximityRadius, labelFullOpacityDistance, dist));
             if (proximity <= 0f) continue;
             if (Physics.Linecast(camPos, point, obstructionMask)) continue;
 
