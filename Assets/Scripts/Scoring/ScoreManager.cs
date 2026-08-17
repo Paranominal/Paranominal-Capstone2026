@@ -4,6 +4,7 @@ public class ScoreManager : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private WeaponEvents weaponEvents;
+    [SerializeField] private ComboSystem comboSystem;
 
     [Header("Scoring")]
     [SerializeField] private int pointsPerWeakpointHit = 10;
@@ -33,6 +34,11 @@ public class ScoreManager : MonoBehaviour
         {
             weaponEvents = GetComponent<WeaponEvents>(); // getting the weapon events from the current object (assuming Player) if not manually assigned
         }
+        if (comboSystem == null)
+        {
+            comboSystem = GetComponent<ComboSystem>();
+        }
+
         weaponEvents.ShotResolved += HandleShotResolved;
 
         EvaluateRank();
@@ -88,9 +94,20 @@ public class ScoreManager : MonoBehaviour
 
     private void HandleShotResolved(WeakPointType shotType, ShotOutcome outcome)
     {
-        if (outcome.IsRewarded())
+        switch (outcome) // still not sure if i should pull this out tbh. maybe i shalllll
         {
-            AddScore(pointsPerWeakpointHit); // handling this in here, but the more scoring additions we add the less it will make sense
+            case ShotOutcome.WeakPointHit:
+                AddScore(pointsPerWeakpointHit);
+                comboSystem.RegisterWeakPointHit();
+                break;
+
+            case ShotOutcome.Miss:
+            case ShotOutcome.WrongAmmo:
+                comboSystem.BreakCombo();
+                break;
+
+            case ShotOutcome.EnemyHit:
+                break; // neutral: no increment, no break, timer keeps running
         }
     }
 }
