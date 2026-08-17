@@ -30,8 +30,8 @@ public class SensitivityAdjuster : MonoBehaviour
         {
             sensitivityValue = sensitivitySlider.value;
             playerLook.SetLookSensitivity(sensitivityValue);
-            weaponSway.SetSwayMultiplier(sensitivityValue * 2);
-            bookSway.SetSwayMultiplier(sensitivityValue * 2);
+            if (weaponSway != null) weaponSway.SetSwayMultiplier(sensitivityValue * 2);
+            if (bookSway != null) bookSway.SetSwayMultiplier(sensitivityValue * 2);
             UpdateSensitivityText();
         }
 

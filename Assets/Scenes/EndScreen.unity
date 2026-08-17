@@ -2790,6 +2790,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+      propertyPath: playerInput
+      value: 
+      objectReference: {fileID: 1697689617573677297}
     - target: {fileID: 9041544226671817565, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: m_Name
       value: SceneEssentialsBundle
@@ -2964,7 +2968,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInputReader
   moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  sprintAction: {fileID: 6790621974129141125, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  slowWalkAction: {fileID: 4707686780592785771, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookAction: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  canMove: 1
   startLockMode: 1
   startCursorVisible: 0
 --- !u!114 &1844408759094502599
@@ -2979,6 +2986,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd30b5d39a07c7b45b135c75afab90ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerGravity
+  playerInputReader: {fileID: 1697689617573677297}
   playerMover: {fileID: 0}
   gravity: -25
   groundedStickForce: -2
@@ -3012,6 +3020,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18e67ab7004eb55448b731af20e759bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLook
+  player: {fileID: 5190490495989894971}
   playerCamera: {fileID: 0}
   inputReader: {fileID: 1697689617573677297}
   playerMover: {fileID: 0}
@@ -3019,6 +3028,10 @@ MonoBehaviour:
   lookSensitivity: 0.05
   lookXLimit: 60
   lookSmoothing: 0.03
+  interactableMask:
+    serializedVersion: 2
+    m_Bits: 0
+  lookAtRange: 4
 --- !u!1 &5190490495989894971
 GameObject:
   m_ObjectHideFlags: 0

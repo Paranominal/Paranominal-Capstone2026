@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerLook : MonoBehaviour
 {
     [Header("References")]
+    [SerializeField] private GameObject player;
     [SerializeField] private Camera playerCamera;
     [SerializeField] private PlayerInputReader inputReader;
     [SerializeField] private PlayerMover playerMover;
@@ -37,7 +38,7 @@ public class PlayerLook : MonoBehaviour
         if (Time.timeScale == 0f)
             return;
 
-        if (playerMover != null && !playerMover.CanMove)
+        if (playerMover != null && !inputReader.CanMove)
             return;
 
         Vector2 rawLookInput = inputReader != null ? inputReader.LookInput : Vector2.zero;
@@ -60,7 +61,7 @@ public class PlayerLook : MonoBehaviour
         if (playerCamera != null)
             playerCamera.transform.localRotation = Quaternion.Euler(cameraPitch + recoilOffset, 0f, 0f);
 
-        transform.Rotate(0f, mouseX, 0f);
+        player.transform.Rotate(0f, mouseX, 0f);
     }
 
     public void SetLookSensitivity(float newSensitivity)
@@ -72,5 +73,20 @@ public class PlayerLook : MonoBehaviour
     {
         return lookSensitivity;
     }
-
+    
+    // Looking at
+    [Header("Looking At")]
+    [SerializeField] private LayerMask interactableMask;
+    [SerializeField] private float lookAtRange = 4;
+    public GameObject LookingAt()
+    {
+        Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, lookAtRange, interactableMask);
+        if (hit.collider != null && !hit.collider.gameObject.isStatic) return hit.collider.gameObject;
+        else return null;
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(0f, 1f, 0f);
+        Gizmos.DrawLine(transform.position, transform.position + transform.forward * lookAtRange);
+    }
 }

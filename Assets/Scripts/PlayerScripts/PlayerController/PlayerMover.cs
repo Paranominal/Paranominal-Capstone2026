@@ -7,16 +7,15 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private PlayerInputReader inputReader;
 
     [Header("Movement")]
-    [SerializeField] private float walkSpeed = 6f;
+    [SerializeField] private float walkSpeed = 5f;
+    [SerializeField] private float sprintStrength = 5f;
+    [SerializeField] private float slowWalkPercent = 0.3f;
 
     [Header("Sound")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private SoundDataSO playerFootstep;
     [SerializeField] private float footstepInterval = 0.45f;
     private float footstepTimer;
-
-    public bool canMove = true;
-    public bool CanMove => canMove;
 
     private CharacterController characterController;
 
@@ -30,11 +29,16 @@ public class PlayerMover : MonoBehaviour
 
     private void Update()
     {
-        if (!canMove)
+        if (!inputReader.canMove)
             return;
 
         Vector2 moveInput = inputReader != null ? inputReader.MoveInput : Vector2.zero;
+        bool sprintInput = inputReader != null ? inputReader.SprintInput : false;
+        bool slowWalkInput = inputReader != null ? inputReader.SlowWalkInput : false;
+
         Vector3 move = (transform.forward * moveInput.y + transform.right * moveInput.x) * walkSpeed;
+        if (slowWalkInput) move *= slowWalkPercent;
+        else if (sprintInput) move *= sprintStrength;
         characterController.Move(move * Time.deltaTime);
     }
 

@@ -5,7 +5,11 @@ public class PlayerInputReader : MonoBehaviour
 {
     [Header("Input Actions")]
     [SerializeField] private InputActionReference moveAction;
+    [SerializeField] private InputActionReference sprintAction;
+    [SerializeField] private InputActionReference slowWalkAction;
     [SerializeField] private InputActionReference lookAction;
+    public bool canMove = true;
+    public bool CanMove => canMove;
 
     [Header("Cursor")]
     [SerializeField] private CursorLockMode startLockMode = CursorLockMode.Locked;
@@ -14,6 +18,12 @@ public class PlayerInputReader : MonoBehaviour
     public Vector2 MoveInput => moveAction != null && moveAction.action != null
         ? moveAction.action.ReadValue<Vector2>()
         : Vector2.zero;
+    public bool SprintInput => sprintAction != null && sprintAction.action != null
+        ? sprintAction.action.IsPressed()
+        : false;
+    public bool SlowWalkInput => slowWalkAction != null && slowWalkAction.action != null
+        ? slowWalkAction.action.IsPressed()
+        : false;
 
     public Vector2 LookInput => lookAction != null && lookAction.action != null
         ? lookAction.action.ReadValue<Vector2>()
@@ -28,5 +38,17 @@ public class PlayerInputReader : MonoBehaviour
     {
         Cursor.lockState = lockMode;
         Cursor.visible = visible;
+    }
+    private void Update()
+    {
+        AnyInput();
+    }
+    public bool AnyInput()
+    {
+        if (moveAction.action.IsPressed()) return true;
+        else if (sprintAction.action.IsPressed()) return true;
+        else if (slowWalkAction.action.IsPressed()) return true;
+        else if (lookAction.action.IsPressed()) return true;
+        else return false;
     }
 }

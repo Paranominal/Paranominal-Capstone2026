@@ -1,22 +1,78 @@
-using UnityEditor.EditorTools;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 public class SceneReset : MonoBehaviour
 {
     [SerializeField] private InputActionReference resetInput;
-    [Tooltip("the Build Index of the scene you want to load")]
+    [Tooltip("the Build Index of the scene you want to load. Typically 0")]
     [SerializeField] private int sceneBuildIndex;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField] private bool doTimeout = true;
+    [SerializeField] private float timeOutSeconds = 30;
+    [SerializeField] private WeaponInputReader weaponInput;
+    [SerializeField] private PlayerInputReader playerInput;
+    [SerializeField] private TextMeshProUGUI resettingText;
+    [SerializeField] private bool logTimer;
+    private float time;
+    private Color cachedResetTextColor;
     void Start()
     {
+        cachedResetTextColor = resettingText.color;
+        TimerText(); // trigger once to turn off at start
+        CheckForInputReaders();
     }
-
-    // Update is called once per frame
     void Update()
     {
-        if (resetInput.action.WasReleasedThisFrame()) SceneManager.LoadScene(sceneBuildIndex);    
+        PressReset();
+        if (doTimeout) TimeoutTimer();
+
+        if (logTimer) Debug.Log(time);
+    }
+    void PressReset()
+    {
+        if (resetInput.action.WasReleasedThisFrame()) DoReset();
+    }
+    void TimeoutTimer()
+    {   
+        if (AnyInput()) time = 0f;
+
+        if (time >= timeOutSeconds) DoReset(); // timer
+        else time += Time.unscaledDeltaTime;
+        TimerText();
+    }
+    private bool AnyInput()
+    {
+        if (playerInput != null && playerInput.AnyInput()) return true;
+        else if (weaponInput != null &&weaponInput.AnyInput()) return true;
+        else return false;
+    }
+    void TimerText()
+    {
+        if (doTimeout && time > timeOutSeconds - 5f) cachedResetTextColor.a += Time.unscaledDeltaTime / 5f;
+        else cachedResetTextColor.a = 0;
+        resettingText.color = cachedResetTextColor;
+    }
+    void DoReset()
+    {
+        Debug.Log($"Resetting Scene to [Scene: {sceneBuildIndex}]!");
+        SceneManager.LoadScene(sceneBuildIndex);
+    }
+    void CheckForInputReaders()
+    {
+        if (playerInput == null)
+        {
+            Debug.LogWarning($"[{this}] No playerInput was set! This may be a mistake. Attempting to find one...");
+            playerInput = FindAnyObjectByType<PlayerInputReader>();
+            if (playerInput == null) Debug.LogWarning("[Reset Manager] No playerInput found.");
+            else Debug.LogWarning($"[Reset Manager] playerInput found! [{playerInput}]");
+        }
+        if (weaponInput == null)
+        {
+            Debug.LogWarning($"[{this}] No weaponInput was set! This may be a mistake. Attempting to find one...");
+            weaponInput = FindAnyObjectByType<WeaponInputReader>();
+            if (weaponInput == null) Debug.LogWarning("[Reset Manager] No weaponInput found.");
+            else Debug.LogWarning($"[Reset Manager] weaponInput found! [{weaponInput}]");
+        }
     }
 }
