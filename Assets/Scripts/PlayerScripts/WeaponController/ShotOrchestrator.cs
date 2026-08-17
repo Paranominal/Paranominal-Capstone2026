@@ -95,14 +95,14 @@ public class ShotOrchestrator : MonoBehaviour
 
         weaponFiringLogic.StartShotCooldown();
 
-        bool rewardedShot = Fire(shotType);
-        if (!rewardedShot)
+        ShotOutcome outcome = Fire(shotType);
+        if (!outcome.IsRewarded())
             weaponFiringLogic.ConsumeAmmo();
 
         if (weaponEvents != null)
         {
             weaponEvents.RaiseShotFired(shotType);
-            weaponEvents.RaiseShotResolved(shotType, rewardedShot);
+            weaponEvents.RaiseShotResolved(shotType, outcome);
             weaponEvents.RaiseAmmoChanged(weaponFiringLogic.CurrentAmmo, weaponFiringLogic.MagazineSize);
         }
 
@@ -110,7 +110,7 @@ public class ShotOrchestrator : MonoBehaviour
             StartCoroutine(DelayedAutoReload());
     }
 
-    private bool Fire(WeakPointType shotType)
+    private ShotOutcome Fire(WeakPointType shotType)
     {
         if (cameraRecoilController != null)
             cameraRecoilController.PlayShotCameraRecoil();
@@ -119,29 +119,36 @@ public class ShotOrchestrator : MonoBehaviour
             gunVisuals.PlayShotVisuals(shotType);
 
         if (weaponHitscan == null)
-            return false;
+            return ShotOutcome.Miss;
 
         if (weaponHitscan.TryGetWeakPointHit(out WeakPoint weakPoint, out RaycastHit hitWeak))
         {
             if (weakPointResolver != null)
                 return weakPointResolver.ResolveWeakPointHit(weakPoint, shotType, hitWeak.collider.name);
 
-            return false;
+            return ShotOutcome.Miss;
         }
 
         if (weaponHitscan.TryGetShootableTargetHit(out ShootableTarget target, out RaycastHit targetHit))
         {
-            return target.ResolveHit(shotType);
+            if (target.ResolveHit(shotType))
+            {
+                return ShotOutcome.WeakPointHit;
+            }
+            else
+            {
+                return ShotOutcome.WrongAmmo;
+            }
         }
 
         if (weaponHitscan.TryGetDamageableHit(out IDamageable damageable, out RaycastHit damageHit))
         {
             damageable.TakeDamage(new DamageInfo());
-            return false; 
+            return ShotOutcome.EnemyHit; 
         }
 
         weaponHitscan.LogWorldHitOrMiss();
-        return false;
+        return ShotOutcome.Miss;
     }
 
     private System.Collections.IEnumerator DelayedAutoReload()

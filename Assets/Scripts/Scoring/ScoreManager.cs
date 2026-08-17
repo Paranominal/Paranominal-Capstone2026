@@ -86,9 +86,9 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    private void HandleShotResolved(WeakPointType shotType, bool rewarded)
+    private void HandleShotResolved(WeakPointType shotType, ShotOutcome outcome)
     {
-        if (rewarded)
+        if (outcome.IsRewarded())
         {
             AddScore(pointsPerWeakpointHit); // handling this in here, but the more scoring additions we add the less it will make sense
         }
