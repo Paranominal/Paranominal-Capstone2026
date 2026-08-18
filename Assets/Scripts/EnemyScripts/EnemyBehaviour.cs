@@ -144,13 +144,19 @@ public class EnemyBehaviour : MonoBehaviour
     bool IsAttacking()
     {
         if (attack == null) return false;
-        if (attack.attackState == EnemyAttack_Melee.AttackState.Attacking || IsWindingUp()) return true;
+        if (attack.attackState == EnemyAttack_Melee.AttackState.Attacking || IsWindingUp() || IsWindingDown()) return true;
         else return false;
     }
     bool IsWindingUp()
     {
         if (attack == null) return false;
         if (attack.attackState == EnemyAttack_Melee.AttackState.WindUp) return true;
+        else return false;
+    }
+    bool IsWindingDown()
+    {
+        if (attack == null) return false;
+        if (attack.attackState == EnemyAttack_Melee.AttackState.WindDown) return true;
         else return false;
     }
     void DoSpawn()
@@ -208,7 +214,8 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (behaviourState == BehaviourState.Idling || behaviourState == BehaviourState.Waiting) animator.SetTrigger("idle");
         else if (AttackEnabled() && attack.attackState == EnemyAttack_Melee.AttackState.WindUp) animator.SetTrigger("windUp");
-        else if (behaviourState == BehaviourState.Chasing) animator.SetTrigger("aggro");
+        else if (AttackEnabled() && attack.attackState == EnemyAttack_Melee.AttackState.WindDown) animator.SetTrigger("attack");
+        else if (behaviourState == BehaviourState.Chasing) animator.SetTrigger("chase");
         else if (behaviourState == BehaviourState.Spawning) animator.SetTrigger("spawn");
         else if (behaviourState == BehaviourState.Stunned) animator.SetTrigger("stun");
 

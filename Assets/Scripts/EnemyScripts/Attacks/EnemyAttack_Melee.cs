@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class EnemyAttack_Melee : EnemyAttack
 {
-    public enum AttackState { Ready, WindUp, Attacking, Cooldown }
+    public enum AttackState { Ready, WindUp, Attacking,  WindDown,Cooldown }
     public AttackState attackState = AttackState.Ready;
     [SerializeField] private LayerMask targetLayers;
     [SerializeField] private int damage = 10;
@@ -45,11 +45,19 @@ public class EnemyAttack_Melee : EnemyAttack
             yield return null;
         }
         DoDamageField();
-        StartCoroutine(Cooldown());
+        if (currentAttack != null && !currentAttack.attackComplete && !currentAttack.hitRegistered) StartCoroutine(WaitForAttackEnd());
+        else DoCooldown();
         SetAttackIndicator(false);
     }
+    
+    IEnumerator WaitForAttackEnd()
+    {
+        attackState = AttackState.WindDown;
+        yield return new WaitUntil(() => currentAttack == null || currentAttack.attackComplete);
+        DoCooldown();
+    }
     float currentCooldownTime;
-    void DoCooldown(float multiplier)
+    void DoCooldown(float multiplier = 1)
     {
         currentCooldownTime = coolDownTime * multiplier;
         StartCoroutine(Cooldown());
@@ -65,9 +73,11 @@ public class EnemyAttack_Melee : EnemyAttack
         }
         attackState = AttackState.Ready;
     }
+    DamageField currentAttack;
     private void DoDamageField()
     {
-        Instantiate(damageFieldPrefab, transform.position + (transform.forward * attackRange/2) + (Vector3.up * damageFieldHeight * 0.5001f), transform.rotation).GetComponent<DamageField>().DoDamageField(damage, damageWindow, attackRange/2, damageFieldHeight, targetLayers, this);
+        currentAttack = Instantiate(damageFieldPrefab, transform.position + (transform.forward * attackRange / 2) + (Vector3.up * damageFieldHeight * 0.5001f), transform.rotation).GetComponent<DamageField>();
+        currentAttack.DoDamageField(damage, damageWindow, attackRange/2, damageFieldHeight, targetLayers, this);
     }
     private void SetAttackIndicator(bool warn)
     {

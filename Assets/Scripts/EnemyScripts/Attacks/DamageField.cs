@@ -51,12 +51,17 @@ public class DamageField : MonoBehaviour
     IEnumerator PersistTimer()
     {
         yield return new WaitForSeconds(persistTime);
-        ClearDamageField();
+        DisableDamageField();
+        RemoveDamageField();
     }
-    void ClearDamageField()
+    void DisableDamageField()
     {
+        attackComplete = true;
         gameObject.SetActive(false);
-        Destroy(gameObject);
+    }
+    void RemoveDamageField()
+    {
+        if (attackProgenitor == null) Destroy(gameObject);
     }
     void OnTriggerEnter(Collider other)
     {
@@ -69,6 +74,6 @@ public class DamageField : MonoBehaviour
             attackProgenitor.gameObject
         );
         other.GetComponentInParent<IDamageable>().TakeDamage(damageInfo);
-        ClearDamageField();
+        DisableDamageField();
     }
 }
