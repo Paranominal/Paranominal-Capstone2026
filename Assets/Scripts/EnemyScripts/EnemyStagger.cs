@@ -84,6 +84,10 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     {
         if (debugMode) Debug.Log($"[EnemyStagger] {gameObject.name} was staggered!", gameObject);
         isStaggered = true;
+
+        //without this it wasn't syncing with the cycles causing a mismatch that didn't add extra time to the stagger duration
+        cachedCurrentWeakpoint = 0;
+
         if (weakPointManager != null) weakPointManager.StartSequence();
         // if (doStaggerColor) DoColor(staggerColor);
     }
