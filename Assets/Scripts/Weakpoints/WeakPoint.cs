@@ -157,6 +157,8 @@ public class WeakPoint : MonoBehaviour
         currentAlpha = 0f;
     }
 
+    public GameObject text;
+
     public void OnHit(WeakPointType type, Vector3 hitpos)
     {
         // Ignore mismatched bullet types to enforce iron/silver behavior
@@ -179,11 +181,18 @@ public class WeakPoint : MonoBehaviour
             if (manager != null)
             {
                 manager.OnWeakPointHit();
+
+                
             }
+            GameObject newtext = Instantiate(text, transform.position + new Vector3 (Random.Range(-1,1),Random.Range(-1,1),Random.Range(-1,1)), transform.rotation);
+            newtext.GetComponentInChildren<HitFeedbackText>().SetText("Perfect", Color.green);
         }
         else
         {
             manager.Smallhit();
+
+            GameObject newtext = Instantiate(text, transform.position + new Vector3 (Random.Range(-1,1),Random.Range(-1,1),Random.Range(-1,1)), transform.rotation);
+            newtext.GetComponentInChildren<HitFeedbackText>().SetText("Good", Color.orange);
         }
 
         Hide();
