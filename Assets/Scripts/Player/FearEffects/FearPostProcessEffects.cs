@@ -5,23 +5,32 @@ using UnityEngine.Rendering;
 [ExecuteAlways]
 public class FearPostProcessEffects : MonoBehaviour
 {
+    public enum VignetteBlendMode { Multiply, Screen, Overlay, HardLight }
+
     [Header("Fear Vignette")]
     [SerializeField] private Material vignetteMaterial;
-
-    [Header("Vignette Intensity")]
-    [SerializeField] private float vignetteIntensityMin = 0.0f;
-    [SerializeField] private float vignetteIntensityMax = 0.8f;
-
-    [Header("Vignette Noise")]
-    [SerializeField] private float noiseIntensityMin = 0.0f;
-    [SerializeField] private float noiseIntensityMax = 0.5f;
-
-    [Header("Vignette Settings")]
+    [Tooltip("The colour the vignette fades toward. Try dark colours with Multiply, lighter colours with Screen.")]
     [SerializeField] private Color vignetteColor = Color.black;
+    [Tooltip("How the vignette colour blends with the scene. Multiply darkens, Screen lightens, Overlay adds contrast, Hard Light is a punchier Overlay.")]
+    [SerializeField] private VignetteBlendMode blendMode = VignetteBlendMode.Multiply;
+    [Tooltip("Global intensity of the vignette effect. Scales all vignette and noise values proportionally.")]
+    [Range(0f, 1f)]
+    [SerializeField] private float effectStrength = 1.0f;
+
+    [Header("Advanced Settings")]
+    [Tooltip("How far the vignette can encroach from the edges at maximum fear.")]
+    [SerializeField] private float vignetteIntensityMax = 0.8f;
+    [Tooltip("How gradual the vignette falloff is. Lower values give a harder edge.")]
     [SerializeField] private float vignetteSoftness = 0.3f;
+    [Tooltip("How much the noise distorts the vignette edge at maximum fear.")]
+    [SerializeField] private float noiseIntensityMax = 0.5f;
+    [Tooltip("Size of the noise pattern. Higher values give finer, more detailed noise.")]
     [SerializeField] private float noiseScale = 6.0f;
+    [Tooltip("How fast the noise creeps inward at minimum fear.")]
     [SerializeField] private float noiseSpeedMin = 0.1f;
+    [Tooltip("How fast the noise creeps inward at maximum fear.")]
     [SerializeField] private float noiseSpeedMax = 0.5f;
+    [Tooltip("How long in seconds before each noise layer resets. Shorter values reduce stretching but may show visible resets.")]
     [SerializeField] private float cycleDuration = 10f;
 
     private static readonly int VignetteIntensityID = Shader.PropertyToID("_VignetteIntensity");
@@ -31,6 +40,7 @@ public class FearPostProcessEffects : MonoBehaviour
     private static readonly int NoiseScaleID = Shader.PropertyToID("_NoiseScale");
     private static readonly int NoiseSpeedID = Shader.PropertyToID("_NoiseSpeed");
     private static readonly int CycleDurationID = Shader.PropertyToID("_CycleDuration");
+    private static readonly int BlendModeID = Shader.PropertyToID("_BlendMode");
     private static readonly int EnabledID = Shader.PropertyToID("_Enabled");
 
     private void OnEnable()
@@ -54,9 +64,11 @@ public class FearPostProcessEffects : MonoBehaviour
     {
         if (vignetteMaterial == null) return;
 
-        float vignetteIntensity = Mathf.Lerp(vignetteIntensityMin, vignetteIntensityMax, normalizedFear);
-        float noiseIntensity = Mathf.Lerp(noiseIntensityMin, noiseIntensityMax, normalizedFear);
-        float noiseSpeed = Mathf.Lerp(noiseSpeedMin, noiseSpeedMax, normalizedFear);
+        float strength = normalizedFear * effectStrength;
+
+        float vignetteIntensity = vignetteIntensityMax * strength;
+        float noiseIntensity = noiseIntensityMax * strength;
+        float noiseSpeed = Mathf.Lerp(noiseSpeedMin, noiseSpeedMax, strength);
 
         vignetteMaterial.SetFloat(VignetteIntensityID, vignetteIntensity);
         vignetteMaterial.SetFloat(VignetteSoftnessID, vignetteSoftness);
@@ -65,6 +77,7 @@ public class FearPostProcessEffects : MonoBehaviour
         vignetteMaterial.SetFloat(NoiseScaleID, noiseScale);
         vignetteMaterial.SetFloat(NoiseSpeedID, noiseSpeed);
         vignetteMaterial.SetFloat(CycleDurationID, cycleDuration);
+        vignetteMaterial.SetFloat(BlendModeID, (float)blendMode);
     }
 
     public void OnRankChanged(FearBar.FearRank rank)

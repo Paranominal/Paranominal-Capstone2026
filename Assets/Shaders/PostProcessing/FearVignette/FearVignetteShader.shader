@@ -9,6 +9,7 @@ Shader "Custom/URP/FearVignetteShader"
         _NoiseScale ("Noise Scale", Range(1.0, 20.0)) = 6.0
         _NoiseSpeed ("Noise Speed", Float) = 0.3
         _CycleDuration ("Cycle Duration (Seconds)", Float) = 10.0
+        _BlendMode ("Blend Mode", Float) = 0.0
         _Enabled ("Enabled", Float) = 1.0
     }
 
@@ -43,6 +44,7 @@ Shader "Custom/URP/FearVignetteShader"
                 float _NoiseScale; // Size of the noise pattern.
                 float _NoiseSpeed; // How fast the noise creeps inward.
                 float _CycleDuration; // How long in seconds before each noise layer resets.
+                float _BlendMode; // 0 = Multiply, 1 = Screen, 2 = Overlay, 3 = Hard Light.
                 float _Enabled; // Toggle to bypass the effect for Scene View camera.
             CBUFFER_END
 
@@ -77,6 +79,37 @@ Shader "Custom/URP/FearVignetteShader"
                 value += ValueNoise(p * 2.0) * 0.25;
                 value += ValueNoise(p * 4.0) * 0.125;
                 return value / 0.875; // normalize to 0..1
+            }
+
+            // Blend mode functions.
+            half3 BlendMultiply(half3 base, half3 blend)
+            {
+                return base * blend;
+            }
+
+            half3 BlendScreen(half3 base, half3 blend)
+            {
+                return 1.0 - (1.0 - base) * (1.0 - blend);
+            }
+
+            half3 BlendOverlay(half3 base, half3 blend)
+            {
+                // Per-channel: darkens where base is dark, lightens where base is light.
+                return lerp(
+                    2.0 * base * blend,
+                    1.0 - 2.0 * (1.0 - base) * (1.0 - blend),
+                    step(0.5, base)
+                );
+            }
+
+            half3 BlendHardLight(half3 base, half3 blend)
+            {
+                // Same as overlay but driven by blend colour instead of base.
+                return lerp(
+                    2.0 * base * blend,
+                    1.0 - 2.0 * (1.0 - base) * (1.0 - blend),
+                    step(0.5, blend)
+                );
             }
 
             half4 Frag(Varyings input) : SV_Target
@@ -124,7 +157,21 @@ Shader "Custom/URP/FearVignetteShader"
                 // Smooth falloff from the vignette edge inward.
                 float vignette = smoothstep(vignetteRadius, vignetteRadius + _VignetteSoftness, adjustedDist);
 
-                col.rgb = lerp(col.rgb, _VignetteColor.rgb, vignette);
+                // Apply selected blend mode between scene colour and vignette colour.
+                half3 blended;
+                int mode = (int)_BlendMode;
+
+                if (mode == 1)
+                    blended = BlendScreen(col.rgb, _VignetteColor.rgb);
+                else if (mode == 2)
+                    blended = BlendOverlay(col.rgb, _VignetteColor.rgb);
+                else if (mode == 3)
+                    blended = BlendHardLight(col.rgb, _VignetteColor.rgb);
+                else
+                    blended = BlendMultiply(col.rgb, _VignetteColor.rgb);
+
+                // Lerp between original and blended based on vignette mask.
+                col.rgb = lerp(col.rgb, blended, vignette);
 
                 return col;
             }
