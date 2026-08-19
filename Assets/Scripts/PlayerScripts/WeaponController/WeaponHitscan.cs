@@ -108,6 +108,8 @@ public class WeaponHitscan : MonoBehaviour
             Debug.Log("Miss...");
     }
 
+    public Ray AimRay => raycaster != null ? raycaster.Ray : default;
+
     private Ray BuildAimRay()
     {
         return raycaster.Ray;

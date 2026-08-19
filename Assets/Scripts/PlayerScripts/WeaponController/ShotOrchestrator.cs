@@ -95,14 +95,14 @@ public class ShotOrchestrator : MonoBehaviour
 
         weaponFiringLogic.StartShotCooldown();
 
-        ShotOutcome outcome = Fire(shotType);
-        if (!outcome.RetainsAmmo())
+        ShotResult result = Fire(shotType);
+        if (!result.Outcome.RetainsAmmo())
             weaponFiringLogic.ConsumeAmmo();
 
         if (weaponEvents != null)
         {
             weaponEvents.RaiseShotFired(shotType);
-            weaponEvents.RaiseShotResolved(shotType, outcome);
+            weaponEvents.RaiseShotResolved(result);
             weaponEvents.RaiseAmmoChanged(weaponFiringLogic.CurrentAmmo, weaponFiringLogic.MagazineSize);
         }
 
@@ -110,7 +110,18 @@ public class ShotOrchestrator : MonoBehaviour
             StartCoroutine(DelayedAutoReload());
     }
 
-    private ShotOutcome Fire(WeakPointType shotType)
+    private ShotResult BuildResult(WeakPointType shotType, ShotOutcome outcome, Vector3 hitPoint, float accuracy = 0f)
+    {
+        return new ShotResult
+        {
+            ShotType = shotType,
+            Outcome = outcome,
+            Accuracy = accuracy,
+            HitPoint = hitPoint
+        };
+    }
+
+    private ShotResult Fire(WeakPointType shotType)
     {
         if (cameraRecoilController != null)
             cameraRecoilController.PlayShotCameraRecoil();
@@ -119,19 +130,21 @@ public class ShotOrchestrator : MonoBehaviour
             gunVisuals.PlayShotVisuals(shotType);
 
         if (weaponHitscan == null)
-            return ShotOutcome.Miss;
+            return BuildResult(shotType, ShotOutcome.Miss, Vector3.zero);
 
         if (weaponHitscan.TryGetWeakPointHit(out WeakPoint weakPoint, out RaycastHit hitWeak))
         {
-            if (weakPointResolver != null)
-                return weakPointResolver.ResolveWeakPointHit(weakPoint, shotType, hitWeak.collider.name);
+            if (weakPointResolver == null)
+                return BuildResult(shotType, ShotOutcome.Miss, hitWeak.point);
 
-            return ShotOutcome.Miss;
+            ShotOutcome outcome = weakPointResolver.ResolveWeakPointHit(weakPoint, shotType, hitWeak.collider.name);
+            return BuildResult(shotType, outcome, hitWeak.point, weakPoint.GetAccuracy(weaponHitscan.AimRay));
         }
 
         if (weaponHitscan.TryGetShootableTargetHit(out ShootableTarget target, out RaycastHit targetHit))
         {
-            return target.ResolveHit(shotType) ? ShotOutcome.WeakPointHit : ShotOutcome.WrongAmmo;
+            ShotOutcome outcome = target.ResolveHit(shotType) ? ShotOutcome.ShootableTargetHit : ShotOutcome.WrongAmmo;
+            return BuildResult(shotType, outcome, targetHit.point);
         }
 
         if (weaponHitscan.TryGetDamageableHit(out IDamageable damageable, out RaycastHit damageHit))
@@ -141,11 +154,12 @@ public class ShotOrchestrator : MonoBehaviour
 
             damageable.TakeDamage(new DamageInfo());
 
-            return wasStaggered ? ShotOutcome.EnemyHitStaggered : ShotOutcome.EnemyHit;
+            return BuildResult(shotType, wasStaggered ? ShotOutcome.EnemyHitStaggered : ShotOutcome.EnemyHit, damageHit.point);
         }
 
         weaponHitscan.LogWorldHitOrMiss();
-        return ShotOutcome.Miss;
+        return BuildResult(shotType, ShotOutcome.Miss, Vector3.zero);
+
     }
 
     private System.Collections.IEnumerator DelayedAutoReload()

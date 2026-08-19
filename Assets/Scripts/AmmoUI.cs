@@ -63,12 +63,12 @@ public class AmmoUI : MonoBehaviour
             BuildAmmoUiElements(magazineSize);
     }
 
-    private void OnShotResolved(WeakPointType shotType, ShotOutcome outcome)
+    private void OnShotResolved(ShotResult result)
     {
-        if (outcome.RetainsAmmo())
+        if (result.Outcome.RetainsAmmo())
             return;
 
-        StrikeAmmo(shotType);
+        StrikeAmmo(result.ShotType);
     }
 
     private void StrikeAmmo(WeakPointType shotType)
