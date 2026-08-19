@@ -33,6 +33,9 @@ public class ScoreManager : MonoBehaviour
 
     public event System.Action<int> OnPointsAdded;
 
+    // points to display = final awarded (after combo), precision = 1-10 base, position = where it landed
+    public event System.Action<int, int, Vector3> OnPointsAwarded;
+
     private void Awake()
     {
         if (weaponEvents == null)
@@ -115,6 +118,7 @@ public class ScoreManager : MonoBehaviour
 
         if (debugMode) Debug.Log($"Weakpoint hit: {result.Accuracy:0.00} accuracy = {basePoints} base x {1f + multiplier:0.0} = {points} points");
         AddScore(points);
+        OnPointsAwarded?.Invoke(points, basePoints, result.HitPoint);
     }
 
     private void HandleShotResolved(ShotResult result)
