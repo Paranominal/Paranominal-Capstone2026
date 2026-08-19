@@ -97,9 +97,16 @@ public class GrimoireAnimManager : MonoBehaviour
         if (isAnimating) return;
         if (isMenuing) return;
         if (isCasting) return;
-        if (stayOpen) return;
 
-        if (isPlayerShooting) CloseGrimoire();
+        if (isPlayerShooting)
+        {
+            if (stayOpen)
+            {
+                StopCoroutine(StayOpen());
+                stayOpen = false;
+            }
+            CloseGrimoire();
+        }
     }
     private void CastOnHold()
     {   //return conditions
