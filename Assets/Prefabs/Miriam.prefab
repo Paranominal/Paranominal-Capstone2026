@@ -559,6 +559,7 @@ MonoBehaviour:
   slowWalkAction: {fileID: 4707686780592785771, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookActionMouse: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookActionGamepad: {fileID: 3901640413146405176, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  gamepadLookSens: 100
   canMove: 1
   startLockMode: 1
   startCursorVisible: 0
@@ -1105,7 +1106,6 @@ MonoBehaviour:
   playerMover: {fileID: 404796220867514065}
   cameraRecoil: {fileID: 260499741174559401}
   lookSensitivity: 0.05
-  gamepadSensMulti: 100
   lookXLimit: 60
   lookSmoothing: 0.03
   interactableMask:
@@ -2401,10 +2401,6 @@ PrefabInstance:
       propertyPath: m_Value
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 273836561670073298, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 430255705077211595, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -2417,14 +2413,6 @@ PrefabInstance:
       propertyPath: fearBar
       value: 
       objectReference: {fileID: 1642531195737763663}
-    - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -0.000061026145
-      objectReference: {fileID: 0}
-    - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -0.00034084622
-      objectReference: {fileID: 0}
     - target: {fileID: 1090110928602918560, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: screenUI
       value: 
@@ -2625,6 +2613,10 @@ PrefabInstance:
       propertyPath: grimoireMenu
       value: 
       objectReference: {fileID: 1041928120879739539, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+    - target: {fileID: 7649480553947373842, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
+      propertyPath: stayOpenDuration
+      value: 1.3
+      objectReference: {fileID: 0}
     - target: {fileID: 7649480553947373842, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: playerInputReader
       value: 
