@@ -30,15 +30,10 @@ public class ShootableTarget : MonoBehaviour
 
         if (isValid)
         {
-            Debug.Log($"ShootableTarget hit successfully with {shotType} round! (ammo preserved)");
             if (destroyOnHit)
             {
                 Destroy(gameObject);
             }
-        }
-        else
-        {
-            Debug.Log($"ShootableTarget hit, but wrong shot type {shotType} (ammo consumed)");
         }
 
         return isValid;

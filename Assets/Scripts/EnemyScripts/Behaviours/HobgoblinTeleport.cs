@@ -28,11 +28,11 @@ public class HobgoblinTeleport : EnemyBehaviourBase
             roomCollider = roomDetector.GetComponent<Collider>();
         }
 
-        //subscribe to stagger end event
-        if (stagger != null)
-        {
-            stagger.OnStaggerEnd += HandleStaggerEnded;
-        }
+        // //subscribe to stagger end event
+        // if (stagger != null)
+        // {
+        //     stagger.OnStaggerEnd += HandleStaggerEnded;
+        // }
     }
 
     //called when stagger ends, triggers teleport if player is visible
