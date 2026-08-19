@@ -4,6 +4,7 @@ public class ScoreManager : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private WeaponEvents weaponEvents;
+    [SerializeField] private ComboSystem comboSystem;
 
     [Header("Scoring")]
     [SerializeField] private int pointsPerWeakpointHit = 10;
@@ -19,6 +20,9 @@ public class ScoreManager : MonoBehaviour
         new RankDefinition { label = "A", pointThreshold = 400 },
         new RankDefinition { label = "S", pointThreshold = 800 },
     };
+    
+    [Header("Debug")]
+    [SerializeField] private bool debugMode = true;
 
     public string CurrentRank { get; private set; } = string.Empty;
     public event System.Action<string> OnRankChanged;
@@ -33,6 +37,11 @@ public class ScoreManager : MonoBehaviour
         {
             weaponEvents = GetComponent<WeaponEvents>(); // getting the weapon events from the current object (assuming Player) if not manually assigned
         }
+        if (comboSystem == null)
+        {
+            comboSystem = GetComponent<ComboSystem>();
+        }
+
         weaponEvents.ShotResolved += HandleShotResolved;
 
         EvaluateRank();
@@ -46,7 +55,7 @@ public class ScoreManager : MonoBehaviour
         }
 
         currentScore += amount;
-        Debug.Log($"Final score: {currentScore}"); // printing this in console for now, will be displayed on end screen
+        if (debugMode) Debug.Log($"Current score: {currentScore}"); // printing this in console for now, will be displayed on end screen
         OnPointsAdded?.Invoke(currentScore);
 
         EvaluateRank();
@@ -83,14 +92,37 @@ public class ScoreManager : MonoBehaviour
         {
             CurrentRank = newRank;
             OnRankChanged?.Invoke(CurrentRank);
+            if (debugMode) Debug.Log($"Rank up! New rank: {CurrentRank}");
         }
     }
 
-    private void HandleShotResolved(WeakPointType shotType, bool rewarded)
+    // kinda combos stuff below this point but pulling it into combosystem felt worse
+
+    private void AwardWeakPointHit()
     {
-        if (rewarded)
+        float multiplier = comboSystem != null ? comboSystem.Multiplier : 0f;
+        int points = Mathf.RoundToInt(pointsPerWeakpointHit * (1f + multiplier));
+
+        if (debugMode) Debug.Log($"Weakpoint hit: {pointsPerWeakpointHit} x {1f + multiplier:0.0} = {points} points");
+        AddScore(points);
+    }
+
+    private void HandleShotResolved(WeakPointType shotType, ShotOutcome outcome)
+    {
+        switch (outcome)
         {
-            AddScore(pointsPerWeakpointHit); // handling this in here, but the more scoring additions we add the less it will make sense
+            case ShotOutcome.WeakPointHit:
+                AwardWeakPointHit();
+                comboSystem.RegisterWeakPointHit();
+                break;
+
+            case ShotOutcome.Miss:
+            case ShotOutcome.WrongAmmo:
+                comboSystem.BreakCombo();
+                break;
+
+            case ShotOutcome.EnemyHit:
+                break; // neutral: no increment, no break, timer keeps running
         }
     }
 }

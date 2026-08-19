@@ -12,7 +12,7 @@ public class FearBar : MonoBehaviour
     [SerializeField] private float fearLevel = 0; // serialised so we can see it but do not modify directly
     public float FearLevel => fearLevel;
 
-    [SerializeField] private float fearDamage = 10; // flat fallback for calls without a defined amount
+    [SerializeField, Tooltip("Default damage amount when an attack does not have one predefined.")] private float fearDamage = 10;
     [SerializeField] private float fearHealPerShot = 5f; // fear reduced on each rewarded shot
 
     [Header("Tick Rates (fear per second)")]
@@ -112,9 +112,9 @@ public class FearBar : MonoBehaviour
         OnFearChanged?.Invoke(CurrentRank); // event for fearbarUI & spiritbar to update, happens every time player takes damage
     }
 
-    private void HandleShotResolved(WeakPointType shotType, bool rewarded)
+    private void HandleShotResolved(WeakPointType shotType, ShotOutcome outcome)
     {
-        if (rewarded)
+        if (outcome.IsRewarded())
         {
             ModifyFear(-fearHealPerShot);
         }
