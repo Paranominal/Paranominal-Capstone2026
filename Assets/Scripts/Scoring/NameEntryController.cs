@@ -22,7 +22,7 @@ public class NameEntryController : MonoBehaviour
     }
 
     //hooks with the submit button on inspector
-    private void SubmitName()
+    public void SubmitName()
     {
         string enteredName = nameInputField != null ? nameInputField.text : string.Empty;
         if (string.IsNullOrWhiteSpace(enteredName))
