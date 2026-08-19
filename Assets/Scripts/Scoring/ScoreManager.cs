@@ -7,7 +7,9 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private ComboSystem comboSystem;
 
     [Header("Scoring")]
-    [SerializeField] private int pointsPerWeakpointHit = 10;
+    [Tooltip("Accuracy scoring lerps linearly between these two values.")]
+    [SerializeField] private int minWeakpointPoints = 1;
+    [SerializeField] private int maxWeakpointPoints = 10;
 
     [Header("Ranks")]
     [Tooltip("In ascending order of pointThreshold. Player holds the highest rank whose threshold they've met.")]
@@ -98,21 +100,29 @@ public class ScoreManager : MonoBehaviour
 
     // kinda combos stuff below this point but pulling it into combosystem felt worse
 
-    private void AwardWeakPointHit()
+    private int PointsForAccuracy(float accuracy)
     {
-        float multiplier = comboSystem != null ? comboSystem.Multiplier : 0f;
-        int points = Mathf.RoundToInt(pointsPerWeakpointHit * (1f + multiplier));
+        return Mathf.Clamp(
+            Mathf.RoundToInt(Mathf.Lerp(minWeakpointPoints, maxWeakpointPoints, accuracy)),
+            minWeakpointPoints, maxWeakpointPoints);
+    }
 
-        if (debugMode) Debug.Log($"Weakpoint hit: {pointsPerWeakpointHit} x {1f + multiplier:0.0} = {points} points");
+    private void AwardHit(ShotResult result)
+    {
+        int basePoints = PointsForAccuracy(result.Accuracy);
+        float multiplier = comboSystem != null ? comboSystem.Multiplier : 0f;
+        int points = Mathf.RoundToInt(basePoints * (1f + multiplier));
+
+        if (debugMode) Debug.Log($"Weakpoint hit: {result.Accuracy:0.00} accuracy = {basePoints} base x {1f + multiplier:0.0} = {points} points");
         AddScore(points);
     }
 
-    private void HandleShotResolved(WeakPointType shotType, ShotOutcome outcome)
+    private void HandleShotResolved(ShotResult result)
     {
-        OutcomeRules rules = outcome.Rules();
+        OutcomeRules rules = result.Outcome.Rules();
 
         if (rules.AwardsPoints)
-            AwardWeakPointHit();
+            AwardHit(result);
 
         switch (rules.Combo)
         {
