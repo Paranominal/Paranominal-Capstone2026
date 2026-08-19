@@ -92,6 +92,9 @@ public class WeaponHitscan : MonoBehaviour
         if (damageable == null)
             damageable = damageableHit.collider.GetComponentInParent<IDamageable>();
 
+        if (damageableHit.collider.gameObject == GameObject.FindWithTag("Player"))
+            return false;
+
         return damageable != null;
     }
 
