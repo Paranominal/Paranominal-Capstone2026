@@ -10,6 +10,7 @@ public class PlayerInputReader : MonoBehaviour
     [SerializeField] private InputActionReference slowWalkAction;
     [SerializeField] private InputActionReference lookActionMouse;
     [SerializeField] private InputActionReference lookActionGamepad;
+    [SerializeField] private float gamepadLookSens = 100f;
     public bool canMove = true;
     public bool CanMove => canMove;
 
@@ -41,7 +42,7 @@ public class PlayerInputReader : MonoBehaviour
         : Vector2.zero;
 
     public Vector2 LookInput => Math.Abs(LookInputGamepad.x) > Math.Abs(LookInputMouse.x) || Math.Abs(LookInputGamepad.y) > Math.Abs(LookInputMouse.y)
-        ? LookInputGamepad * 100
+        ? LookInputGamepad * gamepadLookSens
         : LookInputMouse;
 
     private void Start()
