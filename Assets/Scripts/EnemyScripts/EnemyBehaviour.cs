@@ -37,20 +37,13 @@ public class EnemyBehaviour : MonoBehaviour
     [Tooltip("Time in seconds it takes the enemy to spawn")]
     [SerializeField] private float spawnDelay = 3;
     public bool debugMode;
-    private SpriteRenderer cachedSprite;
     // [Tooltip("Time in seconds it takes the enemy to engage the Player after getting aggro'd")]
     // [SerializeField] private float engageDelay = 1;
 
     private void Start()
     {
         if (skipSpawn) DoSpawn();
-        else
-        {
-            GetComponentInChildren<SpriteRenderer>(cachedSprite);
-            if (cachedSprite != null) cachedSprite.enabled = false;
-            StartCoroutine(SpawnAnimation());
-        } 
-        
+        else StartCoroutine(SpawnAnimation());;
         playerTransform = GameObject.FindWithTag("Player").transform;
         if (attack != null && navAgent != null) navAgent.stoppingDistance = attack.attackRange;
         else if (navAgent != null) navAgent.stoppingDistance = chaseStopDistance;
@@ -178,7 +171,6 @@ public class EnemyBehaviour : MonoBehaviour
         if (stagger != null && stagger.canBeHit) stagger.canBeHit = false;
         if (debugMode) Debug.Log($"[{this}] Spawning...");
         behaviourState = BehaviourState.Spawning;
-        // if (cachedSprite != null) cachedSprite.enabled = true;
         yield return new WaitForSeconds(spawnDelay);
         DoSpawn();
         yield break;
