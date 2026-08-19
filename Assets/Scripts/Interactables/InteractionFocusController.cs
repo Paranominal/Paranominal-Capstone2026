@@ -2,13 +2,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // Summary: Two-pass detection each frame.
-// Pass 1 (proximity): OverlapSphere finds nearby WorldLabel components and feeds them
-//   to the WorldLabelPool. Handles both FloatingLabel and InteractionPrompt modes.
+// Pass 1 (proximity): OverlapSphere finds nearby WorldLabel components and feeds them to the WorldLabelPool. Handles both FloatingLabel and InteractionPrompt modes.
 // Pass 2 (aim): reads the shared Raycaster hit, routes interact input.
-// EDIT (raycaster-consolidation): aim detection uses Raycaster.Instance instead of its own ray.
-// EDIT (interaction-rework): proximity and aim are independent; both can show simultaneously.
-// EDIT (label-split): floating labels now come from WorldLabel, not IInteractable.
-// EDIT (world-space-labels): all labels are now world-space. HUD prompts removed.
 public class InteractionFocusController : MonoBehaviour
 {
     [Header("Proximity Detection (Floating Labels)")]

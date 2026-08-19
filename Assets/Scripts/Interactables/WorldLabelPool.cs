@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-// Summary: Pools world-space label instances that track world positions. The focus controller calls Show() for each
-// active label per frame, then Flush() to fade out any that weren't refreshed. Handles positioning, fade, and billboard/fixed-facing rotation.
+// Summary: Pools world-space label instances that track world positions. The focus controller calls Show() for each active label per frame, then Flush() to fade out any that weren't refreshed. 
+// Handles positioning, fade, and billboard/fixed-facing rotation.
 public class WorldLabelPool : MonoBehaviour
 {
     [SerializeField] private GameObject labelPrefab;

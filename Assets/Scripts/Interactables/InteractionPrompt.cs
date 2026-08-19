@@ -1,6 +1,5 @@
-// Summary: A single resolved interaction prompt. Every prompt is actionable (shown
-// in world-space with an input glyph when in proximity). Informational floating
-// labels are handled separately by WorldLabel.
+// Summary: A single resolved interaction prompt. Every prompt is actionable (shown in world-space with an input glyph when in proximity). 
+// Informational floating labels are handled separately by WorldLabel.
 public struct InteractionPrompt
 {
     public string label;        // e.g. "Open", "Pick Up", "Brew"

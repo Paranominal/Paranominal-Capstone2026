@@ -2,8 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// Summary: Forces all UI Image and TMP_Text components on this object to render
-// over scene geometry by setting ZTest to Always. Drop on the label prefab root.
+// Summary: Forces all UI Image and TMP_Text components on this object to render over scene geometry by setting ZTest to Always. Drop on the label prefab root.
 public class WorldLabelOverlay : MonoBehaviour
 {
     void Start()
