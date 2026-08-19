@@ -31,7 +31,7 @@ public class SpiritBarUI : MonoBehaviour
         }
 
         scoreText.text = scoreManager.currentScore.ToString();
-        rankText.text = scoreManager.CurrentRank;
+        rankText.text = scoreManager.currentRank;
         SetBarWidth(scoreManager.GetProgressToNextRank()); // calls new function in scoremanager to get the float
     }
 

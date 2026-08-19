@@ -10,7 +10,7 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private int pointsPerWeakpointHit = 10;
 
     [Header("Ranks")]
-    [Tooltip("In ascending order of pointThreshold. Player holds the highest rank whose threshold they've met.")]
+    [Tooltip("In ascending order of point Threshold. Player holds the highest rank whose threshold they've met.")]
     [SerializeField]
     private RankDefinition[] ranks = new RankDefinition[]
     {
@@ -24,7 +24,7 @@ public class ScoreManager : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool debugMode = true;
 
-    public string CurrentRank { get; private set; } = string.Empty;
+    public string currentRank { get; private set; } = string.Empty;
     public event System.Action<string> OnRankChanged;
 
     public int currentScore = 0;
@@ -88,11 +88,11 @@ public class ScoreManager : MonoBehaviour
             if (currentScore >= rank.pointThreshold)
                 newRank = rank.label;
         }
-        if (newRank != CurrentRank)
+        if (newRank != currentRank)
         {
-            CurrentRank = newRank;
-            OnRankChanged?.Invoke(CurrentRank);
-            if (debugMode) Debug.Log($"Rank up! New rank: {CurrentRank}");
+            currentRank = newRank;
+            OnRankChanged?.Invoke(currentRank);
+            if (debugMode) Debug.Log($"Rank up! New rank: {currentRank}");
         }
     }
 
