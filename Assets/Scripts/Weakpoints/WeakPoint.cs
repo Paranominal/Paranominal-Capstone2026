@@ -37,6 +37,9 @@ public class WeakPoint : MonoBehaviour
     private float currentAlpha;
     private int remainingShots;
 
+    // used to pass the enemy's centre to the popup for cool tilting
+    public Vector3 OwnerCentre => weakpointManager != null ? weakpointManager.transform.position : transform.position;
+
     private void OnEnable()
     {
         WeakPointRegistry.Register(this);

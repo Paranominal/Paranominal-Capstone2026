@@ -110,14 +110,15 @@ public class ShotOrchestrator : MonoBehaviour
             StartCoroutine(DelayedAutoReload());
     }
 
-    private ShotResult BuildResult(WeakPointType shotType, ShotOutcome outcome, Vector3 hitPoint, float accuracy = 0f)
+    private ShotResult BuildResult(WeakPointType shotType, ShotOutcome outcome, Vector3 hitPoint, float accuracy = 0f, Vector3 ownerCentre = default)
     {
         return new ShotResult
         {
             ShotType = shotType,
             Outcome = outcome,
             Accuracy = accuracy,
-            HitPoint = hitPoint
+            HitPoint = hitPoint,
+            OwnerCentre = ownerCentre
         };
     }
 
@@ -138,7 +139,7 @@ public class ShotOrchestrator : MonoBehaviour
                 return BuildResult(shotType, ShotOutcome.Miss, hitWeak.point);
 
             ShotOutcome outcome = weakPointResolver.ResolveWeakPointHit(weakPoint, shotType, hitWeak.collider.name);
-            return BuildResult(shotType, outcome, hitWeak.point, weakPoint.GetAccuracy(weaponHitscan.AimRay));
+            return BuildResult(shotType, outcome, hitWeak.point, weakPoint.GetAccuracy(weaponHitscan.AimRay), weakPoint.OwnerCentre);
         }
 
         if (weaponHitscan.TryGetShootableTargetHit(out ShootableTarget target, out RaycastHit targetHit))
