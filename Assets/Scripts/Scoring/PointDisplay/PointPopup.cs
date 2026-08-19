@@ -11,19 +11,20 @@ public class PointPopup : MonoBehaviour
     [SerializeField] private float riseDistance = 0.6f;
     [SerializeField] private float fadeStart = 0.5f;  // time before fading starts
 
-    private PointPopupSpawner owner;
     private Vector3 startPos;
     private Color colour;
     private float elapsed;
 
-    public void Play(string text, Vector3 position, PointPopupSpawner spawner)
+    public void Play(string text, PointPopupStyle style, Vector3 position)
     {
-        owner = spawner;
         startPos = position;
         transform.position = position;
 
         label.text = text;
-        colour = label.color;
+        colour = style.colour;
+        label.color = colour;
+
+        transform.localScale = Vector3.one * style.scaleMultiplier;
 
         elapsed = 0f;
     }
