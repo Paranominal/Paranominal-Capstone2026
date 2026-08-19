@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class WeakPoint : MonoBehaviour
 {
-    [HideInInspector] public WeakPointManager manager;
+    [HideInInspector] public WeakPointManager weakpointManager;
     public WeakPointType weakPointType;
     public string PointId => pointId;
     public bool IsTough => isTough;
@@ -33,6 +33,7 @@ public class WeakPoint : MonoBehaviour
     // isShown tracks whether this weakpoint is the currently active target in the weakpoint sequence
     // currentAlpha is smoothed over time to avoid hard pop-in transitions
     private bool isShown;
+    public bool hasBeenHit;
     private float currentAlpha;
     private int remainingShots;
 
@@ -49,8 +50,8 @@ public class WeakPoint : MonoBehaviour
     private void Awake()
     {
         // cache expensive lookups once at startup for performance and cleaner updating
-        weakPointCollider = GetComponent<SphereCollider>();
-        allRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+        weakPointCollider = gameObject.GetComponent<SphereCollider>();
+        allRenderers = gameObject.GetComponentsInChildren<SpriteRenderer>(true);
 
         // Decide which visual branch this weakpoint should use based on its type
         if (weakPointType == WeakPointType.Iron) currentElement = ironElement;
@@ -61,7 +62,7 @@ public class WeakPoint : MonoBehaviour
         if (currentElement != null)
             currentRenderers = currentElement.GetComponentsInChildren<SpriteRenderer>(true);
 
-        // ensure weakpoints start hidden until the manager explicitly shows the current target
+        // ensure weakpoints start hidden until the weakpointManager explicitly shows the current target
         Hide();
     }
 
@@ -74,7 +75,7 @@ public class WeakPoint : MonoBehaviour
         // Prefer the dedicated weakpoint camera profile; fallback to main camera for robustness
         Camera cam = WeakPointCamera.ActiveCamera != null ? WeakPointCamera.ActiveCamera : Camera.main;
 
-        // exit if there is no camera to check against, though this shouldn't happen since the manager ensures a camera exists before showing weakpoints
+        // exit if there is no camera to check against, though this shouldn't happen since the weakpointManager ensures a camera exists before showing weakpoints
         if (cam == null)
             return;
 
@@ -114,7 +115,7 @@ public class WeakPoint : MonoBehaviour
         ApplyAlpha(currentAlpha);
     }
 
-    public void Show(WeakPointType _)
+    public void Show()
     {
         // Mark as currently active in sequence and re-enable hit detection.
         isShown = true;
@@ -141,7 +142,6 @@ public class WeakPoint : MonoBehaviour
     public void Hide()
     {
         isShown = false;
-
         if (weakPointCollider != null)
             weakPointCollider.enabled = false;
 
@@ -156,27 +156,27 @@ public class WeakPoint : MonoBehaviour
 
         currentAlpha = 0f;
     }
+    public void SetUpWeakpoint(WeakPointManager manager)
+    {
+        weakpointManager = manager; 
+        Hide();
+    }
 
     public void OnHit(WeakPointType type)
     {
         // Ignore mismatched bullet types to enforce iron/silver behavior
         if (type != weakPointType) return;
-
         // Warded weakpoints cannot be destroyed until unlocked externally
         if (isWarded) return;
-
-        if (manager != null)
-        {
-            manager.OnWeakPointHit();
-        }
-
         // Tough weakpoints require multiple successful hits
         remainingShots -= 1;
         if (remainingShots > 0) return;
 
         // Correct hit: hide this point and advance sequence to the next one
         Hide();
-        manager.NextWeakPoint();
+        // set state to hasbeenhit.
+        hasBeenHit = true;
+        // weakpointManager.NextInSequence();
     }
 
     public void UnlockWeakPoint()

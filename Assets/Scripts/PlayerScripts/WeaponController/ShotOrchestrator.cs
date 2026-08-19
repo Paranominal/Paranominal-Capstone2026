@@ -137,7 +137,11 @@ public class ShotOrchestrator : MonoBehaviour
         if (weaponHitscan.TryGetDamageableHit(out IDamageable damageable, out RaycastHit damageHit))
         {
             damageable.TakeDamage(new DamageInfo());
-            return false; 
+            //the previous gameObject.GetComponent system relies too heavily on enemy stagger
+            //essentially anything that doesn't have the script, ie the ghost minions
+            //will throw a silent ShotOrchestrator error
+            if (damageable is EnemyStagger enemyStagger && enemyStagger.IsStaggered) return false;
+            return true; 
         }
 
         weaponHitscan.LogWorldHitOrMiss();
