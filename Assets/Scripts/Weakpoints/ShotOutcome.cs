@@ -7,6 +7,7 @@ public enum ShotOutcome
     WeakPointHit,        // correct type, landed hit
     EnemyHit,            // hit an unstaggered enemy body or a warded weakpoint
     EnemyHitStaggered,   // hit a staggered enemy body
+    ShootableTargetHit   // hit a destructible/trigger
 }
 
 public static class ShotOutcomeExtensions
@@ -17,5 +18,7 @@ public static class ShotOutcomeExtensions
 
     // this is ammo retention so that unstaggered enemy hits keep the bullet without scoring
     public static bool RetainsAmmo(this ShotOutcome outcome) =>
-        outcome == ShotOutcome.WeakPointHit || outcome == ShotOutcome.EnemyHit;
+        outcome == ShotOutcome.WeakPointHit
+        || outcome == ShotOutcome.EnemyHit
+        || outcome == ShotOutcome.ShootableTargetHit;
 }

@@ -65,7 +65,7 @@ public class AmmoUI : MonoBehaviour
 
     private void OnShotResolved(WeakPointType shotType, ShotOutcome outcome)
     {
-        if (outcome.IsRewarded())
+        if (outcome.RetainsAmmo())
             return;
 
         StrikeAmmo(shotType);

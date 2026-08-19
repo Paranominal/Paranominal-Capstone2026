@@ -118,6 +118,7 @@ public class ScoreManager : MonoBehaviour
 
             case ShotOutcome.Miss:
             case ShotOutcome.WrongAmmo:
+            case ShotOutcome.EnemyHitStaggered:
                 comboSystem.BreakCombo();
                 break;
 
