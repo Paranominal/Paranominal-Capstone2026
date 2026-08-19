@@ -1,11 +1,22 @@
 using UnityEngine;
 
-// Summary: Floating name label for world objects. Place on a child object to define
-// the label position (uses this transform's position). The InteractionFocusController
-// finds these via proximity and feeds them to the ScreenSpacePromptPool.
-// Completely independent of IInteractable.
+public enum WorldLabelMode
+{
+    FloatingLabel,
+    InteractionPrompt
+}
+
+// Summary: Anchor for world-space labels. Place on a child object to define
+// the label position. Mode determines presentation behaviour:
+// FloatingLabel: billboards toward camera with rotation easing.
+// InteractionPrompt: fixed facing from parent transform's forward.
+// The InteractionFocusController finds these via proximity and feeds them
+// to the WorldLabelPool.
 public class WorldLabel : MonoBehaviour
 {
-    [Tooltip("Text shown in the floating label.")]
+    [Tooltip("FloatingLabel: billboards toward camera. InteractionPrompt: faces a fixed direction.")]
+    public WorldLabelMode mode = WorldLabelMode.FloatingLabel;
+
+    [Tooltip("Text shown in the floating label. Ignored in InteractionPrompt mode.")]
     public string displayName;
 }

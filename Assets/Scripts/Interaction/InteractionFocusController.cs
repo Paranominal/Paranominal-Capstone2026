@@ -2,14 +2,13 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // Summary: Two-pass detection each frame.
-// Pass 1 (proximity): OverlapSphere finds nearby WorldLabel components and feeds their
-//   names to the ScreenSpacePromptPool as floating labels.
-// Pass 2 (aim): reads the shared Raycaster hit, drives HUD prompts for actionable
-//   interactions and routes interact input.
+// Pass 1 (proximity): OverlapSphere finds nearby WorldLabel components and feeds them
+//   to the WorldLabelPool. Handles both FloatingLabel and InteractionPrompt modes.
+// Pass 2 (aim): reads the shared Raycaster hit, routes interact input.
 // EDIT (raycaster-consolidation): aim detection uses Raycaster.Instance instead of its own ray.
 // EDIT (interaction-rework): proximity and aim are independent; both can show simultaneously.
-// EDIT (screen-space-prompts): floating prompts use a pooled screen-space system.
 // EDIT (label-split): floating labels now come from WorldLabel, not IInteractable.
+// EDIT (world-space-labels): all labels are now world-space. HUD prompts removed.
 public class InteractionFocusController : MonoBehaviour
 {
     [Header("Proximity Detection (Floating Labels)")]
@@ -20,12 +19,11 @@ public class InteractionFocusController : MonoBehaviour
     [Tooltip("Distance at which floating labels reach full opacity.")]
     [SerializeField] private float labelFullOpacityDistance = 1.5f;
 
-    [Header("Aim Detection (HUD Prompts)")]
+    [Header("Aim Detection (Interact Input)")]
     [SerializeField] private float interactionRange = 10f;
 
     [Header("Presenters")]
-    [SerializeField] private HudPromptPresenter hudPresenter;
-    [SerializeField] private ScreenSpacePromptPool promptPool;
+    [SerializeField] private WorldLabelPool labelPool;
 
     [Header("Input")]
     [SerializeField] private string interactActionName = "Collect";
@@ -40,10 +38,8 @@ public class InteractionFocusController : MonoBehaviour
         cam = Camera.main;
         interactAction = InputSystem.actions.FindAction(interactActionName);
 
-        if (hudPresenter == null)
-            hudPresenter = FindAnyObjectByType<HudPromptPresenter>();
-        if (promptPool == null)
-            promptPool = FindAnyObjectByType<ScreenSpacePromptPool>();
+        if (labelPool == null)
+            labelPool = FindAnyObjectByType<WorldLabelPool>();
 
         Inventory inventory = FindAnyObjectByType<Inventory>();
 
@@ -65,8 +61,7 @@ public class InteractionFocusController : MonoBehaviour
     private void OnGrimoireToggled(bool grimoireOpen)
     {
         suspended = grimoireOpen;
-        hudPresenter?.SetVisible(!grimoireOpen);
-        promptPool?.SetVisible(!grimoireOpen);
+        labelPool?.SetVisible(!grimoireOpen);
     }
 
     void Update()
@@ -80,16 +75,15 @@ public class InteractionFocusController : MonoBehaviour
 
         Vector3 camPos = cam.transform.position;
 
-        // -- Pass 1: Proximity (floating name labels from WorldLabel components) --
+        // -- Pass 1: Proximity (world-space labels for both FloatingLabel and InteractionPrompt) --
         DriveWorldLabels(camPos);
 
-        // -- Pass 2: Aim via Raycaster (HUD prompts + interact input) --
-        DriveAimPrompt();
+        // -- Pass 2: Aim via Raycaster (interact input routing only, no HUD display) --
+        DriveAimInteraction();
     }
 
-    // Summary: OverlapSphere for nearby WorldLabel components. Shows a floating name
-    // label for each one, keyed by instance ID.
-    // EDIT (label-split): no longer queries IInteractable; uses WorldLabel directly.
+    // Summary: OverlapSphere for nearby WorldLabel components. Resolves content based
+    // on mode: FloatingLabel uses displayName, InteractionPrompt uses IInteractable.
     private void DriveWorldLabels(Vector3 camPos)
     {
         Collider[] hits = Physics.OverlapSphere(camPos, proximityRadius, interactableMask);
@@ -99,7 +93,26 @@ public class InteractionFocusController : MonoBehaviour
             if (label == null)
                 label = col.GetComponentInChildren<WorldLabel>();
             if (label == null) continue;
-            if (string.IsNullOrEmpty(label.displayName)) continue;
+
+            // Resolve display text based on mode.
+            string text;
+            if (label.mode == WorldLabelMode.InteractionPrompt)
+            {
+                IInteractable interactable = col.GetComponent<IInteractable>();
+                if (interactable == null)
+                    interactable = col.GetComponentInParent<IInteractable>();
+                if (interactable == null) continue;
+
+                InteractionPrompt prompt = interactable.ResolvePrompt(context);
+                if (!prompt.HasPrompt) continue;
+
+                text = FormatPrompt(prompt);
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(label.displayName)) continue;
+                text = label.displayName;
+            }
 
             // ClosestPoint fallback for non-convex MeshColliders.
             Vector3 point;
@@ -113,58 +126,53 @@ public class InteractionFocusController : MonoBehaviour
             if (proximity <= 0f) continue;
             if (Physics.Linecast(camPos, point, obstructionMask)) continue;
 
-            promptPool?.Show(
+            // InteractionPrompt: fixed facing from parent transform.
+            // FloatingLabel: rotation is ignored by the pool (it billboards instead).
+            Quaternion rotation = label.mode == WorldLabelMode.InteractionPrompt
+                ? label.transform.parent.rotation * Quaternion.Euler(0f, 180f, 0f)
+                : Quaternion.identity;
+
+            labelPool?.Show(
                 label.GetInstanceID(),
                 label.transform.position,
-                label.displayName,
-                proximity);
+                rotation,
+                text,
+                proximity,
+                label.mode);
         }
 
-        promptPool?.Flush();
+        labelPool?.Flush();
     }
 
-    // Summary: Reads the shared Raycaster hit. Shows HUD prompt for actionable
-    // interactions and routes interact input.
-    private void DriveAimPrompt()
+    // Summary: Reads the shared Raycaster hit. Routes interact input to the aimed
+    // IInteractable. No longer drives HUD display.
+    private void DriveAimInteraction()
     {
         Raycaster raycaster = Raycaster.Instance;
-        if (raycaster == null || !raycaster.HasHit)
-        {
-            hudPresenter?.Clear();
-            return;
-        }
-
-        if (raycaster.Hit.distance > interactionRange)
-        {
-            hudPresenter?.Clear();
-            return;
-        }
+        if (raycaster == null || !raycaster.HasHit) return;
+        if (raycaster.Hit.distance > interactionRange) return;
 
         IInteractable aimed = raycaster.Hit.collider.GetComponent<IInteractable>();
         if (aimed == null)
             aimed = raycaster.Hit.collider.GetComponentInParent<IInteractable>();
+        if (aimed == null) return;
 
-        if (aimed == null)
-        {
-            hudPresenter?.Clear();
-            return;
-        }
-
-        InteractionPrompt prompt = aimed.ResolvePrompt(context);
-        if (prompt.HasPrompt)
-        {
-            hudPresenter?.SetTarget(prompt, 1f);
-        }
-        else
-        {
-            hudPresenter?.Clear();
-        }
-
-        // Route interact input regardless of prompt.
         if (interactAction != null && interactAction.WasReleasedThisFrame())
         {
             aimed.Interact(context);
         }
+    }
+
+    // Summary: Formats an InteractionPrompt into a display string with keybind.
+    private string FormatPrompt(InteractionPrompt prompt)
+    {
+        InputAction action = InputSystem.actions.FindAction(prompt.actionName);
+        if (action != null)
+        {
+            string binding = action.GetBindingDisplayString(0);
+            return $"[{binding}] {prompt.label}";
+        }
+        return prompt.label;
     }
 
     void OnDrawGizmosSelected()
