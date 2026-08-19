@@ -70,15 +70,14 @@ public class InteractionFocusController : MonoBehaviour
 
         Vector3 camPos = cam.transform.position;
 
-        // -- Pass 1: Proximity (world-space labels for both FloatingLabel and InteractionPrompt) --
+        // Pass 1: Proximity (world-space labels for both FloatingLabel and InteractionPrompt)
         DriveWorldLabels(camPos);
 
-        // -- Pass 2: Aim via Raycaster (interact input routing only, no HUD display) --
+        // Pass 2: Aim via Raycaster (interact input routing only, no HUD display)
         DriveAimInteraction();
     }
 
-    // Summary: OverlapSphere for nearby WorldLabel components. Resolves content based
-    // on mode: FloatingLabel uses displayName, InteractionPrompt uses IInteractable.
+    // OverlapSphere for nearby WorldLabel components. Resolves content based on mode: FloatingLabel uses displayName, InteractionPrompt uses IInteractable.
     private void DriveWorldLabels(Vector3 camPos)
     {
         Collider[] hits = Physics.OverlapSphere(camPos, proximityRadius, interactableMask);
@@ -121,11 +120,17 @@ public class InteractionFocusController : MonoBehaviour
             if (proximity <= 0f) continue;
             if (Physics.Linecast(camPos, point, obstructionMask)) continue;
 
-            // InteractionPrompt: fixed facing from parent transform.
+            // InteractionPrompt: fixed facing from parent transform, flipped if player is on the back side so the prompt is always readable.
             // FloatingLabel: rotation is ignored by the pool (it billboards instead).
-            Quaternion rotation = label.mode == WorldLabelMode.InteractionPrompt
-                ? label.transform.parent.rotation * Quaternion.Euler(0f, 180f, 0f)
-                : Quaternion.identity;
+            Quaternion rotation = Quaternion.identity;
+            if (label.mode == WorldLabelMode.InteractionPrompt)
+            {
+                Vector3 toCamera = camPos - label.transform.position;
+                float dot = Vector3.Dot(label.transform.parent.forward, toCamera);
+                rotation = dot > 0f
+                    ? label.transform.parent.rotation * Quaternion.Euler(0f, 180f, 0f)
+                    : label.transform.parent.rotation;
+            }
 
             labelPool?.Show(
                 label.GetInstanceID(),
@@ -139,8 +144,7 @@ public class InteractionFocusController : MonoBehaviour
         labelPool?.Flush();
     }
 
-    // Summary: Reads the shared Raycaster hit. Routes interact input to the aimed
-    // IInteractable. No longer drives HUD display.
+    // Reads the shared Raycaster hit. Routes interact input to the aimed IInteractable. No longer drives HUD display.
     private void DriveAimInteraction()
     {
         Raycaster raycaster = Raycaster.Instance;
@@ -148,8 +152,6 @@ public class InteractionFocusController : MonoBehaviour
         if (raycaster.Hit.distance > interactionRange) return;
 
         IInteractable aimed = raycaster.Hit.collider.GetComponent<IInteractable>();
-        if (aimed == null)
-            aimed = raycaster.Hit.collider.GetComponentInParent<IInteractable>();
         if (aimed == null) return;
 
         if (interactAction != null && interactAction.WasReleasedThisFrame())
@@ -158,7 +160,7 @@ public class InteractionFocusController : MonoBehaviour
         }
     }
 
-    // Summary: Formats an InteractionPrompt into a display string with keybind.
+    // Formats an InteractionPrompt into a display string with keybind.
     private string FormatPrompt(InteractionPrompt prompt)
     {
         InputAction action = InputSystem.actions.FindAction(prompt.actionName);
