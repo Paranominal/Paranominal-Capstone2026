@@ -30,7 +30,7 @@ public class ComboSystem : MonoBehaviour
         }
     }
 
-    public void RegisterWeakPointHit()
+    public void RegisterHit()
     {
         Multiplier += multiplierPerHit;
         TimeRemaining = comboDuration;

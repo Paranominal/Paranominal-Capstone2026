@@ -109,21 +109,23 @@ public class ScoreManager : MonoBehaviour
 
     private void HandleShotResolved(WeakPointType shotType, ShotOutcome outcome)
     {
-        switch (outcome)
+        OutcomeRules rules = outcome.Rules();
+
+        if (rules.AwardsPoints)
+            AwardWeakPointHit();
+
+        switch (rules.Combo)
         {
-            case ShotOutcome.WeakPointHit:
-                AwardWeakPointHit();
-                comboSystem.RegisterWeakPointHit();
+            case ComboEffect.Increment:
+                comboSystem.RegisterHit();
                 break;
 
-            case ShotOutcome.Miss:
-            case ShotOutcome.WrongAmmo:
-            case ShotOutcome.EnemyHitStaggered:
+            case ComboEffect.Break:
                 comboSystem.BreakCombo();
                 break;
 
-            case ShotOutcome.EnemyHit:
-                break; // neutral: no increment, no break, timer keeps running
+            case ComboEffect.Neutral:
+                break;
         }
     }
 }
