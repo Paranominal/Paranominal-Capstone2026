@@ -150,6 +150,7 @@ public class InteractionFocusController : MonoBehaviour
         Raycaster raycaster = Raycaster.Instance;
         if (raycaster == null || !raycaster.HasHit) return;
         if (raycaster.Hit.distance > interactionRange) return;
+        if (raycaster.Hit.collider == null) return;
 
         IInteractable aimed = raycaster.Hit.collider.GetComponent<IInteractable>();
         if (aimed == null) return;
