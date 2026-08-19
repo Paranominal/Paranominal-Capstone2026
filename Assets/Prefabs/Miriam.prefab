@@ -485,8 +485,12 @@ GameObject:
   - component: {fileID: 8240368774250594449}
   - component: {fileID: 388139220132730565}
   - component: {fileID: 1642531195737763663}
+  - component: {fileID: 5597166695601807007}
+  - component: {fileID: 2180521647401765705}
+  - component: {fileID: 1075438856331412565}
   - component: {fileID: 2395450753178358459}
   - component: {fileID: 5855240123241697755}
+  - component: {fileID: 3000788553867072500}
   - component: {fileID: 795694508415802441}
   - component: {fileID: 6259397004850044514}
   - component: {fileID: 578014413173976834}
@@ -633,6 +637,67 @@ MonoBehaviour:
   tickRateLow: 0
   tickRateMedium: 0
   tickRateHigh: 0
+--- !u!114 &5597166695601807007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfedc085b8cc3e44ca283c097fdbd83c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FearEffectsManager
+  fearBar: {fileID: 1642531195737763663}
+  playerStatus: {fileID: 388139220132730565}
+--- !u!114 &2180521647401765705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ac2263b7840ebd48a980a56235dc3a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FearAudioEffects
+  mediumIdleBeat: {fileID: 11400000, guid: 2018e28a02d57094fb9d98a596d32565, type: 2}
+  mediumActionBeat: {fileID: 11400000, guid: 22bc890138b5f3e40a6dc36d71175f8c, type: 2}
+  lowIdleBeat: {fileID: 11400000, guid: 0314c87769513fd42bcc1b4d4b137ed6, type: 2}
+  lowActionBeat: {fileID: 11400000, guid: cc9e08c105181bf45be5ee90f495a25e, type: 2}
+  mediumVolumeMin: 0.1
+  mediumVolumeMax: 0.4
+  lowVolumeMin: 0.4
+  lowVolumeMax: 1
+  mediumInterval: 1.2
+  mediumActionInterval: 0.9
+  lowInterval: 0.8
+  lowActionInterval: 0.6
+--- !u!114 &1075438856331412565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29a48d787d2b248a8640b2b42ff110, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FearPostProcessEffects
+  vignetteMaterial: {fileID: 2100000, guid: 259b1eb3cab294e4f9902c1af2592769, type: 2}
+  vignetteColor: {r: 0, g: 0, b: 0, a: 1}
+  blendMode: 0
+  effectStrength: 1
+  vignetteIntensityMax: 0.8
+  vignetteSoftness: 0.3
+  noiseIntensityMax: 0.5
+  noiseScale: 6
+  noiseSpeedMin: 0.1
+  noiseSpeedMax: 0.5
+  cycleDuration: 10
 --- !u!114 &2395450753178358459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -694,6 +759,29 @@ MonoBehaviour:
   fearBar: {fileID: 1642531195737763663}
   scoreManager: {fileID: 2395450753178358459}
   endScreenBuildIndex: 2
+--- !u!114 &3000788553867072500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f2a8c8566ec63149ba09d151b5f7219, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractionFocusController
+  interactableMask:
+    serializedVersion: 2
+    m_Bits: 1281
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 151552
+  proximityRadius: 4
+  labelFullOpacityDistance: 1.5
+  interactionRange: 10
+  labelPool: {fileID: 0}
+  interactActionName: Collect
 --- !u!82 &795694508415802441
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1025,6 +1113,7 @@ MonoBehaviour:
   m_CameraType: 0
   m_Cameras:
   - {fileID: 5940204994785997246}
+  - {fileID: 0}
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
@@ -1075,7 +1164,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3524502881056351253}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e37c9416a20373047baa003d4160bde3, type: 3}
   m_Name: 
@@ -1150,6 +1239,11 @@ MonoBehaviour:
   enableStrafeTilt: 0
   maxTiltAngle: 1
   tiltSpeed: 2
+  defaultShakeIntensity: 0.3
+  defaultShakeDuration: 0.25
+  shakePositionScale: 0.08
+  shakeRollScale: 2
+  shakeFrequency: 25
 --- !u!114 &260499741174559401
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2399,6 +2493,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 250437841754734501, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_Value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 273836561670073298, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 430255705077211595, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
