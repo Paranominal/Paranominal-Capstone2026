@@ -23,9 +23,14 @@ public class EnemyAttack_Melee : EnemyAttack
     [Tooltip("Number of seconds the Damage Field persists after appearing")]
     [SerializeField] private float damageWindow = 1f;
     // [SerializeField] private bool doInterrupt = true;
-    void Start()
+    // Michael edit (spawn-visual-fix): hide indicator in Awake so it's never visible on spawn.
+    void Awake()
     {
         SetAttackIndicator(false);
+    }
+
+    void Start()
+    {
     }
     public void InitiateAttack()
     {

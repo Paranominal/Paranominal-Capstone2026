@@ -39,6 +39,12 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     //     if (knockback == null) knockback = GetComponentInParent<EnemyKnockback>();
     // }
 
+    // Michael edit (spawn-visual-fix): hide stagger bar in Awake so it's never visible on spawn.
+    private void Awake()
+    {
+        if (staggerBar != null) staggerBar.gameObject.SetActive(false);
+    }
+
     void Start()
     {
         // if (doStaggerColor) InitializeColor();
