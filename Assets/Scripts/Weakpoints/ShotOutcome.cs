@@ -36,7 +36,7 @@ public static class ShotOutcomeExtensions
     {                                                   // combo                  points  ammo return
         { ShotOutcome.Miss,               new OutcomeRules(ComboEffect.Break,     false,  false) },
         { ShotOutcome.WrongAmmo,          new OutcomeRules(ComboEffect.Break,     false,  false) },
-        { ShotOutcome.EnemyHit,           new OutcomeRules(ComboEffect.Increment, false,  true ) },
+        { ShotOutcome.EnemyHit,           new OutcomeRules(ComboEffect.Neutral, false,  true ) },
         { ShotOutcome.EnemyHitStaggered,  new OutcomeRules(ComboEffect.Break,     false,  false) },
         { ShotOutcome.ShootableTargetHit, new OutcomeRules(ComboEffect.Neutral,   false,  true ) },
         { ShotOutcome.WeakPointHit,       new OutcomeRules(ComboEffect.Increment, true,   true ) },
