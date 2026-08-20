@@ -48,9 +48,13 @@ public class FearPostProcessEffects : MonoBehaviour
         RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
     }
 
+    // Disables the vignette shader's FullScreenRenderPass when this script gets diabled (stops vignette appearing in unnecessary scenes)
     private void OnDisable()
     {
         RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
+
+        if (vignetteMaterial == null) return;
+        vignetteMaterial.SetFloat(EnabledID, 0f);
     }
 
     private void OnBeginCameraRendering(ScriptableRenderContext context, Camera cam)
