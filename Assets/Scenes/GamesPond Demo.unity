@@ -9730,6 +9730,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 97abf8a2b4c93b144a4109dbe9e6ab7a, type: 3}
+--- !u!114 &860485342 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 715327910090208011, guid: 97abf8a2b4c93b144a4109dbe9e6ab7a, type: 3}
+  m_PrefabInstance: {fileID: 860485341}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 223291d1c9e1d6348aa7c2477011f387, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
 --- !u!43 &868292280
 Mesh:
   m_ObjectHideFlags: 0
@@ -22108,33 +22119,6 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
---- !u!1 &1838718271 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8041357665917767240, guid: 93c0f2d3ac4baae4989693f237185999, type: 3}
-  m_PrefabInstance: {fileID: 4591308626114457611}
-  m_PrefabAsset: {fileID: 0}
---- !u!64 &1838718275
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1838718271}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -7545831556655825222, guid: 84d3c08e6d050af4f909bf02c2f5ad39, type: 3}
 --- !u!43 &1846309944
 Mesh:
   m_ObjectHideFlags: 0
@@ -25046,10 +25030,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8041357665917767240, guid: 93c0f2d3ac4baae4989693f237185999, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1838718275}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 93c0f2d3ac4baae4989693f237185999, type: 3}
 --- !u!1001 &4961470893492285293
 PrefabInstance:
@@ -25851,6 +25832,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4328504843176614423, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+      propertyPath: scoreManager
+      value: 
+      objectReference: {fileID: 860485342}
     - target: {fileID: 7815363325721621503, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: m_IsActive
       value: 0

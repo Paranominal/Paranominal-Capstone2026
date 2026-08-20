@@ -65,7 +65,7 @@ public class PointPopupSpawner : MonoBehaviour
         nextIndex = (nextIndex + 1) % poolSize;
 
         popup.gameObject.SetActive(true);
-        popup.Play($"{points} points{style.suffix}", style, worldPos, side);
+        popup.Play($"{points}{style.suffix}", style, worldPos, side);
     }
 
     private PointPopupStyle StyleFor(int precision)
