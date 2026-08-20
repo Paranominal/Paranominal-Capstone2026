@@ -494,6 +494,7 @@ GameObject:
   - component: {fileID: 795694508415802441}
   - component: {fileID: 6259397004850044514}
   - component: {fileID: 578014413173976834}
+  - component: {fileID: 5660757829747511445}
   m_Layer: 6
   m_Name: Miriam
   m_TagString: Player
@@ -711,6 +712,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
   weaponEvents: {fileID: 8998853392705874315}
+  comboSystem: {fileID: 0}
   pointsPerWeakpointHit: 10
   ranks:
   - label: D
@@ -743,6 +745,7 @@ MonoBehaviour:
     pointThreshold: 700
   - label: S++
     pointThreshold: 750
+  debugMode: 1
   currentScore: 0
 --- !u!114 &5855240123241697755
 MonoBehaviour:
@@ -991,6 +994,21 @@ MonoBehaviour:
   grimoire: {fileID: 446425657346133023}
   stateController: {fileID: 7147252156496146882}
   shotgunName: The Norwych
+--- !u!114 &5660757829747511445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 685652e99afa3da43bef0175ae674a64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ComboSystem
+  comboDuration: 5
+  multiplierPerHit: 0.1
+  debugMode: 1
 --- !u!1 &3524502881056351253
 GameObject:
   m_ObjectHideFlags: 0
@@ -2904,6 +2922,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6876284312139161342, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
+      propertyPath: comboSystem
+      value: 
+      objectReference: {fileID: 5660757829747511445}
     - target: {fileID: 6984559138644257905, guid: 3dd487e81fa6b1847982d8cf532923fd, type: 3}
       propertyPath: weaponEvents
       value: 

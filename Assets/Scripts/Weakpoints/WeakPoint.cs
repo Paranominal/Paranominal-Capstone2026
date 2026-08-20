@@ -37,6 +37,9 @@ public class WeakPoint : MonoBehaviour
     private float currentAlpha;
     private int remainingShots;
 
+    // used to pass the enemy's centre to the popup for cool tilting
+    public Vector3 OwnerCentre => weakpointManager != null ? weakpointManager.transform.position : transform.position;
+
     private void OnEnable()
     {
         WeakPointRegistry.Register(this);
@@ -177,6 +180,24 @@ public class WeakPoint : MonoBehaviour
         // set state to hasbeenhit.
         hasBeenHit = true;
         // weakpointManager.NextInSequence();
+    }
+
+    public float GetAccuracy(Ray ray)
+    {
+        if (weakPointCollider == null) return 1f;
+
+        Vector3 centre = transform.TransformPoint(weakPointCollider.center);
+        Vector3 scale = transform.lossyScale;
+        float radius = weakPointCollider.radius *
+            Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.y), Mathf.Abs(scale.z));
+
+        if (radius <= 0f) return 1f;
+
+        // how close the ray passed to the centre of the weakpoint sphere
+        float along = Vector3.Dot(centre - ray.origin, ray.direction);
+        float missDistance = Vector3.Distance(ray.origin + ray.direction * along, centre);
+
+        return 1f - Mathf.Clamp01(missDistance / radius);
     }
 
     public void UnlockWeakPoint()
