@@ -31,6 +31,10 @@ public class InteractionObject : MonoBehaviour
             {
                 if (grimoire.GetCurrentEntry().entryName == keyName && grimoire.GetCurrentEntry().collected && collectAction.WasReleasedThisFrame() && target.gameObject.GetComponentInChildren<Collider>() == hit.collider)
                 {
+                    // Michael edit (interaction-rework): unlock door if target is a Door, since InteractionObject acts as the key-check gatekeeper.
+                    Door door = target.gameObject.GetComponent<Door>();
+                    if (door != null) door.Unlock();
+
                     target.Interact(new InteractionContext());
 
                     if (consumesItem)

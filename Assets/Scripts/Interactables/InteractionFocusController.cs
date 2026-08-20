@@ -149,6 +149,7 @@ public class InteractionFocusController : MonoBehaviour
     {
         Raycaster raycaster = Raycaster.Instance;
         if (raycaster == null || !raycaster.HasHit) return;
+        // Debug.Log($"Aiming at: {raycaster.Hit.collider.gameObject.name}"); // Debug to find what's fucking with opening/closing doors (Future Michael here, it was the Room Bounds objects lol)
         if (raycaster.Hit.distance > interactionRange) return;
         if (raycaster.Hit.collider == null) return;
 
