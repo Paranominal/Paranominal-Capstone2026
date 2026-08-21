@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +19,41 @@ public class AmmoUI : MonoBehaviour
     private Image ammoUiTemplate;
     private int strikes;
     private float shotTemplateSpacing = 30f;
+
+    public GameObject broken0,broken1,broken2;
+
+    private void Update()
+    {
+        if (strikes == 0)
+        {
+            broken0.SetActive(true);
+            broken1.SetActive(false);
+            broken2.SetActive(false);
+            Debug.Log("0");
+        }
+        else if ( strikes ==1)
+        {
+            broken0.SetActive(false);
+            broken1.SetActive(true);
+            broken2.SetActive(false);
+            Debug.Log("1");
+        }
+        else if ( strikes ==2)
+        {
+            broken0.SetActive(false);
+            broken1.SetActive(false);
+            broken2.SetActive(true);
+            Debug.Log("2");
+        }
+        else if ( strikes ==3)
+        {
+            broken0.SetActive(false);
+            broken1.SetActive(false);
+            broken2.SetActive(false);
+            Debug.Log("3");
+        }
+        
+    }
 
     private void Awake()
     {
