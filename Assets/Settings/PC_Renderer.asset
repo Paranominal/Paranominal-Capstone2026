@@ -112,11 +112,12 @@ MonoBehaviour:
     probeVolumeBlendStatesCS: {fileID: 7200000, guid: b9a23f869c4fd45f19c5ada54dd82176, type: 3}
   m_RendererFeatures:
   - {fileID: 7833122117494664109}
-  - {fileID: -4580449277675019056}
   - {fileID: -6632190853482328111}
-  - {fileID: -4023522189989383855}
+  - {fileID: -4580449277675019056}
+  - {fileID: 5538159499667830741}
   - {fileID: -6917648197494371644}
-  m_RendererFeatureMap: ad6b866f10d7b46cd0647c74a6f96ec0d14f97bf8eb9f5a351f1c7bfe29329c8c40a3a9b9d93ff9f
+  - {fileID: -4023522189989383855}
+  m_RendererFeatureMap: ad6b866f10d7b46cd14f97bf8eb9f5a3d0647c74a6f96ec0d5f727f7b87edb4cc40a3a9b9d93ff9f51f1c7bfe29329c8
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -145,6 +146,22 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 0
+--- !u!114 &5538159499667830741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62fb68e62914504291e0dd856643c48, type: 3}
+  m_Name: DownsampleRendererFeature
+  m_EditorClassIdentifier: Assembly-CSharp::DownsampleRendererFeature
+  m_Active: 1
+  shader: {fileID: 4800000, guid: f115d8cc24cf19b4783ed43bc62af2aa, type: 3}
+  defaultSettings:
+    pixelSize: 4
 --- !u!114 &7833122117494664109
 MonoBehaviour:
   m_ObjectHideFlags: 0

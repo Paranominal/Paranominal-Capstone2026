@@ -19,6 +19,22 @@ MonoBehaviour:
   sampleDistance:
     m_OverrideState: 1
     m_Value: 1
+--- !u!114 &-1139922521984664487
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fee72878a416da74a9e4afb9e6326f29, type: 3}
+  m_Name: DownsampleVolume
+  m_EditorClassIdentifier: Assembly-CSharp::DownsampleVolume
+  active: 1
+  pixelSize:
+    m_OverrideState: 1
+    m_Value: 2
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36,6 +52,7 @@ MonoBehaviour:
   - {fileID: 3061170837803561773}
   - {fileID: 5008235498170778188}
   - {fileID: 1623244102945971050}
+  - {fileID: -1139922521984664487}
 --- !u!114 &1623244102945971050
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -97,16 +114,16 @@ MonoBehaviour:
     m_Value: 16
   effectStrength:
     m_OverrideState: 1
-    m_Value: 0.172
+    m_Value: 0.6
   ditherStrength:
     m_OverrideState: 1
-    m_Value: 0.15
+    m_Value: 0.7
   bayerSize:
     m_OverrideState: 1
     m_Value: 2
   usePS1Matrix:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
   usePerceivedBrightness:
     m_OverrideState: 1
     m_Value: 1
@@ -134,7 +151,7 @@ MonoBehaviour:
     m_Value: 70
   scanlineIntensity:
     m_OverrideState: 1
-    m_Value: 0.1
+    m_Value: 0
   scanlineCount:
     m_OverrideState: 1
     m_Value: 196
@@ -146,4 +163,4 @@ MonoBehaviour:
     m_Value: 100
   phosphorIntensity:
     m_OverrideState: 1
-    m_Value: 0.059
+    m_Value: 0.089
