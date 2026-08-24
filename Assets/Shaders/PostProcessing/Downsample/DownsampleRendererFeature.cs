@@ -29,6 +29,7 @@ public class DownsampleRendererFeature : ScriptableRendererFeature
     {
         if (pass == null) return;
         if (renderingData.cameraData.cameraType != CameraType.Game) return;
+        if (renderingData.cameraData.camera.name == "UICam" || renderingData.cameraData.camera.name == "DialogueCam" || renderingData.cameraData.camera.name == "POVCam") return; // bypasses the UI, Dialogue, and POC Cameras for the Downsampling pass, making the stenciling scripts unnecessary :)
 
         renderer.EnqueuePass(pass);
     }
@@ -92,34 +93,30 @@ public class DownsampleRenderPass : ScriptableRenderPass
         var desc = src.GetDescriptor(renderGraph);
         desc.name = "_DownsampleTexture";
         desc.depthBufferBits = 0;
-        TextureHandle dst = renderGraph.CreateTexture(desc);
+        TextureHandle tmp = renderGraph.CreateTexture(desc);
 
         UpdateSettings();
 
-        if (!src.IsValid() || !dst.IsValid()) return;
+        if (!src.IsValid() || !tmp.IsValid()) return;
 
-        // First pass: blit through the downsample material with stencil buffer bound.
+        // Copy source to temp so it can be sampled as _BlitTexture.
+        renderGraph.AddCopyPass(src, tmp);
+
+        // Blit from temp back to source through the downsample material.
+        // Stencil-excluded pixels are never written, retaining the original image.
         using (var builder = renderGraph.AddRasterRenderPass<PassData>(PassName, out var passData))
         {
-            passData.sourceTexture = src;
+            passData.sourceTexture = tmp;
             passData.material = material;
 
-            // Read the source colour texture.
-            builder.UseTexture(src, AccessFlags.Read);
-
-            // Set the temp texture as our render target.
-            builder.SetRenderAttachment(dst, 0, AccessFlags.Write);
-
-            // Bind the depth-stencil buffer for stencil testing.
-            builder.SetRenderAttachmentDepth(resourceData.activeDepthTexture, AccessFlags.Read);
+            builder.UseTexture(tmp, AccessFlags.Read);
+            builder.SetRenderAttachment(src, 0, AccessFlags.Write);
+            builder.SetRenderAttachmentDepth(resourceData.activeDepthTexture, AccessFlags.ReadWrite);
 
             builder.SetRenderFunc(static (PassData data, RasterGraphContext context) =>
             {
                 Blitter.BlitTexture(context.cmd, data.sourceTexture, new Vector4(1, 1, 0, 0), data.material, 0);
             });
         }
-
-        // Second pass: copy back without re-applying the effect.
-        renderGraph.AddCopyPass(dst, src);
     }
 }
