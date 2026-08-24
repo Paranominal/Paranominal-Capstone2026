@@ -65,6 +65,11 @@ public class GrimoireAnimManager : MonoBehaviour
         if (playerShoot.action.IsPressed()) isPlayerShooting = true;
         else isPlayerShooting = false;
     }
+    public void OpenFromDialogue()
+    {
+        OpenGrimoire();
+        Debug.Log("Tried open");
+    }
     // Input to Action
     private void OpenOnScroll()
     {   //return conditions
@@ -92,9 +97,16 @@ public class GrimoireAnimManager : MonoBehaviour
         if (isAnimating) return;
         if (isMenuing) return;
         if (isCasting) return;
-        if (stayOpen) return;
 
-        if (isPlayerShooting) CloseGrimoire();
+        if (isPlayerShooting)
+        {
+            if (stayOpen)
+            {
+                StopCoroutine(StayOpen());
+                stayOpen = false;
+            }
+            CloseGrimoire();
+        }
     }
     private void CastOnHold()
     {   //return conditions

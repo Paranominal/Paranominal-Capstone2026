@@ -92,6 +92,9 @@ public class WeaponHitscan : MonoBehaviour
         if (damageable == null)
             damageable = damageableHit.collider.GetComponentInParent<IDamageable>();
 
+        if (damageableHit.collider.gameObject == GameObject.FindWithTag("Player"))
+            return false;
+
         return damageable != null;
     }
 
@@ -107,6 +110,8 @@ public class WeaponHitscan : MonoBehaviour
         else
             Debug.Log("Miss...");
     }
+
+    public Ray AimRay => raycaster != null ? raycaster.Ray : default;
 
     private Ray BuildAimRay()
     {

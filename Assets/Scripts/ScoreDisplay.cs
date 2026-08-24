@@ -7,13 +7,9 @@ public class GameOverDisplay : MonoBehaviour
 
     private void Start()
     {
-        if (GameOverHandler.FinalScore != null)
+        if (scoreText != null)
         {
-            if (scoreText != null)
-            {
-                scoreText.text = $"Final score: {GameOverHandler.FinalScore}";
-            }
+            scoreText.text = $"Final score: {GameOverHandler.FinalScore}";
         }
-        else { Debug.Log("uh oh!!!! you just opened this scene didn't you"); }
     }
 }

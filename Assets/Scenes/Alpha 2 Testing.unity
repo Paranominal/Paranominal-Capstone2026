@@ -1378,14 +1378,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7815363325721621503, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: doTimeout
-      value: 0
-      objectReference: {fileID: 0}
+    - target: {fileID: 4328504843176614423, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+      propertyPath: scoreManager
+      value: 
+      objectReference: {fileID: 2138304928}
     - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: playerInput
       value: 
@@ -1398,10 +1394,6 @@ PrefabInstance:
       propertyPath: playerInputReader
       value: 
       objectReference: {fileID: 478942401}
-    - target: {fileID: 8740965625450218032, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: weaponInputReader
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 9041544226671817565, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: m_Name
       value: SceneEssentialsBundle
@@ -1422,6 +1414,10 @@ PrefabInstance:
     - target: {fileID: 799491107579824861, guid: 97abf8a2b4c93b144a4109dbe9e6ab7a, type: 3}
       propertyPath: m_Name
       value: Miriam Witchgun
+      objectReference: {fileID: 0}
+    - target: {fileID: 1112020347921381024, guid: 97abf8a2b4c93b144a4109dbe9e6ab7a, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2453617423186176221, guid: 97abf8a2b4c93b144a4109dbe9e6ab7a, type: 3}
       propertyPath: m_IsActive
@@ -2186,6 +2182,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5619986495726668729, guid: fd3ff0606e787c84b8402b8418e8b9a4, type: 3}
   m_PrefabInstance: {fileID: 456289147}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2138304928 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 715327910090208011, guid: 97abf8a2b4c93b144a4109dbe9e6ab7a, type: 3}
+  m_PrefabInstance: {fileID: 1347591857}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 223291d1c9e1d6348aa7c2477011f387, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
 --- !u!4 &2139794694 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2323877199288351275, guid: 7c93bf3344d5f7642a8ba71c42fd1d37, type: 3}

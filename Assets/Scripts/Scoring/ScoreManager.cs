@@ -4,9 +4,12 @@ public class ScoreManager : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private WeaponEvents weaponEvents;
+    [SerializeField] private ComboSystem comboSystem;
 
     [Header("Scoring")]
-    [SerializeField] private int pointsPerWeakpointHit = 10;
+    [Tooltip("Accuracy scoring lerps linearly between these two values.")]
+    [SerializeField] private int minWeakpointPoints = 1;
+    [SerializeField] private int maxWeakpointPoints = 10;
 
     [Header("Ranks")]
     [Tooltip("In ascending order of pointThreshold. Player holds the highest rank whose threshold they've met.")]
@@ -19,6 +22,9 @@ public class ScoreManager : MonoBehaviour
         new RankDefinition { label = "A", pointThreshold = 400 },
         new RankDefinition { label = "S", pointThreshold = 800 },
     };
+    
+    [Header("Debug")]
+    [SerializeField] private bool debugMode = true;
 
     public string CurrentRank { get; private set; } = string.Empty;
     public event System.Action<string> OnRankChanged;
@@ -27,12 +33,20 @@ public class ScoreManager : MonoBehaviour
 
     public event System.Action<int> OnPointsAdded;
 
+    // points to display = final awarded (after combo), precision = 1-10 base, position = where it landed, ownerCentre = where the enemy is
+    public event System.Action<int, int, Vector3, Vector3> OnPointsAwarded;
+
     private void Awake()
     {
         if (weaponEvents == null)
         {
             weaponEvents = GetComponent<WeaponEvents>(); // getting the weapon events from the current object (assuming Player) if not manually assigned
         }
+        if (comboSystem == null)
+        {
+            comboSystem = GetComponent<ComboSystem>();
+        }
+
         weaponEvents.ShotResolved += HandleShotResolved;
 
         EvaluateRank();
@@ -46,7 +60,7 @@ public class ScoreManager : MonoBehaviour
         }
 
         currentScore += amount;
-        Debug.Log($"Final score: {currentScore}"); // printing this in console for now, will be displayed on end screen
+        if (debugMode) Debug.Log($"Current score: {currentScore}"); // printing this in console for now, will be displayed on end screen
         OnPointsAdded?.Invoke(currentScore);
 
         EvaluateRank();
@@ -83,14 +97,49 @@ public class ScoreManager : MonoBehaviour
         {
             CurrentRank = newRank;
             OnRankChanged?.Invoke(CurrentRank);
+            if (debugMode) Debug.Log($"Rank up! New rank: {CurrentRank}");
         }
     }
 
-    private void HandleShotResolved(WeakPointType shotType, bool rewarded)
+    // kinda combos stuff below this point but pulling it into combosystem felt worse
+
+    private int PointsForAccuracy(float accuracy)
     {
-        if (rewarded)
+        return Mathf.Clamp(
+            Mathf.RoundToInt(Mathf.Lerp(minWeakpointPoints, maxWeakpointPoints, accuracy)),
+            minWeakpointPoints, maxWeakpointPoints);
+    }
+
+    private void AwardHit(ShotResult result)
+    {
+        int basePoints = PointsForAccuracy(result.Accuracy);
+        float multiplier = comboSystem != null ? comboSystem.Multiplier : 0f;
+        int points = Mathf.RoundToInt(basePoints * (1f + multiplier));
+
+        if (debugMode) Debug.Log($"Weakpoint hit: {result.Accuracy:0.00} accuracy = {basePoints} base x {1f + multiplier:0.0} = {points} points");
+        AddScore(points);
+        OnPointsAwarded?.Invoke(points, basePoints, result.HitPoint, result.OwnerCentre);
+    }
+
+    private void HandleShotResolved(ShotResult result)
+    {
+        OutcomeRules rules = result.Outcome.Rules();
+
+        if (rules.AwardsPoints)
+            AwardHit(result);
+
+        switch (rules.Combo)
         {
-            AddScore(pointsPerWeakpointHit); // handling this in here, but the more scoring additions we add the less it will make sense
+            case ComboEffect.Increment:
+                comboSystem.RegisterHit();
+                break;
+
+            case ComboEffect.Break:
+                comboSystem.BreakCombo();
+                break;
+
+            case ComboEffect.Neutral:
+                break;
         }
     }
 }

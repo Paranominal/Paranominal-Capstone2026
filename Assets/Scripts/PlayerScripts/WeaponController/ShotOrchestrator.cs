@@ -95,14 +95,14 @@ public class ShotOrchestrator : MonoBehaviour
 
         weaponFiringLogic.StartShotCooldown();
 
-        bool rewardedShot = Fire(shotType);
-        if (!rewardedShot)
+        ShotResult result = Fire(shotType);
+        if (!result.Outcome.RetainsAmmo())
             weaponFiringLogic.ConsumeAmmo();
 
         if (weaponEvents != null)
         {
             weaponEvents.RaiseShotFired(shotType);
-            weaponEvents.RaiseShotResolved(shotType, rewardedShot);
+            weaponEvents.RaiseShotResolved(result);
             weaponEvents.RaiseAmmoChanged(weaponFiringLogic.CurrentAmmo, weaponFiringLogic.MagazineSize);
         }
 
@@ -110,7 +110,19 @@ public class ShotOrchestrator : MonoBehaviour
             StartCoroutine(DelayedAutoReload());
     }
 
-    private bool Fire(WeakPointType shotType)
+    private ShotResult BuildResult(WeakPointType shotType, ShotOutcome outcome, Vector3 hitPoint, float accuracy = 0f, Vector3 ownerCentre = default)
+    {
+        return new ShotResult
+        {
+            ShotType = shotType,
+            Outcome = outcome,
+            Accuracy = accuracy,
+            HitPoint = hitPoint,
+            OwnerCentre = ownerCentre
+        };
+    }
+
+    private ShotResult Fire(WeakPointType shotType)
     {
         if (cameraRecoilController != null)
             cameraRecoilController.PlayShotCameraRecoil();
@@ -119,33 +131,36 @@ public class ShotOrchestrator : MonoBehaviour
             gunVisuals.PlayShotVisuals(shotType);
 
         if (weaponHitscan == null)
-            return false;
+            return BuildResult(shotType, ShotOutcome.Miss, Vector3.zero);
 
         if (weaponHitscan.TryGetWeakPointHit(out WeakPoint weakPoint, out RaycastHit hitWeak))
         {
-            if (weakPointResolver != null)
-                return weakPointResolver.ResolveWeakPointHit(weakPoint, shotType, hitWeak.collider.name);
+            if (weakPointResolver == null)
+                return BuildResult(shotType, ShotOutcome.Miss, hitWeak.point);
 
-            return false;
+            ShotOutcome outcome = weakPointResolver.ResolveWeakPointHit(weakPoint, shotType, hitWeak.collider.name);
+            return BuildResult(shotType, outcome, hitWeak.point, weakPoint.GetAccuracy(weaponHitscan.AimRay), weakPoint.OwnerCentre);
         }
 
         if (weaponHitscan.TryGetShootableTargetHit(out ShootableTarget target, out RaycastHit targetHit))
         {
-            return target.ResolveHit(shotType);
+            ShotOutcome outcome = target.ResolveHit(shotType) ? ShotOutcome.ShootableTargetHit : ShotOutcome.WrongAmmo;
+            return BuildResult(shotType, outcome, targetHit.point);
         }
 
         if (weaponHitscan.TryGetDamageableHit(out IDamageable damageable, out RaycastHit damageHit))
         {
+            // shifted so capturing stagger state BEFORE damage
+            bool wasStaggered = damageable is EnemyStagger stagger && stagger.IsStaggered;
+
             damageable.TakeDamage(new DamageInfo());
-            //the previous gameObject.GetComponent system relies too heavily on enemy stagger
-            //essentially anything that doesn't have the script, ie the ghost minions
-            //will throw a silent ShotOrchestrator error
-            if (damageable is EnemyStagger enemyStagger && enemyStagger.IsStaggered) return false;
-            return true; 
+
+            return BuildResult(shotType, wasStaggered ? ShotOutcome.EnemyHitStaggered : ShotOutcome.EnemyHit, damageHit.point);
         }
 
         weaponHitscan.LogWorldHitOrMiss();
-        return false;
+        return BuildResult(shotType, ShotOutcome.Miss, Vector3.zero);
+
     }
 
     private System.Collections.IEnumerator DelayedAutoReload()
