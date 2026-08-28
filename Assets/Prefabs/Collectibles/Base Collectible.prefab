@@ -11,8 +11,6 @@ GameObject:
   - component: {fileID: 2406488627202122064}
   - component: {fileID: 8537647096630367776}
   - component: {fileID: 4729201623484262996}
-  - component: {fileID: 345798100693208773}
-  - component: {fileID: 3243387333272717265}
   m_Layer: 8
   m_Name: Key
   m_TagString: Untagged
@@ -28,13 +26,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1989797523901916598}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.6603399, y: 0.6603399, z: 0.2528859, w: 0.2528859}
-  m_LocalPosition: {x: 0, y: 0.0126, z: 0}
-  m_LocalScale: {x: 0.62523, y: 0.62523, z: 0.62523}
+  m_LocalRotation: {x: 0.2588186, y: -0, z: -0, w: 0.965926}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4266959299686548479}
-  m_LocalEulerAnglesHint: {x: 0, y: 138.09, z: 90}
+  m_Father: {fileID: 7402720889618364449}
+  m_LocalEulerAnglesHint: {x: 30, y: 0, z: 0}
 --- !u!33 &8537647096630367776
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -93,54 +91,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &345798100693208773
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1989797523901916598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Outline
-  outlineMode: 3
-  outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 10
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
---- !u!114 &3243387333272717265
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1989797523901916598}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8283e6e80b2870149bed84f51959e99e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RotateEffect
-  rotateLocalXSpeed: 0
-  rotateLocalYSpeed: 0
-  rotateLocalZSpeed: 0
-  rotateWorldXSpeed: 0
-  rotateWorldYSpeed: 0
-  rotateWorldZSpeed: 0
-  floatLocalXAmplitude: 0
-  floatLocalXFrequency: 0
-  floatLocalYAmplitude: 0
-  floatLocalYFrequency: 0
-  floatLocalZAmplitude: 0
-  floatLocalZFrequency: 0
-  floatWorldXAmplitude: 0
-  floatWorldXFrequency: 0
-  floatWorldYAmplitude: 0
-  floatWorldYFrequency: 0
-  floatWorldZAmplitude: 0
-  floatWorldZFrequency: 0
 --- !u!1 &4245117009066482222
 GameObject:
   m_ObjectHideFlags: 0
@@ -168,7 +118,7 @@ Transform:
   m_GameObject: {fileID: 4245117009066482222}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.39200002, z: 0}
+  m_LocalPosition: {x: 0, y: 0.593, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -187,8 +137,8 @@ Light:
   m_Color: {r: 1, g: 0.49188858, b: 0, a: 1}
   m_Intensity: 0.18
   m_Range: 0.81
-  m_SpotAngle: 96.60463
-  m_InnerSpotAngle: 21.80208
+  m_SpotAngle: 83.221405
+  m_InnerSpotAngle: 22.917286
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
     m_Type: 0
@@ -301,7 +251,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2566777298588791928}
-  - {fileID: 2406488627202122064}
+  - {fileID: 7402720889618364449}
   - {fileID: 4045262384183750877}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -333,7 +283,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.3, y: 0.3, z: 0.3}
-  m_Center: {x: 0.00091159344, y: 0.09084135, z: 0.02477841}
+  m_Center: {x: 0.00091159344, y: 0.21, z: 0.02477841}
 --- !u!114 &1346632394192855191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -354,7 +304,89 @@ MonoBehaviour:
     completeText: 
     snapshotImage: {fileID: 0}
   pickupDialogue: {fileID: 1390969595278299323, guid: 2d2be56983b409f4a9495f642be1f88a, type: 3}
-  outline: {fileID: 345798100693208773}
+  outline: {fileID: 0}
+--- !u!1 &8603326914630054811
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7402720889618364449}
+  - component: {fileID: 7750715035344091652}
+  - component: {fileID: 6196358295975178780}
+  m_Layer: 0
+  m_Name: ItemDisplay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7402720889618364449
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8603326914630054811}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.221, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2406488627202122064}
+  m_Father: {fileID: 4266959299686548479}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7750715035344091652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8603326914630054811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8283e6e80b2870149bed84f51959e99e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RotateEffect
+  rotateLocalXSpeed: 0
+  rotateLocalYSpeed: 30
+  rotateLocalZSpeed: 0
+  rotateWorldXSpeed: 0
+  rotateWorldYSpeed: 0
+  rotateWorldZSpeed: 0
+  floatLocalXAmplitude: 0
+  floatLocalXFrequency: 0
+  floatLocalYAmplitude: 0
+  floatLocalYFrequency: 0
+  floatLocalZAmplitude: 0
+  floatLocalZFrequency: 0
+  floatWorldXAmplitude: 0
+  floatWorldXFrequency: 0
+  floatWorldYAmplitude: 0
+  floatWorldYFrequency: 0
+  floatWorldZAmplitude: 0
+  floatWorldZFrequency: 0
+--- !u!114 &6196358295975178780
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8603326914630054811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 3
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 10
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1001 &4483041374416905633
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -369,7 +401,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2137503630877807065, guid: 35084b8e086c96541baa1c0869b7fd3d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.165
+      value: 0.426
       objectReference: {fileID: 0}
     - target: {fileID: 2137503630877807065, guid: 35084b8e086c96541baa1c0869b7fd3d, type: 3}
       propertyPath: m_LocalPosition.z
