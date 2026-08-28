@@ -52,8 +52,8 @@ public class EnemyBehaviour : MonoBehaviour
 
     void Update()
     {
-        StateControl();
         OnlyChaseIfAttackReadied();
+        StateControl();
         if (animator != null) Animations();
     }
     void StateControl()
@@ -64,6 +64,8 @@ public class EnemyBehaviour : MonoBehaviour
             case BehaviourState.Idling:
                 if (PlayerInAggroRange() && permitEngage) behaviourState = BehaviourState.Chasing;
                 else if (IsStunned()) DoStun();
+                if (!AttackReady() && AttackEnabled() && PlayerInAttackRange()) behaviourState = BehaviourState.Waiting;
+                else if (AttackReady() && PlayerInAttackRange()) DoAttack();
                 return;
             case BehaviourState.Chasing:
                 LookAtPlayer();
@@ -86,7 +88,7 @@ public class EnemyBehaviour : MonoBehaviour
                 LookAtPlayer();
                 if (AttackReady() && PlayerInAttackRange()) DoAttack();
                 else if (IsStunned()) DoStun();
-                else if (AttackReady() || !PlayerInAttackRange()) behaviourState = BehaviourState.Chasing;
+                else if ((AttackReady() || !PlayerInAttackRange()) && chasePlayer) behaviourState = BehaviourState.Chasing;
                 else if (!AttackEnabled()) behaviourState = BehaviourState.Idling;
                 return;
             case BehaviourState.Stunned:
@@ -103,7 +105,7 @@ public class EnemyBehaviour : MonoBehaviour
     bool permitEngage = true;
     void OnlyChaseIfAttackReadied()
     {
-        if (onlyChaseIfAttackReady && !AttackReady()) permitEngage = false;
+        if ((onlyChaseIfAttackReady && !AttackReady()) || !chasePlayer) permitEngage = false;
         else permitEngage = true;
     }
     void LookAtPlayer()
@@ -161,7 +163,7 @@ public class EnemyBehaviour : MonoBehaviour
     }
     void DoSpawn()
     {
-        if (PlayerInAggroRange()) behaviourState = BehaviourState.Chasing;
+        if (PlayerInAggroRange() && permitEngage) behaviourState = BehaviourState.Chasing;
         else behaviourState = BehaviourState.Idling;
         if (stagger != null && !stagger.canBeHit) stagger.canBeHit = true;
         if (debugMode) Debug.Log($"[{this}] Spawned.");
