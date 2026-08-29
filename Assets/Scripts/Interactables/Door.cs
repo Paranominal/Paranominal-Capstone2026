@@ -118,6 +118,8 @@ public class Door : MonoBehaviour, IInteractable
 
     public void TryDoor()
     {
+        Debug.Log("openpls");
+        
         if (unlocked)
         {
             if (state == DoorState.Open)
