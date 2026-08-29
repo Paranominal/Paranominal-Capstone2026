@@ -13,6 +13,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     [HideInInspector] public bool canBeHit = true;
     private bool isStaggered = false;
     [SerializeField] private int hitsToStagger = 2;
+    [SerializeField] private float timeBeforeBarDrain = 0.4f;
     public int HitsToStagger => hitsToStagger;
     [SerializeField] private bool stunOnWindup = true;
     [Range(0,2)]
@@ -38,6 +39,12 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     //     knockback = GetComponent<EnemyKnockback>();
     //     if (knockback == null) knockback = GetComponentInParent<EnemyKnockback>();
     // }
+
+    // Michael edit (spawn-visual-fix): hide stagger bar in Awake so it's never visible on spawn.
+    private void Awake()
+    {
+        if (staggerBar != null) staggerBar.gameObject.SetActive(false);
+    }
 
     void Start()
     {
@@ -113,6 +120,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     private Color[] cachedColors;
     private bool isInitialized;
 
+    // commented out because it gets overriden by animations!
     // private void InitializeColor()
     // {
     //     if (isInitialized) return;
@@ -165,6 +173,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
 
         // if (knockback != null) knockback.ApplyKnockback();
         damageTaken++;
+        currentRecoveryBuffer = timeBeforeBarDrain;
         if (damageTaken >= AdjustedHitsToStagger()) TriggerStagger();
     }
 
@@ -177,11 +186,13 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         else return hitsToStagger;
     }
 
+    float currentRecoveryBuffer = 0;
     private void StaggerBar()
     {
         // if (isStaggered) staggerBar.enabled = false;
         // else 
-        if (damageTaken > 0) damageTaken -= Time.deltaTime * staggerResistance;
+        if (currentRecoveryBuffer > 0) currentRecoveryBuffer -= Time.deltaTime;
+        else if (damageTaken > 0) damageTaken -= Time.deltaTime * staggerResistance;
         else damageTaken = 0;
         if (staggerBar.value == 0) staggerBar.gameObject.SetActive(false);
         else staggerBar.gameObject.SetActive(true);

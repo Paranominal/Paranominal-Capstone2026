@@ -15,6 +15,7 @@ public class EnemyAttack_Melee : EnemyAttack
     [SerializeField] private float coolDownTime = 2f;
     [Tooltip("Wind Up time in Seconds")]
     public float windUpTime = 1f;
+    [SerializeField] private SpriteRenderer windupIndicator;
     [SerializeField] private SpriteRenderer attackIndicator;
     [Header("Damage Field")]
     [SerializeField] private GameObject damageFieldPrefab;
@@ -23,9 +24,15 @@ public class EnemyAttack_Melee : EnemyAttack
     [Tooltip("Number of seconds the Damage Field persists after appearing")]
     [SerializeField] private float damageWindow = 1f;
     // [SerializeField] private bool doInterrupt = true;
+    // Michael edit (spawn-visual-fix): hide indicator in Awake so it's never visible on spawn.
+    void Awake()
+    {
+        SetWindupIndicator(false);
+        SetAttackIndicator(false);
+    }
+
     void Start()
     {
-        SetAttackIndicator(false);
     }
     public void InitiateAttack()
     {
@@ -37,6 +44,7 @@ public class EnemyAttack_Melee : EnemyAttack
     IEnumerator WindUp()
     {
         attackState = AttackState.WindUp;
+        SetWindupIndicator(true);
         SetAttackIndicator(true);
         // yield return new WaitForSeconds(windUpTime);
         while (currentWindUpTime > 0)
@@ -47,6 +55,7 @@ public class EnemyAttack_Melee : EnemyAttack
         DoDamageField();
         if (currentAttack != null && !currentAttack.attackComplete && !currentAttack.hitRegistered) StartCoroutine(WaitForAttackEnd());
         else DoCooldown();
+        SetWindupIndicator(false);
         SetAttackIndicator(false);
     }
     
@@ -79,9 +88,13 @@ public class EnemyAttack_Melee : EnemyAttack
         currentAttack = Instantiate(damageFieldPrefab, transform.position + (transform.forward * attackRange / 2) + (Vector3.up * damageFieldHeight * 0.5001f), transform.rotation).GetComponent<DamageField>();
         currentAttack.DoDamageField(damage, damageWindow, attackRange/2, damageFieldHeight, targetLayers, this);
     }
+    private void SetWindupIndicator(bool warn)
+    {
+        if (windupIndicator) windupIndicator.enabled = warn;
+    }
     private void SetAttackIndicator(bool warn)
     {
-        attackIndicator.enabled = warn;
+        if (attackIndicator) attackIndicator.enabled = warn;
     }
     bool isInterrupted;
     public bool IsInterrupted => isInterrupted; 
@@ -89,6 +102,7 @@ public class EnemyAttack_Melee : EnemyAttack
     {
         StopCoroutine(WindUp());
         DoCooldown(2);
+        SetWindupIndicator(false);
         SetAttackIndicator(false);
     }
 }
