@@ -8,6 +8,8 @@ public class RoomEntryDetector : MonoBehaviour
     public int enemiesinside;
     private bool isFirstFrame = true;
 
+    public GameObject door;
+
     // Automatically finds the parent encounter manager when the object is first loaded.
     private void Awake()
     {
@@ -63,6 +65,11 @@ public class RoomEntryDetector : MonoBehaviour
             Debug.Log(enemiesinside + name);
 
             //destroy door here
+
+            if (enemiesinside == 0 && door != null)
+            {
+                Destroy(door);
+            }
         }
         
         // This ensures we only run our check during the first physics cycle
