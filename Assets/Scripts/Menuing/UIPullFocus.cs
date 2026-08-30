@@ -5,6 +5,7 @@ public class UIPullFocus : MonoBehaviour
 {
     [SerializeField] private EventSystem eventSystem;
     [SerializeField] private GameObject newFocus;
+    [SerializeField] private DialogueManager dialogueManager;   //i need to work out the code to detect which dialogue is being used in order to select the correct button to return to. alas.
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -18,11 +19,16 @@ public class UIPullFocus : MonoBehaviour
             }
         }
 
+        if (dialogueManager == null)
+        {
+            dialogueManager = FindAnyObjectByType<DialogueManager>();
+        }
+
     }
 
     public void PullFocus()
     {
         eventSystem.SetSelectedGameObject(newFocus);
-        //Debug.Log(eventSystem.currentSelectedGameObject);
+        Debug.Log(eventSystem.currentSelectedGameObject);
     }
 }
