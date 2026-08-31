@@ -1,0 +1,166 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6243507172271137879
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a6ca7c862d080b40b37e79656194198, type: 3}
+  m_Name: SharpenVolume
+  m_EditorClassIdentifier: Assembly-CSharp::SharpenVolume
+  active: 1
+  sharpness:
+    m_OverrideState: 1
+    m_Value: 0.08
+  sampleDistance:
+    m_OverrideState: 1
+    m_Value: 1
+--- !u!114 &-1139922521984664487
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fee72878a416da74a9e4afb9e6326f29, type: 3}
+  m_Name: DownsampleVolume
+  m_EditorClassIdentifier: Assembly-CSharp::DownsampleVolume
+  active: 1
+  pixelSize:
+    m_OverrideState: 1
+    m_Value: 2
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
+  m_Name: PostProcessingVolumeProfile
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.VolumeProfile
+  components:
+  - {fileID: -6243507172271137879}
+  - {fileID: 3061170837803561773}
+  - {fileID: 5008235498170778188}
+  - {fileID: 1623244102945971050}
+  - {fileID: -1139922521984664487}
+--- !u!114 &1623244102945971050
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a74af2af9565d14993de368041b88d7, type: 3}
+  m_Name: FearVignetteVolume
+  m_EditorClassIdentifier: Assembly-CSharp::FearVignetteVolume
+  active: 1
+  vignetteIntensity:
+    m_OverrideState: 1
+    m_Value: 0.43
+  vignetteSoftness:
+    m_OverrideState: 1
+    m_Value: 0.3
+  vignetteColor:
+    m_OverrideState: 1
+    m_Value: {r: 0.122641504, g: 0, b: 0.097157545, a: 1}
+  noiseIntensity:
+    m_OverrideState: 1
+    m_Value: 0.5
+  noiseScale:
+    m_OverrideState: 1
+    m_Value: 20
+  noiseSpeed:
+    m_OverrideState: 1
+    m_Value: 0.3
+  cycleDuration:
+    m_OverrideState: 1
+    m_Value: 10
+  blendMode:
+    m_OverrideState: 1
+    m_Value: 1
+--- !u!114 &3061170837803561773
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94aec13b8887f744590bba531570917e, type: 3}
+  m_Name: QuantisedDitherVolume
+  m_EditorClassIdentifier: Assembly-CSharp::QuantisedDitherVolume
+  active: 1
+  redSteps:
+    m_OverrideState: 1
+    m_Value: 16
+  greenSteps:
+    m_OverrideState: 1
+    m_Value: 16
+  blueSteps:
+    m_OverrideState: 1
+    m_Value: 16
+  effectStrength:
+    m_OverrideState: 1
+    m_Value: 0.6
+  ditherStrength:
+    m_OverrideState: 1
+    m_Value: 0.7
+  bayerSize:
+    m_OverrideState: 1
+    m_Value: 2
+  usePS1Matrix:
+    m_OverrideState: 1
+    m_Value: 1
+  usePerceivedBrightness:
+    m_OverrideState: 1
+    m_Value: 1
+  perceptualGamma:
+    m_OverrideState: 1
+    m_Value: 0.2
+--- !u!114 &5008235498170778188
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e4136331b92bf04580dc6abad2aedba, type: 3}
+  m_Name: CRTVolume
+  m_EditorClassIdentifier: Assembly-CSharp::CRTVolume
+  active: 1
+  curvature:
+    m_OverrideState: 1
+    m_Value: 10
+  vignetteWidth:
+    m_OverrideState: 1
+    m_Value: 70
+  scanlineIntensity:
+    m_OverrideState: 1
+    m_Value: 0
+  scanlineCount:
+    m_OverrideState: 1
+    m_Value: 196
+  cornerRadius:
+    m_OverrideState: 1
+    m_Value: 0.2
+  cornerSharpness:
+    m_OverrideState: 1
+    m_Value: 100
+  phosphorIntensity:
+    m_OverrideState: 1
+    m_Value: 0.089

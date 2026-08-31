@@ -5962,6 +5962,17 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!114 &372312951 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3429753814182246217, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+  m_PrefabInstance: {fileID: 8723667617613130007}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
 --- !u!4 &373940897 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8141083602662129258, guid: d7f415ebd2472d94a846903227830a11, type: 3}
@@ -9301,15 +9312,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4266959299686548479, guid: cb69832a300edd646af2cd37a342b55f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 57.11
+      value: 57.115
       objectReference: {fileID: 0}
     - target: {fileID: 4266959299686548479, guid: cb69832a300edd646af2cd37a342b55f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.92388135
+      value: 0.912
       objectReference: {fileID: 0}
     - target: {fileID: 4266959299686548479, guid: cb69832a300edd646af2cd37a342b55f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 19.257843
+      value: 19.399
       objectReference: {fileID: 0}
     - target: {fileID: 4266959299686548479, guid: cb69832a300edd646af2cd37a342b55f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -10136,10 +10147,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 105819745583116868, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-      propertyPath: labelPool
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 799491107579824861, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_Name
       value: Miriam Norwych
@@ -10156,6 +10163,10 @@ PrefabInstance:
       propertyPath: dialogueManager
       value: 
       objectReference: {fileID: 660388033}
+    - target: {fileID: 2756126848750675429, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: postProcessVolume
+      value: 
+      objectReference: {fileID: 372312951}
     - target: {fileID: 3769110204529532494, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -10177,7 +10188,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4866703231690206579, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-      propertyPath: 'm_Cameras.Array.data[1]'
+      propertyPath: 'm_Cameras.Array.data[2]'
       value: 
       objectReference: {fileID: 8723667617613130008}
     - target: {fileID: 5181015595577067208, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
@@ -10218,18 +10229,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5181015595577067208, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5990457673979546620, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5990457673979546620, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5990457673979546620, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6913672582733860919, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
@@ -19395,17 +19394,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 355507da6e9a0ca419d0d8d11a0ff80c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInputReader
---- !u!114 &1539268849 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 715327910090208011, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-  m_PrefabInstance: {fileID: 721273275}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1539268823}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 223291d1c9e1d6348aa7c2477011f387, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
 --- !u!43 &1542962729
 Mesh:
   m_ObjectHideFlags: 0
@@ -30408,10 +30396,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 952096367421499217, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: raycastMask.m_Bits
-      value: 516023
-      objectReference: {fileID: 0}
     - target: {fileID: 1704071766544820172, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -30452,14 +30436,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4328504843176614423, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: scoreManager
-      value: 
-      objectReference: {fileID: 1539268849}
-    - target: {fileID: 7944320556625297270, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: labelPrefab
-      value: 
-      objectReference: {fileID: 2553725025826167387, guid: 33af256de2b11d64099f54fc28b54945, type: 3}
     - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: playerInput
       value: 

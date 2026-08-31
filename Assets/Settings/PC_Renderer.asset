@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4990091538380135940
+--- !u!114 &-6917648197494371644
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,18 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: FullScreenPassRendererFeature
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FullScreenPassRendererFeature
+  m_Script: {fileID: 11500000, guid: 29960b970f207d94189162dda63c5de9, type: 3}
+  m_Name: FearVignetteRendererFeature
+  m_EditorClassIdentifier: Assembly-CSharp::FearVignetteRendererFeature
   m_Active: 1
-  injectionPoint: 600
-  fetchColorBuffer: 1
-  requirements: 4
-  passMaterial: {fileID: 2100000, guid: 259b1eb3cab294e4f9902c1af2592769, type: 2}
-  passIndex: 0
-  bindDepthStencilAttachment: 0
-  m_Version: 1
---- !u!114 &-3646260057447883949
+  shader: {fileID: 4800000, guid: 2fd73c7f4202c2844aa4b47f69e48ae9, type: 3}
+  defaultSettings:
+    vignetteIntensity: 0
+    vignetteSoftness: 0.3
+    vignetteColor: {r: 0, g: 0, b: 0, a: 1}
+    noiseIntensity: 0
+    noiseScale: 6
+    noiseSpeed: 0.3
+    cycleDuration: 10
+    blendMode: 0
+--- !u!114 &-6632190853482328111
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -29,18 +32,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: FullScreenPassRendererFeature
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FullScreenPassRendererFeature
+  m_Script: {fileID: 11500000, guid: 7290ef08541c5fa408ab1b4428895aa3, type: 3}
+  m_Name: QuantisedDitherRendererFeature
+  m_EditorClassIdentifier: Assembly-CSharp::QuantisedDitherRendererFeature
   m_Active: 1
-  injectionPoint: 600
-  fetchColorBuffer: 1
-  requirements: 4
-  passMaterial: {fileID: 2100000, guid: 776aec6d5fe099e4cab658fb3609c11d, type: 2}
-  passIndex: 0
-  bindDepthStencilAttachment: 0
-  m_Version: 1
---- !u!114 &-88408094934999040
+  shader: {fileID: 4800000, guid: ea1da7bdb18994a49b465e6678af1f0b, type: 3}
+  defaultSettings:
+    redSteps: 8
+    greenSteps: 8
+    blueSteps: 8
+    effectStrength: 1
+    ditherStrength: 1
+    bayerSize: 16
+    usePS1Matrix: 0
+    usePerceivedBrightness: 0
+    perceptualGamma: 0.5
+--- !u!114 &-4580449277675019056
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -49,17 +56,36 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: FullScreenPassRendererFeature
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FullScreenPassRendererFeature
+  m_Script: {fileID: 11500000, guid: 7d083f32a4ce3b84ea1c6828d3cd38cb, type: 3}
+  m_Name: SharpenRendererFeature
+  m_EditorClassIdentifier: Assembly-CSharp::SharpenRendererFeature
   m_Active: 1
-  injectionPoint: 600
-  fetchColorBuffer: 1
-  requirements: 4
-  passMaterial: {fileID: 2100000, guid: 15f797f75bbc0044ca5fa1230a302cbf, type: 2}
-  passIndex: 0
-  bindDepthStencilAttachment: 1
-  m_Version: 1
+  shader: {fileID: 4800000, guid: d826d02e526355d4dbe6480afca3d66c, type: 3}
+  defaultSettings:
+    sharpness: 0.25
+    sampleDistance: 1
+--- !u!114 &-4023522189989383855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d784d4e8cc601ce41a0f58993a3bc49a, type: 3}
+  m_Name: CRTRendererFeature
+  m_EditorClassIdentifier: Assembly-CSharp::CRTRendererFeature
+  m_Active: 1
+  shader: {fileID: 4800000, guid: 21ae8d357c065e8498d28a80d8726f54, type: 3}
+  defaultSettings:
+    curvature: 1
+    vignetteWidth: 30
+    scanlineIntensity: 0.3
+    scanlineCount: 300
+    cornerRadius: 0.05
+    cornerSharpness: 20
+    phosphorIntensity: 0.15
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,12 +112,12 @@ MonoBehaviour:
     probeVolumeBlendStatesCS: {fileID: 7200000, guid: b9a23f869c4fd45f19c5ada54dd82176, type: 3}
   m_RendererFeatures:
   - {fileID: 7833122117494664109}
-  - {fileID: 1065050478797097803}
-  - {fileID: 1692648957279621833}
-  - {fileID: -88408094934999040}
-  - {fileID: -4990091538380135940}
-  - {fileID: -3646260057447883949}
-  m_RendererFeatureMap: ad6b866f10d7b46c4b8b8f80c4d1c70ec9521634427f7d170060215a4ee9c5fefc612b3a2fa2bfba539b1fe5cbe165cd
+  - {fileID: -6632190853482328111}
+  - {fileID: -4580449277675019056}
+  - {fileID: 5538159499667830741}
+  - {fileID: -6917648197494371644}
+  - {fileID: -4023522189989383855}
+  m_RendererFeatureMap: ad6b866f10d7b46cd14f97bf8eb9f5a3d0647c74a6f96ec0d5f727f7b87edb4cc40a3a9b9d93ff9f51f1c7bfe29329c8
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -120,7 +146,7 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 0
---- !u!114 &1065050478797097803
+--- !u!114 &5538159499667830741
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -129,37 +155,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: FullScreenPassRendererFeature
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FullScreenPassRendererFeature
+  m_Script: {fileID: 11500000, guid: f62fb68e62914504291e0dd856643c48, type: 3}
+  m_Name: DownsampleRendererFeature
+  m_EditorClassIdentifier: Assembly-CSharp::DownsampleRendererFeature
   m_Active: 1
-  injectionPoint: 600
-  fetchColorBuffer: 1
-  requirements: 4
-  passMaterial: {fileID: 2100000, guid: d2c59686c1964744caf2c105a61e4b2e, type: 2}
-  passIndex: 0
-  bindDepthStencilAttachment: 1
-  m_Version: 1
---- !u!114 &1692648957279621833
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: FullScreenPassRendererFeature
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FullScreenPassRendererFeature
-  m_Active: 1
-  injectionPoint: 600
-  fetchColorBuffer: 1
-  requirements: 11
-  passMaterial: {fileID: 2100000, guid: 80057439c9e181042b86a66e3841e27f, type: 2}
-  passIndex: 0
-  bindDepthStencilAttachment: 0
-  m_Version: 1
+  shader: {fileID: 4800000, guid: f115d8cc24cf19b4783ed43bc62af2aa, type: 3}
+  defaultSettings:
+    pixelSize: 4
 --- !u!114 &7833122117494664109
 MonoBehaviour:
   m_ObjectHideFlags: 0
