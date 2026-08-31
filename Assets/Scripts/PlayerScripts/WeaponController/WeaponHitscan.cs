@@ -8,6 +8,7 @@ public class WeaponHitscan : MonoBehaviour
 
     [Header("Hitscan")]
     [SerializeField] private LayerMask weakPointLayer;
+    [SerializeField] private LayerMask ignoreLayer;
     [SerializeField] private float rayDistance = 1000f;
 
     private Raycaster raycaster;
@@ -59,7 +60,8 @@ public class WeaponHitscan : MonoBehaviour
         }
 
         Ray ray = BuildAimRay();
-        bool hasHit = Physics.Raycast(ray, out targetHit, rayDistance, ~0, QueryTriggerInteraction.Collide);
+        LayerMask mask = ~ignoreLayer;
+        bool hasHit = Physics.Raycast(ray, out targetHit, rayDistance, mask, QueryTriggerInteraction.Collide);
         if (!hasHit)
             return false;
 
@@ -82,8 +84,8 @@ public class WeaponHitscan : MonoBehaviour
         }
 
         Ray ray = BuildAimRay();
-        
-        bool hasHit = Physics.Raycast(ray, out damageableHit, rayDistance, ~0, QueryTriggerInteraction.Collide);
+        LayerMask mask = ~ignoreLayer;
+        bool hasHit = Physics.Raycast(ray, out damageableHit, rayDistance, mask, QueryTriggerInteraction.Collide);
         if (!hasHit)
             return false;
 

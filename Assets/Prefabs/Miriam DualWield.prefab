@@ -224,6 +224,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3366863352943741122}
     m_Modifications:
+    - target: {fileID: 1124352296754514323, guid: c6f92026b405daa41967f2e844ea765c, type: 3}
+      propertyPath: ignoreLayer.m_Bits
+      value: 262144
+      objectReference: {fileID: 0}
     - target: {fileID: 1734549147116464373, guid: c6f92026b405daa41967f2e844ea765c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.15
@@ -328,6 +332,10 @@ PrefabInstance:
       propertyPath: gunReturnTime
       value: 0.3
       objectReference: {fileID: 0}
+    - target: {fileID: 5110911200105199445, guid: c6f92026b405daa41967f2e844ea765c, type: 3}
+      propertyPath: cameraRecoilController
+      value: 
+      objectReference: {fileID: 3120563633708356377}
     - target: {fileID: 5357353307771774393, guid: c6f92026b405daa41967f2e844ea765c, type: 3}
       propertyPath: silverBarrelEnabled
       value: 0
@@ -452,6 +460,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1449982339782834691, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: positioner
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1642531195737763663, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: weaponEvents
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1704120311507834775, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: weaponEvents
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1704120311507834775, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+      propertyPath: weaponFiringLogic
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1822622895965474925, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
@@ -656,6 +676,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1037853406379208950, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
   m_PrefabInstance: {fileID: 2941698508022489520}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3120563633708356377 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 260499741174559401, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
+  m_PrefabInstance: {fileID: 2941698508022489520}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26610a684dd371147bda96f749b28ec2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraRecoilController
 --- !u!114 &4474451980135714559 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1642531195737763663, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
@@ -790,7 +821,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 273836561670073298, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -810,11 +841,11 @@ PrefabInstance:
       objectReference: {fileID: 6097707595428842775}
     - target: {fileID: 1553545264737492289, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1553545264737492289, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2169486006195455376, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1010,6 +1041,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3366863352943741122}
     m_Modifications:
+    - target: {fileID: 1124352296754514323, guid: c6f92026b405daa41967f2e844ea765c, type: 3}
+      propertyPath: ignoreLayer.m_Bits
+      value: 262144
+      objectReference: {fileID: 0}
     - target: {fileID: 1734549147116464373, guid: c6f92026b405daa41967f2e844ea765c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.15
