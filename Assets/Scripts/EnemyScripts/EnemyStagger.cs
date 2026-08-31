@@ -74,6 +74,8 @@ public class EnemyStagger : MonoBehaviour, IDamageable
 
     int cachedCurrentWeakpoint;
 
+    public bool staticenemy;
+
     private IEnumerator DoStagger() //handles duration and recovery
     {      
         EnterStagger();  
@@ -81,7 +83,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         {
             if (weakPointManager.currentWeakpoint > cachedCurrentWeakpoint) ExtendStagger();
             if (debugMode) Debug.Log($"[{this}] Stagger Time Remaining for {gameObject}: {currentStaggerTimeRemaining}");
-            //currentStaggerTimeRemaining -= Time.deltaTime;
+            if (!staticenemy) currentStaggerTimeRemaining -= Time.deltaTime;
             yield return null;
         }
         ExitStagger();

@@ -79,6 +79,9 @@ public class GhostBehaviour_PrototypeAttack : EnemyBehaviourBase
         Die();
     }
 
+    private float timer;
+
+
     //update the ghost state each frame
     private void Update()
     {
@@ -86,18 +89,50 @@ public class GhostBehaviour_PrototypeAttack : EnemyBehaviourBase
         if (IsPaused || IsDying) return;
         if (!HasVisionTarget) return;
 
-        //always chase when a vision target exists (room-based encounters)
+        if (tutorialghost)
+        {
+            timer += Time.deltaTime; 
+        }
         PerformChase();
+
+        //always chase when a vision target exists (room-based encounters)
+
     }
+
+    [SerializeField] bool tutorialghost;
+
+    Transform player;
+    Vector3 dirFromPlayer;
+    Vector3 followPos;
 
     //trail the player at a safe distance
     private void PerformChase()
     {
-        Transform player = VisionTarget;
-        Vector3 dirFromPlayer = (transform.position - player.position).normalized;
-        Vector3 followPos = player.position + (dirFromPlayer * keepDistance) + (Vector3.up * floatHeight);
 
-        MoveTowards(followPos, followSpeed);
+        if (tutorialghost)
+        {
+            if (timer >2)
+            {
+                player = VisionTarget;
+                followPos = player.position + new Vector3(Random.Range(-50, 50), Random.Range(-50, 50), 0) + (Vector3.up * floatHeight);
+
+                timer = 0;
+            }
+            
+
+            MoveTowards(followPos, followSpeed * 10);
+        }
+        else
+        {
+            player = VisionTarget;
+            dirFromPlayer = (transform.position - player.position).normalized;
+            followPos = player.position + (dirFromPlayer * keepDistance) + (Vector3.up * floatHeight);
+
+            MoveTowards(followPos, followSpeed);
+        }
+            
+
+        
         LookAt(player.position);
     }
 
