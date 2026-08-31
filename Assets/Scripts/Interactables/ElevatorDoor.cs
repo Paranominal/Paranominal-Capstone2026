@@ -2,15 +2,28 @@ using UnityEngine;
 
 public class ElevatorDoor : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField] private Animator doorAnimator;
+    [SerializeField] private string playerTag = "Player";
+
     void Start()
     {
-        
+        if (doorAnimator == null)
+            doorAnimator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnTriggerEnter(Collider other)
     {
-        
+        if (other.CompareTag(playerTag))
+        {
+            doorAnimator.SetTrigger("open");
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag(playerTag))
+        {
+            doorAnimator.SetTrigger("close");
+        }
     }
 }
