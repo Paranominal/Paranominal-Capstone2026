@@ -1,10 +1,18 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LeaderboardUI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Transform entryContainer;
     [SerializeField] private LeaderboardEntryUI entryPrefab;
+    [SerializeField] private ScrollRect scrollRect;
+
+    private void Start()
+    {
+        PopulateLeaderboard();
+    }
 
     private void PopulateLeaderboard()
     {
@@ -29,5 +37,18 @@ public class LeaderboardUI : MonoBehaviour
             row.SetData(position, entry, entry == justAdded);
             position++;
         }
+
+        if (scrollRect != null)
+        {
+            StartCoroutine(ScrollToTopNextFrame());
+        }
+    }
+
+    private IEnumerator ScrollToTopNextFrame()
+    {
+        yield return null; // wait one full frame
+        LayoutRebuilder.ForceRebuildLayoutImmediate(entryContainer as RectTransform);
+        scrollRect.StopMovement();
+        scrollRect.verticalNormalizedPosition = 1f;
     }
 }

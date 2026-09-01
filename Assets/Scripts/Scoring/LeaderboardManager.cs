@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using UnityEditor;
 using UnityEngine;
 
 public class LeaderboardManager : MonoBehaviour
@@ -52,7 +51,8 @@ public class LeaderboardManager : MonoBehaviour
         }
 
         LeaderboardEntry entry = new LeaderboardEntry(playerName.Trim(), score, rank);
-        data.entries.Add(entry);
+        //insert at the start to keep the latest run at the top
+        data.entries.Insert(0, entry); 
 
         //keep only the highest entries in descending order
         data.entries = data.entries.OrderByDescending(e => e.score).Take(maxEntries).ToList();
