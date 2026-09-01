@@ -11,6 +11,7 @@ public class DialogueManager : MonoBehaviour
     public WeaponInputReader weaponInputReader;
     [Tooltip("Add this here to open grimoire after hitting continue on an pick-up dialogue!")]
     [SerializeField] GrimoireAnimManager grimoireAnimManager;
+    public Camera canvascam;
 
     void Start()
     {
@@ -19,6 +20,7 @@ public class DialogueManager : MonoBehaviour
     public void StartDialogue(GameObject pickupDialogue) // public so CollectibleObject can activate it
     {
         UpdateDialogue(pickupDialogue);
+        canvascam.enabled = true;
         //Time.timeScale = 0f; //pause game
         dialogueCanvas.SetActive(true); //activate UI
         if (playerInputReader != null) playerInputReader.canMove = false;
@@ -41,6 +43,7 @@ public class DialogueManager : MonoBehaviour
         dialogueCanvas.gameObject.SetActive(false); //deactivate dialogue
         if (grimoireAnimManager != null && openGrimoire) grimoireAnimManager.OpenFromDialogue(); //open grimoire
         // Time.timeScale = 1f; //resume game
+        canvascam.enabled = false;
     }
 
     public void UpdateDialogue(GameObject pickupDialogue)

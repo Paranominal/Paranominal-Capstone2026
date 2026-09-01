@@ -13,6 +13,13 @@ public class WeaponFiringLogic : MonoBehaviour
     [Header("Misfire")]
     [SerializeField] private float misfireCooldown = 1f;
 
+    
+    public GameObject msifiretext, reloadtext;
+    public GameObject dialoguemanager;
+    [SerializeField] private Inventory inventory;
+
+    private bool hasmisfired, hasreloaded;
+
     private bool isReloading;
     private bool onCooldown;
     private bool onMisfireCooldown;
@@ -74,6 +81,7 @@ public class WeaponFiringLogic : MonoBehaviour
 
     private IEnumerator ReloadRoutine()
     {
+        
         if (isReloading)
             yield break;
 
@@ -89,6 +97,15 @@ public class WeaponFiringLogic : MonoBehaviour
         currentAmmo = magazineSize;
         reloadTimeRemaining = 0f;
         isReloading = false;
+
+        if (!hasreloaded)
+        {
+
+            dialoguemanager.GetComponent<DialogueManager>().StartDialogue(reloadtext);
+
+            //inventory.Add(this.gameObject, true, text.GetComponent<CollectibleObject>().pickupDialogue);
+            hasreloaded=true;
+        } 
     }
 
     private IEnumerator ShotCooldownRoutine()
@@ -100,9 +117,19 @@ public class WeaponFiringLogic : MonoBehaviour
 
     private IEnumerator MisfireCooldownRoutine()
     {
+        
         onMisfireCooldown = true;
         yield return new WaitForSeconds(misfireCooldown);
         onMisfireCooldown = false;
+
+        if (!hasmisfired)
+        {
+
+            dialoguemanager.GetComponent<DialogueManager>().StartDialogue(msifiretext);
+
+            //inventory.Add(this.gameObject, true, text.GetComponent<CollectibleObject>().pickupDialogue);
+            hasmisfired=true;
+        } 
     }
 
     public void CancelActiveState()
