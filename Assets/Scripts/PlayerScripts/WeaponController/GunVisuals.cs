@@ -8,6 +8,8 @@ public class GunVisuals : MonoBehaviour
     [SerializeField] private Transform gunModel;
     [SerializeField] private SpriteRenderer ironMuzzleFlash;
     [SerializeField] private SpriteRenderer silverMuzzleFlash;
+    [SerializeField] private Animator gunAnimator;
+    [SerializeField] private Renderer[] gunPartRenderers;
 
     // Recoil and flash tuning values
     [Header("Weapon Model Recoil")]
@@ -17,15 +19,23 @@ public class GunVisuals : MonoBehaviour
     [SerializeField] private float gunReturnTime = 0.1f;
     [SerializeField] private float muzzleFlashDuration = 0.05f;
 
+    // Misfire animation and texture tuning values
+    [Header("Misfire Visuals")]
+    [SerializeField] private Material misfireMaterial;
+    [SerializeField] private float misfiresTextureChangeDuration = 0.2f;
+
     // Rest pose cache for the gun model
     // Kick animation always returns to these values to prevent drift over repeated shots
     private Vector3 gunRestLocalPosition;
     private Quaternion gunRestLocalRotation;
+    // Cache original materials for each renderer so they can be restored after texture changes
+    private Material[] originalMaterials;
 
     // Coroutine handles are kept so ongoing effects can be interrupted and restarted cleanly
     // This avoids stacked coroutines fighting over visibility or transform state
     private Coroutine muzzleFlashRoutine;
     private Coroutine gunKickRoutine;
+    private Coroutine textureChangeRoutine;
 
     private void Awake()
     {
@@ -33,11 +43,36 @@ public class GunVisuals : MonoBehaviour
         if (ironMuzzleFlash != null) ironMuzzleFlash.enabled = false;
         if (silverMuzzleFlash != null) silverMuzzleFlash.enabled = false;
 
+        // Auto-find gun model if not explicitly assigned
+        if (gunModel == null)
+        {
+            gunModel = GetComponent<Transform>();
+        }
+
         // Capture gun resting transform once at startup for recoil animation
         if (gunModel != null)
         {
             gunRestLocalPosition = gunModel.localPosition;
             gunRestLocalRotation = gunModel.localRotation;
+        }
+
+        // Cache the original materials from all gun part renderers so they can be restored after misfire texture changes
+        if (gunPartRenderers != null && gunPartRenderers.Length > 0)
+        {
+            originalMaterials = new Material[gunPartRenderers.Length];
+            for (int i = 0; i < gunPartRenderers.Length; i++)
+            {
+                if (gunPartRenderers[i] != null)
+                {
+                    originalMaterials[i] = gunPartRenderers[i].material;
+                }
+            }
+        }
+
+        // Find the animator if not explicitly assigned in inspector
+        if (gunAnimator == null)
+        {
+            gunAnimator = GetComponent<Animator>();
         }
     }
 
@@ -49,7 +84,50 @@ public class GunVisuals : MonoBehaviour
         PlayRecoil();
     }
 
-    private void PlayMuzzleFlash(WeakPointType shotType)
+    // Returns the muzzle flash duration
+    // Used to delay misfire texture/animation until after the muzzle flash completes
+    public float GetMuzzleFlashDuration()
+    {
+        return muzzleFlashDuration;
+    }
+
+    public float GetMisfireVisualsDuration()
+    {
+        return misfiresTextureChangeDuration;
+    }
+
+    // entry point called by misfire logic
+    // triggers animator animation and texture change for misfire feedback
+    public void PlayMisfireVisuals()
+    {
+        // Trigger the misfire animation in the animator
+        if (gunAnimator != null)
+        {
+            gunAnimator.SetTrigger("misfire");
+        }
+
+        // Change the gun part textures to indicate a misfire occurred
+        if (misfireMaterial != null && gunPartRenderers != null && gunPartRenderers.Length > 0)
+        {
+            // Interrupt any ongoing texture change to restart cleanly
+            if (textureChangeRoutine != null)
+                StopCoroutine(textureChangeRoutine);
+
+            textureChangeRoutine = StartCoroutine(TextureChangeRoutine());
+        }
+    }
+
+    // entry point called by reload logic
+    // triggers animator animation for reload feedback
+    public void PlayReloadAnimation()
+    {
+        if (gunAnimator != null)
+        {
+            gunAnimator.SetTrigger("reload");
+        }
+    }
+
+    public void PlayMuzzleFlash(WeakPointType shotType)
     {
         // Restart flash if a rapid shot occurs before previous flash finished (should only happen if firing faster than flash duration (which shouldn't ever happen, but just for redundancy sake??))
         if (muzzleFlashRoutine != null)
@@ -128,6 +206,33 @@ public class GunVisuals : MonoBehaviour
         gunModel.localRotation = gunRestLocalRotation;
     }
 
+    private IEnumerator TextureChangeRoutine()
+    {
+        if (gunPartRenderers == null || gunPartRenderers.Length == 0)
+            yield break;
+
+        // Swap each gun part to the misfire material counterpart to visually indicate the weapon misfired
+        for (int i = 0; i < gunPartRenderers.Length; i++)
+        {
+            if (gunPartRenderers[i] != null)
+            {
+                gunPartRenderers[i].material = misfireMaterial;
+            }
+        }
+
+        // Keep the misfire texture visible for the configured duration
+        yield return new WaitForSeconds(misfiresTextureChangeDuration);
+
+        // Restore the original materials for each part after the misfire effect concludes
+        for (int i = 0; i < gunPartRenderers.Length; i++)
+        {
+            if (gunPartRenderers[i] != null && originalMaterials != null && i < originalMaterials.Length && originalMaterials[i] != null)
+            {
+                gunPartRenderers[i].material = originalMaterials[i];
+            }
+        }
+    }
+
     public void SetVisualsVisible(bool visible)
     {
         if (!visible)
@@ -144,8 +249,27 @@ public class GunVisuals : MonoBehaviour
                 gunKickRoutine = null;
             }
 
+            // Stop any ongoing texture changes and restore original materials
+            if (textureChangeRoutine != null)
+            {
+                StopCoroutine(textureChangeRoutine);
+                textureChangeRoutine = null;
+            }
+
             if (ironMuzzleFlash != null) ironMuzzleFlash.enabled = false;
             if (silverMuzzleFlash != null) silverMuzzleFlash.enabled = false;
+
+            // Ensure the original materials are restored when visuals are disabled
+            if (gunPartRenderers != null)
+            {
+                for (int i = 0; i < gunPartRenderers.Length; i++)
+                {
+                    if (gunPartRenderers[i] != null && originalMaterials != null && i < originalMaterials.Length && originalMaterials[i] != null)
+                    {
+                        gunPartRenderers[i].material = originalMaterials[i];
+                    }
+                }
+            }
         }
 
         if (gunModel != null)
