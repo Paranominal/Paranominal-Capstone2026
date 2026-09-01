@@ -182,6 +182,7 @@ MonoBehaviour:
   gunVisuals: {fileID: 7805263806390814388}
   weaponStateController: {fileID: 2267303368116125607}
   postShotReloadDelay: 0.45
+  misfireEffectsDelay: 0.7
 --- !u!114 &2267303368116125607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216,6 +217,9 @@ MonoBehaviour:
   weakPointLayer:
     serializedVersion: 2
     m_Bits: 128
+  ignoreLayer:
+    serializedVersion: 2
+    m_Bits: 262144
   rayDistance: 20
 --- !u!114 &2958747480649630596
 MonoBehaviour:
@@ -232,6 +236,7 @@ MonoBehaviour:
   shootIronAction: {fileID: 1110478493490812807, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   shootSilverAction: {fileID: -4469930708225053851, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   reloadAction: {fileID: 9149243809506474783, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  canShoot: 1
 --- !u!114 &7805263806390814388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,11 +252,17 @@ MonoBehaviour:
   gunModel: {fileID: 5565441257704977131}
   ironMuzzleFlash: {fileID: 4763065678442171007}
   silverMuzzleFlash: {fileID: 4795959234687237012}
+  gunAnimator: {fileID: 0}
+  gunPartRenderers:
+  - {fileID: 0}
+  - {fileID: 0}
   gunKickOffset: {x: 0, y: 0.05, z: -0.6}
   gunKickUpRotationDegrees: 8
   gunKickTime: 0.1
   gunReturnTime: 0.3
   muzzleFlashDuration: 0.05
+  misfireMaterial: {fileID: 2100000, guid: af7b34866673c4749a715a903c27eaaf, type: 2}
+  misfiresTextureChangeDuration: 1
 --- !u!114 &8670980604454997217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -267,6 +278,7 @@ MonoBehaviour:
   magazineSize: 5
   reloadDuration: 2
   shotCooldown: 0.1
+  misfireCooldown: 1
 --- !u!114 &5823630955117093588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -282,8 +294,10 @@ MonoBehaviour:
   weaponEvents: {fileID: 46565326360291310}
   fireSource: {fileID: 4818359179771710617}
   reloadSource: {fileID: 582727642378340705}
+  misfireSource: {fileID: 4818359179771710617}
   shotgunFire: {fileID: 11400000, guid: fb3c274af03cb9b4e9cba33fb64a27b3, type: 2}
   shotgunReload: {fileID: 11400000, guid: abd7296a0353de749a28154b3aacc81d, type: 2}
+  shotgunMisfire: {fileID: 11400000, guid: a2e64c832bb3f8144bac75343ea8171e, type: 2}
 --- !u!82 &4818359179771710617
 AudioSource:
   m_ObjectHideFlags: 0
