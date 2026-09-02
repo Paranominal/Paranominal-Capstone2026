@@ -98,14 +98,14 @@ public class WeaponFiringLogic : MonoBehaviour
         reloadTimeRemaining = 0f;
         isReloading = false;
 
-        if (!hasreloaded)
+        /*if (!hasreloaded)
         {
 
             dialoguemanager.GetComponent<DialogueManager>().StartDialogue(reloadtext);
 
             //inventory.Add(this.gameObject, true, text.GetComponent<CollectibleObject>().pickupDialogue);
             hasreloaded=true;
-        } 
+        } */
     }
 
     private IEnumerator ShotCooldownRoutine()
@@ -122,14 +122,14 @@ public class WeaponFiringLogic : MonoBehaviour
         yield return new WaitForSeconds(misfireCooldown);
         onMisfireCooldown = false;
 
-        if (!hasmisfired)
+        /*if (!hasmisfired)
         {
 
             dialoguemanager.GetComponent<DialogueManager>().StartDialogue(msifiretext);
 
             //inventory.Add(this.gameObject, true, text.GetComponent<CollectibleObject>().pickupDialogue);
             hasmisfired=true;
-        } 
+        } */
     }
 
     public void CancelActiveState()

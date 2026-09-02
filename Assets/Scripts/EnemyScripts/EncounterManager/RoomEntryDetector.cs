@@ -1,3 +1,5 @@
+using System;
+using System.Threading;
 using UnityEngine;
 
 public class RoomEntryDetector : MonoBehaviour
@@ -5,11 +7,12 @@ public class RoomEntryDetector : MonoBehaviour
     [Header("References")]
     [SerializeField] private EnemyEncounterManager encounterManager;
 
-    public int enemiesinside;
+    public int enemiesinside =1;
     private bool isFirstFrame = true;
 
     public GameObject door;
 
+    private bool playerinside;
     // Automatically finds the parent encounter manager when the object is first loaded.
     private void Awake()
     {
@@ -31,6 +34,8 @@ public class RoomEntryDetector : MonoBehaviour
         {
             encounterManager.SetPlayerInRoom(true);
             Debug.Log($"{other.name} has entered the room!");
+
+            playerinside = true;
         }
 
         
@@ -48,6 +53,8 @@ public class RoomEntryDetector : MonoBehaviour
         {
             encounterManager.SetPlayerInRoom(false);
             Debug.Log($"{other.name} has exited the room!");
+
+            playerinside = false;
         }
 
         if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
@@ -58,6 +65,11 @@ public class RoomEntryDetector : MonoBehaviour
         
     }
 
+    private float buffertimer;
+
+
+    
+
     void FixedUpdate()
     {
         if (isFirstFrame == false)
@@ -66,21 +78,23 @@ public class RoomEntryDetector : MonoBehaviour
 
             //destroy door here
 
-            if (enemiesinside == 0 && door != null)
+            if (playerinside && enemiesinside == 0 && door != null)
             {
                 Destroy(door);
             }
         }
         
         // This ensures we only run our check during the first physics cycle
-        if (Time.timeSinceLevelLoad > 0)
+        if ( buffertimer > 0.1f)
         {
             isFirstFrame = false;
         }
 
+        if (playerinside)
+        {
+            enemiesinside = 0;
+        }
         
-
-        enemiesinside = 0;
 
         
     }
@@ -89,7 +103,7 @@ public class RoomEntryDetector : MonoBehaviour
     {
         
 
-        if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("Enemy") && playerinside)
         {
             enemiesinside++;
         }
@@ -101,6 +115,10 @@ public class RoomEntryDetector : MonoBehaviour
 
     private void Update()
     {
+        if (playerinside)
+        {
+            buffertimer += Time.deltaTime;
+        }
         
     }
 }
