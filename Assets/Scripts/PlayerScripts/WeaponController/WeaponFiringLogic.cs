@@ -62,7 +62,7 @@ public class WeaponFiringLogic : MonoBehaviour
         if (onMisfireCooldown)
             return;
 
-        StartCoroutine(MisfireCooldownRoutine());
+        //StartCoroutine(MisfireCooldownRoutine());
     }
 
     public bool TryStartReload()
