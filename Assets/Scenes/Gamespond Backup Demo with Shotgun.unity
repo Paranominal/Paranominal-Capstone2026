@@ -10128,6 +10128,17 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!114 &721042117 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3971937404206549046, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+  m_PrefabInstance: {fileID: 721273275}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4bc96a8fbc847d40af5c1c000ee6f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponInputReader
 --- !u!1001 &721273275
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10136,9 +10147,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 105819745583116868, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-      propertyPath: labelPool
+    - target: {fileID: 258671244724854170, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: m_Name
+      value: TimeoutToggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 449872566838055685, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: m_IsOn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 449872566838055685, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 449872566838055685, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
+      objectReference: {fileID: 851918503}
+    - target: {fileID: 449872566838055685, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ToggleTimeout
+      objectReference: {fileID: 0}
+    - target: {fileID: 680692097326499936, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 799491107579824861, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_Name
@@ -10180,6 +10211,10 @@ PrefabInstance:
       propertyPath: 'm_Cameras.Array.data[1]'
       value: 
       objectReference: {fileID: 8723667617613130008}
+    - target: {fileID: 5128326797947026050, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: m_text
+      value: Timeout
+      objectReference: {fileID: 0}
     - target: {fileID: 5181015595577067208, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_LocalPosition.x
       value: 11.84
@@ -10220,6 +10255,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5821519190451559677, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5990457673979546620, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -10232,11 +10271,19 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6767116771669883792, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6913672582733860919, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6913672582733860919, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9145641593726514729, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
@@ -10992,6 +11039,17 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!114 &851918503 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+  m_PrefabInstance: {fileID: 8723667617613130007}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be736ba276ce9ed46a9a18a2afde08c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!43 &857412295
 Mesh:
   m_ObjectHideFlags: 0
@@ -20663,17 +20721,6 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
---- !u!114 &1606109823 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7731953312378505995, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-  m_PrefabInstance: {fileID: 721273275}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4bc96a8fbc847d40af5c1c000ee6f72, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponInputReader
 --- !u!1001 &1618459034
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30461,13 +30508,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2553725025826167387, guid: 33af256de2b11d64099f54fc28b54945, type: 3}
     - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+      propertyPath: doTimeout
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: playerInput
       value: 
       objectReference: {fileID: 1539268848}
     - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: weaponInput
       value: 
-      objectReference: {fileID: 1606109823}
+      objectReference: {fileID: 721042117}
     - target: {fileID: 8740965625450218032, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: playerInputReader
       value: 
@@ -30475,7 +30526,7 @@ PrefabInstance:
     - target: {fileID: 8740965625450218032, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: weaponInputReader
       value: 
-      objectReference: {fileID: 1606109823}
+      objectReference: {fileID: 0}
     - target: {fileID: 8740965625450218032, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: grimoireAnimManager
       value: 
