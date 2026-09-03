@@ -193,7 +193,7 @@ Shader "Custom/URP/QuantisedDitherShader"
                 // Use the dither threshold as a bias during quantisation.
                 float biasedValue = value * steps + thresholdOffset * _DitherStrength;
 
-                return floor(biasedValue) / steps;
+                return round(biasedValue) / steps;
             }
 
             half4 Frag(Varyings input) : SV_Target

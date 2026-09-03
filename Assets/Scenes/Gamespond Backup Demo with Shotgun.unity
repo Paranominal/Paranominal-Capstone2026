@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000000, guid: 75a393e060ed7ca4e97c892a68723044, type: 2}
+  m_LightingDataAsset: {fileID: 112000000, guid: 2a6c142f86fc30f45b39f454668d2ceb, type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: 4b10f3b219b77e7488850c252629e277, type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -5962,17 +5962,6 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
---- !u!114 &372312951 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3429753814182246217, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-  m_PrefabInstance: {fileID: 8723667617613130007}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
 --- !u!4 &373940897 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8141083602662129258, guid: d7f415ebd2472d94a846903227830a11, type: 3}
@@ -10166,7 +10155,7 @@ PrefabInstance:
     - target: {fileID: 2756126848750675429, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: postProcessVolume
       value: 
-      objectReference: {fileID: 372312951}
+      objectReference: {fileID: 0}
     - target: {fileID: 3769110204529532494, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -10185,6 +10174,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4165901649735431468, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4866703231690206579, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: m_Dithering
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4866703231690206579, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
@@ -10229,6 +10222,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5181015595577067208, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5990457673979546620, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5990457673979546620, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5990457673979546620, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6913672582733860919, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
@@ -30435,6 +30440,14 @@ PrefabInstance:
     - target: {fileID: 1704071766544820172, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7091370011521105743, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+      propertyPath: weight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8335569649758497404, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: playerInput

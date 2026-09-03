@@ -115,6 +115,9 @@ public class FearVignetteRenderPass : ScriptableRenderPass
 
         UpdateSettings();
 
+        // Skip the pass entirely when there is no vignette to render. Added so that we can just put vignette intensity to zero on scenes like the title screen :3
+        if (material.GetFloat(VignetteIntensityID) < 0.001f) return;
+
         if (!src.IsValid() || !dst.IsValid()) return;
 
         // Apply the effect from source to temp texture.
