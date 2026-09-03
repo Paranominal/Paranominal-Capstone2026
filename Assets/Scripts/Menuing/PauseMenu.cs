@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private string playerActionMapName = "Player";
     [SerializeField] private string grimoireActionMapName = "GrimoireUI";
     [SerializeField] private ALTGrimoire grimoire;
+    [SerializeField] private string targetScene;
 
     private void OnEnable()
     {
@@ -125,9 +127,6 @@ public class PauseMenu : MonoBehaviour
 
     public void QuitGame()
     {
-        Application.Quit();
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
+        SceneManager.LoadScene(targetScene);
     }
 }
