@@ -10,7 +10,7 @@ public class WeakPointManager : MonoBehaviour
     void Start()
     {
         SetupWeakpoints();
-        if(GetComponent<EnemyStagger>().staticenemy) StartSequence();
+        //if(GetComponent<EnemyStagger>().staticenemy) StartSequence();
     }
 
     //sanity check so that weakpoints are actually a component that is usable

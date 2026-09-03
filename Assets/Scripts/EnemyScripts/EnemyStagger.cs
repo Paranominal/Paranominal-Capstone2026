@@ -49,7 +49,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     void Start()
     {
         // if (doStaggerColor) InitializeColor();
-        TriggerStagger();
+        //TriggerStagger();
     }
 
     void Update()
@@ -84,7 +84,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         {
             if (weakPointManager.currentWeakpoint > cachedCurrentWeakpoint) ExtendStagger();
             if (debugMode) Debug.Log($"[{this}] Stagger Time Remaining for {gameObject}: {currentStaggerTimeRemaining}");
-            if (!staticenemy) currentStaggerTimeRemaining -= Time.deltaTime;
+            currentStaggerTimeRemaining -= Time.deltaTime;
             yield return null;
         }
         ExitStagger();
