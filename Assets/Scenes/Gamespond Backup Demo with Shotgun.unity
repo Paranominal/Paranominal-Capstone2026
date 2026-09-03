@@ -10153,8 +10153,32 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 660388033}
     - target: {fileID: 2756126848750675429, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: blendMode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2756126848750675429, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: effectStrength
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2756126848750675429, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: vignetteColor.b
+      value: 0.8039216
+      objectReference: {fileID: 0}
+    - target: {fileID: 2756126848750675429, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: vignetteColor.g
+      value: 0.7372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 2756126848750675429, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: vignetteColor.r
+      value: 0.8117647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2756126848750675429, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: postProcessVolume
       value: 
+      objectReference: {fileID: 836409541}
+    - target: {fileID: 2756126848750675429, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: vignetteIntensityMax
+      value: 0.43
       objectReference: {fileID: 0}
     - target: {fileID: 3769110204529532494, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_AnchorMax.x
@@ -10174,10 +10198,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4165901649735431468, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4866703231690206579, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-      propertyPath: m_Dithering
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4866703231690206579, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
@@ -10996,6 +11016,17 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!114 &836409541 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7091370011521105743, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+  m_PrefabInstance: {fileID: 8723667617613130007}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
 --- !u!43 &857412295
 Mesh:
   m_ObjectHideFlags: 0
@@ -30401,6 +30432,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 952096367421499217, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+      propertyPath: raycastMask.m_Bits
+      value: 516087
+      objectReference: {fileID: 0}
     - target: {fileID: 1704071766544820172, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -30440,18 +30475,6 @@ PrefabInstance:
     - target: {fileID: 1704071766544820172, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7091370011521105743, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: weight
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7944320556625297270, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: labelPrefab
-      value: 
-      objectReference: {fileID: 2553725025826167387, guid: 33af256de2b11d64099f54fc28b54945, type: 3}
-    - target: {fileID: 8335569649758497404, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: playerInput
