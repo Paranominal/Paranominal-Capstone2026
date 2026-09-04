@@ -86,6 +86,7 @@ public class DownsampleRenderPass : ScriptableRenderPass
     {
         UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
 
+        if (material == null) return;
         if (resourceData.isActiveTargetBackBuffer) return;
 
         TextureHandle src = resourceData.activeColorTexture;
