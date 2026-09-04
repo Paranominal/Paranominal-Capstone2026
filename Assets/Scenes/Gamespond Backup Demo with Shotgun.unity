@@ -10128,6 +10128,17 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!114 &721042117 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3971937404206549046, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+  m_PrefabInstance: {fileID: 721273275}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4bc96a8fbc847d40af5c1c000ee6f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponInputReader
 --- !u!1001 &721273275
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10136,10 +10147,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 105819745583116868, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-      propertyPath: labelPool
+    - target: {fileID: 449872566838055685, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 851918503}
     - target: {fileID: 799491107579824861, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_Name
       value: Miriam Norwych
@@ -10992,6 +11003,17 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!114 &851918503 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+  m_PrefabInstance: {fileID: 8723667617613130007}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be736ba276ce9ed46a9a18a2afde08c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!43 &857412295
 Mesh:
   m_ObjectHideFlags: 0
@@ -20663,17 +20685,6 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
---- !u!114 &1606109823 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7731953312378505995, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-  m_PrefabInstance: {fileID: 721273275}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4bc96a8fbc847d40af5c1c000ee6f72, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WeaponInputReader
 --- !u!1001 &1618459034
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30461,13 +30472,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2553725025826167387, guid: 33af256de2b11d64099f54fc28b54945, type: 3}
     - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+      propertyPath: doTimeout
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: playerInput
       value: 
       objectReference: {fileID: 1539268848}
     - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: weaponInput
       value: 
-      objectReference: {fileID: 1606109823}
+      objectReference: {fileID: 721042117}
     - target: {fileID: 8740965625450218032, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: playerInputReader
       value: 
@@ -30475,7 +30490,7 @@ PrefabInstance:
     - target: {fileID: 8740965625450218032, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: weaponInputReader
       value: 
-      objectReference: {fileID: 1606109823}
+      objectReference: {fileID: 0}
     - target: {fileID: 8740965625450218032, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: grimoireAnimManager
       value: 

@@ -48,7 +48,6 @@ public class WeaponSway : MonoBehaviour
     // These are blended smoothly to keep first-person weapon motion readable
     void Update()
     {
-        enableSway = playerInputReader.canMove;
         if (enableSway)
         {
             // read look input from the Input System action and scale to serialized input

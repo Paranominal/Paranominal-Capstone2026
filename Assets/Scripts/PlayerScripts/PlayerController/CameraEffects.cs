@@ -20,6 +20,7 @@ public class CameraEffects : MonoBehaviour
     [SerializeField] private float tiltSpeed = 5f;
 
     [Header("Camera Shake")]
+    [SerializeField] private bool enableShake = true;
     [SerializeField] private float defaultShakeIntensity = 0.3f;
     [SerializeField] private float defaultShakeDuration = 0.25f;
     [Tooltip("How much positional offset (X/Y) to apply at full intensity.")]
@@ -120,6 +121,13 @@ public class CameraEffects : MonoBehaviour
     // Summary: Applies Perlin noise shake additively on top of head bob and strafe tilt.
     private void UpdateShake()
     {
+        if (!enableShake)
+        {
+            // If shake was disabled while active, stop applying effects and reset state
+            isShaking = false;
+            return;
+        }
+
         if (!isShaking) return;
 
         shakeElapsed += Time.deltaTime;
@@ -155,12 +163,14 @@ public class CameraEffects : MonoBehaviour
     // Start a shake with default intensity and duration. Restarts if already shaking.
     public void Shake()
     {
+        if (!enableShake) return;
         Shake(defaultShakeIntensity, defaultShakeDuration);
     }
 
     // Start a shake with custom intensity and duration. Restarts if already shaking.
     public void Shake(float intensity, float duration)
     {
+        if (!enableShake) return;
         shakeIntensity = intensity;
         shakeDuration = duration;
         shakeElapsed = 0f;
@@ -175,6 +185,18 @@ public class CameraEffects : MonoBehaviour
     {
         enableHeadBob = toggle;
         enableStrafeTilt = toggle;
+        enableShake = toggle;
+    }
+
+    // Expose runtime control for shake independently
+    public void ToggleCameraShake(bool enable)
+    {
+        enableShake = enable;
+        if (!enable)
+        {
+            // stop any active shake immediately
+            isShaking = false;
+        }
     }
     
 }
