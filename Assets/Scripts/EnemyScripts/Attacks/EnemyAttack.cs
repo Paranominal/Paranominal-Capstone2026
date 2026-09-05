@@ -28,11 +28,8 @@ public class EnemyAttack_Base : MonoBehaviour
     // Michael edit (spawn-visual-fix): hide indicator in Awake so it's never visible on spawn.
     void Awake()
     {
+        attackState = AttackState.Ready;
         SetWindupIndicator(false);
-    }
-
-    void Start()
-    {
     }
     public void InitiateAttack(Vector3 targetPos)
     {

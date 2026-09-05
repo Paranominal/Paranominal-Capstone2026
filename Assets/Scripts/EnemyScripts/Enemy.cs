@@ -36,7 +36,7 @@ public class Enemy : MonoBehaviour
     [Header("Stagger")]
     [SerializeField] private EnemyStagger stagger;
     [SerializeField] private int numberOfPhases = 3;
-    [SerializeField] private int phaseDelay = 1;
+    // [SerializeField] private int phaseDelay = 1;
     // [SerializeField] private EnemyKnockback knockback;
     // [SerializeField] private float knockbackStrength = 5;
     [Header("Animation")]
