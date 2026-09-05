@@ -2,7 +2,7 @@ using System.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class EnemyAttack_AoE : EnemyAttack_Base
+public class EnemyAttack_AreaCast : EnemyAttack_Base
 {
     [SerializeField] private DangerZone dangerZonePrefab;
     [Range(1,5)]
