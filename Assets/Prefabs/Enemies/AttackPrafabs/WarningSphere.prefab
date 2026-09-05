@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4519419341502827860}
   - component: {fileID: 7643349622336954021}
+  - component: {fileID: 4814060506327898331}
   m_Layer: 0
   m_Name: Warning
   m_TagString: Untagged
@@ -91,6 +92,21 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &4814060506327898331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290365842691495294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c31a935967c3dd47b0f2fea3ec4ef49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
+  rotateX: 1
+  slowBillboard: 0
+  slowBillboardTime: 0.1
 --- !u!1 &4492502382225129448
 GameObject:
   m_ObjectHideFlags: 0
@@ -104,7 +120,7 @@ GameObject:
   - component: {fileID: 6809663377753233748}
   - component: {fileID: 4280848331170967189}
   m_Layer: 18
-  m_Name: SphereAoE
+  m_Name: WarningSphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
