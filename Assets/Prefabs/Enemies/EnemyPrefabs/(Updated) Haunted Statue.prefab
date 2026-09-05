@@ -1180,7 +1180,7 @@ MonoBehaviour:
   chaseStopDistance: 2.5
   stagger: {fileID: 37560343727338874}
   animator: {fileID: 4655058686648088248}
-  aggroRange: 10
+  aggroRange: 20
   skipSpawn: 0
   spawnDelay: 3
   debugMode: 0
@@ -1254,7 +1254,7 @@ MonoBehaviour:
   windUpTime: 2
   windupIndicator: {fileID: 1133451556357430640}
   damageFieldPrefab: {fileID: 5792883796589563391, guid: 69f641cc01b72464eb8479f0d3d12619, type: 3}
-  attackRange: 5
+  attackRange: 15
   damageFieldHeight: 0.5
   damageWindow: 1
   currentWindUpTime: 0
@@ -1764,6 +1764,7 @@ GameObject:
   - component: {fileID: 6410323926195951661}
   - component: {fileID: 6421360316652292779}
   - component: {fileID: 4655058686648088248}
+  - component: {fileID: 4489898357551836509}
   m_Layer: 17
   m_Name: Sprite
   m_TagString: Untagged
@@ -1876,6 +1877,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4489898357551836509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4275281193309529426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c31a935967c3dd47b0f2fea3ec4ef49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
+  rotateX: 0
+  slowBillboard: 0
+  slowBillboardTime: 0.1
 --- !u!1 &4313458501550949798
 GameObject:
   m_ObjectHideFlags: 0
