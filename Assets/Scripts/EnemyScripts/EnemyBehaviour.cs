@@ -15,7 +15,7 @@ public class EnemyBehaviour : MonoBehaviour
     [Header("Weak Points")]
     [SerializeField] private WeakPointManager weakPointManager;
     [Header("Attack")]
-    [SerializeField] private EnemyAttack_Melee attack;
+    [SerializeField] private EnemyAttack_Base attack;
     [Header("Chase")]
     [SerializeField] private NavMeshAgent navAgent;
     [SerializeField] private float chaseSpeed = 5f;
@@ -29,7 +29,7 @@ public class EnemyBehaviour : MonoBehaviour
     // [SerializeField] private float knockbackStrength = 5;
     [Header("Animation")]
     [SerializeField] private Animator animator;
-    
+
     private Transform playerTransform;
     [SerializeField] private float aggroRange = 10;
     // [SerializeField] private float attackRange = 3;
@@ -45,7 +45,7 @@ public class EnemyBehaviour : MonoBehaviour
         if (skipSpawn) DoSpawn();
         else StartCoroutine(SpawnAnimation());;
         playerTransform = GameObject.FindWithTag("Player").transform;
-        if (attack != null && navAgent != null) navAgent.stoppingDistance = attack.attackRange;
+        if (attack != null && navAgent != null) navAgent.stoppingDistance = attack.AttackRange;
         else if (navAgent != null) navAgent.stoppingDistance = chaseStopDistance;
         if (navAgent != null) navAgent.acceleration = 51 - chaseEasing * 50;
     }
@@ -139,25 +139,25 @@ public class EnemyBehaviour : MonoBehaviour
     }
     bool PlayerInAttackRange()
     {
-        if ((transform.position - playerTransform.position).magnitude < attack.attackRange) return true;
+        if ((transform.position - playerTransform.position).magnitude < attack.AttackRange) return true;
         else return false;
     }
     bool IsAttacking()
     {
         if (attack == null) return false;
-        if (attack.attackState == EnemyAttack_Melee.AttackState.Attacking || IsWindingUp() || IsWindingDown()) return true;
+        if (attack.attackState == EnemyAttack_Base.AttackState.Attacking || IsWindingUp() || IsWindingDown()) return true;
         else return false;
     }
     bool IsWindingUp()
     {
         if (attack == null) return false;
-        if (attack.attackState == EnemyAttack_Melee.AttackState.WindUp) return true;
+        if (attack.attackState == EnemyAttack_Base.AttackState.WindUp) return true;
         else return false;
     }
     bool IsWindingDown()
     {
         if (attack == null) return false;
-        if (attack.attackState == EnemyAttack_Melee.AttackState.WindDown) return true;
+        if (attack.attackState == EnemyAttack_Base.AttackState.WindDown) return true;
         else return false;
     }
     void DoSpawn()
@@ -180,13 +180,13 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (debugMode) Debug.Log($"[{this}] PlayerInAttackRange: [{PlayerInAttackRange()}] | attack: [{attack}]");
         behaviourState = BehaviourState.Attacking;
-        attack.InitiateAttack();
+        attack.InitiateAttack(playerTransform.position);
         if (debugMode) Debug.Log($"[{this}] Doing attack: [{attack}]");
     }
     bool AttackReady()
     {
         if (!AttackEnabled()) return false;
-        if (AttackEnabled() && attack.attackState == EnemyAttack_Melee.AttackState.Ready) return true;
+        if (AttackEnabled() && attack.attackState == EnemyAttack_Base.AttackState.Ready) return true;
         else return false;
     }
     bool AttackEnabled()
@@ -221,7 +221,7 @@ public class EnemyBehaviour : MonoBehaviour
         else if (behaviourState == BehaviourState.Stunned) animator.SetTrigger("stun");
 
         if (behaviourState == BehaviourState.Spawning) animator.speed = 1 / spawnDelay;
-        else if (AttackEnabled() && attack.attackState == EnemyAttack_Melee.AttackState.WindUp) animator.speed = 1 / attack.windUpTime;
+        else if (AttackEnabled() && attack.attackState == EnemyAttack_Melee.AttackState.WindUp) animator.speed = 1 / attack.WindUpTime;
         else animator.speed = 1;
     }
 }

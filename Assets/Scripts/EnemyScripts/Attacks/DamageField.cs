@@ -1,12 +1,11 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class DamageField : MonoBehaviour
 {
     [HideInInspector] public bool hitRegistered;
     [HideInInspector] public bool attackComplete;
-    private EnemyAttack attackProgenitor;
+    private EnemyAttack_Base attackProgenitor;
     private int damageOnHit;
     private float persistTime = 1;
     private LayerMask layerMask;
@@ -27,7 +26,7 @@ public class DamageField : MonoBehaviour
     {
         DoDamageField(damage, damageWindow, radius, 1f, targetLayers, null);
     }
-    public void DoDamageField(int damage, float damageWindow, LayerMask targetLayers, EnemyAttack origin)
+    public void DoDamageField(int damage, float damageWindow, LayerMask targetLayers, EnemyAttack_Base origin)
     {
         DoDamageField(damage, damageWindow, 1f, 1f, targetLayers, origin);
     }
@@ -35,11 +34,11 @@ public class DamageField : MonoBehaviour
     {
         DoDamageField(damage, damageWindow, radius, height, targetLayers, null);
     }
-    public void DoDamageField(int damage, float damageWindow, float radius, LayerMask targetLayers, EnemyAttack origin)
+    public void DoDamageField(int damage, float damageWindow, float radius, LayerMask targetLayers, EnemyAttack_Base origin)
     {
         DoDamageField(damage, damageWindow, radius, 1f, targetLayers, origin);
     }
-    public void DoDamageField(int damage, float damageWindow, float radius, float height, LayerMask targetLayers, EnemyAttack origin)
+    public void DoDamageField(int damage, float damageWindow, float radius, float height, LayerMask targetLayers, EnemyAttack_Base origin)
     {
         damageOnHit = damage;
         persistTime = damageWindow;
