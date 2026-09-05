@@ -29,6 +29,11 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     public bool debugMode;
     public bool IsStaggered => isStaggered; //returns whether the enemy is staggered
     private Coroutine currentStagger;
+
+    [SerializeField] private SpriteRenderer enemysprite;
+    [SerializeField] private Color EnemyStartColour, EnemyEndColour;
+
+    [SerializeField] private Gradient colourgradient;
     
     //i'll jsut comment out the kb stuff for now, dk what you really want to do with it ek
     //moved in from the miniboss and tough scripts to standardise this process more easily
@@ -55,6 +60,17 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     {
         // if (WeakpointWasHit()) weakPointManager.NextInSequence();
         StaggerBar();
+
+        if (!isStaggered)
+        {
+            //enemysprite.color = Color.Lerp(EnemyStartColour, EnemyEndColour, staggerBar.value);
+            enemysprite.color = colourgradient.Evaluate(staggerBar.value);
+        }
+        else
+        {
+            enemysprite.color= Color.white;
+        }
+        
     }
 
     bool WeakpointWasHit()
