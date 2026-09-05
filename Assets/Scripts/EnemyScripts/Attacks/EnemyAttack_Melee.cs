@@ -8,6 +8,7 @@ public class EnemyAttack_Melee : EnemyAttack_Base
     void Awake()
     {
         SetAttackIndicator(false);
+        SetWindupIndicator(false);
     }
     public override void DoAttack(Vector3 targetPos)
     {

@@ -80,11 +80,8 @@ public class WeakPointManager : MonoBehaviour
 
     private void SequenceComplete() //checks for miniboss cycles
     {
-        if (!dieOnWeakpointsComplete)
-        {
-            cyclesComplete++; 
-            SetupWeakpoints();
-        }
+        cyclesComplete++; 
+        if (!dieOnWeakpointsComplete) SetupWeakpoints();
         else if (handleOwnDestruction)
         {
             Debug.Log($"[{this}] was killed!");

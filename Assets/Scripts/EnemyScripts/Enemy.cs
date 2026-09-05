@@ -74,8 +74,7 @@ public class Enemy : MonoBehaviour
         else StartCoroutine(SpawnAnimation());
         playerTransform = GameObject.FindWithTag("Player").transform;
         if (stagger && stagger.weakPointManager) stagger.weakPointManager.handleOwnDestruction = false;
-        // if (enemyClass.GetType() == typeof(EnemyClass_Champion)) weakPointManager.dieOnWeakpointsComplete = false;
-        if (enemyClass == EnemyClass.Standard) stagger.weakPointManager.dieOnWeakpointsComplete = false;
+        if (enemyClass == EnemyClass.Champion) stagger.weakPointManager.dieOnWeakpointsComplete = false;
         if (attack != null && navAgent != null) navAgent.stoppingDistance = attack.AttackRange;
         else if (navAgent != null) navAgent.stoppingDistance = chaseStopDistance;
         if (navAgent != null) navAgent.acceleration = 51 - chaseEasing * 50;
