@@ -2,10 +2,15 @@ using UnityEngine;
 
 public class WeakPointManager : MonoBehaviour
 {
+    [SerializeField] private bool resetSequenceEveryStagger = false;
     public WeakPoint[] weakpoints;
-    public int currentWeakpoint = 0;
-    [SerializeField] private bool resetSequenceEveryStagger = true;
+    private int currentWeakpoint = 0;
+    public int CurrentWeakpoint => currentWeakpoint;
     public bool debugMode;
+    [HideInInspector] public bool dieOnWeakpointsComplete = true;
+    private int cyclesComplete = 0;
+    public int CyclesComplete => cyclesComplete;
+    [HideInInspector] public bool handleOwnDestruction = true;
 
     void Start()
     {
@@ -75,11 +80,14 @@ public class WeakPointManager : MonoBehaviour
 
     private void SequenceComplete() //checks for miniboss cycles
     {
-        ToMiniBoss miniBoss = GetComponentInParent<ToMiniBoss>();
-        if (miniBoss != null) miniBoss.OnCycleComplete();
-        else
+        if (!dieOnWeakpointsComplete)
         {
-            Debug.Log("Enemy Killed!");
+            cyclesComplete++; 
+            SetupWeakpoints();
+        }
+        else if (handleOwnDestruction)
+        {
+            Debug.Log($"[{this}] was killed!");
             Destroy(gameObject);
         }
     }

@@ -1,60 +1,92 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using System;
+using Unity.VisualScripting;
 
-public class EnemyBehaviour : MonoBehaviour
+[DisallowMultipleComponent]
+public class Enemy : MonoBehaviour
 {
-    private enum BehaviourState {Idling, Chasing, Attacking, Waiting, Stunned, Spawning, Dying, Inactive};
-    private BehaviourState behaviourState = BehaviourState.Inactive;
+    public enum BehaviourState { Idling, Chasing, Attacking, Waiting, Stunned, Spawning, Dying, Inactive };
+    public enum EnemyClass { Standard, Champion, Thrall };
 
     [Header("Enemy Options")]
+    [SerializeField] private EnemyClass enemyClass = EnemyClass.Standard;
     [SerializeField] private bool alwaysAggro;
-    [SerializeField] private bool chasePlayer;
-    [SerializeField] private bool neverGiveUpChase;
-    [SerializeField] private bool onlyChaseIfAttackReady;
-    [Header("Weak Points")]
-    [SerializeField] private WeakPointManager weakPointManager;
+    [SerializeField] private float aggroRange = 10;
+    [SerializeField] private bool skipSpawn;
+    [Tooltip("Time in seconds it takes the enemy to spawn")]
+    [SerializeField] private float spawnDelay = 3;
+    // [Header("Weak Points")]
+    // [SerializeField] private WeakPointManager weakPointManager;
+    // [Header("Class")]
+    // public EnemyClass enemyClass = EnemyClass.Standard;
     [Header("Attack")]
     [SerializeField] private EnemyAttack_Base attack;
     [Header("Chase")]
+    [SerializeField] private bool chasePlayer;
+    [SerializeField] private bool onlyChaseIfAttackReady;
+    [SerializeField] private bool neverGiveUpChase;
     [SerializeField] private NavMeshAgent navAgent;
     [SerializeField] private float chaseSpeed = 5f;
-    [Range(0,1)]
+    [Range(0, 1)]
     [SerializeField] private float chaseEasing = 0.5f;
     [Tooltip("Overrides NavMeshAgent stopping distance, but will also be overriden by the range of added Attack Scripts.")]
     [SerializeField] private float chaseStopDistance = 2.5f;
     [Header("Stagger")]
     [SerializeField] private EnemyStagger stagger;
+    [SerializeField] private int numberOfPhases = 3;
+    [SerializeField] private int phaseDelay = 1;
     // [SerializeField] private EnemyKnockback knockback;
     // [SerializeField] private float knockbackStrength = 5;
     [Header("Animation")]
     [SerializeField] private Animator animator;
+    [Header("Summons ( CHAMPION ONLY )")]
+    [SerializeField] private bool doSummons = true; //toggle or not
+    public bool DoSummons
+    {
+        get => doSummons;
+        set => doSummons = value;
+    }
+    [SerializeField] private int[] summonOnCycles = new int[] { 1 }; //this is an array, 0 would mean after the first cycle
+    [SerializeField] private Enemy summonsPrefab;
+    [SerializeField] private int numberOfSummons = 3;
+    [SerializeField] private float summonRadius = 3f;
+    [Header("Debug")]
+    public bool debugMode;
 
     private Transform playerTransform;
-    [SerializeField] private float aggroRange = 10;
-    // [SerializeField] private float attackRange = 3;
-    [SerializeField] private bool skipSpawn;
-    [Tooltip("Time in seconds it takes the enemy to spawn")]
-    [SerializeField] private float spawnDelay = 3;
-    public bool debugMode;
-    // [Tooltip("Time in seconds it takes the enemy to engage the Player after getting aggro'd")]
-    // [SerializeField] private float engageDelay = 1;
+    private BehaviourState behaviourState = BehaviourState.Inactive;
+    // private int WeakpointCycle => !stagger.weakPointManager ? stagger.weakPointManager.CyclesComplete : 0;
 
-    private void Start()
+    private void Reset()
+    {
+        if (!GetComponent<EnemyStagger>())
+        {
+            Debug.LogWarning($"[{this}] no Stagger component found! Adding one now.");
+            gameObject.AddComponent(typeof(EnemyStagger));
+        }   
+    }
+
+    private void Awake()
     {
         if (skipSpawn) DoSpawn();
-        else StartCoroutine(SpawnAnimation());;
+        else StartCoroutine(SpawnAnimation());
         playerTransform = GameObject.FindWithTag("Player").transform;
+        if (stagger && stagger.weakPointManager) stagger.weakPointManager.handleOwnDestruction = false;
+        // if (enemyClass.GetType() == typeof(EnemyClass_Champion)) weakPointManager.dieOnWeakpointsComplete = false;
+        if (enemyClass == EnemyClass.Standard) stagger.weakPointManager.dieOnWeakpointsComplete = false;
         if (attack != null && navAgent != null) navAgent.stoppingDistance = attack.AttackRange;
         else if (navAgent != null) navAgent.stoppingDistance = chaseStopDistance;
         if (navAgent != null) navAgent.acceleration = 51 - chaseEasing * 50;
     }
-
     void Update()
     {
         StateControl();
         if (animator != null) Animations();
+        if (stagger.weakPointManager) CheckDie();
     }
+
     void StateControl()
     {
         if (debugMode) Debug.Log($"[{this}] BehaviourState: [{behaviourState}]");
@@ -134,6 +166,7 @@ public class EnemyBehaviour : MonoBehaviour
     }
     bool PlayerInAggroRange()
     {
+        if (alwaysAggro) return true;
         if ((transform.position - playerTransform.position).magnitude < aggroRange) return true;
         else return false;
     }
@@ -211,17 +244,81 @@ public class EnemyBehaviour : MonoBehaviour
         if (stagger != null && stagger.IsStaggered) return true;
         else return false;
     }
+
+    void TriggerSummons()
+    {
+        if (summonsPrefab == null)
+        {
+            Debug.LogWarning($"[{this}] Missing minion prefab! Attach it, don't @ me :C.", gameObject);
+            return;
+        }
+        Debug.Log($"[{this}] Spawning {numberOfSummons} minions!");
+
+
+        for (int i = 0; i < numberOfSummons; i++)
+        {
+            //circle around miniboss
+            Vector2 randomCircle = UnityEngine.Random.insideUnitCircle * summonRadius;
+            Vector3 spawnOffset = new Vector3(randomCircle.x, 0f, randomCircle.y);
+            Vector3 targetSpawnPos = transform.position + spawnOffset;
+
+            //try to prevent spawning in walls by validating navs
+            Enemy spawnedMinion = null;
+            if (UnityEngine.AI.NavMesh.SamplePosition(targetSpawnPos, out UnityEngine.AI.NavMeshHit hit, summonRadius, UnityEngine.AI.NavMesh.AllAreas))
+            {
+                spawnedMinion = Instantiate(summonsPrefab, hit.position, Quaternion.identity);
+            }
+            else
+            {
+                //fallback to positional if navmesh fails
+                spawnedMinion = Instantiate(summonsPrefab, transform.position, Quaternion.identity);
+            }
+        }
+    }
+
+    private int currentCycle = 0;
+    private void CheckDie()
+    {
+        if (stagger && enemyClass == EnemyClass.Champion)
+        {
+            if (stagger.weakPointManager.CyclesComplete >= numberOfPhases) Die();
+            else if (stagger.weakPointManager.CyclesComplete > currentCycle)
+            {
+                currentCycle++;
+                Debug.Log($"Cycle {stagger.weakPointManager.CyclesComplete} complete.");
+                if (doSummons && summonOnCycles != null && Array.IndexOf(summonOnCycles, currentCycle) != -1)
+                TriggerSummons();
+            }
+        }
+        else if (stagger && enemyClass == EnemyClass.Thrall)
+        {
+            if (stagger.DamageTaken > 0) Die();
+        }
+        else if (stagger && stagger.weakPointManager && stagger.weakPointManager.CyclesComplete > 0) Die();
+    }
+
+    private bool isDying;
+    public void Die()
+    {
+        if (isDying) return;
+        isDying = true;
+
+        // do death anim here!
+
+        Destroy(gameObject);
+    }
+
     void Animations()
     {
         if (behaviourState == BehaviourState.Idling || behaviourState == BehaviourState.Waiting) animator.SetTrigger("idle");
-        else if (AttackEnabled() && attack.attackState == EnemyAttack_Melee.AttackState.WindUp) animator.SetTrigger("windUp");
-        else if (AttackEnabled() && attack.attackState == EnemyAttack_Melee.AttackState.WindDown) animator.SetTrigger("attack");
+        else if (AttackEnabled() && attack.attackState == EnemyAttack_Base.AttackState.WindUp) animator.SetTrigger("windUp");
+        else if (AttackEnabled() && attack.attackState == EnemyAttack_Base.AttackState.WindDown) animator.SetTrigger("attack");
         else if (behaviourState == BehaviourState.Chasing) animator.SetTrigger("chase");
         else if (behaviourState == BehaviourState.Spawning) animator.SetTrigger("spawn");
         else if (behaviourState == BehaviourState.Stunned) animator.SetTrigger("stun");
 
         if (behaviourState == BehaviourState.Spawning) animator.speed = 1 / spawnDelay;
-        else if (AttackEnabled() && attack.attackState == EnemyAttack_Melee.AttackState.WindUp) animator.speed = 1 / attack.WindUpTime;
+        else if (AttackEnabled() && attack.attackState == EnemyAttack_Base.AttackState.WindUp) animator.speed = 1 / attack.WindUpTime;
         else animator.speed = 1;
     }
 }
