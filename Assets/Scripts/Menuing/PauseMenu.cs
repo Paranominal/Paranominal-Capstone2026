@@ -28,6 +28,8 @@ public class PauseMenu : MonoBehaviour
 
     private void OnDisable()
     {
+        ResumeGame();
+
         if (pauseAction != null && pauseAction.action != null)
         {
             pauseAction.action.Disable();
