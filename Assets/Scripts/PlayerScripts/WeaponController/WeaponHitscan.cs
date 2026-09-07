@@ -100,17 +100,24 @@ public class WeaponHitscan : MonoBehaviour
         return damageable != null;
     }
 
-    public void LogWorldHitOrMiss()
+    public Vector3 LogWorldHitOrMiss()
     {
         if (playerCamera == null)
-            return;
+            return Vector3.zero;
 
         Ray ray = BuildAimRay();
 
         if (Physics.Raycast(ray, out RaycastHit hitAny, rayDistance, ~0, QueryTriggerInteraction.Collide))
+        {
             Debug.Log("Hit! " + hitAny.collider.name);
+            return hitAny.point;
+        }
         else
+        {
             Debug.Log("Miss...");
+            return ray.origin + ray.direction;
+        }
+            
     }
 
     public Ray AimRay => raycaster != null ? raycaster.Ray : default;

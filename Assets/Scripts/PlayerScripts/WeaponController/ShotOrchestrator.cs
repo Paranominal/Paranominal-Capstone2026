@@ -197,7 +197,7 @@ public class ShotOrchestrator : MonoBehaviour
         }
 
         weaponHitscan.LogWorldHitOrMiss();
-        return BuildResult(shotType, ShotOutcome.Miss, Vector3.zero);
+        return BuildResult(shotType, ShotOutcome.Miss, weaponHitscan.LogWorldHitOrMiss());
     }
 
     private IEnumerator DelayedAutoReload()

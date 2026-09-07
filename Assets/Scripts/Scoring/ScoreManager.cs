@@ -32,6 +32,7 @@ public class ScoreManager : MonoBehaviour
     public int currentScore = 0;
 
     public event System.Action<int> OnPointsAdded;
+    public event System.Action<Vector3> OnShotMissed;
 
     // points to display = final awarded (after combo), precision = 1-10 base, position = where it landed, ownerCentre = where the enemy is
     public event System.Action<int, int, Vector3, Vector3> OnPointsAwarded;
@@ -127,6 +128,8 @@ public class ScoreManager : MonoBehaviour
 
         if (rules.AwardsPoints)
             AwardHit(result);
+        else if (rules.ShowsMissPopup)
+            OnShotMissed?.Invoke(result.HitPoint);
 
         switch (rules.Combo)
         {
