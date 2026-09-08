@@ -3,6 +3,7 @@ using UnityEngine;
 public class WeakPointManager : MonoBehaviour
 {
     [SerializeField] private bool resetSequenceEveryStagger = false;
+    [SerializeField] private bool alwaysShowAll;
     public WeakPoint[] weakpoints;
     private int currentWeakpoint = 0;
     public int CurrentWeakpoint => currentWeakpoint;
@@ -11,12 +12,10 @@ public class WeakPointManager : MonoBehaviour
     private int cyclesComplete = 0;
     public int CyclesComplete => cyclesComplete;
     [HideInInspector] public bool handleOwnDestruction = true;
-    [SerializeField] private bool tutorialweakpoint;
 
     void Start()
     {
         SetupWeakpoints();
-        if (tutorialweakpoint) StartSequence();
     }
 
     //sanity check so that weakpoints are actually a component that is usable
@@ -51,6 +50,7 @@ public class WeakPointManager : MonoBehaviour
         }
         if (debugMode) Debug.Log($"[{this}] Setup Weakpoints: [{weakpoints}] for {gameObject}");
         // weakpoints[0].Show(); // activate the first weakpoint in the index
+        if (alwaysShowAll) StartSequence();
     }
 
     public void StartSequence()
@@ -58,7 +58,11 @@ public class WeakPointManager : MonoBehaviour
         if (!HasWeakpoints()) return;
 
         if (resetSequenceEveryStagger) SetupWeakpoints();
-        weakpoints[currentWeakpoint].Show(); // activate the first weakpoint in the index
+        if (alwaysShowAll)
+        {
+            foreach (WeakPoint weakpoint in weakpoints) weakpoint.Show();
+        }
+        else weakpoints[currentWeakpoint].Show(); // activate the first weakpoint in the index
         if (debugMode) Debug.Log($"[{this}] Started Weakpoint Sequence for {gameObject}");
     }
 
