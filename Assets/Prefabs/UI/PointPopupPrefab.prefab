@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 7814005255243986007}
   - component: {fileID: 3163050465988231321}
   - component: {fileID: 5237789966769686462}
+  - component: {fileID: 4028053860143427592}
+  - component: {fileID: 6334421816054931212}
   m_Layer: 19
   m_Name: PointPopupPrefab
   m_TagString: Untagged
@@ -194,10 +196,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ef4d38b7a32a1a408d646a50a402148, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PointPopup
+  distanceScale: {fileID: 4028053860143427592}
+  spriteBillboard: {fileID: 6334421816054931212}
   label: {fileID: 3163050465988231321}
   duration: 0.9
   riseDistance: 0.6
   fadeStart: 0.5
   yawAngle: -40
   rollAngle: 8
-  distanceInfluence: 0.12
+--- !u!114 &4028053860143427592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3615240380728386812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ed8b94ccb04ea44ca413fa223947f2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DistanceScale
+  influence: 0.12
+  finalSizeModifier: 0.3
+--- !u!114 &6334421816054931212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3615240380728386812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c31a935967c3dd47b0f2fea3ec4ef49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
+  rotateX: 0
+  slowBillboard: 0
+  slowBillboardTime: 0.1

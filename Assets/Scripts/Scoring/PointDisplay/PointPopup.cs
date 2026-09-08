@@ -1,8 +1,13 @@
 using TMPro;
 using UnityEngine;
 
+[RequireComponent(typeof(DistanceScale))]
+[RequireComponent(typeof(SpriteBillboard))]
 public class PointPopup : MonoBehaviour
 {
+    [SerializeField] private DistanceScale distanceScale;
+    [SerializeField] private SpriteBillboard spriteBillboard;
+
     [SerializeField] private TextMeshPro label;
 
     [Header("Lifetime")]
@@ -26,7 +31,9 @@ public class PointPopup : MonoBehaviour
     {
         startPos = position;
         transform.position = position;
-        styleScale = style.scaleMultiplier;
+
+        spriteBillboard.DoImmediate();
+        distanceScale.SetBaseScale(Vector3.one * style.scaleMultiplier);
 
         label.text = text;
         label.ForceMeshUpdate();
@@ -58,16 +65,9 @@ public class PointPopup : MonoBehaviour
         label.color = colour;
     }
 
-    // now handles billboarding and distance scaling natively to avoid persistent scaling bugs
+    // just does rotation again
     private void LateUpdate() 
     {
-        Camera cam = Camera.main;
-        if (cam == null) return;
-
-        transform.rotation = Quaternion.Euler(0f, cam.transform.rotation.eulerAngles.y, 0f)
-                           * Quaternion.Euler(0f, yaw, roll);
-
-        float distance = Vector3.Distance(transform.position, cam.transform.position);
-        transform.localScale = Vector3.one * (styleScale * distance);
+        transform.Rotate(0f, yaw, roll, Space.Self);
     }
 }
