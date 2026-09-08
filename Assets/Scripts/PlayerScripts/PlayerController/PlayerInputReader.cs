@@ -31,7 +31,7 @@ public class PlayerInputReader : MonoBehaviour
         ? slowWalkAction.action.IsPressed()
         : false;
     public bool jumpInput => jumpAction != null && jumpAction.action != null
-        ? jumpAction.action.IsPressed()
+        ? jumpAction.action.WasPressedThisFrame()
         : false;
 
     public bool dashInput => dashAction != null && dashAction.action != null
