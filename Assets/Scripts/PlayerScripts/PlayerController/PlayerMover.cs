@@ -13,6 +13,8 @@ public class PlayerMover : MonoBehaviour
 
     [Tooltip("Jump height in meters.")]
     [SerializeField] private float jumpHeight = 1.5f;
+    [Tooltip("Cooldown after jumping before miriam can jump again.")]
+    [SerializeField] private float jumpCooldown = 1f;
 
     [Header("Dash")]
     [Tooltip("Horizontal dash speed applied while dashing.")]
@@ -57,6 +59,7 @@ public class PlayerMover : MonoBehaviour
     private Vector3 dashDirection = Vector3.zero;
     private bool dashHeldLastFrame = false;
     private float dashCooldownTimer = 0f;
+    private float jumpCooldownTimer = 0f;
 
     private void Awake()
     {
@@ -134,15 +137,21 @@ public class PlayerMover : MonoBehaviour
             // lock horizontal velocity to dash direction
             currentVelocity = dashDirection * dashSpeed;
         }
-        SKIP_DASH: ;
+    SKIP_DASH:;
 
+
+        // Tick jump cooldown timer
+        if (jumpCooldownTimer > 0f)
+            jumpCooldownTimer -= Time.deltaTime;
+            
         // Handle jump input. If allowDashJump is enabled, jumping while dashing is allowed and will end the dash.
-        if (jumpInput && characterController.isGrounded)
+        if (jumpInput && characterController.isGrounded && jumpCooldownTimer <= 0f)
         {
             if (!isDashing || allowDashJump)
             {
                 // v = sqrt(2 * g * h)
                 verticalVelocity = Mathf.Sqrt(2f * gravity * jumpHeight);
+                jumpCooldownTimer = jumpCooldown;
 
                 if (isDashing)
                 {
