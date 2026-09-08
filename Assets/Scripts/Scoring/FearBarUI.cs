@@ -19,7 +19,7 @@ public class FearBarUI : MonoBehaviour
         fullWidth = barRect.rect.width;
         fearBar.OnFearChanged += HandleFearChanged;
         rankText.text = "Fine";
-        SetBarWidth(0f);
+        SetBarWidth(1f);
     }
 
     private void Start()
@@ -33,7 +33,8 @@ public class FearBarUI : MonoBehaviour
 
     private void HandleFearChanged(FearBar.FearRank rank)
     {
-        SetBarWidth(fearBar.FearLevel / fearBar.MaxFear);
+        // SetBarWidth(fearBar.FearLevel / fearBar.MaxFear);
+        SetBarWidth(1- (fearBar.FearLevel / fearBar.MaxFear));
         rankText.text = rank.ToString();
     }
 

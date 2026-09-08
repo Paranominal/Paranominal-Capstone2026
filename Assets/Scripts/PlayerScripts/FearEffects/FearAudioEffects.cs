@@ -51,7 +51,7 @@ public class FearAudioEffects : MonoBehaviour
     {
         currentRank = rank;
 
-        bool shouldPlay = rank == FearBar.FearRank.Medium || rank == FearBar.FearRank.Low;
+        bool shouldPlay = rank == FearBar.FearRank.Critical || rank == FearBar.FearRank.Fine;
 
         if (shouldPlay && !heartbeatActive)
         {
@@ -81,8 +81,8 @@ public class FearAudioEffects : MonoBehaviour
     {
         return currentRank switch
         {
-            FearBar.FearRank.Medium => isInEncounter ? mediumActionInterval : mediumInterval,
-            FearBar.FearRank.Low => isInEncounter ? lowActionInterval : lowInterval,
+            FearBar.FearRank.Critical => isInEncounter ? mediumActionInterval : mediumInterval,
+            FearBar.FearRank.Fine => isInEncounter ? lowActionInterval : lowInterval,
             _ => mediumInterval,
         };
     }
@@ -104,8 +104,8 @@ public class FearAudioEffects : MonoBehaviour
     {
         return currentRank switch
         {
-            FearBar.FearRank.Medium => isInEncounter ? mediumActionBeat : mediumIdleBeat,
-            FearBar.FearRank.Low => isInEncounter ? lowActionBeat : lowIdleBeat,
+            FearBar.FearRank.Critical => isInEncounter ? mediumActionBeat : mediumIdleBeat,
+            FearBar.FearRank.Fine => isInEncounter ? lowActionBeat : lowIdleBeat,
             _ => null,
         };
     }
@@ -115,7 +115,7 @@ public class FearAudioEffects : MonoBehaviour
     {
         float fearMin, fearMax, volMin, volMax;
 
-        if (currentRank == FearBar.FearRank.Low)
+        if (currentRank == FearBar.FearRank.Fine)
         {
             fearMin = LowFearMin; fearMax = LowFearMax;
             volMin = lowVolumeMin; volMax = lowVolumeMax;
