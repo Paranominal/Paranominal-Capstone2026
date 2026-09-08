@@ -130,7 +130,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1857849712381634114, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9961947
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 1857849712381634114, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_LocalRotation.x
@@ -142,11 +142,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1857849712381634114, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.08715574
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 1857849712381634114, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 10
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 2709379681799444947, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_Layer
@@ -162,7 +162,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5756565870020647140, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9961947
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 5756565870020647140, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_LocalRotation.y
@@ -170,11 +170,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5756565870020647140, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.08715574
+      value: -0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 5756565870020647140, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -10
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: 5900473113903386770, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_LocalScale.x
@@ -202,7 +202,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5900473113903386770, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 5900473113903386770, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_LocalRotation.x
@@ -214,7 +214,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5900473113903386770, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 5900473113903386770, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -226,7 +226,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5900473113903386770, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: 6532860093128772136, guid: 02f58764be260b140b5a77b7d1110b0d, type: 3}
       propertyPath: m_Name
@@ -321,7 +321,7 @@ MonoBehaviour:
   grimoireAnimator: {fileID: 1836343103789049700}
   altGrimoire: {fileID: 1090110928602918560}
   grimoireScroll: {fileID: 5104623742680006299, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
-  grimoireMenu: {fileID: 0}
+  grimoireMenu: {fileID: 1041928120879739539, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   playerMove: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   playerShoot: {fileID: 1110478493490812807, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   scanAction: {fileID: 1781555164194001046, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
@@ -343,14 +343,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c52b46f8d7a44fb4d91fd0fc83a76e4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LowerGrimoire
-  targetObject: {fileID: 0}
+  targetObject: {fileID: 6535952568432753539}
   handsObject: {fileID: 0}
-  speed: 3
+  speed: 5
   lowPoint: {fileID: 0}
   lowPointHands: {fileID: 0}
   openPoint: {fileID: 0}
   menuPoint: {fileID: 0}
-  debugMode: 1
+  debugMode: 0
   position: 0
 --- !u!4 &7255997013680192133 stripped
 Transform:
@@ -977,7 +977,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8321973102680552757, guid: 6d7cf884bdf49ad4687ca7f05e012875, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -0.00084948965
+      value: -0.0000131142915
       objectReference: {fileID: 0}
     - target: {fileID: 8573294394900391797, guid: 6d7cf884bdf49ad4687ca7f05e012875, type: 3}
       propertyPath: m_Size
