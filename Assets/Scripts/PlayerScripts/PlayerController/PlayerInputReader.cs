@@ -9,6 +9,7 @@ public class PlayerInputReader : MonoBehaviour
     [SerializeField] private InputActionReference sprintAction;
     [SerializeField] private InputActionReference slowWalkAction;
     [SerializeField] private InputActionReference jumpAction;
+    [SerializeField] private InputActionReference dashAction;
     [SerializeField] private InputActionReference lookActionMouse;
     [SerializeField] private InputActionReference lookActionGamepad;
     [SerializeField] private float gamepadLookSens = 100f;
@@ -31,6 +32,10 @@ public class PlayerInputReader : MonoBehaviour
         : false;
     public bool jumpInput => jumpAction != null && jumpAction.action != null
         ? jumpAction.action.IsPressed()
+        : false;
+
+    public bool dashInput => dashAction != null && dashAction.action != null
+        ? dashAction.action.IsPressed()
         : false;
 
     // public Vector2 LookInput => lookActionMouse != null && lookActionMouse.action != null
@@ -71,6 +76,7 @@ public class PlayerInputReader : MonoBehaviour
         else if (slowWalkAction.action.IsPressed()) return true;
         else if (jumpAction.action.IsPressed()) return true;
         else if (lookActionMouse.action.IsPressed()) return true;
+        else if (dashAction != null && dashAction.action != null && dashAction.action.IsPressed()) return true;
         else return false;
     }
     void DoDebug()

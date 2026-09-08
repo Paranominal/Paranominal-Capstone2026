@@ -562,6 +562,7 @@ MonoBehaviour:
   sprintAction: {fileID: 6790621974129141125, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   slowWalkAction: {fileID: 4707686780592785771, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   jumpAction: {fileID: 156809300950686061, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  dashAction: {fileID: 6790621974129141125, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookActionMouse: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookActionGamepad: {fileID: 3901640413146405176, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   gamepadLookSens: 100
@@ -586,7 +587,13 @@ MonoBehaviour:
   sprintStrength: 1.5
   slowWalkPercent: 0.3
   jumpHeight: 1
-  inertiaPower: 0.175
+  dashSpeed: 15
+  dashDuration: 0.1
+  allowAirDash: 0
+  allowDashJump: 1
+  dashCooldown: 2
+  inertiaPower: 0.15
+  airInertiaMultiplier: 2
   gravity: 12
   groundedStickForce: -2
   audioSource: {fileID: 795694508415802441}
