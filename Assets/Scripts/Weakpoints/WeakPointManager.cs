@@ -11,10 +11,12 @@ public class WeakPointManager : MonoBehaviour
     private int cyclesComplete = 0;
     public int CyclesComplete => cyclesComplete;
     [HideInInspector] public bool handleOwnDestruction = true;
+    [SerializeField] private bool tutorialweakpoint;
 
     void Start()
     {
         SetupWeakpoints();
+        if (tutorialweakpoint) StartSequence();
     }
 
     //sanity check so that weakpoints are actually a component that is usable
