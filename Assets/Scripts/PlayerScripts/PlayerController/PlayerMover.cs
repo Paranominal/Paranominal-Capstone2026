@@ -11,9 +11,17 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private float sprintStrength = 5f;
     [SerializeField] private float slowWalkPercent = 0.3f;
 
+    [Tooltip("Jump height in meters.")]
+    [SerializeField] private float jumpHeight = 1.5f;
+
     [Header("Inertia")]
     [Tooltip("Time value (seconds) that controls how quickly velocity changes. Larger = more inertia (slower accel and deccel).")]
     [SerializeField] private float inertiaPower = 0.1f;
+
+
+    [Header("Gravity")]
+    [SerializeField] private float gravity = 9.81f;
+    [SerializeField] private float groundedStickForce = -2f;
 
     [Header("Sound")]
     [SerializeField] private AudioSource audioSource;
@@ -23,6 +31,7 @@ public class PlayerMover : MonoBehaviour
 
     private CharacterController characterController;
     private Vector3 currentVelocity = Vector3.zero;
+    private float verticalVelocity;
 
     private void Awake()
     {
@@ -40,6 +49,7 @@ public class PlayerMover : MonoBehaviour
         Vector2 moveInput = inputReader != null ? inputReader.MoveInput : Vector2.zero;
         bool sprintInput = inputReader != null ? inputReader.SprintInput : false;
         bool slowWalkInput = inputReader != null ? inputReader.SlowWalkInput : false;
+        bool jumpInput = inputReader != null ? inputReader.jumpInput : false;
 
         // Calculate desired direction and speed
         Vector3 desiredDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
@@ -65,7 +75,29 @@ public class PlayerMover : MonoBehaviour
             currentVelocity = Vector3.Lerp(currentVelocity, Vector3.zero, smoothFactor);
         }
 
-        characterController.Move(currentVelocity * Time.deltaTime);
+        // Handle jump input
+        if (jumpInput && characterController.isGrounded)
+        {
+            // v = sqrt(2 * g * h)
+            verticalVelocity = Mathf.Sqrt(2f * gravity * jumpHeight);
+        }
+
+        // Apply gravity/ground stick
+        if (characterController.isGrounded && verticalVelocity < 0f)
+        {
+            verticalVelocity = groundedStickForce;
+        }
+        else
+        {
+            verticalVelocity -= gravity * Time.deltaTime;
+        }
+
+        // Combine horizontal and vertical movement
+        Vector3 move = currentVelocity + Vector3.up * verticalVelocity;
+        characterController.Move(move * Time.deltaTime);
+
+        // Footsteps
+        HandleFootsteps(moveInput);
     }
 
     // Plays a footstep when the player is actively moving on the ground, on a fixed interval.
@@ -73,20 +105,20 @@ public class PlayerMover : MonoBehaviour
     {
         bool isMoving = moveInput.sqrMagnitude > 0.01f;
         bool isGrounded = characterController.isGrounded;
- 
+
         if (!isMoving || !isGrounded)
         {
             // Reset so the next movement start plays a step immediately
             footstepTimer = 0f;
             return;
         }
- 
+
         footstepTimer -= Time.deltaTime;
         if (footstepTimer <= 0f)
         {
             if (playerFootstep != null && audioSource != null)
                 AudioManager.PlaySound(playerFootstep, audioSource);
- 
+
             footstepTimer = footstepInterval;
         }
     }
