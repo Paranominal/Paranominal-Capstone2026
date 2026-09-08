@@ -17,7 +17,7 @@ public class AmmoUI : MonoBehaviour
 
     private Image ammoUiTemplate;
     private int strikes;
-    private float shotTemplateSpacing = 30f;
+    [SerializeField] private float shotTemplateSpacing = 30f;
 
     private void Awake()
     {
