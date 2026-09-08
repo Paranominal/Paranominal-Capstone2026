@@ -196,7 +196,6 @@ public class ShotOrchestrator : MonoBehaviour
             return BuildResult(shotType, wasStaggered ? ShotOutcome.EnemyHitStaggered : ShotOutcome.EnemyHit, damageHit.point);
         }
 
-        weaponHitscan.LogWorldHitOrMiss();
         return BuildResult(shotType, ShotOutcome.Miss, weaponHitscan.LogWorldHitOrMiss());
     }
 

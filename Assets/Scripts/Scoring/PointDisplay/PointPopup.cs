@@ -1,7 +1,6 @@
 using TMPro;
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteBillboard))]
 public class PointPopup : MonoBehaviour
 {
     [SerializeField] private TextMeshPro label;
@@ -18,6 +17,7 @@ public class PointPopup : MonoBehaviour
     private Vector3 startPos;
     private Color colour;
     private float elapsed;
+    private float styleScale;
 
     private float yaw;
     private float roll;
@@ -26,12 +26,12 @@ public class PointPopup : MonoBehaviour
     {
         startPos = position;
         transform.position = position;
+        styleScale = style.scaleMultiplier;
 
         label.text = text;
+        label.ForceMeshUpdate();
         colour = style.colour;
         label.color = colour;
-
-        transform.localScale = Vector3.one * style.scaleMultiplier;
 
         // sits left of the enemy -> turns inward to the right, and vice versa
         yaw = -side * yawAngle * (-1f);
@@ -58,9 +58,16 @@ public class PointPopup : MonoBehaviour
         label.color = colour;
     }
 
-    //had to put this here to avoid conflict with billboard rotation
-    private void LateUpdate()
+    // now handles billboarding and distance scaling natively to avoid persistent scaling bugs
+    private void LateUpdate() 
     {
-        transform.Rotate(0f, yaw, roll, Space.Self);
+        Camera cam = Camera.main;
+        if (cam == null) return;
+
+        transform.rotation = Quaternion.Euler(0f, cam.transform.rotation.eulerAngles.y, 0f)
+                           * Quaternion.Euler(0f, yaw, roll);
+
+        float distance = Vector3.Distance(transform.position, cam.transform.position);
+        transform.localScale = Vector3.one * (styleScale * distance);
     }
 }

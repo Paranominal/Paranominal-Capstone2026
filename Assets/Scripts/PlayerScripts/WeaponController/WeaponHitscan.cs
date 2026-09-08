@@ -11,6 +11,10 @@ public class WeaponHitscan : MonoBehaviour
     [SerializeField] private LayerMask ignoreLayer;
     [SerializeField] private float rayDistance = 1000f;
 
+    [Header("Miss Popup Distance")]
+    [SerializeField] private float maxMissPopupDistance = 8f;
+    [SerializeField] private float minMissPopupDistance = 2f;
+
     private Raycaster raycaster;
 
     private void Start()
@@ -106,16 +110,18 @@ public class WeaponHitscan : MonoBehaviour
             return Vector3.zero;
 
         Ray ray = BuildAimRay();
+        LayerMask mask = ~ignoreLayer;
 
-        if (Physics.Raycast(ray, out RaycastHit hitAny, rayDistance, ~0, QueryTriggerInteraction.Collide))
+        if (Physics.Raycast(ray, out RaycastHit hitAny, rayDistance, mask, QueryTriggerInteraction.Collide))
         {
-            Debug.Log("Hit! " + hitAny.collider.name);
-            return hitAny.point;
+            Debug.Log("Hit! " + hitAny.collider.name + " at " + hitAny.distance);
+            float distance = Mathf.Max(hitAny.distance, minMissPopupDistance);
+            return ray.origin + ray.direction * distance;
         }
         else
         {
             Debug.Log("Miss...");
-            return ray.origin + ray.direction;
+            return ray.origin + ray.direction * maxMissPopupDistance;
         }
             
     }
