@@ -1,97 +1,117 @@
+// Summary:
+// Abstract base class for all modular enemy attacks. Provides a shared interface for the behaviour script: range, cooldown, state queries, lifecycle events,
+// and windup indicator management. Subclasses implement their own attack sequences and call StartCooldown() when finished.
+
+using System;
 using System.Collections;
 using UnityEngine;
 
-public class EnemyAttack_Base : MonoBehaviour
+public abstract class EnemyAttack_Base : MonoBehaviour
 {
-    public enum AttackState { Ready, WindUp, Attacking,  WindDown,Cooldown }
-    public AttackState attackState = AttackState.Ready;
-    public LayerMask targetLayers;
-    [SerializeField] private int damage = 10;
-    public int Damage => damage;
-    [Tooltip("Time between each attack in Seconds")]
-    [SerializeField] private float coolDownTime = 2f;
-    [Tooltip("Wind Up time in Seconds")]
-    [SerializeField] private float windUpTime = 1f;
-    public float WindUpTime => windUpTime;
+    [Header("Attack Range")]
+    [Tooltip("Distance within which the behaviour script will consider using this attack.")]
+    [SerializeField] private float attackRange = 5f;
+
+    [Header("Cooldown")]
+    [Tooltip("Time between attacks, measured from end of one to availability of next.")]
+    [SerializeField] private float cooldownTime = 2f;
+
+    [Header("Windup Indicator")]
+    [Tooltip("Optional sprite shown during windup. Hidden on spawn, toggled automatically.")]
     [SerializeField] private SpriteRenderer windupIndicator;
-    [Header("Damage Field")]
-    [SerializeField] private DamageField damageFieldPrefab;
-    public DamageField DamageFieldPrefab => damageFieldPrefab;
-    [SerializeField] private float attackRange = 1f;
+
     public float AttackRange => attackRange;
-    [SerializeField] private float damageFieldHeight = 0.5f;
-    public float DamageFieldHeight => damageFieldHeight;
-    [Tooltip("Number of seconds the Damage Field persists after appearing")]
-    [SerializeField] private float damageWindow = 1f;
-    public float DamageWindow => damageWindow;
-    // [SerializeField] private bool doInterrupt = true;
-    // Michael edit (spawn-visual-fix): hide indicator in Awake so it's never visible on spawn.
-    void Awake()
+    public float CooldownTime => cooldownTime;
+
+    // state
+    private bool isOnCooldown;
+    private Coroutine cooldownRoutine;
+
+    // properties
+    public bool IsReady => !IsAttacking && !isOnCooldown;
+    public abstract bool IsAttacking { get; }
+    public virtual bool IsWindingUp => false;
+    public virtual float WindupDuration => 0f;
+
+    // events for feedback components, animation, etc.
+    public event Action OnWindupStart;
+    public event Action OnStrikeStart;
+    public event Action OnStrikeEnd;
+    public event Action OnAttackCancelled;
+
+    // core interface
+    public abstract void PerformAttack(Transform target);
+    public abstract void CancelAttack();
+
+    // Override for attack-specific usage conditions (e.g. "only on stationary targets"). Returns true by default. the behaviour script checks this during attack selection.
+    public virtual bool ShouldUse(Transform target) => true;
+
+
+    // Attack Lifecycle
+    // hide indicator on spawn so it's never visible before the first attack
+    protected virtual void Awake()
     {
-        attackState = AttackState.Ready;
         SetWindupIndicator(false);
     }
-    public void InitiateAttack(Vector3 targetPos)
+
+
+    // Attack Cooldown
+    protected void StartCooldown()
     {
-        if (attackState != AttackState.Ready) return;
-        currentWindUpTime = windUpTime;
-        StartCoroutine(WindUp(targetPos));
+        if (cooldownRoutine != null) StopCoroutine(cooldownRoutine);
+        cooldownRoutine = StartCoroutine(CooldownSequence(cooldownTime));
     }
-    [HideInInspector] public float currentWindUpTime;
-    public virtual IEnumerator WindUp(Vector3 targetPos)
+
+    protected void StartCooldown(float multiplier)
     {
-        attackState = AttackState.WindUp;
+        if (cooldownRoutine != null) StopCoroutine(cooldownRoutine);
+        cooldownRoutine = StartCoroutine(CooldownSequence(cooldownTime * multiplier));
+    }
+
+    private IEnumerator CooldownSequence(float duration)
+    {
+        isOnCooldown = true;
+        float timer = duration;
+        while (timer > 0f)
+        {
+            timer -= Time.deltaTime;
+            yield return null;
+        }
+        isOnCooldown = false;
+        cooldownRoutine = null;
+    }
+
+
+    // Attack Indicators
+    // toggle the windup indicator directly if needed outside the event invokers
+    protected void SetWindupIndicator(bool show)
+    {
+        if (windupIndicator != null) windupIndicator.enabled = show;
+    }
+
+
+    // Event Invokers
+    // subclasses call these to fire the shared events. Windup indicator is managed automatically through these.
+    protected void InvokeWindupStart()
+    {
         SetWindupIndicator(true);
-        // yield return new WaitForSeconds(windUpTime);
-        while (currentWindUpTime > 0)
-        {
-            currentWindUpTime -= Time.deltaTime;
-            yield return null;
-        }
-        DoAttack(targetPos);
-        if (currentAttack != null && !currentAttack.attackComplete && !currentAttack.hitRegistered) StartCoroutine(WaitForAttackEnd());
-        else DoCooldown();
+        OnWindupStart?.Invoke();
+    }
+
+    protected void InvokeStrikeStart()
+    {
         SetWindupIndicator(false);
+        OnStrikeStart?.Invoke();
     }
-    
-    public IEnumerator WaitForAttackEnd()
+
+    protected void InvokeStrikeEnd()
     {
-        attackState = AttackState.WindDown;
-        yield return new WaitUntil(() => currentAttack == null || currentAttack.attackComplete);
-        DoCooldown();
+        OnStrikeEnd?.Invoke();
     }
-    float currentCooldownTime;
-    public void DoCooldown(float multiplier = 1)
+
+    protected void InvokeAttackCancelled()
     {
-        currentCooldownTime = coolDownTime * multiplier;
-        StartCoroutine(Cooldown());
-    }
-    IEnumerator Cooldown() // additional multipler incase we want interrupts to be more impactful
-    {
-        attackState = AttackState.Cooldown;
-        // yield return new WaitForSeconds(coolDownTime * multiplier);
-        while (currentCooldownTime > 0)
-        {
-            currentCooldownTime -= Time.deltaTime;
-            yield return null;
-        }
-        attackState = AttackState.Ready;
-    }
-    [HideInInspector] public DamageField currentAttack;
-    public virtual void DoAttack(Vector3 targetPos)
-    {
-        // enemy attack overrides this method
-    }
-    public void SetWindupIndicator(bool warn)
-    {
-        if (windupIndicator) windupIndicator.enabled = warn;
-    }
-    bool isInterrupted;
-    public bool IsInterrupted => isInterrupted; 
-    public virtual void InterruptAttack()
-    {
-        StopCoroutine(WindUp(Vector3.zero));
-        DoCooldown(2);
         SetWindupIndicator(false);
+        OnAttackCancelled?.Invoke();
     }
 }

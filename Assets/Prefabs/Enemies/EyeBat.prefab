@@ -49,6 +49,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
   rotateX: 1
+  slowBillboard: 0
+  slowBillboardTime: 0.1
 --- !u!212 &6016132784837794902
 SpriteRenderer:
   serializedVersion: 2
@@ -118,14 +120,13 @@ GameObject:
   m_Component:
   - component: {fileID: 5454403040594385629}
   - component: {fileID: 8614396900537901332}
+  - component: {fileID: 5897069030547296727}
+  - component: {fileID: 4484425421592386137}
+  - component: {fileID: 3910540567803071707}
   - component: {fileID: 1894387095101060742}
-  - component: {fileID: 1483370790856417942}
   - component: {fileID: 4280961717600154479}
   - component: {fileID: 7258074684030722955}
   - component: {fileID: 2522395779099145161}
-  - component: {fileID: -357270100409380465}
-  - component: {fileID: 697487408336731762}
-  - component: {fileID: 8232089063731135401}
   - component: {fileID: -7151052709924787694}
   - component: {fileID: 4505595464840246474}
   m_Layer: 8
@@ -169,9 +170,101 @@ MonoBehaviour:
   chaseDistance: 12
   visionBlockers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 20480
   eyeHeight: 1.6
   targetHeight: 1.2
+--- !u!114 &5897069030547296727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915909615733791053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b822e32bd4727ef4c9b62f566be59d03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlyingMovement
+  acceleration: 10
+--- !u!114 &4484425421592386137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915909615733791053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd9c02d573255d34984b5687bf495593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlyingEnemyBehaviour
+  enemyClass: 0
+  skipSpawn: 1
+  spawnDelay: 3
+  alwaysAggro: 1
+  aggroRange: 10
+  chasePlayer: 1
+  onlyChaseIfAttackReady: 0
+  neverGiveUpChase: 1
+  chaseRange: 20
+  chaseSpeed: 8
+  chaseStopDistance: 6
+  returnToOrigin: 0
+  returnSpeed: 3
+  retreatAfterAttack: 0
+  retreatDistance: 5
+  retreatSpeed: 4
+  strafeWhileWaiting: 1
+  strafeSpeed: 4
+  strafeDirectionInterval: 3
+  attacks:
+  - {fileID: 3910540567803071707}
+  stagger: {fileID: 4280961717600154479}
+  animator: {fileID: 0}
+  numberOfPhases: 3
+  doSummons: 1
+  summonOnCycles: 01000000
+  summonsPrefab: {fileID: 0}
+  numberOfSummons: 3
+  summonRadius: 3
+  vision: {fileID: 8614396900537901332}
+  debugMode: 0
+  movementScript: {fileID: 5897069030547296727}
+--- !u!114 &3910540567803071707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7915909615733791053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62e3abad7d85a1c48acc23fe611372ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_Charge
+  attackRange: 8
+  cooldownTime: 5
+  windupIndicator: {fileID: 0}
+  useBodyCollider: 1
+  hitDetectionRadius: 0.5
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  damageFieldPrefab: {fileID: 0}
+  damageFieldHeight: 1
+  windupDuration: 0.6
+  recoveryDuration: 0.3
+  windupTurnSpeed: 360
+  chargeSpeed: 16
+  chargePastDistance: 3
+  backOffDistance: 4
+  backOffSpeed: 6
+  damage: 10
+  collisionCastRadius: 0.5
+  geometryLayers:
+    serializedVersion: 2
+    m_Bits: 20480
+  debugMode: 0
 --- !u!114 &1894387095101060742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,30 +277,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c936537ae8577547866f4342903735a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeakPointManager
+  resetSequenceEveryStagger: 0
   weakpoints:
   - {fileID: 9122484986075877985}
   - {fileID: 940071960326430286}
   - {fileID: 2207208786353684176}
---- !u!114 &1483370790856417942
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7915909615733791053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0baadbcf1b888c42ad3fb894447dafc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EyeBatBehaviour_PrototypeSwoop
-  vision: {fileID: 8614396900537901332}
-  hoverHeight: 2.5
-  turnSpeed: 180
-  followSpeed: 10
-  followSmoothTime: 0.2
-  keepDistance: 4
-  swoopAttack: {fileID: 8232089063731135401}
-  swoopCooldown: 4
+  debugMode: 0
+  dieOnWeakpointsComplete: 1
+  handleOwnDestruction: 1
 --- !u!114 &4280961717600154479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,12 +297,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d49d50defecf244d9e2d39fcffcdd3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
-  staggerDuration: 2
+  staggerBar: {fileID: 0}
+  staggerBarFill: {fileID: 0}
+  barColor: {r: 1, g: 1, b: 1, a: 1}
+  barResetColor: {r: 1, g: 3, b: 5, a: 1}
+  weakPointManager: {fileID: 0}
+  hitsToStagger: 2
+  stunOnWindup: 1
+  staggerResistance: 0.3
+  staggerTime: 2
+  timeBeforeBarDrain: 0.4
+  timeAddedOnHit: 0.5
+  knockbackOnHit: 0
+  knockback: {fileID: 0}
   debugMode: 1
-  scanStunDuration: 2
-  maxScanStaggers: -1
-  scanStaggerCooldown: 1.5
-  extensionPerHit: 0.5
+  canBeHit: 1
+  windingUp: 0
 --- !u!54 &7258074684030722955
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -249,7 +336,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -274,71 +361,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-357270100409380465
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7915909615733791053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 959141b4c24dd154cb89199c6c9db3c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ALTScannableObject
-  entry:
-    entryName: Eye Bat
-    flavourText: A lesser demon from lower realms.
-    hintText: According to all known laws of aviation, there is no way that a bat
-      should be able to eye...
-    completeText: 
-    snapshotImage: {fileID: 0}
-  outline: {fileID: 697487408336731762}
-  collectable: 0
-  scanDuration: 0.5
-  usesMeshOutline: 0
-  outlineRenderer: {fileID: 0}
-  outlineMaterialIndex: 1
---- !u!114 &697487408336731762
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7915909615733791053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Outline
-  outlineMode: 0
-  outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 2
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
---- !u!114 &8232089063731135401
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7915909615733791053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 635a7ec8bd1ba2144aff564946a28910, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SwoopAttack
-  hitbox: {fileID: 2292610576746257784}
-  windupDuration: 0.6
-  recoveryDuration: 0.2
-  diveSpeed: 14
-  returnSpeed: 6
-  riseSpeed: 4
-  divePastDistance: 1.5
-  windupTurnSpeed: 360
-  damage: 10
-  debugMode: 1
 --- !u!114 &-7151052709924787694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -365,7 +387,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7fd8d9b4bb13db4b88d2c3e5a12150d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StaggerColorEffect
-  staggerColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1001 &777204630496428280
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -423,17 +444,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
---- !u!114 &2292610576746257784 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1520477600550804864, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
-  m_PrefabInstance: {fileID: 777204630496428280}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e12cc5aca71d944cbf39a1d02d3c1a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Hitbox
 --- !u!4 &4951780373933805465 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5652419394934148961, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
