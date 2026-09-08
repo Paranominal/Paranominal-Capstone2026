@@ -6323,6 +6323,17 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!114 &389764432 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7944320556625297270, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
+  m_PrefabInstance: {fileID: 8723667617613130007}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d40f63c735b5404ea2a789817e19dac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldLabelPool
 --- !u!43 &401468102
 Mesh:
   m_ObjectHideFlags: 0
@@ -10136,6 +10147,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 105819745583116868, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: labelPool
+      value: 
+      objectReference: {fileID: 389764432}
     - target: {fileID: 799491107579824861, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_Name
       value: Miriam Norwych
@@ -10156,6 +10171,10 @@ PrefabInstance:
       propertyPath: dialogueManager
       value: 
       objectReference: {fileID: 660388033}
+    - target: {fileID: 2453617423186176221, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3264304001121824609, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: airInertiaMultiplier
       value: 3
@@ -10179,6 +10198,10 @@ PrefabInstance:
     - target: {fileID: 4165901649735431468, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_AnchorMin.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4474451980135714559, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: maxFear
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4866703231690206579, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: 'm_Cameras.Array.data[1]'
@@ -17389,6 +17412,17 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!114 &1334191167 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4023773961289312593, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+  m_PrefabInstance: {fileID: 721273275}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4bc96a8fbc847d40af5c1c000ee6f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponInputReader
 --- !u!43 &1340534809
 Mesh:
   m_ObjectHideFlags: 0
@@ -30472,7 +30506,7 @@ PrefabInstance:
     - target: {fileID: 8740965625450218032, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: weaponInputReader
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1334191167}
     - target: {fileID: 8740965625450218032, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: grimoireAnimManager
       value: 

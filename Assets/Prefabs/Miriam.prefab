@@ -621,7 +621,7 @@ MonoBehaviour:
   gravity: 9.81
   groundedStickForce: -2
   audioSource: {fileID: 795694508415802441}
-  playerFootstep: {fileID: 11400000, guid: 95221a47635bbbf4693a9f1c94b2689b, type: 2}
+  playerFootstep: {fileID: 0}
   footstepInterval: 0.45
 --- !u!114 &388139220132730565
 MonoBehaviour:
@@ -801,9 +801,9 @@ MonoBehaviour:
   obstructionMask:
     serializedVersion: 2
     m_Bits: 151552
-  proximityRadius: 4
+  proximityRadius: 3
   labelFullOpacityDistance: 1.5
-  interactionRange: 10
+  interactionRange: 3
   labelPool: {fileID: 0}
   interactActionName: Collect
 --- !u!82 &795694508415802441
@@ -2532,6 +2532,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6143742847426307529}
     m_Modifications:
+    - target: {fileID: 273836561670073298, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1090110928602918560, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: screenUI
       value: 
@@ -2542,11 +2546,11 @@ PrefabInstance:
       objectReference: {fileID: 8956652460274281639}
     - target: {fileID: 1553545264737492289, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1553545264737492289, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2847827877754305373, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: fearBar
