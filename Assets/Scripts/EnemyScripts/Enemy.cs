@@ -7,7 +7,7 @@ using System;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public abstract class EnemyBehaviourBase : MonoBehaviour
+public abstract class Enemy : MonoBehaviour
 {
     public enum BehaviourState { Inactive, Spawning, Idling, Chasing, Attacking, Waiting, Stunned, Returning, Retreating, Dying };
     public enum EnemyClass { Standard, Champion, Thrall };

@@ -4,7 +4,7 @@
 
 using UnityEngine;
 
-public class FlyingEnemyBehaviour : EnemyBehaviourBase
+public class Enemy_Flying : Enemy
 {
     [Header("Movement")]
     [Tooltip("Drop in any MonoBehaviour that implements IEnemyMovement.")]

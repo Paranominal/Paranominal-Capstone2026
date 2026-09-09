@@ -1,12 +1,12 @@
 // Summary:
 // Ground enemy behaviour using NavMeshAgent for movement.
-// Extends EnemyBehaviourBase with NavMesh-specific chase, retreat, strafe, and return.
+// Extends Enemy with NavMesh-specific chase, retreat, strafe, and return.
 
 using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyBehaviour : EnemyBehaviourBase
+public class Enemy_Basic : Enemy
 {
     [Header("NavMesh Movement")]
     [SerializeField] private NavMeshAgent navAgent;

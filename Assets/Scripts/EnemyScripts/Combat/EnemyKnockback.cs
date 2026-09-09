@@ -10,7 +10,7 @@ public class EnemyKnockback : MonoBehaviour
 
     private NavMeshAgent navAgent;
     private Rigidbody rb;
-    private EnemyBehaviourBase[] enemyBehaviours;
+    private Enemy[] enemyBehaviours;
     private Coroutine restoreCoroutine;
 
     private void Awake()
@@ -18,7 +18,7 @@ public class EnemyKnockback : MonoBehaviour
         //cache references before play starts
         navAgent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
-        enemyBehaviours = GetComponents<EnemyBehaviourBase>();
+        enemyBehaviours = GetComponents<Enemy>();
     }
 
     public void ApplyKnockback()
