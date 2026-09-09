@@ -30,11 +30,6 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     [SerializeField] private float timeBeforeBarDrain = 0.4f;
     [SerializeField] private float timeAddedOnHit = 0.5f;
 
-    [Header("Knockback")]
-    [Tooltip("If enabled, each hit that counts toward stagger also triggers knockback.")]
-    [SerializeField] private bool knockbackOnHit;
-    [SerializeField] private EnemyKnockback knockback;
-
     [Header("Debug")]
     public bool debugMode;
 
@@ -59,7 +54,6 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     private void Awake()
     {
         if (staggerBar != null) staggerBar.gameObject.SetActive(false);
-        if (knockback == null && knockbackOnHit) knockback = GetComponent<EnemyKnockback>();
     }
 
     private void Update()
@@ -73,8 +67,6 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     {
         if (isStaggered) return;
         if (!canBeHit) return;
-
-        if (knockbackOnHit && knockback != null) knockback.ApplyKnockback();
 
         damageTaken++;
         currentRecoveryBuffer = timeBeforeBarDrain;

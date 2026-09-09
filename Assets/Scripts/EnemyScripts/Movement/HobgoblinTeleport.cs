@@ -9,7 +9,6 @@ public class HobgoblinTeleport : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private EnemyStagger stagger;
-    [SerializeField] private EnemyVisionSensor vision;
 
     [Header("Teleport Escape")]
     [SerializeField] private float teleportDistance = 5f;
@@ -25,7 +24,6 @@ public class HobgoblinTeleport : MonoBehaviour
         navAgent = GetComponent<NavMeshAgent>();
 
         if (stagger == null) stagger = GetComponent<EnemyStagger>();
-        if (vision == null) vision = GetComponent<EnemyVisionSensor>();
 
         // try to find the room bounds from parent RoomEntryDetector
         RoomEntryDetector roomDetector = GetComponentInParent<RoomEntryDetector>();
@@ -45,8 +43,7 @@ public class HobgoblinTeleport : MonoBehaviour
 
     private void HandleStaggerEnded()
     {
-        if (vision != null && vision.HasTarget)
-            TeleportToRandomNavMeshPoint();
+        TeleportToRandomNavMeshPoint();
 
         if (debugMode) Debug.Log($"[HobgoblinTeleport] Stagger ended for {gameObject.name}", gameObject);
     }

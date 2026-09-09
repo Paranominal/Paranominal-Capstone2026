@@ -82,9 +82,6 @@ public abstract class Enemy : MonoBehaviour
     [SerializeField] private int numberOfSummons = 3;
     [SerializeField] private float summonRadius = 3f;
 
-    [Header("Vision")]
-    [SerializeField] protected EnemyVisionSensor vision;
-
     [Header("Debug")]
     public bool debugMode;
 
@@ -122,8 +119,6 @@ public abstract class Enemy : MonoBehaviour
     {
         spawnPosition = transform.position;
         playerTransform = GameObject.FindWithTag("Player").transform;
-
-        if (vision == null) vision = GetComponent<EnemyVisionSensor>();
 
         if (stagger && stagger.weakPointManager) stagger.weakPointManager.handleOwnDestruction = false;
         if (enemyClass == EnemyClass.Champion && stagger && stagger.weakPointManager)
@@ -672,13 +667,6 @@ public abstract class Enemy : MonoBehaviour
         hasReportedDeathToSpawner = true;
         ownerSpawner.NotifyEnemyDeath(this);
     }
-
-
-    // Vision stuff (are we even using this anymore idek)
-    protected bool HasVisionTarget => vision != null && vision.HasTarget;
-    protected Transform VisionTarget => vision != null ? vision.Target : null;
-    protected bool SensorHasVision() => vision != null && vision.IsTargetInVision();
-    protected bool SensorDetectsTarget() => vision != null && vision.IsTargetDetected();
 
 
     // Movement
