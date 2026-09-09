@@ -1,20 +1,34 @@
 // Summary:
-// Telegraphed area attack. Spawns a DangerZone visual telegraph, then an AoEStrike at the snapshotted position. The strike spawns at the committed position,
-//  not a re-tracked one. The player's dodge window is the telegraph duration.
-// Targeting rules branch on player speed: stationary targets get an offset toward the caster, moving targets get a lead + scatter. This keeps the AoE readable without being trivially dodgeable.
+// Telegraphed area attack. Spawns a DangerZone visual telegraph, then a DamageField at the snapshotted position. The strike spawns at the committed position, not a re-tracked one. 
+// The player's dodge window is the telegraph duration. Targeting rules branch on player speed: stationary targets get an offset toward the caster, moving targets get a lead + scatter. 
+// This keeps the AoE readable without being trivially dodgeable.
 
 using System.Collections;
 using UnityEngine;
 
 public class EnemyAttack_AoE : EnemyAttack_Base
 {
-    [Header("Prefabs")]
+    [Header("Damage Field")]
+    [SerializeField] private DamageField damageFieldPrefab;
+    [Range(0.5f, 5f)]
+    [SerializeField] private float spellRadius = 2f;
+    [SerializeField] private float damageFieldHeight = 0.5f;
+    [SerializeField] private int damage = 10;
+    [Tooltip("Number of seconds the Damage Field persists after appearing.")]
+    [SerializeField] private float damageWindow = 1f;
+    [SerializeField] private LayerMask targetLayers;
+
+    [Header("Damage Field Options")]
+    [Tooltip("If enabled, the damage field stays active for its full duration after hitting instead of deactivating on first contact.")]
+    [SerializeField] private bool persistAfterHit;
+    [Tooltip("If enabled, deals damage repeatedly while the player stays in the field.")]
+    [SerializeField] private bool damageOverTime;
+    [Tooltip("Time between damage ticks when Damage Over Time is enabled.")]
+    [SerializeField] private float damageTickRate = 0.5f;
+
+    [Header("Telegraph")]
     [Tooltip("Visual telegraph spawned at the target position during the windup.")]
     [SerializeField] private DangerZone dangerZonePrefab;
-
-    [Tooltip("The actual attack spawned after the telegraph completes. " +
-             "Swap this prefab to change the attack flavor (lightning, spikes, fire, etc).")]
-    [SerializeField] private AoEStrike strikePrefab;
 
     [Header("Timing")]
     [Tooltip("How long the danger zone is shown before the strike spawns.")]
@@ -22,11 +36,6 @@ public class EnemyAttack_AoE : EnemyAttack_Base
 
     [Tooltip("Brief pause after the strike spawns before the attack is considered finished.")]
     [SerializeField] private float recoveryDuration = 0.4f;
-
-    [Header("Telegraph")]
-    [Tooltip("Visual radius passed to the DangerZone for sizing. Should roughly match " +
-             "the strike prefab's hitbox so the telegraph reads honestly.")]
-    [SerializeField] private float telegraphRadius = 2f;
 
     [Header("Targeting")]
     [Tooltip("Below this speed (units/sec), the target is considered stationary.")]
@@ -55,6 +64,7 @@ public class EnemyAttack_AoE : EnemyAttack_Base
     private bool isAttacking;
     private bool isWindingUp;
     private DangerZone activeZone;
+    private DamageField activeDamageField;
     private Coroutine attackRoutine;
 
     // velocity sampling
@@ -91,17 +101,17 @@ public class EnemyAttack_AoE : EnemyAttack_Base
     {
         if (isAttacking)
         {
-            if (debugMode) Debug.LogWarning($"[AoEAttack] PerformAttack called while already attacking. Ignored.", this);
+            if (debugMode) Debug.LogWarning($"[EnemyAttack_AoE] PerformAttack called while already attacking. Ignored.", this);
             return;
         }
         if (target == null)
         {
-            Debug.LogError($"[AoEAttack] PerformAttack called with null target on {gameObject.name}.", this);
+            Debug.LogError($"[EnemyAttack_AoE] PerformAttack called with null target on {gameObject.name}.", this);
             return;
         }
-        if (strikePrefab == null)
+        if (damageFieldPrefab == null)
         {
-            Debug.LogError($"[AoEAttack] No AoEStrike prefab assigned on {gameObject.name}.", this);
+            Debug.LogError($"[EnemyAttack_AoE] No DamageField prefab assigned on {gameObject.name}.", this);
             return;
         }
 
@@ -114,7 +124,7 @@ public class EnemyAttack_AoE : EnemyAttack_Base
     public void PerformAttack(Vector3 targetPosition)
     {
         if (isAttacking) return;
-        if (strikePrefab == null) return;
+        if (damageFieldPrefab == null) return;
         attackRoutine = StartCoroutine(AttackSequence(targetPosition));
     }
 
@@ -123,11 +133,12 @@ public class EnemyAttack_AoE : EnemyAttack_Base
         if (!isAttacking) return;
         if (attackRoutine != null) { StopCoroutine(attackRoutine); attackRoutine = null; }
         if (activeZone != null) { activeZone.Cancel(); activeZone = null; }
+        CleanupDamageField();
         isAttacking = false;
         isWindingUp = false;
         InvokeAttackCancelled();
         StartCooldown(2f);
-        if (debugMode) Debug.Log($"[AoEAttack] Attack cancelled on {gameObject.name}.", this);
+        if (debugMode) Debug.Log($"[EnemyAttack_AoE] Attack cancelled on {gameObject.name}.", this);
     }
 
     public override bool ShouldUse(Transform target)
@@ -137,6 +148,15 @@ public class EnemyAttack_AoE : EnemyAttack_Base
         Vector3 velocity = EstimateVelocity(target.position);
         velocity.y = 0f;
         return velocity.magnitude < stationaryThreshold;
+    }
+
+    private void CleanupDamageField()
+    {
+        if (activeDamageField != null)
+        {
+            Destroy(activeDamageField.gameObject);
+            activeDamageField = null;
+        }
     }
 
 
@@ -152,7 +172,7 @@ public class EnemyAttack_AoE : EnemyAttack_Base
             ? ComputeStationaryPosition(targetPos)
             : ComputeMovingPosition(targetPos, velocity);
 
-        if (debugMode) Debug.Log($"[AoEAttack] Target speed: {speed:F2} -> snapshot: {result}", this);
+        if (debugMode) Debug.Log($"[EnemyAttack_AoE] Target speed: {speed:F2} -> snapshot: {result}", this);
         return result;
     }
 
@@ -191,34 +211,40 @@ public class EnemyAttack_AoE : EnemyAttack_Base
         if (dangerZonePrefab != null)
         {
             activeZone = Instantiate(dangerZonePrefab, targetPosition, Quaternion.identity);
-            activeZone.Show(targetPosition, telegraphRadius, telegraphDuration);
+            activeZone.Show(targetPosition, spellRadius, telegraphDuration);
         }
         else if (debugMode)
         {
-            Debug.LogWarning($"[AoEAttack] No DangerZone prefab assigned. Attack will have no telegraph.", this);
+            Debug.LogWarning($"[EnemyAttack_AoE] No DangerZone prefab assigned. Attack will have no telegraph.", this);
         }
 
-        if (debugMode) Debug.Log($"[AoEAttack] Telegraph started at {targetPosition} (duration {telegraphDuration}s).", this);
+        if (debugMode) Debug.Log($"[EnemyAttack_AoE] Telegraph started at {targetPosition} (duration {telegraphDuration}s).", this);
 
         yield return new WaitForSeconds(telegraphDuration);
 
         isWindingUp = false;
-
-        // strike
-        AoEStrike strike = Instantiate(strikePrefab, targetPosition, Quaternion.identity);
-        strike.SetSource(gameObject);
         activeZone = null;
+
+        // strike: spawn DamageField at the snapshotted position
+        Vector3 spawnPos = targetPosition + (Vector3.up * damageFieldHeight * 0.5001f);
+        activeDamageField = Instantiate(damageFieldPrefab, spawnPos, Quaternion.identity).GetComponent<DamageField>();
+        activeDamageField.DoDamageField(damage, damageWindow, spellRadius, damageFieldHeight, targetLayers, this, persistAfterHit, damageOverTime, damageTickRate);
         InvokeStrikeStart();
 
-        if (debugMode) Debug.Log($"[AoEAttack] Strike spawned at {targetPosition}.", this);
+        if (debugMode) Debug.Log($"[EnemyAttack_AoE] DamageField spawned at {targetPosition}.", this);
+
+        // wait for the damage field to finish
+        yield return new WaitUntil(() => activeDamageField == null || activeDamageField.attackComplete);
+
+        CleanupDamageField();
+        InvokeStrikeEnd();
 
         // recovery
         yield return new WaitForSeconds(recoveryDuration);
 
-        InvokeStrikeEnd();
         isAttacking = false;
         attackRoutine = null;
         StartCooldown();
-        if (debugMode) Debug.Log($"[AoEAttack] Attack complete on {gameObject.name}.", this);
+        if (debugMode) Debug.Log($"[EnemyAttack_AoE] Attack complete on {gameObject.name}.", this);
     }
 }

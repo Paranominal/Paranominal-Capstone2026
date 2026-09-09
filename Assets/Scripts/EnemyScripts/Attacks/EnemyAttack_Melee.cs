@@ -1,6 +1,5 @@
 // Summary:
-// Telegraphed melee attack. Handles windup (tracking), strike (DamageField), and recovery.
-// The player's dodge window is the windup phase: sidestepping while the enemy tracks at a (typically slow) turn speed.
+// Telegraphed melee attack. Handles windup (tracking), strike (DamageField), and recovery. The player's dodge window is the windup phase: sidestepping while the enemy tracks at a (typically slow) turn speed.
 
 using System.Collections;
 using UnityEngine;
@@ -12,6 +11,14 @@ public class EnemyAttack_Melee : EnemyAttack_Base
     [SerializeField] private DamageField damageFieldPrefab;
     [SerializeField] private float damageFieldHeight = 0.5f;
     [SerializeField] private LayerMask targetLayers;
+
+    [Header("Damage Field Options")]
+    [Tooltip("If enabled, the damage field stays active for its full duration after hitting instead of deactivating on first contact.")]
+    [SerializeField] private bool persistAfterHit;
+    [Tooltip("If enabled, deals damage repeatedly while the player stays in the field.")]
+    [SerializeField] private bool damageOverTime;
+    [Tooltip("Time between damage ticks when Damage Over Time is enabled.")]
+    [SerializeField] private float damageTickRate = 0.5f;
 
     [Header("Timing")]
     [Tooltip("How long the owner winds up before striking. " +
@@ -130,7 +137,7 @@ public class EnemyAttack_Melee : EnemyAttack_Base
         if (debugMode) Debug.Log($"[EnemyAttack_Melee] Strike on {gameObject.name}.", this);
         Vector3 spawnPos = transform.position + (transform.forward * AttackRange / 2f) + (Vector3.up * damageFieldHeight * 0.5001f);
         activeDamageField = Instantiate(damageFieldPrefab, spawnPos, transform.rotation).GetComponent<DamageField>();
-        activeDamageField.DoDamageField(damage, strikeDuration, AttackRange / 2f, damageFieldHeight, targetLayers, this);
+        activeDamageField.DoDamageField(damage, strikeDuration, AttackRange / 2f, damageFieldHeight, targetLayers, this, persistAfterHit, damageOverTime, damageTickRate);
         InvokeStrikeStart();
 
         // wait for the damage field to finish (hit or timed out)

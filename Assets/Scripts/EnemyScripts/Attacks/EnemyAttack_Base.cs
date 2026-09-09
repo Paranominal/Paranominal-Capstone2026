@@ -54,7 +54,6 @@ public abstract class EnemyAttack_Base : MonoBehaviour
         SetWindupIndicator(false);
     }
 
-
     // Attack Cooldown
     protected void StartCooldown()
     {
@@ -81,14 +80,12 @@ public abstract class EnemyAttack_Base : MonoBehaviour
         cooldownRoutine = null;
     }
 
-
     // Attack Indicators
     // toggle the windup indicator directly if needed outside the event invokers
     protected void SetWindupIndicator(bool show)
     {
         if (windupIndicator != null) windupIndicator.enabled = show;
     }
-
 
     // Event Invokers
     // subclasses call these to fire the shared events. Windup indicator is managed automatically through these.

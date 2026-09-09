@@ -1,6 +1,6 @@
 // Summary:
-// Abstract base class for all enemy behaviour controllers. Owns the state machine, all shared toggles and parameters,
-// animation, class/death/summon logic, and spawner lifecycle. Subclasses implement movement (NavMeshAgent vs custom movement scripts).
+// Abstract base class for all enemy behaviour controllers. Owns the state machine, all shared toggles and parameters, animation, 
+// class/death/summon logic, and spawner lifecycle. Subclasses implement movement (NavMeshAgent vs custom movement scripts).
 
 using System.Collections;
 using System;
@@ -50,6 +50,13 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
     [Tooltip("How often the enemy changes strafe direction in seconds.")]
     [SerializeField] private float strafeDirectionInterval = 2f;
 
+    [Header("Contact Damage")]
+    [Tooltip("If enabled, the enemy deals damage on contact with the player and dies. For kamikaze-style enemies with no attack scripts.")]
+    [SerializeField] private bool kamikazeOnContact;
+    [SerializeField] private int contactDamage = 10;
+    [Tooltip("Distance at which contact damage triggers.")]
+    [SerializeField] private float contactRadius = 1f;
+
     [Header("Attacks")]
     [Tooltip("All attacks available to this enemy. Priority is determined by array order.")]
     [SerializeField] private EnemyAttack_Base[] attacks;
@@ -84,6 +91,7 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
     // state
     private BehaviourState behaviourState = BehaviourState.Inactive;
     public BehaviourState CurrentState => behaviourState;
+    protected bool ShouldUseDirectMovement => kamikazeOnContact && behaviourState == BehaviourState.Chasing;
 
     protected Transform playerTransform;
     protected Vector3 spawnPosition;
@@ -109,7 +117,7 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
     private bool hasReportedDeathToSpawner;
 
 
-    // Enemy Lifecycle
+    // Lifecycle
     protected virtual void Awake()
     {
         spawnPosition = transform.position;
@@ -151,7 +159,7 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
     }
 
 
-    // Behaviour State Machine
+    // State Machine
     private void StateControl()
     {
         if (debugMode) Debug.Log($"[{this}] State: [{behaviourState}]");
@@ -198,6 +206,10 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
 
         FacePlayer();
         DoMove(playerTransform.position, chaseSpeed, GetChaseStopDistance());
+
+        // kamikaze: deal damage on contact and die
+        if (kamikazeOnContact) CheckContactDamage();
+
         if (debugMode) Debug.Log($"[{this}] Chasing to {playerTransform.position}");
     }
 
@@ -238,7 +250,21 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
         {
             UpdateStrafe();
             FacePlayer();
-            DoMove(ComputeStrafeTarget(), strafeSpeed, 0.5f);
+
+            Vector3 target = ComputeStrafeTarget(strafeDirection);
+
+            // if blocked, try the other direction. if both blocked, stop and face the player.
+            if (!IsStrafeClear(target))
+            {
+                target = ComputeStrafeTarget(-strafeDirection);
+                if (!IsStrafeClear(target))
+                {
+                    DoStop();
+                    return;
+                }
+            }
+
+            DoMove(target, strafeSpeed, 0.5f);
         }
         else
         {
@@ -278,7 +304,7 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
     }
 
 
-    // Behaviour State Transitions
+    // State Transitions
     private void EnterAttack()
     {
         EnemyAttack_Base selected = SelectAttack();
@@ -414,27 +440,47 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
         return stagger != null && stagger.IsStaggered;
     }
 
-    // chase stops at the shortest attack range, so the enemy closes to usable distance
+    // chase stops at the shortest attack range, or contact radius for kamikaze, or the manual stop distance
     private float GetChaseStopDistance()
     {
-        if (attacks == null || attacks.Length == 0) return chaseStopDistance;
-
-        float minRange = chaseStopDistance;
-        bool found = false;
-        for (int i = 0; i < attacks.Length; i++)
+        if (attacks != null && attacks.Length > 0)
         {
-            if (attacks[i] == null || !attacks[i].isActiveAndEnabled) continue;
-            if (!found || attacks[i].AttackRange < minRange)
+            float minRange = chaseStopDistance;
+            bool found = false;
+            for (int i = 0; i < attacks.Length; i++)
             {
-                minRange = attacks[i].AttackRange;
-                found = true;
+                if (attacks[i] == null || !attacks[i].isActiveAndEnabled) continue;
+                if (!found || attacks[i].AttackRange < minRange)
+                {
+                    minRange = attacks[i].AttackRange;
+                    found = true;
+                }
             }
+            if (found) return minRange;
         }
-        return minRange;
+
+        // kamikaze enemies chase all the way to the player
+        if (kamikazeOnContact) return 0f;
+
+        return chaseStopDistance;
     }
 
 
-    // Strafe Behaviour
+    // Contact Damage
+    private void CheckContactDamage()
+    {
+        if (DistanceToPlayer() > contactRadius) return;
+
+        IDamageable damageable = playerTransform.GetComponentInParent<IDamageable>();
+        if (damageable == null) return;
+
+        DamageInfo info = new DamageInfo(contactDamage, transform.position, transform.forward, gameObject);
+        damageable.TakeDamage(info);
+        Die();
+    }
+
+
+    // Strafe
     private void UpdateStrafe()
     {
         strafeTimer -= Time.deltaTime;
@@ -445,7 +491,7 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
         }
     }
 
-    private Vector3 ComputeStrafeTarget()
+    private Vector3 ComputeStrafeTarget(float direction)
     {
         if (playerTransform == null) return transform.position;
 
@@ -454,7 +500,7 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
         float radius = GetChaseStopDistance();
         if (radius < 0.1f) return transform.position;
 
-        Vector3 lateral = Vector3.Cross(Vector3.up, toEnemy.normalized) * strafeDirection;
+        Vector3 lateral = Vector3.Cross(Vector3.up, toEnemy.normalized) * direction;
         Vector3 aheadOnArc = transform.position + lateral * 2f;
         Vector3 fromPlayer = aheadOnArc - playerTransform.position;
         fromPlayer.y = 0f;
@@ -462,8 +508,14 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
         return playerTransform.position + fromPlayer.normalized * radius;
     }
 
+    // override in subclasses to check for obstacles between the enemy and the strafe target
+    protected virtual bool IsStrafeClear(Vector3 target)
+    {
+        return true;
+    }
 
-    // Spawn Behaviour
+
+    // Spawn
     private void DoSpawn()
     {
         if (stagger != null && !stagger.canBeHit) stagger.canBeHit = true;
@@ -482,7 +534,7 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
     }
 
 
-    // Facing The Player
+    // Facing
     protected virtual void FacePlayer()
     {
         if (playerTransform == null) return;
@@ -493,7 +545,7 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
     }
 
 
-    // Champiion Death Behaviour
+    // Champion / Death stuff
     private void CheckDie()
     {
         if (stagger == null || stagger.weakPointManager == null) return;
@@ -538,7 +590,7 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
     protected virtual void OnDying() { }
 
 
-    // Minion Summoning
+    // Summons
     private void TriggerSummons()
     {
         if (summonsPrefab == null)
@@ -593,7 +645,7 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
     }
 
 
-    // Enemy Spawner Integration (gonna work on new spawning system soon anyway lol)
+    // Spawner Integration (gonna make new spawning system stuff soon anyway lol)
     public void SetOwnerSpawner(IEnemySpawner spawner)
     {
         ownerSpawner = spawner;
@@ -622,7 +674,7 @@ public abstract class EnemyBehaviourBase : MonoBehaviour
     }
 
 
-    // Enemy Vision Sensor (idek if we still need this stuff)
+    // Vision stuff (are we even using this anymore idek)
     protected bool HasVisionTarget => vision != null && vision.HasTarget;
     protected Transform VisionTarget => vision != null ? vision.Target : null;
     protected bool SensorHasVision() => vision != null && vision.IsTargetInVision();

@@ -40,7 +40,13 @@ public class FlyingEnemyBehaviour : EnemyBehaviourBase
 
     protected override void DoMove(Vector3 target, float speed, float stopDistance)
     {
-        if (movement != null) movement.MoveTo(target, speed, stopDistance);
+        if (movement == null) return;
+
+        // disable altitude management when kamikaze chasing so the enemy flies directly at the player
+        if (movement is FlyingMovement flying)
+            flying.useAltitudeManagement = !ShouldUseDirectMovement;
+
+        movement.MoveTo(target, speed, stopDistance);
     }
 
     protected override void DoStop()

@@ -35,7 +35,10 @@ public class FlyingMovement : MonoBehaviour, IEnemyMovement
     private float currentStopDistance = 0.5f;
     private bool hasTarget;
 
-    public bool HasReachedTarget => !hasTarget || HorizontalDistanceToTarget() <= currentStopDistance;
+    // set by FlyingEnemyBehaviour when kamikaze chasing, disables altitude adjustments so the enemy flies directly at the target
+    [HideInInspector] public bool useAltitudeManagement = true;
+
+    public bool HasReachedTarget => !hasTarget || DistanceToTarget() <= currentStopDistance;
 
     private void Awake()
     {
@@ -64,7 +67,7 @@ public class FlyingMovement : MonoBehaviour, IEnemyMovement
         {
             // no horizontal target: maintain altitude without touching horizontal velocity
             // this allows external forces (knockback) to work while the enemy stays at hover height
-            MaintainAltitude();
+            if (useAltitudeManagement) MaintainAltitude();
             return;
         }
 
@@ -72,13 +75,16 @@ public class FlyingMovement : MonoBehaviour, IEnemyMovement
         {
             rb.linearVelocity = Vector3.zero;
             hasTarget = false;
-            MaintainAltitude();
+            if (useAltitudeManagement) MaintainAltitude();
             return;
         }
 
-        // adjust target Y to desired altitude, move toward the adjusted target
-        Vector3 adjustedTarget = new Vector3(targetPosition.x, ComputeDesiredAltitude(), targetPosition.z);
-        Vector3 direction = (adjustedTarget - transform.position).normalized;
+        // when altitude management is off, fly directly at the raw target position
+        Vector3 moveTarget = useAltitudeManagement
+            ? new Vector3(targetPosition.x, ComputeDesiredAltitude(), targetPosition.z)
+            : targetPosition;
+
+        Vector3 direction = (moveTarget - transform.position).normalized;
         Vector3 desiredVelocity = direction * currentSpeed;
         rb.linearVelocity = Vector3.MoveTowards(rb.linearVelocity, desiredVelocity, acceleration * Time.fixedDeltaTime);
     }
@@ -113,11 +119,15 @@ public class FlyingMovement : MonoBehaviour, IEnemyMovement
         return baseAltitude + bob;
     }
 
-    // arrival uses horizontal distance only since altitude is managed separately
-    private float HorizontalDistanceToTarget()
+    private float DistanceToTarget()
     {
-        Vector3 diff = transform.position - targetPosition;
-        diff.y = 0f;
-        return diff.magnitude;
+        if (useAltitudeManagement)
+        {
+            // horizontal only when altitude is managed separately
+            Vector3 diff = transform.position - targetPosition;
+            diff.y = 0f;
+            return diff.magnitude;
+        }
+        return (transform.position - targetPosition).magnitude;
     }
 }
