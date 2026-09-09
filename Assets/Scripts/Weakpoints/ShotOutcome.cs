@@ -7,12 +7,14 @@ public readonly struct OutcomeRules
     public readonly ComboEffect Combo;
     public readonly bool AwardsPoints;
     public readonly bool RetainsAmmo;
+    public readonly bool ShowsMissPopup;
 
-    public OutcomeRules(ComboEffect combo, bool awardsPoints, bool retainsAmmo)
+    public OutcomeRules(ComboEffect combo, bool awardsPoints, bool retainsAmmo, bool showsMissPopup)
     {
         Combo = combo;
         AwardsPoints = awardsPoints;
         RetainsAmmo = retainsAmmo;
+        ShowsMissPopup = showsMissPopup;
     }
 }
 
@@ -33,13 +35,13 @@ public static class ShotOutcomeExtensions
     // WHO ACTUALLY USES DICTIONARIES???
     // ME APPARENTLY
     private static readonly Dictionary<ShotOutcome, OutcomeRules> rules = new Dictionary<ShotOutcome, OutcomeRules>
-    {                                                   // combo                  points  ammo return
-        { ShotOutcome.Miss,               new OutcomeRules(ComboEffect.Break,     false,  false) },
-        { ShotOutcome.WrongAmmo,          new OutcomeRules(ComboEffect.Break,     false,  false) },
-        { ShotOutcome.EnemyHit,           new OutcomeRules(ComboEffect.Neutral,   false,  true ) },
-        { ShotOutcome.EnemyHitStaggered,  new OutcomeRules(ComboEffect.Break,     false,  false) },
-        { ShotOutcome.ShootableTargetHit, new OutcomeRules(ComboEffect.Neutral,   false,  true ) },
-        { ShotOutcome.WeakPointHit,       new OutcomeRules(ComboEffect.Increment, true,   true ) },
+    {                                                   // combo                  points  keep ammo  miss popup
+        { ShotOutcome.Miss,               new OutcomeRules(ComboEffect.Break,     false,  false,  true ) },
+        { ShotOutcome.WrongAmmo,          new OutcomeRules(ComboEffect.Break,     false,  false,  false) },
+        { ShotOutcome.EnemyHit,           new OutcomeRules(ComboEffect.Neutral,   false,  true,   false) },
+        { ShotOutcome.EnemyHitStaggered,  new OutcomeRules(ComboEffect.Break,     false,  false,  false) },
+        { ShotOutcome.ShootableTargetHit, new OutcomeRules(ComboEffect.Neutral,   false,  true,   false) },
+        { ShotOutcome.WeakPointHit,       new OutcomeRules(ComboEffect.Increment, true,   true,   false) },
     };
 
     public static OutcomeRules Rules(this ShotOutcome outcome) => rules[outcome];
