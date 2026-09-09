@@ -109,23 +109,46 @@ public class ShotOrchestrator : MonoBehaviour
 
         if (isMisfire)
         {
-            weaponFiringLogic.StartMisfireCooldown();
-            isMisfireEffectsActive = true;
+            bool consumesAmmo = !result.Outcome.RetainsAmmo();
+            bool willRunOut = consumesAmmo && weaponFiringLogic.CurrentAmmo == 1;
+            bool willAutoReloadNow = willRunOut && autoReloadEnabled;
 
-            if (!result.Outcome.RetainsAmmo())
-                weaponFiringLogic.ConsumeAmmo();
-
-            if (weaponEvents != null)
+            if (willAutoReloadNow)
             {
-                weaponEvents.RaiseShotFired(shotType);
-                weaponEvents.RaiseAmmoChanged(weaponFiringLogic.CurrentAmmo, weaponFiringLogic.MagazineSize);
-                weaponEvents.RaiseShotResolved(result);
-            }
+                // Last shot: skip misfire visuals/audio and immediately proceed to reload logic
+                if (consumesAmmo)
+                    weaponFiringLogic.ConsumeAmmo();
 
-            StartCoroutine(DelayedMisfireVisuals());
+                if (weaponEvents != null)
+                {
+                    weaponEvents.RaiseShotFired(shotType);
+                    weaponEvents.RaiseAmmoChanged(weaponFiringLogic.CurrentAmmo, weaponFiringLogic.MagazineSize);
+                    weaponEvents.RaiseShotResolved(result);
+                }
 
-            if (!weaponFiringLogic.HasAmmo() && autoReloadEnabled)
+                // Start the auto-reload flow without playing misfire effects
                 StartCoroutine(DelayedAutoReload());
+            }
+            else
+            {
+                weaponFiringLogic.StartMisfireCooldown();
+                isMisfireEffectsActive = true;
+
+                if (consumesAmmo)
+                    weaponFiringLogic.ConsumeAmmo();
+
+                if (weaponEvents != null)
+                {
+                    weaponEvents.RaiseShotFired(shotType);
+                    weaponEvents.RaiseAmmoChanged(weaponFiringLogic.CurrentAmmo, weaponFiringLogic.MagazineSize);
+                    weaponEvents.RaiseShotResolved(result);
+                }
+
+                StartCoroutine(DelayedMisfireVisuals());
+
+                if (!weaponFiringLogic.HasAmmo() && autoReloadEnabled)
+                    StartCoroutine(DelayedAutoReload());
+            }
         }
         else
         {
