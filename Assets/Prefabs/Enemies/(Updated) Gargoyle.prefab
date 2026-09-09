@@ -74,7 +74,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviour
   enemyClass: 0
   alwaysAggro: 0
-  aggroRange: 10
+  aggroRange: 2
   skipSpawn: 0
   spawnDelay: 3
   attack: {fileID: 2335755685246290597}
@@ -86,7 +86,7 @@ MonoBehaviour:
   chaseEasing: 0.5
   chaseStopDistance: 2.5
   stagger: {fileID: 3580518955538096315}
-  numberOfPhases: 3
+  numberOfPhases: 1
   animator: {fileID: 4294958922522391095}
   doSummons: 0
   summonOnCycles: 01000000
@@ -162,7 +162,7 @@ MonoBehaviour:
   windUpTime: 2
   windupIndicator: {fileID: 1018914182935538455}
   damageFieldPrefab: {fileID: 5792883796589563391, guid: 69f641cc01b72464eb8479f0d3d12619, type: 3}
-  attackRange: 15
+  attackRange: 5
   damageFieldHeight: 0.5
   damageWindow: 1
   currentWindUpTime: 0
@@ -310,7 +310,7 @@ Animator:
   m_GameObject: {fileID: 2460730295484081653}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 0b2439e63fe325242a979659710fe04b, type: 2}
+  m_Controller: {fileID: 9100000, guid: ad3a4ab401933604cbf77430fd52331d, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -623,7 +623,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 203305178815565052, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4434378975981373331, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: weakPointType
