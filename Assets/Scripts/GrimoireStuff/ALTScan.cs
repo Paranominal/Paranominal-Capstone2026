@@ -59,10 +59,10 @@ public class ALTScan : MonoBehaviour
             if (scanAction.WasReleasedThisFrame())
             {
                 //for staggering the enemy
-                if (scannedEnemy != null)
-                {
-                    scannedEnemy.OnEnemyScanned();
-                }
+                // if (scannedEnemy != null)
+                // {
+                //     scannedEnemy.OnEnemyScanned();
+                // }
 
                 if (scannedNow != null)
                 {

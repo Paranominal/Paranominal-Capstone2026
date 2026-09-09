@@ -10,8 +10,12 @@ public class WeaponFiringLogic : MonoBehaviour
     [Header("Shot Cooldown")]
     [SerializeField] private float shotCooldown = 0.2f;
 
+    [Header("Misfire")]
+    [SerializeField] private float misfireCooldown = 1f;
+
     private bool isReloading;
     private bool onCooldown;
+    private bool onMisfireCooldown;
     private int currentAmmo;
     private float reloadTimeRemaining;
 
@@ -19,6 +23,7 @@ public class WeaponFiringLogic : MonoBehaviour
     public int MagazineSize => magazineSize;
     public bool IsReloading => isReloading;
     public bool IsOnCooldown => onCooldown;
+    public bool IsOnMisfireCooldown => onMisfireCooldown;
     public float ReloadProgress
     {
         get
@@ -43,6 +48,14 @@ public class WeaponFiringLogic : MonoBehaviour
             return;
 
         StartCoroutine(ShotCooldownRoutine());
+    }
+
+    public void StartMisfireCooldown()
+    {
+        if (onMisfireCooldown)
+            return;
+
+        StartCoroutine(MisfireCooldownRoutine());
     }
 
     public bool TryStartReload()
@@ -85,11 +98,19 @@ public class WeaponFiringLogic : MonoBehaviour
         onCooldown = false;
     }
 
+    private IEnumerator MisfireCooldownRoutine()
+    {
+        onMisfireCooldown = true;
+        yield return new WaitForSeconds(misfireCooldown);
+        onMisfireCooldown = false;
+    }
+
     public void CancelActiveState()
     {
         StopAllCoroutines();
         isReloading = false;
         onCooldown = false;
+        onMisfireCooldown = false;
         reloadTimeRemaining = 0f;
     }
 }

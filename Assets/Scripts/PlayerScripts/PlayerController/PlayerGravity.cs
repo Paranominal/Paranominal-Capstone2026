@@ -1,9 +1,11 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerGravity : MonoBehaviour
 {
     [Header("References")]
+    [SerializeField] private PlayerInputReader playerInputReader;
     [SerializeField] private PlayerMover playerMover;
 
     [Header("Gravity")]
@@ -23,7 +25,7 @@ public class PlayerGravity : MonoBehaviour
 
     private void Update()
     {
-        if (playerMover != null && !playerMover.CanMove)
+        if (playerMover != null && !playerInputReader.CanMove)
             return;
 
         if (characterController.isGrounded && verticalVelocity < 0f)

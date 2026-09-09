@@ -13,15 +13,15 @@ public class HobgoblinBehaviour_PrototypeMelee : EnemyBehaviourBase
 
     //follow speed settings
     [Header("Following")]
-    [SerializeField] private float followSpeed = 5f;
+    // [SerializeField] private float followSpeed = 5f;
 
     //attack configuration
     [Header("Attack")]
     [SerializeField] private MeleeAttack meleeAttack;
     [Tooltip("Distance at which the Hobgoblin will commit to a swing. The agent stops pursuing inside this range to avoid crowding the player.")]
     [SerializeField] private float attackRange = 2f;
-    [Tooltip("Distance at which the Hobgoblin resumes pursuing after stopping. Should be slightly larger than attackRange to prevent jittering at the boundary.")]
-    [SerializeField] private float repositionRange = 2.5f;
+    // [Tooltip("Distance at which the Hobgoblin resumes pursuing after stopping. Should be slightly larger than attackRange to prevent jittering at the boundary.")]
+    // [SerializeField] private float repositionRange = 2.5f;
     [Tooltip("How closely the Hobgoblin must be facing the player before committing to a swing.")]
     [SerializeField] private float aimToleranceDegrees = 30f;
     [Tooltip("Time between attacks, measured from the end of one swing to the start of the next.")]
@@ -34,7 +34,7 @@ public class HobgoblinBehaviour_PrototypeMelee : EnemyBehaviourBase
 
     //current ai state
     private EnemyState currentState = EnemyState.Chase;
-    private bool isHolding;
+    // private bool isHolding;
     private float cooldownTimer;
 
     //cache references before play starts
@@ -58,7 +58,7 @@ public class HobgoblinBehaviour_PrototypeMelee : EnemyBehaviourBase
             }
 
             //clear hold flag so resume starts fresh
-            isHolding = false;
+            // isHolding = false;
             StopAllCoroutines();
         }
         else
@@ -73,11 +73,11 @@ public class HobgoblinBehaviour_PrototypeMelee : EnemyBehaviourBase
     //update ai every frame
     private void Update()
     {
-        //paused or dying enemies skip all logic
-        if (IsPaused || IsDying) return;
+        // //paused or dying enemies skip all logic
+        // if (IsPaused || IsDying) return;
 
-        //tick the cooldown regardless of state
-        cooldownTimer = Mathf.Max(0f, cooldownTimer - Time.deltaTime);
+        // //tick the cooldown regardless of state
+        // cooldownTimer = Mathf.Max(0f, cooldownTimer - Time.deltaTime);
 
         if (stagger != null && stagger.IsStaggered)
         {
@@ -119,40 +119,40 @@ public class HobgoblinBehaviour_PrototypeMelee : EnemyBehaviourBase
     //pursue the player when out of range; hold position and face them when in range
     private void PerformChase()
     {
-        if (navAgent == null || !navAgent.isOnNavMesh) return;
-        if (VisionTarget == null) return;
+        // if (navAgent == null || !navAgent.isOnNavMesh) return;
+        // if (VisionTarget == null) return;
 
-        Vector3 toTarget = VisionTarget.position - transform.position;
-        toTarget.y = 0f;
-        float distance = toTarget.magnitude;
+        // Vector3 toTarget = VisionTarget.position - transform.position;
+        // toTarget.y = 0f;
+        // float distance = toTarget.magnitude;
 
-        //hysteresis: stop pursuing inside attackRange, resume only when the player
-        //gets past repositionRange. without this gap, the agent would jitter at the boundary.
-        if (isHolding)
-        {
-            if (distance > repositionRange) isHolding = false;
-        }
-        else
-        {
-            if (distance <= attackRange) isHolding = true;
-        }
+        // //hysteresis: stop pursuing inside attackRange, resume only when the player
+        // //gets past repositionRange. without this gap, the agent would jitter at the boundary.
+        // if (isHolding)
+        // {
+        //     if (distance > repositionRange) isHolding = false;
+        // }
+        // else
+        // {
+        //     if (distance <= attackRange) isHolding = true;
+        // }
 
-        if (isHolding)
-        {
-            //planted: stop the agent and turn to face the player while waiting for cooldown
-            navAgent.isStopped = true;
-            navAgent.ResetPath();
-            FacePlayer(toTarget);
-        }
-        else
-        {
+        // if (isHolding)
+        // {
+        //     //planted: stop the agent and turn to face the player while waiting for cooldown
+        //     navAgent.isStopped = true;
+        //     navAgent.ResetPath();
+        //     FacePlayer(toTarget);
+        // }
+        // else
+        // {
             //pursue
-            navAgent.isStopped = false;
-            navAgent.speed = followSpeed;
-            navAgent.SetDestination(VisionTarget.position);
-        }
+            // navAgent.isStopped = false;
+            // navAgent.speed = followSpeed;
+            // navAgent.SetDestination(VisionTarget.position);
+        // }
 
-        TryAttack();
+        // TryAttack();
     }
 
     //rotate toward the player at idleTurnSpeed while planted

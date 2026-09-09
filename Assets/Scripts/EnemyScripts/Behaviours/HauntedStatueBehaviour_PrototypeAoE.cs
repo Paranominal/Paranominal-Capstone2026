@@ -16,6 +16,8 @@ public class HauntedStatueBehaviour_PrototypeAoE : EnemyBehaviourBase
     [SerializeField] private float attackCooldown = 2.5f;
     [Tooltip("How closely the statue must be facing the player before it will commit to an attack.")]
     [SerializeField] private float aimToleranceDegrees = 10f;
+    [Header("Animation")]
+    [SerializeField] private Animator animator;
 
     //current idle or chase state
     private EnemyState currentState = EnemyState.Idle;
@@ -41,6 +43,7 @@ public class HauntedStatueBehaviour_PrototypeAoE : EnemyBehaviourBase
     //update the statue state each frame
     private void Update()
     {
+        if (animator != null) DoAnimations();
         //paused or dying enemies skip all logic
         if (IsPaused || IsDying) return;
 
@@ -123,5 +126,13 @@ public class HauntedStatueBehaviour_PrototypeAoE : EnemyBehaviourBase
         //the rules just decide *where* that committed position is.
         aoeAttack.PerformAttack(VisionTarget);
         cooldownTimer = attackCooldown;
+    }
+    private void DoAnimations()
+    {
+        if (aoeAttack.IsAttacking) animator.SetTrigger("attack");
+        else animator.SetTrigger("idle");
+
+        if (aoeAttack.IsAttacking) animator.speed = aoeAttack.TelegraphDuration;
+        else animator.speed = 1;
     }
 }

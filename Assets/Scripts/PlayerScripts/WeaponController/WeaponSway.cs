@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class WeaponSway : MonoBehaviour
 {
     [Header("Input Actions")]
+    [SerializeField] private PlayerInputReader playerInputReader;
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference lookAction;
 

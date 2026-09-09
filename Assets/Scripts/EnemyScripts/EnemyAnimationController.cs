@@ -1,7 +1,5 @@
 using System.Drawing;
 using NUnit.Framework;
-using Unity.VisualScripting;
-using UnityEditor.Scripting;
 using UnityEngine;
 using UnityEngine.AI;
 

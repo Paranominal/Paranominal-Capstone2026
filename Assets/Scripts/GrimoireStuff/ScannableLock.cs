@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
+// Michael feature (interaction-rework): updated target.Interact() to pass InteractionContext.
 public class ScannableLock : MonoBehaviour
 {
     public ALTScannableObject lockObject;
@@ -12,10 +12,9 @@ public class ScannableLock : MonoBehaviour
     void Start()
     {
         if (grimoire == null)
-        {
             grimoire = FindAnyObjectByType<ALTGrimoire>();
-        }
-        target = GetComponentInChildren<IInteractable>();   // theres some glaring issues with this (namely you can't currently have more than one interaction type on one object) but it should work
+
+        target = GetComponentInChildren<IInteractable>();
     }
 
     void Update()
@@ -24,7 +23,7 @@ public class ScannableLock : MonoBehaviour
         {
             if (grimoire.CompareEntry(lockObject.entry))
             {
-                target.Interact();
+                target.Interact(new InteractionContext());
                 if (destroysItem)
                 {
                     Destroy(lockObject.gameObject);
@@ -32,6 +31,5 @@ public class ScannableLock : MonoBehaviour
                 }
             }
         }
-        
     }
 }

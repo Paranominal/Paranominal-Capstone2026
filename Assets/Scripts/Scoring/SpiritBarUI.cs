@@ -30,14 +30,14 @@ public class SpiritBarUI : MonoBehaviour
             ALTGrimoire.instance.OnGrimoireToggled += gameObject.SetActive;
         }
 
-        scoreText.text = scoreManager.currentScore.ToString();
+        scoreText.text = scoreManager.currentScore.ToString("N0");
         rankText.text = scoreManager.CurrentRank;
         SetBarWidth(scoreManager.GetProgressToNextRank()); // calls new function in scoremanager to get the float
     }
 
     private void HandlePointsAdded(int newTotal)
     {
-        scoreText.text = newTotal.ToString();
+        scoreText.text = newTotal.ToString("N0");
         SetBarWidth(scoreManager.GetProgressToNextRank());
     }
 

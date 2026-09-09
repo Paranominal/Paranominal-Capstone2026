@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// Michael feature (camera-shake): integrated Perlin noise based camera shake. Applied after head bob and strafe tilt so all three effects layer cleanly.
 public class CameraEffects : MonoBehaviour
 {
     [Header("References")]
@@ -18,9 +19,29 @@ public class CameraEffects : MonoBehaviour
     [SerializeField] private float maxTiltAngle = 2.5f;
     [SerializeField] private float tiltSpeed = 5f;
 
+    [Header("Camera Shake")]
+    [SerializeField] private bool enableShake = true;
+    [SerializeField] private float defaultShakeIntensity = 0.3f;
+    [SerializeField] private float defaultShakeDuration = 0.25f;
+    [Tooltip("How much positional offset (X/Y) to apply at full intensity.")]
+    [SerializeField] private float shakePositionScale = 0.08f;
+    [Tooltip("How much Z roll (degrees) to apply at full intensity.")]
+    [SerializeField] private float shakeRollScale = 2f;
+    [Tooltip("Perlin noise sample speed. Higher = faster wobble.")]
+    [SerializeField] private float shakeFrequency = 25f;
+
     private float bobTimer;
     private Vector3 initialCameraPosition;
     private float currentTilt;
+
+    // Shake state
+    private float shakeIntensity;
+    private float shakeDuration;
+    private float shakeElapsed;
+    private float seedX;
+    private float seedY;
+    private float seedR;
+    private bool isShaking;
 
     private void Awake()
     {
@@ -41,9 +62,11 @@ public class CameraEffects : MonoBehaviour
     private void LateUpdate()
     {
         if (playerCamera == null) return;
+        if (!inputReader.canMove) return;
 
         UpdateHeadBob();
         UpdateStrafeTilt();
+        UpdateShake();
     }
 
     private void UpdateHeadBob()
@@ -95,10 +118,85 @@ public class CameraEffects : MonoBehaviour
         playerCamera.transform.localRotation = Quaternion.Euler(currentEuler);
     }
 
+    // Summary: Applies Perlin noise shake additively on top of head bob and strafe tilt.
+    private void UpdateShake()
+    {
+        if (!enableShake)
+        {
+            // If shake was disabled while active, stop applying effects and reset state
+            isShaking = false;
+            return;
+        }
+
+        if (!isShaking) return;
+
+        shakeElapsed += Time.deltaTime;
+
+        if (shakeElapsed >= shakeDuration)
+        {
+            isShaking = false;
+            return;
+        }
+
+        float t = shakeElapsed / shakeDuration;
+        float decay = 1f - t * t;
+        float scale = shakeIntensity * decay;
+
+        float time = shakeElapsed * shakeFrequency;
+
+        float offsetX = (Mathf.PerlinNoise(seedX + time, 0f) - 0.5f) * 2f;
+        float offsetY = (Mathf.PerlinNoise(seedY + time, 0f) - 0.5f) * 2f;
+        float roll    = (Mathf.PerlinNoise(seedR + time, 0f) - 0.5f) * 2f;
+
+        // layer on top of whatever head bob set.
+        playerCamera.transform.localPosition += new Vector3(
+            offsetX * shakePositionScale * scale,
+            offsetY * shakePositionScale * scale,
+            0f);
+
+        // layer roll on top of whatever strafe tilt set.
+        Vector3 euler = playerCamera.transform.localRotation.eulerAngles;
+        euler.z += roll * shakeRollScale * scale;
+        playerCamera.transform.localRotation = Quaternion.Euler(euler);
+    }
+
+    // Start a shake with default intensity and duration. Restarts if already shaking.
+    public void Shake()
+    {
+        if (!enableShake) return;
+        Shake(defaultShakeIntensity, defaultShakeDuration);
+    }
+
+    // Start a shake with custom intensity and duration. Restarts if already shaking.
+    public void Shake(float intensity, float duration)
+    {
+        if (!enableShake) return;
+        shakeIntensity = intensity;
+        shakeDuration = duration;
+        shakeElapsed = 0f;
+        isShaking = true;
+
+        seedX = Random.Range(0f, 1000f);
+        seedY = Random.Range(0f, 1000f);
+        seedR = Random.Range(0f, 1000f);
+    }
+
     public void ToggleCameraEffects(bool toggle)
     {
         enableHeadBob = toggle;
         enableStrafeTilt = toggle;
+        enableShake = toggle;
+    }
+
+    // Expose runtime control for shake independently
+    public void ToggleCameraShake(bool enable)
+    {
+        enableShake = enable;
+        if (!enable)
+        {
+            // stop any active shake immediately
+            isShaking = false;
+        }
     }
     
 }
