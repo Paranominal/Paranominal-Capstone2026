@@ -22,33 +22,8 @@ public abstract class Enemy : MonoBehaviour
     [SerializeField] private bool alwaysAggro;
     [SerializeField] private float aggroRange = 10f;
 
-    [Header("Chase")]
-    [SerializeField] private bool chasePlayer;
-    [SerializeField] private bool onlyChaseIfAttackReady;
-    [SerializeField] private bool neverGiveUpChase;
-    [Tooltip("Max distance the enemy will chase from its spawn point. Ignored if neverGiveUpChase is on.")]
-    [SerializeField] private float chaseRange = 20f;
-    [SerializeField] private float chaseSpeed = 5f;
-    [Tooltip("How close the enemy stops to the player. Overridden by the shortest attack range if attacks are assigned.")]
-    [SerializeField] private float chaseStopDistance = 2.5f;
-
-    [Header("Return to Origin")]
-    [Tooltip("If enabled, the enemy walks back to its spawn point after losing aggro instead of idling in place.")]
-    [SerializeField] private bool returnToOrigin = true;
-    [SerializeField] private float returnSpeed = 3f;
-
-    [Header("Retreat")]
-    [Tooltip("If enabled, the enemy backs away from the player after finishing an attack.")]
-    [SerializeField] private bool retreatAfterAttack;
-    [SerializeField] private float retreatDistance = 5f;
-    [SerializeField] private float retreatSpeed = 4f;
-
-    [Header("Strafe")]
-    [Tooltip("If enabled, the enemy orbits the player while waiting for attack cooldown instead of standing still.")]
-    [SerializeField] private bool strafeWhileWaiting;
-    [SerializeField] private float strafeSpeed = 3f;
-    [Tooltip("How often the enemy changes strafe direction in seconds.")]
-    [SerializeField] private float strafeDirectionInterval = 2f;
+    [Header("Move & Chase")]
+    [SerializeField] private Enemy_MoveBehaviour_Base moveBehaviour;
 
     [Header("Contact Damage")]
     [Tooltip("If enabled, the enemy deals damage on contact with the player and dies. For kamikaze-style enemies with no attack scripts.")]
@@ -91,17 +66,10 @@ public abstract class Enemy : MonoBehaviour
     protected bool ShouldUseDirectMovement => kamikazeOnContact && behaviourState == BehaviourState.Chasing;
 
     protected Transform playerTransform;
-    protected Vector3 spawnPosition;
+    // protected Vector3 spawnPosition;
 
     // active attack tracking
     private EnemyAttack_Base currentAttack;
-
-    // retreat
-    private Vector3 retreatTarget;
-
-    // strafe
-    private float strafeDirection = 1f;
-    private float strafeTimer;
 
     // champion
     private int currentCycle = 0;
@@ -117,14 +85,13 @@ public abstract class Enemy : MonoBehaviour
     // Lifecycle
     protected virtual void Awake()
     {
-        spawnPosition = transform.position;
         playerTransform = GameObject.FindWithTag("Player").transform;
 
         if (stagger && stagger.weakPointManager) stagger.weakPointManager.handleOwnDestruction = false;
         if (enemyClass == EnemyClass.Champion && stagger && stagger.weakPointManager)
             stagger.weakPointManager.dieOnWeakpointsComplete = false;
 
-        InitializeMovement();
+        if (moveBehaviour) moveBehaviour.target = playerTransform;
 
         if (skipSpawn) DoSpawn();
         else StartCoroutine(SpawnSequence());
@@ -189,18 +156,10 @@ public abstract class Enemy : MonoBehaviour
         if (!CanAttack() && PlayerInAnyAttackRange() && AnyAttackEnabled()) { behaviourState = BehaviourState.Waiting; return; }
 
         // chase leash
-        if (!neverGiveUpChase)
-        {
-            float distFromSpawn = (transform.position - spawnPosition).magnitude;
-            if (!PlayerInAggroRange() || distFromSpawn > chaseRange)
-            {
-                ExitChase();
-                return;
-            }
-        }
+        moveBehaviour.CheckOrigin();
 
         FacePlayer();
-        DoMove(playerTransform.position, chaseSpeed, GetChaseStopDistance());
+        moveBehaviour.DoMove(playerTransform.position, /*chaseSpeed,*/ GetChaseStopDistance());
 
         // kamikaze: deal damage on contact and die
         if (kamikazeOnContact) CheckContactDamage();
@@ -223,7 +182,11 @@ public abstract class Enemy : MonoBehaviour
         currentAttack = null;
         if (stagger != null) stagger.windingUp = false;
 
-        if (retreatAfterAttack) { EnterRetreat(); return; }
+        if (moveBehaviour && moveBehaviour.RetreatAfterAttack)
+        {
+            moveBehaviour.EnterRetreat();
+            return;
+        } 
         if (AnyAttackEnabled() && PlayerInAnyAttackRange()) { behaviourState = BehaviourState.Waiting; return; }
         if (PlayerInAggroRange() && CanChase()) { behaviourState = BehaviourState.Chasing; return; }
         behaviourState = BehaviourState.Idling;
@@ -234,37 +197,34 @@ public abstract class Enemy : MonoBehaviour
         if (IsStunned()) { EnterStun(); return; }
         if (CanAttack()) { EnterAttack(); return; }
 
-        if (!PlayerInAnyAttackRange() && chasePlayer)
+        if (!PlayerInAnyAttackRange() && moveBehaviour)
         {
             behaviourState = BehaviourState.Chasing;
             return;
         }
         if (!AnyAttackEnabled()) { behaviourState = BehaviourState.Idling; return; }
 
-        if (strafeWhileWaiting)
-        {
-            UpdateStrafe();
-            FacePlayer();
+        // if (moveBehaviour && moveBehaviour.StrafeWhileWaiting)
+        // {
+        //     UpdateStrafe();
+        //     FacePlayer();
 
-            Vector3 target = ComputeStrafeTarget(strafeDirection);
+        //     Vector3 target = ComputeStrafeTarget(strafeDirection);
 
-            // if blocked, try the other direction. if both blocked, stop and face the player.
-            if (!IsStrafeClear(target))
-            {
-                target = ComputeStrafeTarget(-strafeDirection);
-                if (!IsStrafeClear(target))
-                {
-                    DoStop();
-                    return;
-                }
-            }
+        //     // if blocked, try the other direction. if both blocked, stop and face the player.
+        //     if (!IsStrafeClear(target))
+        //     {
+        //         target = ComputeStrafeTarget(-strafeDirection);
+        //         if (!IsStrafeClear(target))
+        //         {
+        //             moveBehaviour.DoStop();
+        //             return;
+        //         }
+        //     }
 
-            DoMove(target, strafeSpeed, 0.5f);
-        }
-        else
-        {
-            FacePlayer();
-        }
+        //     moveBehaviour.DoMove(target, strafeSpeed, 0.5f);
+        // }
+        FacePlayer();
     }
 
     private void StunState()
@@ -320,22 +280,6 @@ public abstract class Enemy : MonoBehaviour
         if (currentAttack != null && currentAttack.IsAttacking) currentAttack.CancelAttack();
         currentAttack = null;
         if (!IsStunned()) stagger.TriggerStagger();
-    }
-
-    private void EnterRetreat()
-    {
-        behaviourState = BehaviourState.Retreating;
-        Vector3 awayFromPlayer = (transform.position - playerTransform.position);
-        awayFromPlayer.y = 0f;
-        if (awayFromPlayer.sqrMagnitude < 0.001f) awayFromPlayer = -transform.forward;
-        retreatTarget = transform.position + awayFromPlayer.normalized * retreatDistance;
-    }
-
-    private void ExitChase()
-    {
-        DoStop();
-        if (returnToOrigin) behaviourState = BehaviourState.Returning;
-        else behaviourState = BehaviourState.Idling;
     }
 
 
@@ -403,8 +347,8 @@ public abstract class Enemy : MonoBehaviour
 
     private bool CanChase()
     {
-        if (!chasePlayer) return false;
-        if (onlyChaseIfAttackReady && !AnyAttackReady()) return false;
+        if (!moveBehaviour) return false;
+        if (moveBehaviour.OnlyChaseIfAttackReady && !AnyAttackReady()) return false;
         return true;
     }
 
@@ -454,9 +398,6 @@ public abstract class Enemy : MonoBehaviour
             if (found) return minRange;
         }
 
-        // kamikaze enemies chase all the way to the player
-        if (kamikazeOnContact) return 0f;
-
         return chaseStopDistance;
     }
 
@@ -474,40 +415,6 @@ public abstract class Enemy : MonoBehaviour
         Die();
     }
 
-
-    // Strafe
-    private void UpdateStrafe()
-    {
-        strafeTimer -= Time.deltaTime;
-        if (strafeTimer <= 0f)
-        {
-            strafeDirection *= -1f;
-            strafeTimer = strafeDirectionInterval;
-        }
-    }
-
-    private Vector3 ComputeStrafeTarget(float direction)
-    {
-        if (playerTransform == null) return transform.position;
-
-        Vector3 toEnemy = transform.position - playerTransform.position;
-        toEnemy.y = 0f;
-        float radius = GetChaseStopDistance();
-        if (radius < 0.1f) return transform.position;
-
-        Vector3 lateral = Vector3.Cross(Vector3.up, toEnemy.normalized) * direction;
-        Vector3 aheadOnArc = transform.position + lateral * 2f;
-        Vector3 fromPlayer = aheadOnArc - playerTransform.position;
-        fromPlayer.y = 0f;
-
-        return playerTransform.position + fromPlayer.normalized * radius;
-    }
-
-    // override in subclasses to check for obstacles between the enemy and the strafe target
-    protected virtual bool IsStrafeClear(Vector3 target)
-    {
-        return true;
-    }
 
 
     // Spawn
@@ -574,7 +481,7 @@ public abstract class Enemy : MonoBehaviour
         if (IsDying) return;
         IsDying = true;
         behaviourState = BehaviourState.Dying;
-        DoStop();
+        if (moveBehaviour) moveBehaviour.DoStop();
 
         OnDying();
         ReportDeathToSpawner();
@@ -667,11 +574,4 @@ public abstract class Enemy : MonoBehaviour
         hasReportedDeathToSpawner = true;
         ownerSpawner.NotifyEnemyDeath(this);
     }
-
-
-    // Movement
-    protected abstract void InitializeMovement();
-    protected abstract void DoMove(Vector3 target, float speed, float stopDistance);
-    protected abstract void DoStop();
-    protected abstract bool HasReachedTarget();
 }
