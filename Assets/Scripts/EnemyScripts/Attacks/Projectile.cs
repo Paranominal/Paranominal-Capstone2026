@@ -14,6 +14,8 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float maxVelocity = 20f;
     [SerializeField] private float acceleration = 1f;
     [SerializeField] private float lifetime = 5f;
+    [Tooltip("Layers the projectile can interact with. Leave at Everything to hit all layers.")]
+    [SerializeField] private LayerMask hitLayers = ~0;
 
     private Rigidbody rb;
     private Vector3 travelDirection;
@@ -84,6 +86,9 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // skip layers the projectile shouldn't interact with
+        if (hitLayers != (hitLayers | (1 << other.gameObject.layer))) return;
+
         if (debugMode) Debug.Log($"[Projectile] OnTriggerEnter hit: '{other.gameObject.name}' | Layer: {LayerMask.LayerToName(other.gameObject.layer)} | Tag: {other.gameObject.tag} | IsTrigger: {other.isTrigger}", other.gameObject);
 
         // don't hit the enemy that fired us
