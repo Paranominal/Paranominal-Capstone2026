@@ -312,7 +312,8 @@ GameObject:
   m_Component:
   - component: {fileID: 9149036478034270715}
   - component: {fileID: 6445863154762580808}
-  - component: {fileID: 808684855449376576}
+  - component: {fileID: 1612765203839693141}
+  - component: {fileID: 81387542603288831}
   - component: {fileID: 7537058298590536078}
   - component: {fileID: 1700465578617832570}
   - component: {fileID: 1073755120511419540}
@@ -364,7 +365,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1.8, z: 1}
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!114 &808684855449376576
+--- !u!114 &1612765203839693141
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -373,28 +374,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 8722295293950930483}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: efb8666b58280e34a8da826a9ce6cff7, type: 3}
+  m_Script: {fileID: 11500000, guid: 1606917a069cd2d45a63fbf757bb38b8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviour
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy
   enemyClass: 0
   skipSpawn: 0
-  spawnDelay: 0.5
-  alwaysAggro: 1
+  spawnDelay: 1
+  alwaysAggro: 0
   aggroRange: 10
+  movementScript: {fileID: 81387542603288831}
   chasePlayer: 1
   onlyChaseIfAttackReady: 0
   neverGiveUpChase: 0
   chaseRange: 20
-  chaseSpeed: 5
-  chaseStopDistance: 2.5
-  returnToOrigin: 0
-  returnSpeed: 3
+  returnToOrigin: 1
   retreatAfterAttack: 0
-  retreatDistance: 5
-  retreatSpeed: 4
   strafeWhileWaiting: 1
-  strafeSpeed: 3
-  strafeDirectionInterval: 2
+  kamikazeOnContact: 0
+  contactDamage: 10
   attacks:
   - {fileID: 7537058298590536078}
   stagger: {fileID: 1700465578617832570}
@@ -405,10 +402,27 @@ MonoBehaviour:
   summonsPrefab: {fileID: 0}
   numberOfSummons: 3
   summonRadius: 3
-  vision: {fileID: 0}
   debugMode: 0
-  navAgent: {fileID: 626168012900836677}
-  chaseEasing: 0.75
+--- !u!114 &81387542603288831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8722295293950930483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a643fed73d423384c9d7779bfe27306c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GroundMovement
+  chaseSpeed: 5
+  chaseStopDistance: 2.5
+  chaseEasing: 0.5
+  returnSpeed: 3
+  retreatDistance: 5
+  retreatSpeed: 4
+  strafeSpeed: 3
+  strafeDirectionInterval: 2
 --- !u!114 &7537058298590536078
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -429,6 +443,9 @@ MonoBehaviour:
   targetLayers:
     serializedVersion: 2
     m_Bits: 64
+  persistAfterHit: 0
+  damageOverTime: 0
+  damageTickRate: 0.5
   windupDuration: 0.8
   strikeDuration: 0.4
   recoveryDuration: 0.6
@@ -459,8 +476,6 @@ MonoBehaviour:
   staggerTime: 2
   timeBeforeBarDrain: 1
   timeAddedOnHit: 0.5
-  knockbackOnHit: 0
-  knockback: {fileID: 0}
   debugMode: 0
   canBeHit: 1
   windingUp: 0

@@ -9,11 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4798954612814379618}
-  - component: {fileID: 3702142900603545440}
+  - component: {fileID: 3568241263418442985}
+  - component: {fileID: 5445272703306835462}
   - component: {fileID: 5425350769874602465}
   - component: {fileID: 8192007907820673360}
   - component: {fileID: 4206877478203493182}
-  - component: {fileID: 2480451604828081716}
+  - component: {fileID: 8622962237435936167}
   m_Layer: 8
   m_Name: (Updated) Ghost
   m_TagString: Untagged
@@ -38,7 +39,7 @@ Transform:
   - {fileID: 853030881613916837}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3702142900603545440
+--- !u!114 &3568241263418442985
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,28 +48,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 272941483086651391}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd9c02d573255d34984b5687bf495593, type: 3}
+  m_Script: {fileID: 11500000, guid: 1606917a069cd2d45a63fbf757bb38b8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FlyingEnemyBehaviour
-  enemyClass: 2
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  enemyClass: 0
   skipSpawn: 0
   spawnDelay: 3
-  alwaysAggro: 1
+  alwaysAggro: 0
   aggroRange: 10
+  movementScript: {fileID: 5445272703306835462}
   chasePlayer: 1
   onlyChaseIfAttackReady: 0
-  neverGiveUpChase: 1
+  neverGiveUpChase: 0
   chaseRange: 20
-  chaseSpeed: 5
-  chaseStopDistance: 2.5
-  returnToOrigin: 0
-  returnSpeed: 3
+  returnToOrigin: 1
   retreatAfterAttack: 0
-  retreatDistance: 5
-  retreatSpeed: 4
   strafeWhileWaiting: 0
-  strafeSpeed: 3
-  strafeDirectionInterval: 2
   kamikazeOnContact: 1
   contactDamage: 10
   attacks: []
@@ -80,9 +75,35 @@ MonoBehaviour:
   summonsPrefab: {fileID: 0}
   numberOfSummons: 3
   summonRadius: 3
-  vision: {fileID: 0}
   debugMode: 0
-  movementScript: {fileID: 0}
+--- !u!114 &5445272703306835462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272941483086651391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b822e32bd4727ef4c9b62f566be59d03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlyingMovement
+  chaseSpeed: 8
+  chaseStopDistance: 6
+  acceleration: 10
+  returnSpeed: 3
+  retreatDistance: 5
+  retreatSpeed: 4
+  strafeSpeed: 4
+  strafeDirectionInterval: 2
+  hoverHeight: 2.5
+  verticalOffset: 1.5
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  groundCheckDistance: 50
+  bobAmplitude: 0.3
+  bobFrequency: 2
 --- !u!114 &5425350769874602465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,8 +145,6 @@ MonoBehaviour:
   staggerTime: 2
   timeBeforeBarDrain: 0.4
   timeAddedOnHit: 0.5
-  knockbackOnHit: 0
-  knockback: {fileID: 0}
   debugMode: 1
   canBeHit: 1
   windingUp: 0
@@ -150,18 +169,33 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2480451604828081716
-MonoBehaviour:
+--- !u!54 &8622962237435936167
+Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 272941483086651391}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7fd8d9b4bb13db4b88d2c3e5a12150d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StaggerColorEffect
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &3649698560257739166
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1777833132711805493}
   - component: {fileID: 8871764274831795934}
-  - component: {fileID: 3050938563510264431}
+  - component: {fileID: 480061418811518783}
   - component: {fileID: 6403643788848522719}
   - component: {fileID: 3580518955538096315}
   - component: {fileID: 1199629963655329915}
@@ -61,7 +61,7 @@ CapsuleCollider:
   m_Height: 4
   m_Direction: 1
   m_Center: {x: 0, y: 2.8, z: 0}
---- !u!114 &3050938563510264431
+--- !u!114 &480061418811518783
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -70,28 +70,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 827877862285555472}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: efb8666b58280e34a8da826a9ce6cff7, type: 3}
+  m_Script: {fileID: 11500000, guid: 1606917a069cd2d45a63fbf757bb38b8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviour
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy
   enemyClass: 0
   skipSpawn: 0
   spawnDelay: 3
   alwaysAggro: 0
   aggroRange: 10
+  movementScript: {fileID: 0}
   chasePlayer: 0
   onlyChaseIfAttackReady: 0
   neverGiveUpChase: 0
   chaseRange: 20
-  chaseSpeed: 5
-  chaseStopDistance: 2.5
-  returnToOrigin: 0
-  returnSpeed: 3
+  returnToOrigin: 1
   retreatAfterAttack: 0
-  retreatDistance: 5
-  retreatSpeed: 4
   strafeWhileWaiting: 0
-  strafeSpeed: 3
-  strafeDirectionInterval: 2
+  kamikazeOnContact: 0
+  contactDamage: 10
   attacks:
   - {fileID: 6403643788848522719}
   stagger: {fileID: 3580518955538096315}
@@ -102,10 +98,7 @@ MonoBehaviour:
   summonsPrefab: {fileID: 0}
   numberOfSummons: 3
   summonRadius: 3
-  vision: {fileID: 0}
   debugMode: 0
-  navAgent: {fileID: 0}
-  chaseEasing: 0.5
 --- !u!114 &6403643788848522719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,7 +113,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_AoE
   attackRange: 5
   cooldownTime: 2
-  windupIndicator: {fileID: 0}
+  windupIndicator: {fileID: 1018914182935538455}
   damageFieldPrefab: {fileID: 5792883796589563391, guid: 69f641cc01b72464eb8479f0d3d12619, type: 3}
   spellRadius: 2
   damageFieldHeight: 0.5
@@ -129,6 +122,9 @@ MonoBehaviour:
   targetLayers:
     serializedVersion: 2
     m_Bits: 64
+  persistAfterHit: 0
+  damageOverTime: 0
+  damageTickRate: 0.5
   dangerZonePrefab: {fileID: 4280848331170967189, guid: c661cb46322183c4196f414021fa8d3e, type: 3}
   telegraphDuration: 1.2
   recoveryDuration: 0.4
@@ -162,8 +158,6 @@ MonoBehaviour:
   staggerTime: 5
   timeBeforeBarDrain: 0.4
   timeAddedOnHit: 0.7
-  knockbackOnHit: 0
-  knockback: {fileID: 0}
   debugMode: 0
   canBeHit: 1
   windingUp: 0
