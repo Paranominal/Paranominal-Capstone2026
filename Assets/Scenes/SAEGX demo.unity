@@ -11506,6 +11506,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3264304001121824609, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: inertiaPower
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3264304001121824609, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: airInertiaMultiplier
       value: 3
       objectReference: {fileID: 0}
@@ -12170,29 +12174,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8672dcc90e16b0a489a41edf56e016f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: RealtimeCSG::RealtimeCSG.Components.CSGModel
-  PrefabBehaviour: 0
-  PrefabSourceAlignment: 4
-  PrefabDestinationAlignment: 0
-  Version: 1.1
-  infiniteBrush: {fileID: 0}
-  Settings: 1537
-  VertexChannels: 14
-  ReceiveGI: 2
-  MeshColliderCookingOptions: 14
-  ShowGeneratedMeshes: 0
-  DefaultPhysicsMaterial: {fileID: 13400000, guid: 0c5fdfb44d6f19646a41a0720fbf751a, type: 2}
-  exportType: 0
-  originType: 0
-  exportColliders: 0
-  exportPath: 
-  angleError: 1
-  areaError: 1
-  hardAngle: 60
-  packMargin: 20
-  scaleInLightmap: 1
-  autoUVMaxDistance: 0.5
-  autoUVMaxAngle: 89
-  minimumChartSize: 4
 --- !u!4 &789741720
 Transform:
   m_ObjectHideFlags: 17
@@ -22628,9 +22609,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c3643d4978096d4880d7edbf4f65a50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: RealtimeCSG::InternalRealtimeCSG.GeneratedMeshes
-  Version: 1
-  owner: {fileID: 789741719}
-  helperSurfaces: []
 --- !u!43 &1531241053
 Mesh:
   m_ObjectHideFlags: 0
@@ -29008,6 +28986,63 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1001 &2037468200
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3969586099919428413, guid: 1bd93d32508016747bbd7651b1546175, type: 3}
+      propertyPath: m_Name
+      value: ElevatorDoor
+      objectReference: {fileID: 0}
+    - target: {fileID: 4349664882236768647, guid: 1bd93d32508016747bbd7651b1546175, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 28.327
+      objectReference: {fileID: 0}
+    - target: {fileID: 4349664882236768647, guid: 1bd93d32508016747bbd7651b1546175, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.011483908
+      objectReference: {fileID: 0}
+    - target: {fileID: 4349664882236768647, guid: 1bd93d32508016747bbd7651b1546175, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 83.841
+      objectReference: {fileID: 0}
+    - target: {fileID: 4349664882236768647, guid: 1bd93d32508016747bbd7651b1546175, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4349664882236768647, guid: 1bd93d32508016747bbd7651b1546175, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4349664882236768647, guid: 1bd93d32508016747bbd7651b1546175, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4349664882236768647, guid: 1bd93d32508016747bbd7651b1546175, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4349664882236768647, guid: 1bd93d32508016747bbd7651b1546175, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4349664882236768647, guid: 1bd93d32508016747bbd7651b1546175, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 4349664882236768647, guid: 1bd93d32508016747bbd7651b1546175, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1bd93d32508016747bbd7651b1546175, type: 3}
 --- !u!43 &2050528565
 Mesh:
   m_ObjectHideFlags: 0
@@ -31083,7 +31118,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1579953084}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 6108231654348574474, guid: b17223ed66fd483438797ed8523d9727, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 8644711708722966545, guid: b17223ed66fd483438797ed8523d9727, type: 3}
@@ -31782,3 +31818,4 @@ SceneRoots:
   - {fileID: 690967319}
   - {fileID: 1007171494}
   - {fileID: 789741720}
+  - {fileID: 2037468200}
