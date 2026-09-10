@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 37571238613716867}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.678, z: -0.241}
+  m_LocalPosition: {x: 0, y: 0.678, z: 0.419}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -43,7 +43,6 @@ GameObject:
   - component: {fileID: 8871764274831795934}
   - component: {fileID: 5307842119942140418}
   - component: {fileID: 1351871940050473298}
-  - component: {fileID: 4170538492306705112}
   - component: {fileID: 3580518955538096315}
   - component: {fileID: 1199629963655329915}
   m_Layer: 17
@@ -143,49 +142,16 @@ MonoBehaviour:
   cooldownTime: 2
   windupIndicator: {fileID: 1018914182935538455}
   projectilePrefab: {fileID: 7624500336100165174, guid: 149546affb6a6e94ab12ce1b5afe0c2f, type: 3}
-  launchPoint: {fileID: 7935076025116582689}
-  baseDamage: 10
+  damage: 8
   initialVelocity: 0
   maxVelocity: 20
   acceleration: 5
   lifetime: 2
+  launchOffset: {x: 0, y: 1, z: 2}
+  targetHeightOffset: 1
+  windupDuration: 0.4
   recoveryDuration: 0.5
-  debugMode: 0
---- !u!114 &4170538492306705112
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 827877862285555472}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c85883ac9200dce4784df13b366f62c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_AoE
-  attackRange: 6
-  cooldownTime: 2
-  windupIndicator: {fileID: 1018914182935538455}
-  damageFieldPrefab: {fileID: 5792883796589563391, guid: 69f641cc01b72464eb8479f0d3d12619, type: 3}
-  spellRadius: 2
-  damageFieldHeight: 0.5
-  damage: 10
-  damageWindow: 1
-  targetLayers:
-    serializedVersion: 2
-    m_Bits: 64
-  persistAfterHit: 1
-  damageOverTime: 1
-  damageTickRate: 0.5
-  dangerZonePrefab: {fileID: 4280848331170967189, guid: c661cb46322183c4196f414021fa8d3e, type: 3}
-  telegraphDuration: 1
-  recoveryDuration: 0.4
-  stationaryThreshold: 0.5
-  towardCasterOffset: 0
-  leadTime: 0.6
-  scatterRadius: 0.4
-  velocityWindowDuration: 0.25
-  preferStationaryTargets: 0
+  windupTurnSpeed: 180
   debugMode: 0
 --- !u!114 &3580518955538096315
 MonoBehaviour:
