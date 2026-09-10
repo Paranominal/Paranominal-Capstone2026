@@ -9378,7 +9378,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8740965625450218032, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
   m_PrefabInstance: {fileID: 8723667617613130007}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8723667617613130011}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf6d38aacf65a2f44931f6a277209af0, type: 3}
@@ -10203,6 +10203,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 105819745583116868, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: labelPool
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 799491107579824861, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_Name
       value: Miriam Norwych
@@ -10216,17 +10220,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1944141914219030487, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-      propertyPath: UIPuller
-      value: 
-      objectReference: {fileID: 8723667617613130012}
-    - target: {fileID: 1944141914219030487, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: dialogueManager
       value: 
       objectReference: {fileID: 660388033}
-    - target: {fileID: 3264304001121824609, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-      propertyPath: airInertiaMultiplier
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 3769110204529532494, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -21310,6 +21306,17 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!114 &1606109823 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7731953312378505995, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+  m_PrefabInstance: {fileID: 721273275}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4bc96a8fbc847d40af5c1c000ee6f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponInputReader
 --- !u!1001 &1618459034
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32388,17 +32395,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2553725025826167387, guid: 33af256de2b11d64099f54fc28b54945, type: 3}
     - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: doTimeout
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: playerInput
       value: 
       objectReference: {fileID: 1539268848}
     - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: weaponInput
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1606109823}
     - target: {fileID: 8740965625450218032, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: playerInputReader
       value: 
@@ -32406,7 +32409,7 @@ PrefabInstance:
     - target: {fileID: 8740965625450218032, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: weaponInputReader
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1606109823}
     - target: {fileID: 8740965625450218032, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: grimoireAnimManager
       value: 
@@ -32418,52 +32421,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5922660272011896682, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8723667617613130012}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
 --- !u!20 &8723667617613130008 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 3307265655166600156, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
   m_PrefabInstance: {fileID: 8723667617613130007}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8723667617613130009 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7002268296874924430, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-  m_PrefabInstance: {fileID: 8723667617613130007}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventSystem
---- !u!1 &8723667617613130010 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2796022483660304884, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-  m_PrefabInstance: {fileID: 8723667617613130007}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &8723667617613130011 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5922660272011896682, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-  m_PrefabInstance: {fileID: 8723667617613130007}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8723667617613130012
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8723667617613130011}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36be5761ccc11e14a8b9594d8935a1bf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIPullFocus
-  eventSystem: {fileID: 8723667617613130009}
-  newFocus: {fileID: 8723667617613130010}
-  dialogueManager: {fileID: 660388033}
 --- !u!1001 &8745655675799966875
 PrefabInstance:
   m_ObjectHideFlags: 0
