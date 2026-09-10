@@ -7,6 +7,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] private bool doDuplicates;
     [SerializeField] private ALTGrimoire grimoire;
     [SerializeField] private DialogueManager dialogueManager;
+    [SerializeField] private UIPullFocus UIPuller;
     
 
     public void Add(GameObject item) //similar to old scan, adds entry but keeps item in-world
@@ -55,6 +56,7 @@ public class Inventory : MonoBehaviour
     private void DoDialogue(GameObject pickupDialogue)
     {
         dialogueManager.StartDialogue(pickupDialogue);
+        UIPuller.PullFocus();
     }
     public void Remove(GameObject item)
     {
