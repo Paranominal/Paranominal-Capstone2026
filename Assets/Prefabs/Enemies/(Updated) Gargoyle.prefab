@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &37571238613716867
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7935076025116582689}
+  m_Layer: 0
+  m_Name: ProjectileOrigin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7935076025116582689
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 37571238613716867}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.678, z: -0.241}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9002036258510447634}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &827877862285555472
 GameObject:
   m_ObjectHideFlags: 0
@@ -11,6 +42,7 @@ GameObject:
   - component: {fileID: 1777833132711805493}
   - component: {fileID: 8871764274831795934}
   - component: {fileID: 5307842119942140418}
+  - component: {fileID: 1351871940050473298}
   - component: {fileID: 4170538492306705112}
   - component: {fileID: 3580518955538096315}
   - component: {fileID: 1199629963655329915}
@@ -85,7 +117,7 @@ MonoBehaviour:
   kamikazeOnContact: 0
   contactDamage: 10
   attacks:
-  - {fileID: 4170538492306705112}
+  - {fileID: 1351871940050473298}
   stagger: {fileID: 3580518955538096315}
   animator: {fileID: 4294958922522391095}
   numberOfPhases: 3
@@ -95,7 +127,7 @@ MonoBehaviour:
   numberOfSummons: 3
   summonRadius: 3
   debugMode: 0
---- !u!114 &4170538492306705112
+--- !u!114 &1351871940050473298
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -104,12 +136,36 @@ MonoBehaviour:
   m_GameObject: {fileID: 827877862285555472}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1ef647f0810f5f4f96d9ee7d842cc95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_Ranged
+  attackRange: 12
+  cooldownTime: 2
+  windupIndicator: {fileID: 1018914182935538455}
+  projectilePrefab: {fileID: 7624500336100165174, guid: 149546affb6a6e94ab12ce1b5afe0c2f, type: 3}
+  launchPoint: {fileID: 7935076025116582689}
+  baseDamage: 10
+  initialVelocity: 0
+  maxVelocity: 20
+  acceleration: 5
+  lifetime: 2
+  recoveryDuration: 0.5
+  debugMode: 0
+--- !u!114 &4170538492306705112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 827877862285555472}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c85883ac9200dce4784df13b366f62c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_AoE
   attackRange: 6
   cooldownTime: 2
-  windupIndicator: {fileID: 0}
+  windupIndicator: {fileID: 1018914182935538455}
   damageFieldPrefab: {fileID: 5792883796589563391, guid: 69f641cc01b72464eb8479f0d3d12619, type: 3}
   spellRadius: 2
   damageFieldHeight: 0.5
@@ -243,6 +299,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7935076025116582689}
   - {fileID: 4686161657858057583}
   - {fileID: 3147146313295953652}
   - {fileID: 4951615720741283625}
