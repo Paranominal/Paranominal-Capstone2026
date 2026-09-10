@@ -56,13 +56,13 @@ MonoBehaviour:
     m_Value: 10
   vignetteWidth:
     m_OverrideState: 1
-    m_Value: 60
+    m_Value: 68.8
   scanlineIntensity:
     m_OverrideState: 1
-    m_Value: 0.04
+    m_Value: 0.03
   scanlineCount:
     m_OverrideState: 1
-    m_Value: 200
+    m_Value: 400
   cornerRadius:
     m_OverrideState: 1
     m_Value: 0.2
@@ -71,7 +71,29 @@ MonoBehaviour:
     m_Value: 100
   phosphorIntensity:
     m_OverrideState: 1
-    m_Value: 0.05
+    m_Value: 0
+--- !u!114 &-7465803131807806113
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5485954d14dfb9a4c8ead8edb0ded5b1, type: 3}
+  m_Name: LiftGammaGain
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.LiftGammaGain
+  active: 1
+  lift:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1, z: 1, w: 0}
+  gamma:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1, z: 1, w: 0}
+  gain:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1, z: 1, w: 0.20285504}
 --- !u!114 &-2948373080095487420
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -186,7 +208,7 @@ MonoBehaviour:
   active: 1
   intensity:
     m_OverrideState: 1
-    m_Value: 0.072
+    m_Value: 0.104
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,6 +223,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.VolumeProfile
   components:
   - {fileID: 8214733505025932202}
+  - {fileID: -7465803131807806113}
   - {fileID: -2377814807994718323}
   - {fileID: -2948373080095487420}
   - {fileID: -445072511358724795}
@@ -227,22 +250,22 @@ MonoBehaviour:
   active: 1
   redSteps:
     m_OverrideState: 1
-    m_Value: 16
+    m_Value: 8
   greenSteps:
     m_OverrideState: 1
-    m_Value: 16
+    m_Value: 8
   blueSteps:
     m_OverrideState: 1
-    m_Value: 16
+    m_Value: 8
   effectStrength:
     m_OverrideState: 1
-    m_Value: 0.53
+    m_Value: 0.3
   ditherStrength:
     m_OverrideState: 1
-    m_Value: 0.22
+    m_Value: 0.578
   bayerSize:
     m_OverrideState: 1
-    m_Value: 4
+    m_Value: 2
   usePS1Matrix:
     m_OverrideState: 1
     m_Value: 0
@@ -336,7 +359,7 @@ MonoBehaviour:
   active: 1
   sharpness:
     m_OverrideState: 1
-    m_Value: 0.25
+    m_Value: 0.2
   sampleDistance:
     m_OverrideState: 1
     m_Value: 1

@@ -1,5 +1,7 @@
 using TMPro;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
@@ -29,6 +31,7 @@ public class SceneReset : MonoBehaviour
 
         if (logTimer) Debug.Log(time);
     }
+
     void PressReset()
     {
         if (resetInput.action.WasReleasedThisFrame()) DoReset();
@@ -57,6 +60,13 @@ public class SceneReset : MonoBehaviour
     {
         Debug.Log($"Resetting Scene to [Scene: {sceneBuildIndex}]!");
         SceneManager.LoadScene(sceneBuildIndex);
+    }
+    public void ToggleTimeout(bool toggle)
+    {
+        doTimeout = toggle;
+        // reset timer when enabling so users get the full timeout window
+        if (doTimeout) time = 0f;
+        TimerText();
     }
     void CheckForInputReaders()
     {
