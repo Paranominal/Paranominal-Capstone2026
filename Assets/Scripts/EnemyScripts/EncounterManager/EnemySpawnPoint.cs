@@ -31,8 +31,8 @@ public class EnemySpawnPoint : MonoBehaviour
         }
     }
 
-    // Spawns the enemy assigned to the requested wave and returns its EnemyBehaviourBase if one was created.
-    public EnemyBehaviourBase SpawnEnemy(int currentWave, IEnemySpawner ownerSpawner)
+    // Spawns the enemy assigned to the requested wave and returns its Enemy if one was created.
+    public Enemy SpawnEnemy(int currentWave, IEnemySpawner ownerSpawner)
     {
         if (currentWave <= 0)
         {
@@ -79,7 +79,7 @@ public class EnemySpawnPoint : MonoBehaviour
             navAgent.Warp(transform.position);
         }
 
-        EnemyBehaviourBase enemyBehaviour = spawnedObject.GetComponent<EnemyBehaviourBase>();
+        Enemy enemyBehaviour = spawnedObject.GetComponent<Enemy>();
 
         if (enemyBehaviour != null)
         {
@@ -87,7 +87,7 @@ public class EnemySpawnPoint : MonoBehaviour
             return enemyBehaviour;
         }
 
-        Debug.LogWarning($"{spawnedObject.name} is missing an EnemyBehaviourBase component.");
+        Debug.LogWarning($"{spawnedObject.name} is missing an Enemy component.");
         return null;
     }
 

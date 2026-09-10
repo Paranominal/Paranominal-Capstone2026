@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1777833132711805493}
   - component: {fileID: 8871764274831795934}
-  - component: {fileID: 973528641589158923}
+  - component: {fileID: 480061418811518783}
+  - component: {fileID: 6403643788848522719}
   - component: {fileID: 3580518955538096315}
   - component: {fileID: 1199629963655329915}
-  - component: {fileID: 2335755685246290597}
   m_Layer: 17
   m_Name: Enemy
   m_TagString: Untagged
@@ -60,7 +60,7 @@ CapsuleCollider:
   m_Height: 4
   m_Direction: 1
   m_Center: {x: 0, y: 2.8, z: 0}
---- !u!114 &973528641589158923
+--- !u!114 &480061418811518783
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -69,30 +69,67 @@ MonoBehaviour:
   m_GameObject: {fileID: 827877862285555472}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7dc7616a967e2db4585422e6c3a238bf, type: 3}
+  m_Script: {fileID: 11500000, guid: 1606917a069cd2d45a63fbf757bb38b8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviour
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy
   enemyClass: 0
-  alwaysAggro: 0
-  aggroRange: 20
   skipSpawn: 0
   spawnDelay: 3
-  attack: {fileID: 2335755685246290597}
+  alwaysAggro: 0
+  aggroRange: 100
+  movementScript: {fileID: 0}
   chasePlayer: 0
   onlyChaseIfAttackReady: 0
   neverGiveUpChase: 0
-  navAgent: {fileID: 0}
-  chaseSpeed: 5
-  chaseEasing: 0.5
-  chaseStopDistance: 2.5
+  chaseRange: 20
+  kamikazeOnContact: 0
+  contactDamage: 10
+  attacks:
+  - {fileID: 6403643788848522719}
   stagger: {fileID: 3580518955538096315}
-  numberOfPhases: 3
   animator: {fileID: 4294958922522391095}
+  numberOfPhases: 3
   doSummons: 1
   summonOnCycles: 01000000
-  summonsPrefab: {fileID: 8903830073835344335, guid: dfb1a81b04ff29d4eba5610f3c35899b, type: 3}
+  summonsPrefab: {fileID: 0}
   numberOfSummons: 3
   summonRadius: 3
+  debugMode: 0
+--- !u!114 &6403643788848522719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 827877862285555472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c85883ac9200dce4784df13b366f62c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_AoE
+  attackRange: 50
+  cooldownTime: 2
+  windupIndicator: {fileID: 1018914182935538455}
+  damageFieldPrefab: {fileID: 5792883796589563391, guid: 69f641cc01b72464eb8479f0d3d12619, type: 3}
+  spellRadius: 2
+  damageFieldHeight: 0.5
+  damage: 10
+  damageWindow: 1
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  persistAfterHit: 1
+  damageOverTime: 1
+  damageTickRate: 0.5
+  dangerZonePrefab: {fileID: 4280848331170967189, guid: c661cb46322183c4196f414021fa8d3e, type: 3}
+  telegraphDuration: 1
+  recoveryDuration: 0.4
+  stationaryThreshold: 0.5
+  towardCasterOffset: 0
+  leadTime: 0.6
+  scatterRadius: 0.4
+  velocityWindowDuration: 0.25
+  preferStationaryTargets: 0
   debugMode: 0
 --- !u!114 &3580518955538096315
 MonoBehaviour:
@@ -111,14 +148,14 @@ MonoBehaviour:
   barColor: {r: 1, g: 0.9647059, b: 0.8039216, a: 1}
   barResetColor: {r: 1, g: 0, b: 0.6860709, a: 1}
   weakPointManager: {fileID: 1199629963655329915}
-  canBeHit: 1
   hitsToStagger: 5
-  timeBeforeBarDrain: 0.4
   stunOnWindup: 0
   staggerResistance: 0.2
   staggerTime: 5
+  timeBeforeBarDrain: 0.4
   timeAddedOnHit: 0.7
   debugMode: 0
+  canBeHit: 1
   windingUp: 0
 --- !u!114 &1199629963655329915
 MonoBehaviour:
@@ -141,34 +178,6 @@ MonoBehaviour:
   debugMode: 0
   dieOnWeakpointsComplete: 1
   handleOwnDestruction: 1
---- !u!114 &2335755685246290597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 827877862285555472}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a392f11afd5e14e439d8687c1291dc78, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_AoE
-  attackState: 0
-  targetLayers:
-    serializedVersion: 2
-    m_Bits: 64
-  damage: 10
-  coolDownTime: 2
-  windUpTime: 2
-  windupIndicator: {fileID: 1018914182935538455}
-  damageFieldPrefab: {fileID: 5792883796589563391, guid: 69f641cc01b72464eb8479f0d3d12619, type: 3}
-  attackRange: 15
-  damageFieldHeight: 0.5
-  damageWindow: 1
-  currentWindUpTime: 0
-  currentAttack: {fileID: 0}
-  dangerZonePrefab: {fileID: 4280848331170967189, guid: c661cb46322183c4196f414021fa8d3e, type: 3}
-  spellRadius: 2
 --- !u!1 &1049033662998195316
 GameObject:
   m_ObjectHideFlags: 0

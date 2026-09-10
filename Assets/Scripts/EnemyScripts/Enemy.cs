@@ -1,63 +1,123 @@
+// Summary:
+// Core enemy behaviour controller. Owns the state machine, aggro, class/death/summon logic, animation, and spawner lifecycle. 
+// Movement is delegated to a pluggable IEnemyMovement script. If no movement script is assigned, the enemy is stationary (idles and attacks in place).
+// Attacks are modular components in a priority-ordered array. 
+
 using System.Collections;
-using UnityEngine;
-using UnityEngine.AI;
 using System;
-using Unity.VisualScripting;
+using UnityEngine;
 
 [DisallowMultipleComponent]
 public class Enemy : MonoBehaviour
 {
-    public enum BehaviourState { Idling, Chasing, Attacking, Waiting, Stunned, Spawning, Dying, Inactive };
+    public enum BehaviourState { Inactive, Spawning, Idling, Chasing, Attacking, Waiting, Stunned, Returning, Retreating, Dying };
     public enum EnemyClass { Standard, Champion, Thrall };
 
     [Header("Enemy Options")]
     [SerializeField] private EnemyClass enemyClass = EnemyClass.Standard;
-    [SerializeField] private bool alwaysAggro;
-    [SerializeField] private float aggroRange = 10;
     [SerializeField] private bool skipSpawn;
-    [Tooltip("Time in seconds it takes the enemy to spawn")]
-    [SerializeField] private float spawnDelay = 3;
-    // [Header("Weak Points")]
-    // [SerializeField] private WeakPointManager weakPointManager;
-    // [Header("Class")]
-    // public EnemyClass enemyClass = EnemyClass.Standard;
-    [Header("Attack")]
-    [SerializeField] private EnemyAttack_Base attack;
+    [ShowIf("skipSpawn", false)]
+    [Tooltip("Time in seconds it takes the enemy to spawn.")]
+    [SerializeField] private float spawnDelay = 3f;
+
+    [Header("Aggro")]
+    [SerializeField] private bool alwaysAggro;
+    [ShowIf("alwaysAggro", false)]
+    [SerializeField] private float aggroRange = 10f;
+
+    [Header("Movement")]
+    [Tooltip("Drop in any MonoBehaviour that implements IEnemyMovement. Leave empty for a stationary enemy.")]
+    [SerializeField] private MonoBehaviour movementScript;
+
     [Header("Chase")]
     [SerializeField] private bool chasePlayer;
+    [ShowIf("chasePlayer")]
     [SerializeField] private bool onlyChaseIfAttackReady;
+    [ShowIf("chasePlayer")]
     [SerializeField] private bool neverGiveUpChase;
-    [SerializeField] private NavMeshAgent navAgent;
-    [SerializeField] private float chaseSpeed = 5f;
-    [Range(0, 1)]
-    [SerializeField] private float chaseEasing = 0.5f;
-    [Tooltip("Overrides NavMeshAgent stopping distance, but will also be overriden by the range of added Attack Scripts.")]
-    [SerializeField] private float chaseStopDistance = 2.5f;
+    [ShowIf("chasePlayer")]
+    [Tooltip("Max distance the enemy will chase from its spawn point. Ignored if neverGiveUpChase is on.")]
+    [SerializeField] private float chaseRange = 20f;
+
+    [Header("Contact Damage")]
+    [SerializeField] private bool kamikazeOnContact;
+    [ShowIf("kamikazeOnContact")]
+    [SerializeField] private int contactDamage = 10;
+
+    [Header("Attacks")]
+    [Tooltip("All attacks available to this enemy. Priority is determined by array order.")]
+    [SerializeField] private EnemyAttack_Base[] attacks;
+
     [Header("Stagger")]
     [SerializeField] private EnemyStagger stagger;
-    [SerializeField] private int numberOfPhases = 3;
-    // [SerializeField] private int phaseDelay = 1;
-    // [SerializeField] private EnemyKnockback knockback;
-    // [SerializeField] private float knockbackStrength = 5;
+
     [Header("Animation")]
     [SerializeField] private Animator animator;
-    [Header("Summons ( CHAMPION ONLY )")]
-    [SerializeField] private bool doSummons = true; //toggle or not
+
+    [ShowIf("enemyClass", (int)EnemyClass.Champion, Header = "Champion")]
+    [SerializeField] private int numberOfPhases = 3;
+
+    [ShowIf("enemyClass", (int)EnemyClass.Champion, Header = "Summons (Champion Only)")]
+    [SerializeField] private bool doSummons = true;
     public bool DoSummons
     {
         get => doSummons;
         set => doSummons = value;
     }
-    [SerializeField] private int[] summonOnCycles = new int[] { 1 }; //this is an array, 0 would mean after the first cycle
-    [SerializeField] private Enemy summonsPrefab;
+    [ShowIf("enemyClass", (int)EnemyClass.Champion)]
+    [SerializeField] private int[] summonOnCycles = new int[] { 1 };
+    [ShowIf("enemyClass", (int)EnemyClass.Champion)]
+    [SerializeField] private GameObject summonsPrefab;
+    [ShowIf("enemyClass", (int)EnemyClass.Champion)]
     [SerializeField] private int numberOfSummons = 3;
+    [ShowIf("enemyClass", (int)EnemyClass.Champion)]
     [SerializeField] private float summonRadius = 3f;
+
     [Header("Debug")]
     public bool debugMode;
 
-    private Transform playerTransform;
+    // state
     private BehaviourState behaviourState = BehaviourState.Inactive;
-    // private int WeakpointCycle => !stagger.weakPointManager ? stagger.weakPointManager.CyclesComplete : 0;
+    public BehaviourState CurrentState => behaviourState;
+
+    private Transform playerTransform;
+    private Vector3 spawnPosition;
+    private IEnemyMovement movement;
+
+    // active attack tracking
+    private EnemyAttack_Base currentAttack;
+
+    // champion
+    private int currentCycle = 0;
+
+    // spawner integration
+    public bool IsPaused { get; private set; }
+    public bool IsDying { get; private set; }
+    private IEnemySpawner ownerSpawner;
+    private bool isCreatedBySpawner;
+    private bool hasReportedDeathToSpawner;
+
+
+    // Lifecycle
+    private void Awake()
+    {
+        spawnPosition = transform.position;
+        playerTransform = GameObject.FindWithTag("Player").transform;
+
+        // initialize movement
+        if (movementScript != null)
+            movement = movementScript as IEnemyMovement;
+        if (movement != null)
+            movement.Initialize();
+
+        // stagger/weakpoint setup
+        if (stagger && stagger.weakPointManager) stagger.weakPointManager.handleOwnDestruction = false;
+        if (enemyClass == EnemyClass.Champion && stagger && stagger.weakPointManager)
+            stagger.weakPointManager.dieOnWeakpointsComplete = false;
+
+        if (skipSpawn) DoSpawn();
+        else StartCoroutine(SpawnSequence());
+    }
 
     private void Reset()
     {
@@ -65,259 +125,501 @@ public class Enemy : MonoBehaviour
         {
             Debug.LogWarning($"[{this}] no Stagger component found! Adding one now.");
             gameObject.AddComponent(typeof(EnemyStagger));
-        }   
-    }
-
-    private void Awake()
-    {
-        if (skipSpawn) DoSpawn();
-        else StartCoroutine(SpawnAnimation());
-        playerTransform = GameObject.FindWithTag("Player").transform;
-        if (stagger && stagger.weakPointManager) stagger.weakPointManager.handleOwnDestruction = false;
-        if (enemyClass == EnemyClass.Champion) stagger.weakPointManager.dieOnWeakpointsComplete = false;
-        if (attack != null && navAgent != null) navAgent.stoppingDistance = attack.AttackRange;
-        else if (navAgent != null) navAgent.stoppingDistance = chaseStopDistance;
-        if (navAgent != null) navAgent.acceleration = 51 - chaseEasing * 50;
-    }
-    void Update()
-    {
-        StateControl();
-        if (animator != null) Animations();
-        if (stagger.weakPointManager) CheckDie();
-    }
-
-    void StateControl()
-    {
-        if (debugMode) Debug.Log($"[{this}] BehaviourState: [{behaviourState}]");
-        switch (behaviourState)
-        {
-            case BehaviourState.Idling:
-                if (PlayerInAggroRange() && CanChase()) behaviourState = BehaviourState.Chasing;
-                else if (IsStunned()) DoStun();
-                if (!AttackReady() && AttackEnabled() && PlayerInAttackRange()) behaviourState = BehaviourState.Waiting;
-                else if (AttackReady() && PlayerInAttackRange()) DoAttack();
-                return;
-            case BehaviourState.Chasing:
-                LookAtPlayer();
-                if (debugMode) Debug.Log($"[{this}] ChaseReady(): {ChaseReady()} | TargetPos(): {TargetPos()}");
-                if (ChaseReady()) ChasePlayer();
-                if (!AttackReady() && AttackEnabled() && PlayerInAttackRange()) behaviourState = BehaviourState.Waiting;
-                else if (AttackReady() && PlayerInAttackRange()) DoAttack();
-                else if (IsStunned()) DoStun();
-                if (!neverGiveUpChase && !PlayerInAggroRange()) behaviourState = BehaviourState.Idling;
-                return;
-            case BehaviourState.Attacking:
-                if (IsWindingUp()) stagger.windingUp = true;
-                else if (stagger != null) stagger.windingUp = false;
-                if (!IsAttacking() && PlayerInAttackRange()) behaviourState = BehaviourState.Waiting;
-                else if (!IsAttacking() && PlayerInAggroRange() && CanChase()) behaviourState = BehaviourState.Chasing;
-                else if (!IsAttacking()) behaviourState = BehaviourState.Idling;
-                else if (IsStunned()) DoStun();
-                return;
-            case BehaviourState.Waiting:
-                LookAtPlayer();
-                if (AttackReady() && PlayerInAttackRange()) DoAttack();
-                else if (IsStunned()) DoStun();
-                else if ((AttackReady() || !PlayerInAttackRange()) && chasePlayer) behaviourState = BehaviourState.Chasing;
-                else if (!AttackEnabled()) behaviourState = BehaviourState.Idling;
-                return;
-            case BehaviourState.Stunned:
-                if (!IsStunned()) behaviourState = BehaviourState.Idling;
-                return;
-            case BehaviourState.Spawning:
-                return;
-            case BehaviourState.Dying:
-                return;
-            case BehaviourState.Inactive:
-                return;
         }
     }
-    bool CanChase()
+
+    private void OnDestroy()
     {
-        if (!chasePlayer) return false;
-        else if (onlyChaseIfAttackReady && !AttackReady()) return false;
-        else return true;
+        ReportDeathToSpawner();
     }
-    void LookAtPlayer()
+
+    // stop the movement script when the behaviour is disabled (e.g. during knockback)
+    private void OnDisable()
     {
-        transform.LookAt(playerTransform);
+        if (movement != null) movement.Stop();
     }
-    bool ChaseReady()
+
+    private void Update()
     {
-        if (TargetPos() == transform.position) return false;
-        if (behaviourState == BehaviourState.Stunned) return false;
-        // from nak script
-        if (chasePlayer && navAgent != null && navAgent.isOnNavMesh) return true;
-        else return false;
+        if (IsPaused || IsDying) return;
+
+        StateControl();
+        if (animator != null) Animations();
+        if (stagger && stagger.weakPointManager) CheckDie();
     }
-    void ChasePlayer()
+
+
+    // State Machine
+    private void StateControl()
     {
-        // from nak script
-        if (navAgent.isStopped) navAgent.isStopped = false;
-        navAgent.speed = chaseSpeed;
-        navAgent.SetDestination(TargetPos());
-        if (debugMode) Debug.Log($"[{this}] Chasing to {TargetPos()}");
+        if (debugMode) Debug.Log($"[{this}] State: [{behaviourState}]");
+
+        switch (behaviourState)
+        {
+            case BehaviourState.Idling:     IdleState();      return;
+            case BehaviourState.Chasing:    ChaseState();     return;
+            case BehaviourState.Attacking:  AttackState();    return;
+            case BehaviourState.Waiting:    WaitState();      return;
+            case BehaviourState.Stunned:    StunState();      return;
+            case BehaviourState.Returning:  ReturnState();    return;
+            case BehaviourState.Retreating: RetreatState();   return;
+            case BehaviourState.Spawning:   return;
+            case BehaviourState.Dying:      return;
+            case BehaviourState.Inactive:   return;
+        }
     }
-    Vector3 TargetPos()
+
+    private void IdleState()
     {
-        if (playerTransform != null) return playerTransform.position;
-        else return transform.position;
+        if (IsStunned()) { EnterStun(); return; }
+        if (CanAttack()) { EnterAttack(); return; }
+        if (!CanAttack() && PlayerInAnyAttackRange() && AnyAttackEnabled()) { behaviourState = BehaviourState.Waiting; return; }
+        if (PlayerInAggroRange() && CanChase()) { behaviourState = BehaviourState.Chasing; return; }
     }
-    bool PlayerInAggroRange()
+
+    private void ChaseState()
+    {
+        if (IsStunned()) { EnterStun(); return; }
+        if (CanAttack()) { EnterAttack(); return; }
+        if (!CanAttack() && PlayerInAnyAttackRange() && AnyAttackEnabled()) { behaviourState = BehaviourState.Waiting; return; }
+
+        // chase leash
+        if (!neverGiveUpChase)
+        {
+            float distFromSpawn = (transform.position - spawnPosition).magnitude;
+            if (!PlayerInAggroRange() || distFromSpawn > chaseRange)
+            {
+                ExitChase();
+                return;
+            }
+        }
+
+        if (movement != null)
+        {
+            movement.FaceTarget(playerTransform.position);
+            movement.SetDirectChase(kamikazeOnContact);
+            movement.Chase(playerTransform.position, GetChaseStopDistance());
+        }
+
+        if (debugMode) Debug.Log($"[{this}] Chasing to {playerTransform.position}");
+    }
+
+    private void AttackState()
+    {
+        // windup vulnerability flag
+        if (stagger != null)
+            stagger.windingUp = currentAttack != null && currentAttack.IsWindingUp;
+
+        if (IsStunned()) { EnterStun(); return; }
+
+        // attack still in progress
+        if (currentAttack != null && currentAttack.IsAttacking) return;
+
+        // attack finished
+        currentAttack = null;
+        if (stagger != null) stagger.windingUp = false;
+
+        if (movement != null && movement.RetreatEnabled) { EnterRetreat(); return; }
+        if (AnyAttackEnabled() && PlayerInAnyAttackRange()) { behaviourState = BehaviourState.Waiting; return; }
+        if (PlayerInAggroRange() && CanChase()) { behaviourState = BehaviourState.Chasing; return; }
+        behaviourState = BehaviourState.Idling;
+    }
+
+    private void WaitState()
+    {
+        if (IsStunned()) { EnterStun(); return; }
+        if (CanAttack()) { EnterAttack(); return; }
+
+        if (!PlayerInAnyAttackRange() && chasePlayer && movement != null)
+        {
+            behaviourState = BehaviourState.Chasing;
+            return;
+        }
+        if (!AnyAttackEnabled()) { behaviourState = BehaviourState.Idling; return; }
+
+        if (movement != null && movement.StrafeEnabled)
+        {
+            FacePlayer();
+            movement.Strafe(playerTransform.position, GetChaseStopDistance());
+        }
+        else
+        {
+            FacePlayer();
+        }
+    }
+
+    private void StunState()
+    {
+        if (!IsStunned()) behaviourState = BehaviourState.Idling;
+    }
+
+    private void ReturnState()
+    {
+        if (PlayerInAggroRange() && CanChase())
+        {
+            behaviourState = BehaviourState.Chasing;
+            return;
+        }
+        if (movement == null || movement.HasReachedTarget)
+            behaviourState = BehaviourState.Idling;
+    }
+
+    private void RetreatState()
+    {
+        if (IsStunned()) { EnterStun(); return; }
+        if (movement == null || movement.HasReachedTarget)
+        {
+            if (AnyAttackEnabled() && PlayerInAnyAttackRange()) { behaviourState = BehaviourState.Waiting; return; }
+            if (PlayerInAggroRange() && CanChase()) { behaviourState = BehaviourState.Chasing; return; }
+            behaviourState = BehaviourState.Idling;
+        }
+    }
+
+
+    // State Trabsitions
+    private void EnterAttack()
+    {
+        EnemyAttack_Base selected = SelectAttack();
+        if (selected == null) return;
+
+        currentAttack = selected;
+        behaviourState = BehaviourState.Attacking;
+        if (movement != null) movement.Stop();
+        currentAttack.PerformAttack(playerTransform);
+        if (debugMode) Debug.Log($"[{this}] Attacking with [{currentAttack}]");
+    }
+
+    private void EnterStun()
+    {
+        behaviourState = BehaviourState.Stunned;
+        if (movement != null) movement.Stop();
+        if (stagger != null) stagger.windingUp = false;
+        if (currentAttack != null && currentAttack.IsAttacking) currentAttack.CancelAttack();
+        currentAttack = null;
+        if (!IsStunned()) stagger.TriggerStagger();
+    }
+
+    private void EnterRetreat()
+    {
+        behaviourState = BehaviourState.Retreating;
+        if (movement != null) movement.BeginRetreat(playerTransform.position);
+    }
+
+    private void ExitChase()
+    {
+        if (movement != null) movement.Stop();
+        if (movement != null && movement.ReturnEnabled)
+        {
+            behaviourState = BehaviourState.Returning;
+            movement.BeginReturn();
+        }
+        else
+        {
+            behaviourState = BehaviourState.Idling;
+        }
+    }
+
+
+    // Attacjk Selection
+    private EnemyAttack_Base SelectAttack()
+    {
+        if (attacks == null || attacks.Length == 0) return null;
+
+        float dist = DistanceToPlayer();
+
+        // first pass: ready + in range + ShouldUse
+        for (int i = 0; i < attacks.Length; i++)
+        {
+            if (attacks[i] == null || !attacks[i].isActiveAndEnabled) continue;
+            if (!attacks[i].IsReady) continue;
+            if (dist > attacks[i].AttackRange) continue;
+            if (attacks[i].ShouldUse(playerTransform)) return attacks[i];
+        }
+
+        // fallback: ready + in range, ignore ShouldUse
+        for (int i = 0; i < attacks.Length; i++)
+        {
+            if (attacks[i] == null || !attacks[i].isActiveAndEnabled) continue;
+            if (!attacks[i].IsReady) continue;
+            if (dist > attacks[i].AttackRange) continue;
+            return attacks[i];
+        }
+
+        return null;
+    }
+
+    private bool CanAttack()
+    {
+        return SelectAttack() != null;
+    }
+
+
+    // Condition Checks
+    private bool PlayerInAggroRange()
     {
         if (alwaysAggro) return true;
-        if ((transform.position - playerTransform.position).magnitude < aggroRange) return true;
-        else return false;
+        return DistanceToPlayer() < aggroRange;
     }
-    bool PlayerInAttackRange()
+
+    private bool PlayerInAnyAttackRange()
     {
-        if ((transform.position - playerTransform.position).magnitude < attack.AttackRange) return true;
-        else return false;
+        if (attacks == null) return false;
+        float dist = DistanceToPlayer();
+        for (int i = 0; i < attacks.Length; i++)
+        {
+            if (attacks[i] != null && attacks[i].isActiveAndEnabled && dist < attacks[i].AttackRange)
+                return true;
+        }
+        return false;
     }
-    bool IsAttacking()
+
+    private float DistanceToPlayer()
     {
-        if (attack == null) return false;
-        if (attack.attackState == EnemyAttack_Base.AttackState.Attacking || IsWindingUp() || IsWindingDown()) return true;
-        else return false;
+        if (playerTransform == null) return float.MaxValue;
+        return (transform.position - playerTransform.position).magnitude;
     }
-    bool IsWindingUp()
+
+    private bool CanChase()
     {
-        if (attack == null) return false;
-        if (attack.attackState == EnemyAttack_Base.AttackState.WindUp) return true;
-        else return false;
+        if (!chasePlayer || movement == null) return false;
+        if (onlyChaseIfAttackReady && !AnyAttackReady()) return false;
+        return true;
     }
-    bool IsWindingDown()
+
+    private bool AnyAttackEnabled()
     {
-        if (attack == null) return false;
-        if (attack.attackState == EnemyAttack_Base.AttackState.WindDown) return true;
-        else return false;
+        if (attacks == null) return false;
+        for (int i = 0; i < attacks.Length; i++)
+        {
+            if (attacks[i] != null && attacks[i].isActiveAndEnabled) return true;
+        }
+        return false;
     }
-    void DoSpawn()
+
+    private bool AnyAttackReady()
     {
+        if (attacks == null) return false;
+        for (int i = 0; i < attacks.Length; i++)
+        {
+            if (attacks[i] != null && attacks[i].isActiveAndEnabled && attacks[i].IsReady) return true;
+        }
+        return false;
+    }
+
+    private bool IsStunned()
+    {
+        return stagger != null && stagger.IsStaggered;
+    }
+
+    private float GetChaseStopDistance()
+    {
+        float fallback = movement != null ? movement.ChaseStopDistance : 2.5f;
+
+        if (attacks != null && attacks.Length > 0)
+        {
+            float minRange = fallback;
+            bool found = false;
+            for (int i = 0; i < attacks.Length; i++)
+            {
+                if (attacks[i] == null || !attacks[i].isActiveAndEnabled) continue;
+                if (!found || attacks[i].AttackRange < minRange)
+                {
+                    minRange = attacks[i].AttackRange;
+                    found = true;
+                }
+            }
+            if (found) return minRange;
+        }
+
+        if (kamikazeOnContact) return 0.1f;
+        return fallback;
+    }
+
+
+    // Facing Direction
+    private void FacePlayer()
+    {
+        if (playerTransform == null) return;
+        if (movement != null)
+        {
+            movement.FaceTarget(playerTransform.position);
+        }
+        else
+        {
+            // fallback for stationary enemies
+            Vector3 dir = playerTransform.position - transform.position;
+            dir.y = 0f;
+            if (dir.sqrMagnitude > 0.001f)
+                transform.rotation = Quaternion.LookRotation(dir);
+        }
+    }
+
+
+    // Damage On-Contact
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!kamikazeOnContact || IsDying) return;
+        if (!collision.gameObject.CompareTag("Player")) return;
+        ApplyContactDamage(collision.gameObject);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!kamikazeOnContact || IsDying) return;
+        if (!other.CompareTag("Player")) return;
+        ApplyContactDamage(other.gameObject);
+    }
+
+    private void ApplyContactDamage(GameObject target)
+    {
+        IDamageable damageable = target.GetComponentInParent<IDamageable>();
+        if (damageable == null) return;
+
+        DamageInfo info = new DamageInfo(contactDamage, transform.position, transform.forward, gameObject);
+        damageable.TakeDamage(info);
+        Die();
+    }
+
+
+    // Spawn
+    private void DoSpawn()
+    {
+        if (stagger != null && !stagger.canBeHit) stagger.canBeHit = true;
         if (PlayerInAggroRange() && CanChase()) behaviourState = BehaviourState.Chasing;
         else behaviourState = BehaviourState.Idling;
-        if (stagger != null && !stagger.canBeHit) stagger.canBeHit = true;
         if (debugMode) Debug.Log($"[{this}] Spawned.");
     }
-    IEnumerator SpawnAnimation()
+
+    private IEnumerator SpawnSequence()
     {
         if (stagger != null && stagger.canBeHit) stagger.canBeHit = false;
         if (debugMode) Debug.Log($"[{this}] Spawning...");
         behaviourState = BehaviourState.Spawning;
         yield return new WaitForSeconds(spawnDelay);
         DoSpawn();
-        yield break;
-    }
-    void DoAttack()
-    {
-        if (debugMode) Debug.Log($"[{this}] PlayerInAttackRange: [{PlayerInAttackRange()}] | attack: [{attack}]");
-        behaviourState = BehaviourState.Attacking;
-        attack.InitiateAttack(playerTransform.position);
-        if (debugMode) Debug.Log($"[{this}] Doing attack: [{attack}]");
-    }
-    bool AttackReady()
-    {
-        if (!AttackEnabled()) return false;
-        if (AttackEnabled() && attack.attackState == EnemyAttack_Base.AttackState.Ready) return true;
-        else return false;
-    }
-    bool AttackEnabled()
-    {
-        if (attack == null) return false;
-        if (!attack.isActiveAndEnabled) return false;
-        else return true;
-    }
-    void DoStun()
-    {
-        behaviourState = BehaviourState.Stunned;
-        if (navAgent != null && !navAgent.isStopped)
-        {
-            navAgent.isStopped = true;
-            navAgent.ResetPath();
-        }
-        if (!IsStunned()) stagger.TriggerStagger();
-        if (IsAttacking()) attack.InterruptAttack();
-    }
-    bool IsStunned()
-    {
-        if (stagger != null && stagger.IsStaggered) return true;
-        else return false;
     }
 
-    void TriggerSummons()
-    {
-        if (summonsPrefab == null)
-        {
-            Debug.LogWarning($"[{this}] Missing minion prefab! Attach it, don't @ me :C.", gameObject);
-            return;
-        }
-        Debug.Log($"[{this}] Spawning {numberOfSummons} minions!");
 
-
-        for (int i = 0; i < numberOfSummons; i++)
-        {
-            //circle around miniboss
-            Vector2 randomCircle = UnityEngine.Random.insideUnitCircle * summonRadius;
-            Vector3 spawnOffset = new Vector3(randomCircle.x, 0f, randomCircle.y);
-            Vector3 targetSpawnPos = transform.position + spawnOffset;
-
-            //try to prevent spawning in walls by validating navs
-            Enemy spawnedMinion = null;
-            if (UnityEngine.AI.NavMesh.SamplePosition(targetSpawnPos, out UnityEngine.AI.NavMeshHit hit, summonRadius, UnityEngine.AI.NavMesh.AllAreas))
-            {
-                spawnedMinion = Instantiate(summonsPrefab, hit.position, Quaternion.identity);
-            }
-            else
-            {
-                //fallback to positional if navmesh fails
-                spawnedMinion = Instantiate(summonsPrefab, transform.position, Quaternion.identity);
-            }
-        }
-    }
-
-    private int currentCycle = 0;
+    // Champion / Death stuff
     private void CheckDie()
     {
-        if (stagger && enemyClass == EnemyClass.Champion)
+        if (stagger == null || stagger.weakPointManager == null) return;
+
+        if (enemyClass == EnemyClass.Champion)
         {
-            if (stagger.weakPointManager.CyclesComplete >= numberOfPhases) Die();
+            if (stagger.weakPointManager.CyclesComplete >= numberOfPhases)
+            {
+                Die();
+            }
             else if (stagger.weakPointManager.CyclesComplete > currentCycle)
             {
                 currentCycle++;
-                Debug.Log($"Cycle {stagger.weakPointManager.CyclesComplete} complete.");
+                if (debugMode) Debug.Log($"[{this}] Cycle {currentCycle} complete.");
                 if (doSummons && summonOnCycles != null && Array.IndexOf(summonOnCycles, currentCycle) != -1)
-                TriggerSummons();
+                    TriggerSummons();
             }
         }
-        else if (stagger && enemyClass == EnemyClass.Thrall)
+        else if (enemyClass == EnemyClass.Thrall)
         {
             if (stagger.DamageTaken > 0) Die();
         }
-        else if (stagger && stagger.weakPointManager && stagger.weakPointManager.CyclesComplete > 0) Die();
+        else
+        {
+            if (stagger.weakPointManager.CyclesComplete > 0) Die();
+        }
     }
 
-    private bool isDying;
     public void Die()
     {
-        if (isDying) return;
-        isDying = true;
+        if (IsDying) return;
+        IsDying = true;
+        behaviourState = BehaviourState.Dying;
+        if (movement != null) movement.Stop();
 
-        // do death anim here!
-
+        ReportDeathToSpawner();
         Destroy(gameObject);
     }
 
-    void Animations()
-    {
-        if (behaviourState == BehaviourState.Idling || behaviourState == BehaviourState.Waiting) animator.SetTrigger("idle");
-        else if (AttackEnabled() && attack.attackState == EnemyAttack_Base.AttackState.WindUp) animator.SetTrigger("windUp");
-        else if (AttackEnabled() && attack.attackState == EnemyAttack_Base.AttackState.WindDown) animator.SetTrigger("attack");
-        else if (behaviourState == BehaviourState.Chasing) animator.SetTrigger("chase");
-        else if (behaviourState == BehaviourState.Spawning) animator.SetTrigger("spawn");
-        else if (behaviourState == BehaviourState.Stunned) animator.SetTrigger("stun");
 
-        if (behaviourState == BehaviourState.Spawning) animator.speed = 1 / spawnDelay;
-        else if (AttackEnabled() && attack.attackState == EnemyAttack_Base.AttackState.WindUp) animator.speed = 1 / attack.WindUpTime;
-        else animator.speed = 1;
+    // Summons
+    private void TriggerSummons()
+    {
+        if (summonsPrefab == null)
+        {
+            Debug.LogWarning($"[{this}] Missing summon prefab!", gameObject);
+            return;
+        }
+
+        if (debugMode) Debug.Log($"[{this}] Spawning {numberOfSummons} summons!");
+
+        for (int i = 0; i < numberOfSummons; i++)
+        {
+            Vector2 randomCircle = UnityEngine.Random.insideUnitCircle * summonRadius;
+            Vector3 spawnOffset = new Vector3(randomCircle.x, 0f, randomCircle.y);
+            Vector3 targetPos = transform.position + spawnOffset;
+
+            if (UnityEngine.AI.NavMesh.SamplePosition(targetPos, out UnityEngine.AI.NavMeshHit hit, summonRadius, UnityEngine.AI.NavMesh.AllAreas))
+                Instantiate(summonsPrefab, hit.position, Quaternion.identity);
+            else
+                Instantiate(summonsPrefab, transform.position, Quaternion.identity);
+        }
     }
+
+
+    // Anination
+    private void Animations()
+    {
+        bool windingUp = currentAttack != null && currentAttack.IsWindingUp;
+        bool attacking = currentAttack != null && currentAttack.IsAttacking && !windingUp;
+
+        if (behaviourState == BehaviourState.Idling || behaviourState == BehaviourState.Waiting)
+            animator.SetTrigger("idle");
+        else if (windingUp)
+            animator.SetTrigger("windUp");
+        else if (attacking)
+            animator.SetTrigger("attack");
+        else if (behaviourState == BehaviourState.Chasing || behaviourState == BehaviourState.Returning || behaviourState == BehaviourState.Retreating)
+            animator.SetTrigger("chase");
+        else if (behaviourState == BehaviourState.Spawning)
+            animator.SetTrigger("spawn");
+        else if (behaviourState == BehaviourState.Stunned)
+            animator.SetTrigger("stun");
+
+        if (behaviourState == BehaviourState.Spawning)
+            animator.speed = 1f / spawnDelay;
+        else if (windingUp && currentAttack.WindupDuration > 0f)
+            animator.speed = 1f / currentAttack.WindupDuration;
+        else
+            animator.speed = 1f;
+    }
+
+
+    // Spawner Integration (making new spawning system soon anyway lol)
+
+    public void SetOwnerSpawner(IEnemySpawner spawner)
+    {
+        ownerSpawner = spawner;
+        isCreatedBySpawner = spawner != null;
+    }
+
+    public void SetPaused(bool isPaused)
+    {
+        if (IsDying) return;
+        if (IsPaused == isPaused) return;
+
+        IsPaused = isPaused;
+        if (movement != null) movement.SetPaused(isPaused);
+    }
+
+    private void ReportDeathToSpawner()
+    {
+        if (hasReportedDeathToSpawner) return;
+        if (!isCreatedBySpawner || ownerSpawner == null) return;
+        if (ownerSpawner is UnityEngine.Object unityOwner && unityOwner == null) return;
+
+        hasReportedDeathToSpawner = true;
+        ownerSpawner.NotifyEnemyDeath(this);
+    }
+
+
 }
