@@ -1,17 +1,31 @@
 // Summary:
 // Velocity-based flying movement for non-NavMesh enemies. Uses a non-kinematic Rigidbody with no gravity and frozen rotation. 
 // Maintains hover altitude above the ground, adjusts to target altitude, and bobs vertically for visual life.
-// Implements IEnemyMovement for use with FlyingEnemyBehaviour.
+// Implements IEnemyMovement for use with Enemy.
 
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class FlyingMovement : MonoBehaviour, IEnemyMovement
 {
-    [Header("Movement")]
+    [Header("Chase")]
+    [SerializeField] private float chaseSpeed = 8f;
+    [SerializeField] private float chaseStopDistance = 6f;
     [Tooltip("How quickly the enemy accelerates toward its target velocity. " +
              "Higher = snappier, lower = floatier.")]
     [SerializeField] private float acceleration = 10f;
+
+    [Header("Return")]
+    [SerializeField] private float returnSpeed = 3f;
+
+    [Header("Retreat")]
+    [SerializeField] private float retreatDistance = 5f;
+    [SerializeField] private float retreatSpeed = 4f;
+
+    [Header("Strafe")]
+    [SerializeField] private float strafeSpeed = 4f;
+    [Tooltip("How often the enemy changes strafe direction in seconds.")]
+    [SerializeField] private float strafeDirectionInterval = 2f;
 
     [Header("Altitude")]
     [Tooltip("Minimum height above the ground.")]
@@ -30,29 +44,75 @@ public class FlyingMovement : MonoBehaviour, IEnemyMovement
     [SerializeField] private float bobFrequency = 2f;
 
     private Rigidbody rb;
+    private Vector3 spawnPosition;
     private Vector3 targetPosition;
     private float currentSpeed;
     private float currentStopDistance = 0.5f;
     private bool hasTarget;
 
-    // set by FlyingEnemyBehaviour when kamikaze chasing, disables altitude adjustments so the enemy flies directly at the target
-    [HideInInspector] public bool useAltitudeManagement = true;
+    // altitude management is disabled during kamikaze chase
+    private bool useAltitudeManagement = true;
 
+    // strafe
+    private float strafeDirection = 1f;
+    private float strafeTimer;
+
+    public float ChaseStopDistance => chaseStopDistance;
     public bool HasReachedTarget => !hasTarget || DistanceToTarget() <= currentStopDistance;
 
-    private void Awake()
+    public void Initialize()
     {
+        spawnPosition = transform.position;
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
         rb.constraints = RigidbodyConstraints.FreezeRotation;
     }
 
-    public void MoveTo(Vector3 target, float speed, float stopDistance)
+
+    // ==================== MOVEMENT COMMANDS ====================
+
+    public void Chase(Vector3 target, float stopDistance)
     {
-        targetPosition = target;
-        currentSpeed = speed;
-        currentStopDistance = stopDistance;
-        hasTarget = true;
+        MoveTo(target, chaseSpeed, stopDistance);
+    }
+
+    public void Strafe(Vector3 orbitCenter, float orbitRadius)
+    {
+        // update direction timer
+        strafeTimer -= Time.deltaTime;
+        if (strafeTimer <= 0f)
+        {
+            strafeDirection *= -1f;
+            strafeTimer = strafeDirectionInterval;
+        }
+
+        Vector3 target = ComputeStrafeTarget(orbitCenter, orbitRadius, strafeDirection);
+
+        if (!IsStrafeClear(target))
+        {
+            target = ComputeStrafeTarget(orbitCenter, orbitRadius, -strafeDirection);
+            if (!IsStrafeClear(target))
+            {
+                Stop();
+                return;
+            }
+        }
+
+        MoveTo(target, strafeSpeed, 0.5f);
+    }
+
+    public void BeginRetreat(Vector3 awayFrom)
+    {
+        Vector3 dir = (transform.position - awayFrom);
+        dir.y = 0f;
+        if (dir.sqrMagnitude < 0.001f) dir = -transform.forward;
+        Vector3 retreatTarget = transform.position + dir.normalized * retreatDistance;
+        MoveTo(retreatTarget, retreatSpeed, 0.5f);
+    }
+
+    public void BeginReturn()
+    {
+        MoveTo(spawnPosition, returnSpeed, 0.5f);
     }
 
     public void Stop()
@@ -61,12 +121,32 @@ public class FlyingMovement : MonoBehaviour, IEnemyMovement
         if (rb != null) rb.linearVelocity = Vector3.zero;
     }
 
+    public void FaceTarget(Vector3 target)
+    {
+        if (rb == null) return;
+        Vector3 dir = target - transform.position;
+        dir.y = 0f;
+        if (dir.sqrMagnitude > 0.001f)
+            rb.MoveRotation(Quaternion.LookRotation(dir));
+    }
+
+    public void SetDirectChase(bool direct)
+    {
+        useAltitudeManagement = !direct;
+    }
+
+    public void SetPaused(bool paused)
+    {
+        if (paused) Stop();
+    }
+
+
+    // ==================== PHYSICS ====================
+
     private void FixedUpdate()
     {
         if (!hasTarget)
         {
-            // no horizontal target: maintain altitude without touching horizontal velocity
-            // this allows external forces (knockback) to work while the enemy stays at hover height
             if (useAltitudeManagement) MaintainAltitude();
             return;
         }
@@ -79,7 +159,6 @@ public class FlyingMovement : MonoBehaviour, IEnemyMovement
             return;
         }
 
-        // when altitude management is off, fly directly at the raw target position
         Vector3 moveTarget = useAltitudeManagement
             ? new Vector3(targetPosition.x, ComputeDesiredAltitude(), targetPosition.z)
             : targetPosition;
@@ -89,7 +168,17 @@ public class FlyingMovement : MonoBehaviour, IEnemyMovement
         rb.linearVelocity = Vector3.MoveTowards(rb.linearVelocity, desiredVelocity, acceleration * Time.fixedDeltaTime);
     }
 
-    // correct vertical position without touching horizontal velocity
+
+    // ==================== INTERNALS ====================
+
+    private void MoveTo(Vector3 target, float speed, float stopDistance)
+    {
+        targetPosition = target;
+        currentSpeed = speed;
+        currentStopDistance = stopDistance;
+        hasTarget = true;
+    }
+
     private void MaintainAltitude()
     {
         float desiredAlt = ComputeDesiredAltitude();
@@ -100,20 +189,13 @@ public class FlyingMovement : MonoBehaviour, IEnemyMovement
 
     private float ComputeDesiredAltitude()
     {
-        // raycast down to find the ground
-        float groundHeight = transform.position.y - hoverHeight; // fallback if nothing below
+        float groundHeight = 0f;
         if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, groundCheckDistance, groundLayers))
             groundHeight = hit.point.y;
 
-        // never go below hover height above the ground
         float minAltitude = groundHeight + hoverHeight;
-
-        // if we have a target, factor in its Y + vertical offset
         float targetAltitude = hasTarget ? targetPosition.y + verticalOffset : minAltitude;
-
         float baseAltitude = Mathf.Max(minAltitude, targetAltitude);
-
-        // add bobbing
         float bob = bobAmplitude * Mathf.Sin(Time.time * bobFrequency);
 
         return baseAltitude + bob;
@@ -123,11 +205,32 @@ public class FlyingMovement : MonoBehaviour, IEnemyMovement
     {
         if (useAltitudeManagement)
         {
-            // horizontal only when altitude is managed separately
             Vector3 diff = transform.position - targetPosition;
             diff.y = 0f;
             return diff.magnitude;
         }
         return (transform.position - targetPosition).magnitude;
+    }
+
+    private Vector3 ComputeStrafeTarget(Vector3 center, float radius, float direction)
+    {
+        Vector3 toEnemy = transform.position - center;
+        toEnemy.y = 0f;
+        if (radius < 0.1f) return transform.position;
+
+        Vector3 lateral = Vector3.Cross(Vector3.up, toEnemy.normalized) * direction;
+        Vector3 aheadOnArc = transform.position + lateral * 2f;
+        Vector3 fromCenter = aheadOnArc - center;
+        fromCenter.y = 0f;
+
+        return center + fromCenter.normalized * radius;
+    }
+
+    private bool IsStrafeClear(Vector3 target)
+    {
+        Vector3 dir = target - transform.position;
+        float dist = dir.magnitude;
+        if (dist < 0.01f) return true;
+        return !Physics.Raycast(transform.position, dir.normalized, dist, groundLayers);
     }
 }

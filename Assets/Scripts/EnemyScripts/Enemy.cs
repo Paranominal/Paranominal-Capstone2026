@@ -1,13 +1,14 @@
 // Summary:
-// Abstract base class for all enemy behaviour controllers. Owns the state machine, all shared toggles and parameters, animation, 
-// class/death/summon logic, and spawner lifecycle. Subclasses implement movement (NavMeshAgent vs custom movement scripts).
+// Core enemy behaviour controller. Owns the state machine, aggro, class/death/summon logic, animation, and spawner lifecycle. 
+// Movement is delegated to a pluggable IEnemyMovement script. If no movement script is assigned, the enemy is stationary (idles and attacks in place).
+// Attacks are modular components in a priority-ordered array. 
 
 using System.Collections;
 using System;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public abstract class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
     public enum BehaviourState { Inactive, Spawning, Idling, Chasing, Attacking, Waiting, Stunned, Returning, Retreating, Dying };
     public enum EnemyClass { Standard, Champion, Thrall };
@@ -15,22 +16,39 @@ public abstract class Enemy : MonoBehaviour
     [Header("Enemy Options")]
     [SerializeField] private EnemyClass enemyClass = EnemyClass.Standard;
     [SerializeField] private bool skipSpawn;
-    [Tooltip("Time in seconds it takes the enemy to spawn")]
+    [ShowIf("skipSpawn", false)]
+    [Tooltip("Time in seconds it takes the enemy to spawn.")]
     [SerializeField] private float spawnDelay = 3f;
 
     [Header("Aggro")]
     [SerializeField] private bool alwaysAggro;
+    [ShowIf("alwaysAggro", false)]
     [SerializeField] private float aggroRange = 10f;
 
-    [Header("Move & Chase")]
-    [SerializeField] private Enemy_MoveBehaviour_Base moveBehaviour;
+    [Header("Movement")]
+    [Tooltip("Drop in any MonoBehaviour that implements IEnemyMovement. Leave empty for a stationary enemy.")]
+    [SerializeField] private MonoBehaviour movementScript;
+
+    [Header("Chase")]
+    [SerializeField] private bool chasePlayer;
+    [ShowIf("chasePlayer")]
+    [SerializeField] private bool onlyChaseIfAttackReady;
+    [ShowIf("chasePlayer")]
+    [SerializeField] private bool neverGiveUpChase;
+    [ShowIf("chasePlayer")]
+    [Tooltip("Max distance the enemy will chase from its spawn point. Ignored if neverGiveUpChase is on.")]
+    [SerializeField] private float chaseRange = 20f;
+    [ShowIf("chasePlayer")]
+    [SerializeField] private bool returnToOrigin = true;
+
+    [Header("Behaviour Toggles")]
+    [SerializeField] private bool retreatAfterAttack;
+    [SerializeField] private bool strafeWhileWaiting;
 
     [Header("Contact Damage")]
-    [Tooltip("If enabled, the enemy deals damage on contact with the player and dies. For kamikaze-style enemies with no attack scripts.")]
     [SerializeField] private bool kamikazeOnContact;
+    [ShowIf("kamikazeOnContact")]
     [SerializeField] private int contactDamage = 10;
-    [Tooltip("Distance at which contact damage triggers.")]
-    [SerializeField] private float contactRadius = 1f;
 
     [Header("Attacks")]
     [Tooltip("All attacks available to this enemy. Priority is determined by array order.")]
@@ -42,19 +60,23 @@ public abstract class Enemy : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private Animator animator;
 
-    [Header("Champion")]
+    [ShowIf("enemyClass", (int)EnemyClass.Champion, Header = "Champion")]
     [SerializeField] private int numberOfPhases = 3;
 
-    [Header("Summons (Champion Only)")]
+    [ShowIf("enemyClass", (int)EnemyClass.Champion, Header = "Summons (Champion Only)")]
     [SerializeField] private bool doSummons = true;
     public bool DoSummons
     {
         get => doSummons;
         set => doSummons = value;
     }
+    [ShowIf("enemyClass", (int)EnemyClass.Champion)]
     [SerializeField] private int[] summonOnCycles = new int[] { 1 };
+    [ShowIf("enemyClass", (int)EnemyClass.Champion)]
     [SerializeField] private GameObject summonsPrefab;
+    [ShowIf("enemyClass", (int)EnemyClass.Champion)]
     [SerializeField] private int numberOfSummons = 3;
+    [ShowIf("enemyClass", (int)EnemyClass.Champion)]
     [SerializeField] private float summonRadius = 3f;
 
     [Header("Debug")]
@@ -63,10 +85,10 @@ public abstract class Enemy : MonoBehaviour
     // state
     private BehaviourState behaviourState = BehaviourState.Inactive;
     public BehaviourState CurrentState => behaviourState;
-    protected bool ShouldUseDirectMovement => kamikazeOnContact && behaviourState == BehaviourState.Chasing;
 
-    protected Transform playerTransform;
-    // protected Vector3 spawnPosition;
+    private Transform playerTransform;
+    private Vector3 spawnPosition;
+    private IEnemyMovement movement;
 
     // active attack tracking
     private EnemyAttack_Base currentAttack;
@@ -83,15 +105,21 @@ public abstract class Enemy : MonoBehaviour
 
 
     // Lifecycle
-    protected virtual void Awake()
+    private void Awake()
     {
+        spawnPosition = transform.position;
         playerTransform = GameObject.FindWithTag("Player").transform;
 
+        // initialize movement
+        if (movementScript != null)
+            movement = movementScript as IEnemyMovement;
+        if (movement != null)
+            movement.Initialize();
+
+        // stagger/weakpoint setup
         if (stagger && stagger.weakPointManager) stagger.weakPointManager.handleOwnDestruction = false;
         if (enemyClass == EnemyClass.Champion && stagger && stagger.weakPointManager)
             stagger.weakPointManager.dieOnWeakpointsComplete = false;
-
-        if (moveBehaviour) moveBehaviour.target = playerTransform;
 
         if (skipSpawn) DoSpawn();
         else StartCoroutine(SpawnSequence());
@@ -106,9 +134,15 @@ public abstract class Enemy : MonoBehaviour
         }
     }
 
-    protected virtual void OnDestroy()
+    private void OnDestroy()
     {
         ReportDeathToSpawner();
+    }
+
+    // stop the movement script when the behaviour is disabled (e.g. during knockback)
+    private void OnDisable()
+    {
+        if (movement != null) movement.Stop();
     }
 
     private void Update()
@@ -156,13 +190,22 @@ public abstract class Enemy : MonoBehaviour
         if (!CanAttack() && PlayerInAnyAttackRange() && AnyAttackEnabled()) { behaviourState = BehaviourState.Waiting; return; }
 
         // chase leash
-        moveBehaviour.CheckOrigin();
+        if (!neverGiveUpChase)
+        {
+            float distFromSpawn = (transform.position - spawnPosition).magnitude;
+            if (!PlayerInAggroRange() || distFromSpawn > chaseRange)
+            {
+                ExitChase();
+                return;
+            }
+        }
 
-        FacePlayer();
-        moveBehaviour.DoMove(playerTransform.position, /*chaseSpeed,*/ GetChaseStopDistance());
-
-        // kamikaze: deal damage on contact and die
-        if (kamikazeOnContact) CheckContactDamage();
+        if (movement != null)
+        {
+            movement.FaceTarget(playerTransform.position);
+            movement.SetDirectChase(kamikazeOnContact);
+            movement.Chase(playerTransform.position, GetChaseStopDistance());
+        }
 
         if (debugMode) Debug.Log($"[{this}] Chasing to {playerTransform.position}");
     }
@@ -182,11 +225,7 @@ public abstract class Enemy : MonoBehaviour
         currentAttack = null;
         if (stagger != null) stagger.windingUp = false;
 
-        if (moveBehaviour && moveBehaviour.RetreatAfterAttack)
-        {
-            moveBehaviour.EnterRetreat();
-            return;
-        } 
+        if (retreatAfterAttack && movement != null) { EnterRetreat(); return; }
         if (AnyAttackEnabled() && PlayerInAnyAttackRange()) { behaviourState = BehaviourState.Waiting; return; }
         if (PlayerInAggroRange() && CanChase()) { behaviourState = BehaviourState.Chasing; return; }
         behaviourState = BehaviourState.Idling;
@@ -197,34 +236,22 @@ public abstract class Enemy : MonoBehaviour
         if (IsStunned()) { EnterStun(); return; }
         if (CanAttack()) { EnterAttack(); return; }
 
-        if (!PlayerInAnyAttackRange() && moveBehaviour)
+        if (!PlayerInAnyAttackRange() && chasePlayer && movement != null)
         {
             behaviourState = BehaviourState.Chasing;
             return;
         }
         if (!AnyAttackEnabled()) { behaviourState = BehaviourState.Idling; return; }
 
-        // if (moveBehaviour && moveBehaviour.StrafeWhileWaiting)
-        // {
-        //     UpdateStrafe();
-        //     FacePlayer();
-
-        //     Vector3 target = ComputeStrafeTarget(strafeDirection);
-
-        //     // if blocked, try the other direction. if both blocked, stop and face the player.
-        //     if (!IsStrafeClear(target))
-        //     {
-        //         target = ComputeStrafeTarget(-strafeDirection);
-        //         if (!IsStrafeClear(target))
-        //         {
-        //             moveBehaviour.DoStop();
-        //             return;
-        //         }
-        //     }
-
-        //     moveBehaviour.DoMove(target, strafeSpeed, 0.5f);
-        // }
-        FacePlayer();
+        if (strafeWhileWaiting && movement != null)
+        {
+            FacePlayer();
+            movement.Strafe(playerTransform.position, GetChaseStopDistance());
+        }
+        else
+        {
+            FacePlayer();
+        }
     }
 
     private void StunState()
@@ -239,18 +266,14 @@ public abstract class Enemy : MonoBehaviour
             behaviourState = BehaviourState.Chasing;
             return;
         }
-
-        DoMove(spawnPosition, returnSpeed, 0.5f);
-        if (HasReachedTarget()) behaviourState = BehaviourState.Idling;
+        if (movement == null || movement.HasReachedTarget)
+            behaviourState = BehaviourState.Idling;
     }
 
     private void RetreatState()
     {
         if (IsStunned()) { EnterStun(); return; }
-
-        DoMove(retreatTarget, retreatSpeed, 0.5f);
-
-        if (HasReachedTarget())
+        if (movement == null || movement.HasReachedTarget)
         {
             if (AnyAttackEnabled() && PlayerInAnyAttackRange()) { behaviourState = BehaviourState.Waiting; return; }
             if (PlayerInAggroRange() && CanChase()) { behaviourState = BehaviourState.Chasing; return; }
@@ -259,7 +282,7 @@ public abstract class Enemy : MonoBehaviour
     }
 
 
-    // State Transitions
+    // State Trabsitions
     private void EnterAttack()
     {
         EnemyAttack_Base selected = SelectAttack();
@@ -267,7 +290,7 @@ public abstract class Enemy : MonoBehaviour
 
         currentAttack = selected;
         behaviourState = BehaviourState.Attacking;
-        DoStop();
+        if (movement != null) movement.Stop();
         currentAttack.PerformAttack(playerTransform);
         if (debugMode) Debug.Log($"[{this}] Attacking with [{currentAttack}]");
     }
@@ -275,16 +298,35 @@ public abstract class Enemy : MonoBehaviour
     private void EnterStun()
     {
         behaviourState = BehaviourState.Stunned;
-        DoStop();
+        if (movement != null) movement.Stop();
         if (stagger != null) stagger.windingUp = false;
         if (currentAttack != null && currentAttack.IsAttacking) currentAttack.CancelAttack();
         currentAttack = null;
         if (!IsStunned()) stagger.TriggerStagger();
     }
 
+    private void EnterRetreat()
+    {
+        behaviourState = BehaviourState.Retreating;
+        if (movement != null) movement.BeginRetreat(playerTransform.position);
+    }
 
-    // Attack Selection
-    // select the highest-priority attack that's ready, in range, and passes ShouldUse
+    private void ExitChase()
+    {
+        if (movement != null) movement.Stop();
+        if (returnToOrigin && movement != null)
+        {
+            behaviourState = BehaviourState.Returning;
+            movement.BeginReturn();
+        }
+        else
+        {
+            behaviourState = BehaviourState.Idling;
+        }
+    }
+
+
+    // Attacjk Selection
     private EnemyAttack_Base SelectAttack()
     {
         if (attacks == null || attacks.Length == 0) return null;
@@ -312,7 +354,6 @@ public abstract class Enemy : MonoBehaviour
         return null;
     }
 
-    // can we attack right now?
     private bool CanAttack()
     {
         return SelectAttack() != null;
@@ -326,7 +367,6 @@ public abstract class Enemy : MonoBehaviour
         return DistanceToPlayer() < aggroRange;
     }
 
-    // is the player in range of any enabled attack?
     private bool PlayerInAnyAttackRange()
     {
         if (attacks == null) return false;
@@ -347,12 +387,11 @@ public abstract class Enemy : MonoBehaviour
 
     private bool CanChase()
     {
-        if (!moveBehaviour) return false;
-        if (moveBehaviour.OnlyChaseIfAttackReady && !AnyAttackReady()) return false;
+        if (!chasePlayer || movement == null) return false;
+        if (onlyChaseIfAttackReady && !AnyAttackReady()) return false;
         return true;
     }
 
-    // is any attack enabled on this enemy?
     private bool AnyAttackEnabled()
     {
         if (attacks == null) return false;
@@ -363,7 +402,6 @@ public abstract class Enemy : MonoBehaviour
         return false;
     }
 
-    // is any attack off cooldown?
     private bool AnyAttackReady()
     {
         if (attacks == null) return false;
@@ -379,12 +417,13 @@ public abstract class Enemy : MonoBehaviour
         return stagger != null && stagger.IsStaggered;
     }
 
-    // chase stops at the shortest attack range, or contact radius for kamikaze, or the manual stop distance
     private float GetChaseStopDistance()
     {
+        float fallback = movement != null ? movement.ChaseStopDistance : 2.5f;
+
         if (attacks != null && attacks.Length > 0)
         {
-            float minRange = chaseStopDistance;
+            float minRange = fallback;
             bool found = false;
             for (int i = 0; i < attacks.Length; i++)
             {
@@ -398,23 +437,54 @@ public abstract class Enemy : MonoBehaviour
             if (found) return minRange;
         }
 
-        return chaseStopDistance;
+        if (kamikazeOnContact) return 0.1f;
+        return fallback;
     }
 
 
-    // Contact Damage
-    private void CheckContactDamage()
+    // Facing Direction
+    private void FacePlayer()
     {
-        if (DistanceToPlayer() > contactRadius) return;
+        if (playerTransform == null) return;
+        if (movement != null)
+        {
+            movement.FaceTarget(playerTransform.position);
+        }
+        else
+        {
+            // fallback for stationary enemies
+            Vector3 dir = playerTransform.position - transform.position;
+            dir.y = 0f;
+            if (dir.sqrMagnitude > 0.001f)
+                transform.rotation = Quaternion.LookRotation(dir);
+        }
+    }
 
-        IDamageable damageable = playerTransform.GetComponentInParent<IDamageable>();
+
+    // Damage On-Contact
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!kamikazeOnContact || IsDying) return;
+        if (!collision.gameObject.CompareTag("Player")) return;
+        ApplyContactDamage(collision.gameObject);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!kamikazeOnContact || IsDying) return;
+        if (!other.CompareTag("Player")) return;
+        ApplyContactDamage(other.gameObject);
+    }
+
+    private void ApplyContactDamage(GameObject target)
+    {
+        IDamageable damageable = target.GetComponentInParent<IDamageable>();
         if (damageable == null) return;
 
         DamageInfo info = new DamageInfo(contactDamage, transform.position, transform.forward, gameObject);
         damageable.TakeDamage(info);
         Die();
     }
-
 
 
     // Spawn
@@ -433,17 +503,6 @@ public abstract class Enemy : MonoBehaviour
         behaviourState = BehaviourState.Spawning;
         yield return new WaitForSeconds(spawnDelay);
         DoSpawn();
-    }
-
-
-    // Facing
-    protected virtual void FacePlayer()
-    {
-        if (playerTransform == null) return;
-        Vector3 dir = playerTransform.position - transform.position;
-        dir.y = 0f;
-        if (dir.sqrMagnitude > 0.001f)
-            transform.rotation = Quaternion.LookRotation(dir);
     }
 
 
@@ -470,26 +529,22 @@ public abstract class Enemy : MonoBehaviour
         {
             if (stagger.DamageTaken > 0) Die();
         }
-        else // Standard
+        else
         {
             if (stagger.weakPointManager.CyclesComplete > 0) Die();
         }
     }
 
-    public virtual void Die()
+    public void Die()
     {
         if (IsDying) return;
         IsDying = true;
         behaviourState = BehaviourState.Dying;
-        if (moveBehaviour) moveBehaviour.DoStop();
+        if (movement != null) movement.Stop();
 
-        OnDying();
         ReportDeathToSpawner();
-
         Destroy(gameObject);
     }
-
-    protected virtual void OnDying() { }
 
 
     // Summons
@@ -517,13 +572,12 @@ public abstract class Enemy : MonoBehaviour
     }
 
 
-    // Animation
+    // Anination
     private void Animations()
     {
         bool windingUp = currentAttack != null && currentAttack.IsWindingUp;
         bool attacking = currentAttack != null && currentAttack.IsAttacking && !windingUp;
 
-        // state triggers
         if (behaviourState == BehaviourState.Idling || behaviourState == BehaviourState.Waiting)
             animator.SetTrigger("idle");
         else if (windingUp)
@@ -537,7 +591,6 @@ public abstract class Enemy : MonoBehaviour
         else if (behaviourState == BehaviourState.Stunned)
             animator.SetTrigger("stun");
 
-        // speed scaling
         if (behaviourState == BehaviourState.Spawning)
             animator.speed = 1f / spawnDelay;
         else if (windingUp && currentAttack.WindupDuration > 0f)
@@ -547,7 +600,8 @@ public abstract class Enemy : MonoBehaviour
     }
 
 
-    // Spawner Integration (gonna make new spawning system stuff soon anyway lol)
+    // Spawner Integration (making new spawning system soon anyway lol)
+
     public void SetOwnerSpawner(IEnemySpawner spawner)
     {
         ownerSpawner = spawner;
@@ -560,10 +614,8 @@ public abstract class Enemy : MonoBehaviour
         if (IsPaused == isPaused) return;
 
         IsPaused = isPaused;
-        OnPauseStateChanged(isPaused);
+        if (movement != null) movement.SetPaused(isPaused);
     }
-
-    protected virtual void OnPauseStateChanged(bool isPaused) { }
 
     private void ReportDeathToSpawner()
     {
@@ -574,4 +626,6 @@ public abstract class Enemy : MonoBehaviour
         hasReportedDeathToSpawner = true;
         ownerSpawner.NotifyEnemyDeath(this);
     }
+
+
 }
