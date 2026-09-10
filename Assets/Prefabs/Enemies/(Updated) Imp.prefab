@@ -312,7 +312,8 @@ GameObject:
   m_Component:
   - component: {fileID: 9149036478034270715}
   - component: {fileID: 6445863154762580808}
-  - component: {fileID: 8903830073835344335}
+  - component: {fileID: 4376042895188897236}
+  - component: {fileID: 3311171845288023246}
   - component: {fileID: 7537058298590536078}
   - component: {fileID: 1700465578617832570}
   - component: {fileID: 1073755120511419540}
@@ -364,7 +365,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1.8, z: 1}
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!114 &8903830073835344335
+--- !u!114 &4376042895188897236
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -373,31 +374,55 @@ MonoBehaviour:
   m_GameObject: {fileID: 8722295293950930483}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7dc7616a967e2db4585422e6c3a238bf, type: 3}
+  m_Script: {fileID: 11500000, guid: 1606917a069cd2d45a63fbf757bb38b8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy
   enemyClass: 0
-  alwaysAggro: 0
-  aggroRange: 20
   skipSpawn: 0
-  spawnDelay: 1.3
-  attack: {fileID: 7537058298590536078}
-  chasePlayer: 1
-  onlyChaseIfAttackReady: 1
+  spawnDelay: 3
+  alwaysAggro: 0
+  aggroRange: 10
+  movementScript: {fileID: 3311171845288023246}
+  chasePlayer: 0
+  onlyChaseIfAttackReady: 0
   neverGiveUpChase: 0
-  navAgent: {fileID: 626168012900836677}
-  chaseSpeed: 5
-  chaseEasing: 0.5
-  chaseStopDistance: 3
+  chaseRange: 20
+  kamikazeOnContact: 0
+  contactDamage: 10
+  attacks:
+  - {fileID: 7537058298590536078}
   stagger: {fileID: 1700465578617832570}
-  numberOfPhases: 3
   animator: {fileID: 2699374103903870489}
-  doSummons: 1
+  numberOfPhases: 3
+  doSummons: 0
   summonOnCycles: 01000000
   summonsPrefab: {fileID: 0}
   numberOfSummons: 3
   summonRadius: 3
   debugMode: 0
+--- !u!114 &3311171845288023246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8722295293950930483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a643fed73d423384c9d7779bfe27306c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GroundMovement
+  chaseSpeed: 5
+  chaseStopDistance: 2.5
+  chaseEasing: 0.5
+  returnToOrigin: 1
+  returnSpeed: 3
+  retreatEnabled: 0
+  retreatDistance: 5
+  retreatSpeed: 4
+  strafeEnabled: 0
+  strafeSpeed: 3
+  strafeDirectionInterval: 2
 --- !u!114 &7537058298590536078
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,21 +435,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae32cdccd217da34db40c47ced2c6507, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_Melee
-  attackState: 0
+  attackRange: 2
+  cooldownTime: 2
+  windupIndicator: {fileID: 2368134177575591389}
+  damageFieldPrefab: {fileID: 5792883796589563391, guid: 436770d337914f544b39a71aaa614273, type: 3}
+  damageFieldHeight: 1
   targetLayers:
     serializedVersion: 2
     m_Bits: 64
+  persistAfterHit: 0
+  damageOverTime: 0
+  damageTickRate: 0.5
+  windupDuration: 0.6
+  strikeDuration: 0.15
+  recoveryDuration: 0.4
+  windupTurnSpeed: 90
   damage: 10
-  coolDownTime: 1.5
-  windUpTime: 1
-  windupIndicator: {fileID: 2368134177575591389}
-  damageFieldPrefab: {fileID: 5792883796589563391, guid: 436770d337914f544b39a71aaa614273, type: 3}
-  attackRange: 2
-  damageFieldHeight: 1
-  damageWindow: 1
-  currentWindUpTime: 0
-  currentAttack: {fileID: 0}
   attackIndicator: {fileID: 4629690271324483430}
+  debugMode: 0
 --- !u!114 &1700465578617832570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -442,14 +470,14 @@ MonoBehaviour:
   barColor: {r: 1, g: 0.9661553, b: 0.80566037, a: 1}
   barResetColor: {r: 0.8415094, g: 0.061922297, b: 0.42506683, a: 1}
   weakPointManager: {fileID: 1073755120511419540}
-  canBeHit: 1
   hitsToStagger: 1
-  timeBeforeBarDrain: 1
   stunOnWindup: 0
   staggerResistance: 0.5
   staggerTime: 3.5
+  timeBeforeBarDrain: 1
   timeAddedOnHit: 0.5
   debugMode: 0
+  canBeHit: 1
   windingUp: 0
 --- !u!114 &1073755120511419540
 MonoBehaviour:

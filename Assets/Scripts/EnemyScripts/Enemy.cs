@@ -58,7 +58,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private int numberOfPhases = 3;
 
     [ShowIf("enemyClass", (int)EnemyClass.Champion, Header = "Summons (Champion Only)")]
-    [SerializeField] private bool doSummons = true;
+    [SerializeField] private bool doSummons = false;
     public bool DoSummons
     {
         get => doSummons;
