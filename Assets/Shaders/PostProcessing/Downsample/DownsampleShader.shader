@@ -1,5 +1,3 @@
-// Michael Attardi - March 2026
-
 Shader "Custom/URP/DownsampleShader"
 {
     Properties
@@ -19,6 +17,13 @@ Shader "Custom/URP/DownsampleShader"
         ZWrite Off
         ZTest Always
         Cull Off
+
+        // Skip pixels marked with stencil value 1 (UI text/images).
+        Stencil
+        {
+            Ref 1
+            Comp NotEqual
+        }
 
         Pass
         {

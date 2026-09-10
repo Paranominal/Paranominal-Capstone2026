@@ -2,10 +2,13 @@ Shader "Custom/URP/CRTShader"
 {
     Properties
     {
-        _Curvature ("Curvature", Range(1.0, 10.0)) = 1.0 // Controls how strongly the image curves toward the screen edges.
-        _VignetteWidth ("Vignette Width", Range(1.0, 100.0)) = 30.0 // Controls how wide the vignette fade is at the edges.
-        _OverlayTex ("Overlay Texture", 2D) = "white" {} // Optional texture that can be shown instead of the camera image.
-        _UseOverlayTex ("Use Overlay Texture", Float) = 0
+        _Curvature ("Curvature", Range(1.0, 10.0)) = 1.0
+        _VignetteWidth ("Vignette Width", Range(1.0, 100.0)) = 30.0
+        _ScanlineIntensity ("Scanline Intensity", Range(0.0, 1.0)) = 0.3
+        _ScanlineCount ("Scanline Count", Range(50, 1000)) = 300
+        _CornerRadius ("Corner Radius", Range(0.0, 0.2)) = 0.05
+        _CornerSharpness ("Corner Sharpness", Range(1.0, 100.0)) = 20.0
+        _PhosphorIntensity ("Phosphor Intensity", Range(0.0, 1.0)) = 0.15
     }
 
     SubShader
@@ -32,60 +35,82 @@ Shader "Custom/URP/CRTShader"
             #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
-                float _Curvature; // Curvature amount for the barrel distortion seen on old curved glass CRT screens.
+                float _Curvature; // Barrel distortion strength.
                 float _VignetteWidth; // Width of the darkened edge falloff.
-                float _UseOverlayTex; // Toggle between using the screen image and the overlay texture.
+                float _ScanlineIntensity; // How dark the gaps between scanline rows are.
+                float _ScanlineCount; // Number of scanlines across the screen height.
+                float _CornerRadius; // How rounded the screen corners are.
+                float _CornerSharpness; // How hard the transition from screen to black is at the corners.
+                float _PhosphorIntensity; // How visible the RGB phosphor dot pattern is.
             CBUFFER_END
 
-            // Optional overlay texture sampled when requested.
-            TEXTURE2D(_OverlayTex);
-            SAMPLER(sampler_OverlayTex);
+            // Rounded rectangle SDF for corner masking.
+            float RoundedRectSDF(float2 uv, float radius)
+            {
+                float2 d = abs(uv) - (1.0 - radius);
+                return length(max(d, 0.0)) - radius;
+            }
+
+            // RGB phosphor pattern: offsets each channel slightly based on pixel column.
+            half3 ApplyPhosphor(half3 col, float2 screenPos)
+            {
+                int pixel = (int)screenPos.x % 3;
+
+                float3 mask = float3(1, 1, 1);
+                float dim = 1.0 - _PhosphorIntensity;
+
+                if (pixel == 0)
+                    mask = float3(1.0, dim, dim);
+                else if (pixel == 1)
+                    mask = float3(dim, 1.0, dim);
+                else
+                    mask = float3(dim, dim, 1.0);
+
+                return col * mask;
+            }
 
             half4 Frag(Varyings input) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
-                float2 baseUV = input.texcoord; // Use fullscreen pass UV coords to sample the current rendered screen image.
+                float2 baseUV = input.texcoord;
 
-                // Convert UV coords into a centred -1 to 1 range for distortion.
+                // Barrel distortion.
                 float2 uv = baseUV * 2.0 - 1.0;
-
-                // Apply a simple CRT-style barrel distortion.
                 float2 offset = uv.yx / _Curvature;
                 uv = uv + uv * offset * offset;
-
-                // Convert back into normal 0 to 1 UV space.
                 uv = uv * 0.5 + 0.5;
 
-                half4 col;
+                // Rounded corner mask.
+                float2 cornerUV = uv * 2.0 - 1.0;
+                float cornerDist = RoundedRectSDF(cornerUV, _CornerRadius);
+                float cornerMask = 1.0 - smoothstep(0.0, 1.0 / _CornerSharpness, cornerDist);
 
-                // Either sample the overlay texture or the rendered screen image.
-                if (_UseOverlayTex > 0.5)
-                {
-                    col = SAMPLE_TEXTURE2D(_OverlayTex, sampler_OverlayTex, uv);
-                }
-                else
-                {
-                    col = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
-                }
-
-                // Black out the pixels that have been pushed outside the screen bounds.
+                // Black out pixels outside the screen bounds.
                 if (uv.x <= 0.0 || uv.x >= 1.0 || uv.y <= 0.0 || uv.y >= 1.0)
+                    return half4(0, 0, 0, 1);
+
+                half4 col = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
+
+                // Scanlines: darken gaps between rows based on configurable count.
+                float scanline = sin(uv.y * _ScanlineCount * 3.14159) * 0.5 + 0.5;
+                scanline = lerp(1.0, scanline, _ScanlineIntensity);
+                col.rgb *= scanline;
+
+                // RGB phosphor pattern.
+                if (_PhosphorIntensity > 0.001)
                 {
-                    col = half4(0, 0, 0, 1);
+                    float2 screenPos = uv * _ScreenParams.xy;
+                    col.rgb = ApplyPhosphor(col.rgb, screenPos);
                 }
 
-                // Build a vignette mask based on distance from the screen edges.
+                // Edge vignette.
                 float2 vignetteUV = uv * 2.0 - 1.0;
                 float2 vignette = _VignetteWidth / _ScreenParams.xy;
                 vignette = smoothstep(0.0, vignette, 1.0 - abs(vignetteUV));
                 vignette = saturate(vignette);
 
-                // Add slight alternating colour variation to mimic CRT scanline tinting.
-                col.g *= (sin(baseUV.y * _ScreenParams.y * 2.0) + 1.0) * 0.15 + 1.0;
-                col.rb *= (cos(baseUV.y * _ScreenParams.y * 2.0) + 1.0) * 0.135 + 1.0;
-
-                col.rgb = saturate(col.rgb) * vignette.x * vignette.y; // Clamp colour and apply the vignette darkening.
+                col.rgb = saturate(col.rgb) * vignette.x * vignette.y * cornerMask;
 
                 return col;
             }

@@ -2,18 +2,10 @@ using System.Collections;
 using UnityEngine;
 
 /// Summary:
-/// A self-contained AoE strike. Sits on a prefab that represents one flavor
-/// of attack (lightning, spikes, fire, explosion, etc) - the prefab carries
-/// the visual, the Hitbox child collider, and this component to drive the
-/// strike's lifetime.
-///
-/// AoEAttack spawns one of these at the snapshotted position after the
-/// telegraph completes. The strike then runs its own activation sequence
+/// A self-contained AoE strike. Sits on a prefab that represents one flavor of attack (lightning, spikes, fire, explosion, etc) - the prefab carries the visual, the Hitbox child collider, and this component to drive the strike's lifetime.
+/// AoEAttack spawns one of these at the snapshotted position after the telegraph completes. The strike then runs its own activation sequence
 /// and despawns itself - the spawner does not need to manage it further.
-///
-/// Each flavor configures its own intrinsic damage, hitbox active window,
-/// and total lifetime on the prefab. Different flavors can support different
-/// patterns:
+/// Each flavor configures its own intrinsic damage, hitbox active window, and total lifetime on the prefab. Different flavors can support different patterns:
 ///   - Instant: short hitbox window, short lifetime (lightning, explosion)
 ///   - Lingering: long hitbox window, may allow multi-hit on Hitbox (fire)
 ///   - Delayed: optional spawn delay before the hitbox activates (spikes)
@@ -52,9 +44,7 @@ public class AoEStrike : MonoBehaviour
         StartCoroutine(StrikeSequence());
     }
 
-    /// Summary:
-    /// Optional: AoEAttack can call this immediately after instantiating to attribute
-    /// the damage to the spawning enemy rather than the strike object itself.
+    /// Optional: AoEAttack can call this immediately after instantiating to attribute the damage to the spawning enemy rather than the strike object itself.
     
     public void SetSource(GameObject source)
     {
@@ -89,7 +79,7 @@ public class AoEStrike : MonoBehaviour
 
         if (hitbox != null) hitbox.Deactivate();
 
-        //wait out any remaining lifetime so the visual can finish
+        // wait out any remaining lifetime so the visual can finish
         float consumed = hitActivationDelay + hitActiveDuration;
         float remaining = totalLifetime - consumed;
         if (remaining > 0f)
