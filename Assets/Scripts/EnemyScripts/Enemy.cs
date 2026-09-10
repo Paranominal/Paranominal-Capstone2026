@@ -38,12 +38,6 @@ public class Enemy : MonoBehaviour
     [ShowIf("chasePlayer")]
     [Tooltip("Max distance the enemy will chase from its spawn point. Ignored if neverGiveUpChase is on.")]
     [SerializeField] private float chaseRange = 20f;
-    [ShowIf("chasePlayer")]
-    [SerializeField] private bool returnToOrigin = true;
-
-    [Header("Behaviour Toggles")]
-    [SerializeField] private bool retreatAfterAttack;
-    [SerializeField] private bool strafeWhileWaiting;
 
     [Header("Contact Damage")]
     [SerializeField] private bool kamikazeOnContact;
@@ -225,7 +219,7 @@ public class Enemy : MonoBehaviour
         currentAttack = null;
         if (stagger != null) stagger.windingUp = false;
 
-        if (retreatAfterAttack && movement != null) { EnterRetreat(); return; }
+        if (movement != null && movement.RetreatEnabled) { EnterRetreat(); return; }
         if (AnyAttackEnabled() && PlayerInAnyAttackRange()) { behaviourState = BehaviourState.Waiting; return; }
         if (PlayerInAggroRange() && CanChase()) { behaviourState = BehaviourState.Chasing; return; }
         behaviourState = BehaviourState.Idling;
@@ -243,7 +237,7 @@ public class Enemy : MonoBehaviour
         }
         if (!AnyAttackEnabled()) { behaviourState = BehaviourState.Idling; return; }
 
-        if (strafeWhileWaiting && movement != null)
+        if (movement != null && movement.StrafeEnabled)
         {
             FacePlayer();
             movement.Strafe(playerTransform.position, GetChaseStopDistance());
@@ -314,7 +308,7 @@ public class Enemy : MonoBehaviour
     private void ExitChase()
     {
         if (movement != null) movement.Stop();
-        if (returnToOrigin && movement != null)
+        if (movement != null && movement.ReturnEnabled)
         {
             behaviourState = BehaviourState.Returning;
             movement.BeginReturn();

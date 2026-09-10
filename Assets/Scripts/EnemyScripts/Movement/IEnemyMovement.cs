@@ -23,4 +23,7 @@ public interface IEnemyMovement
 
     bool HasReachedTarget { get; }
     float ChaseStopDistance { get; }
+    bool ReturnEnabled { get; }
+    bool RetreatEnabled { get; }
+    bool StrafeEnabled { get; }
 }

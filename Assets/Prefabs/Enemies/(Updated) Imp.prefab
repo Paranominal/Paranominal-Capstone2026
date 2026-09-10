@@ -387,9 +387,6 @@ MonoBehaviour:
   onlyChaseIfAttackReady: 0
   neverGiveUpChase: 0
   chaseRange: 20
-  returnToOrigin: 1
-  retreatAfterAttack: 0
-  strafeWhileWaiting: 1
   kamikazeOnContact: 0
   contactDamage: 10
   attacks:
@@ -418,9 +415,12 @@ MonoBehaviour:
   chaseSpeed: 5
   chaseStopDistance: 2.5
   chaseEasing: 0.5
+  returnToOrigin: 1
   returnSpeed: 3
+  retreatEnabled: 0
   retreatDistance: 5
   retreatSpeed: 4
+  strafeEnabled: 1
   strafeSpeed: 3
   strafeDirectionInterval: 2
 --- !u!114 &7537058298590536078
@@ -443,7 +443,7 @@ MonoBehaviour:
   targetLayers:
     serializedVersion: 2
     m_Bits: 64
-  persistAfterHit: 0
+  persistAfterHit: 1
   damageOverTime: 0
   damageTickRate: 0.5
   windupDuration: 0.8

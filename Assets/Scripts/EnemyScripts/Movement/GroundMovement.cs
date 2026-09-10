@@ -16,14 +16,22 @@ public class GroundMovement : MonoBehaviour, IEnemyMovement
     [SerializeField] private float chaseEasing = 0.5f;
 
     [Header("Return")]
+    [SerializeField] private bool returnToOrigin = true;
+    [ShowIf("returnToOrigin")]
     [SerializeField] private float returnSpeed = 3f;
 
     [Header("Retreat")]
+    [SerializeField] private bool retreatEnabled;
+    [ShowIf("retreatEnabled")]
     [SerializeField] private float retreatDistance = 5f;
+    [ShowIf("retreatEnabled")]
     [SerializeField] private float retreatSpeed = 4f;
 
     [Header("Strafe")]
+    [SerializeField] private bool strafeEnabled;
+    [ShowIf("strafeEnabled")]
     [SerializeField] private float strafeSpeed = 3f;
+    [ShowIf("strafeEnabled")]
     [Tooltip("How often the enemy changes strafe direction in seconds.")]
     [SerializeField] private float strafeDirectionInterval = 2f;
 
@@ -35,6 +43,9 @@ public class GroundMovement : MonoBehaviour, IEnemyMovement
     private float strafeTimer;
 
     public float ChaseStopDistance => chaseStopDistance;
+    public bool ReturnEnabled => returnToOrigin;
+    public bool RetreatEnabled => retreatEnabled;
+    public bool StrafeEnabled => strafeEnabled;
 
     public bool HasReachedTarget
     {

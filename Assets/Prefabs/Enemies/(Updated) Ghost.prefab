@@ -55,19 +55,16 @@ MonoBehaviour:
   skipSpawn: 0
   spawnDelay: 3
   alwaysAggro: 0
-  aggroRange: 10
+  aggroRange: 30
   movementScript: {fileID: 5445272703306835462}
   chasePlayer: 1
   onlyChaseIfAttackReady: 0
   neverGiveUpChase: 0
   chaseRange: 20
-  returnToOrigin: 1
-  retreatAfterAttack: 0
-  strafeWhileWaiting: 0
   kamikazeOnContact: 1
-  contactDamage: 10
+  contactDamage: 15
   attacks: []
-  stagger: {fileID: 0}
+  stagger: {fileID: 8192007907820673360}
   animator: {fileID: 0}
   numberOfPhases: 3
   doSummons: 1
@@ -88,19 +85,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b822e32bd4727ef4c9b62f566be59d03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlyingMovement
-  chaseSpeed: 8
+  chaseSpeed: 6
   chaseStopDistance: 6
   acceleration: 10
+  returnToOrigin: 1
   returnSpeed: 3
+  retreatEnabled: 0
   retreatDistance: 5
   retreatSpeed: 4
+  strafeEnabled: 0
   strafeSpeed: 4
   strafeDirectionInterval: 2
   hoverHeight: 2.5
   verticalOffset: 1.5
   groundLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   groundCheckDistance: 50
   bobAmplitude: 0.3
   bobFrequency: 2
@@ -118,7 +118,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeakPointManager
   resetSequenceEveryStagger: 0
   weakpoints:
-  - {fileID: 147398069966076335}
+  - {fileID: 4419145138689798848}
   debugMode: 0
   dieOnWeakpointsComplete: 1
   handleOwnDestruction: 1
@@ -138,7 +138,7 @@ MonoBehaviour:
   staggerBarFill: {fileID: 0}
   barColor: {r: 1, g: 1, b: 1, a: 1}
   barResetColor: {r: 1, g: 3, b: 5, a: 1}
-  weakPointManager: {fileID: 0}
+  weakPointManager: {fileID: 5425350769874602465}
   hitsToStagger: 2
   stunOnWindup: 1
   staggerResistance: 0.3
@@ -369,11 +369,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
---- !u!1 &147398069966076335 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 203305178815565052, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
+--- !u!114 &4419145138689798848 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4434378975981373331, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
   m_PrefabInstance: {fileID: 61327701195846995}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e6060fe9bced6b418ce272ee8a1a18f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeakPoint
 --- !u!4 &6959259694330694764 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
