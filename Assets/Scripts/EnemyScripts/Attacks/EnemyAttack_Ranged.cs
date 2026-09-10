@@ -18,8 +18,8 @@ public class EnemyAttack_Ranged : EnemyAttack_Base
     [SerializeField] private float lifetime = 5f;
 
     [Header("Targeting")]
-    [Tooltip("Local-space offset from the enemy's position where the projectile spawns.")]
-    [SerializeField] private Vector3 launchOffset = new Vector3(0f, 1f, 0.5f);
+    [Tooltip("Where the projectile spawns. Falls back to the enemy's position if unassigned.")]
+    [SerializeField] private Transform launchPoint;
     [Tooltip("Height offset on the target to aim at (e.g. 1.0 for chest height).")]
     [SerializeField] private float targetHeightOffset = 1f;
 
@@ -124,7 +124,7 @@ public class EnemyAttack_Ranged : EnemyAttack_Base
 
     private void FireProjectile(Transform target)
     {
-        Vector3 spawnPos = transform.position + transform.TransformDirection(launchOffset);
+        Vector3 spawnPos = launchPoint != null ? launchPoint.position : transform.position;
         Vector3 aimPoint = target != null ? target.position + Vector3.up * targetHeightOffset : transform.position + transform.forward;
         Vector3 direction = (aimPoint - spawnPos).normalized;
 
