@@ -29,7 +29,11 @@ public class DownsampleRendererFeature : ScriptableRendererFeature
     {
         if (pass == null) return;
         if (renderingData.cameraData.cameraType != CameraType.Game) return;
-        if (renderingData.cameraData.camera.name == "UICam" || renderingData.cameraData.camera.name == "DialogueCam" || renderingData.cameraData.camera.name == "POVCam") return; // bypasses the UI, Dialogue, and POC Cameras for the Downsampling pass, making the stenciling scripts unnecessary :)
+
+        // bypasses the UI, Dialogue, and POC Cameras for the Downsampling pass, making the stenciling scripts unnecessary :)
+        //if (renderingData.cameraData.camera.name == "UICam") return;
+        //if (renderingData.cameraData.camera.name == "DialogueCam") return;
+        //if (renderingData.cameraData.camera.name == "POVCam") return; 
 
         renderer.EnqueuePass(pass);
     }
