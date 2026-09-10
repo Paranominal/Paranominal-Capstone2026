@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -12,9 +13,13 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private string playerActionMapName = "Player";
     [SerializeField] private string grimoireActionMapName = "GrimoireUI";
     [SerializeField] private ALTGrimoire grimoire;
+    [SerializeField] private int sceneBuildIndex;
 
     private void OnEnable()
     {
+
+        ResumeGame();
+
         if (pauseAction != null && pauseAction.action != null)
         {
             pauseAction.action.Enable();
@@ -23,6 +28,8 @@ public class PauseMenu : MonoBehaviour
 
     private void OnDisable()
     {
+        ResumeGame();
+
         if (pauseAction != null && pauseAction.action != null)
         {
             pauseAction.action.Disable();
@@ -32,6 +39,7 @@ public class PauseMenu : MonoBehaviour
 
     void Update()
     {
+
         if (pauseAction != null && pauseAction.action != null && pauseAction.action.WasPressedThisFrame())
         {
             // Toggle pause state on Escape key press
@@ -125,9 +133,7 @@ public class PauseMenu : MonoBehaviour
 
     public void QuitGame()
     {
-        Application.Quit();
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
+        ResumeGame();
+        SceneManager.LoadScene(sceneBuildIndex);
     }
 }

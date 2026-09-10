@@ -53,7 +53,6 @@ public class EnemyBehaviour : MonoBehaviour
     void Update()
     {
         StateControl();
-        OnlyChaseIfAttackReadied();
         if (animator != null) Animations();
     }
     void StateControl()
@@ -62,8 +61,10 @@ public class EnemyBehaviour : MonoBehaviour
         switch (behaviourState)
         {
             case BehaviourState.Idling:
-                if (PlayerInAggroRange() && permitEngage) behaviourState = BehaviourState.Chasing;
+                if (PlayerInAggroRange() && CanChase()) behaviourState = BehaviourState.Chasing;
                 else if (IsStunned()) DoStun();
+                if (!AttackReady() && AttackEnabled() && PlayerInAttackRange()) behaviourState = BehaviourState.Waiting;
+                else if (AttackReady() && PlayerInAttackRange()) DoAttack();
                 return;
             case BehaviourState.Chasing:
                 LookAtPlayer();
@@ -78,7 +79,7 @@ public class EnemyBehaviour : MonoBehaviour
                 if (IsWindingUp()) stagger.windingUp = true;
                 else if (stagger != null) stagger.windingUp = false;
                 if (!IsAttacking() && PlayerInAttackRange()) behaviourState = BehaviourState.Waiting;
-                else if (!IsAttacking() && PlayerInAggroRange() && permitEngage) behaviourState = BehaviourState.Chasing;
+                else if (!IsAttacking() && PlayerInAggroRange() && CanChase()) behaviourState = BehaviourState.Chasing;
                 else if (!IsAttacking()) behaviourState = BehaviourState.Idling;
                 else if (IsStunned()) DoStun();
                 return;
@@ -86,7 +87,7 @@ public class EnemyBehaviour : MonoBehaviour
                 LookAtPlayer();
                 if (AttackReady() && PlayerInAttackRange()) DoAttack();
                 else if (IsStunned()) DoStun();
-                else if (AttackReady() || !PlayerInAttackRange()) behaviourState = BehaviourState.Chasing;
+                else if ((AttackReady() || !PlayerInAttackRange()) && chasePlayer) behaviourState = BehaviourState.Chasing;
                 else if (!AttackEnabled()) behaviourState = BehaviourState.Idling;
                 return;
             case BehaviourState.Stunned:
@@ -100,11 +101,11 @@ public class EnemyBehaviour : MonoBehaviour
                 return;
         }
     }
-    bool permitEngage = true;
-    void OnlyChaseIfAttackReadied()
+    bool CanChase()
     {
-        if (onlyChaseIfAttackReady && !AttackReady()) permitEngage = false;
-        else permitEngage = true;
+        if (!chasePlayer) return false;
+        else if (onlyChaseIfAttackReady && !AttackReady()) return false;
+        else return true;
     }
     void LookAtPlayer()
     {
@@ -161,7 +162,7 @@ public class EnemyBehaviour : MonoBehaviour
     }
     void DoSpawn()
     {
-        if (PlayerInAggroRange()) behaviourState = BehaviourState.Chasing;
+        if (PlayerInAggroRange() && CanChase()) behaviourState = BehaviourState.Chasing;
         else behaviourState = BehaviourState.Idling;
         if (stagger != null && !stagger.canBeHit) stagger.canBeHit = true;
         if (debugMode) Debug.Log($"[{this}] Spawned.");
