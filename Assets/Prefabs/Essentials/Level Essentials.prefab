@@ -364,7 +364,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8438820481337011511, guid: 28a76956724fb934e998c95c2854e44b, type: 3}
       propertyPath: doTimeout
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -387,6 +387,10 @@ PrefabInstance:
     - target: {fileID: 937215020809856926, guid: 66aba5c6f9d49af47a8628260e3b487d, type: 3}
       propertyPath: m_Name
       value: Raycast Manager
+      objectReference: {fileID: 0}
+    - target: {fileID: 2105206175360045363, guid: 66aba5c6f9d49af47a8628260e3b487d, type: 3}
+      propertyPath: raycastMask.m_Bits
+      value: 516023
       objectReference: {fileID: 0}
     - target: {fileID: 3201257147332958978, guid: 66aba5c6f9d49af47a8628260e3b487d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -575,13 +579,52 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7396868266554899333, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3725994945949144018}
   m_SourcePrefab: {fileID: 100100000, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
 --- !u!4 &470211966102161225 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3607936452381580198, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
   m_PrefabInstance: {fileID: 3789621155129416943}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2796022483660304884 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1322378229337074971, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+  m_PrefabInstance: {fileID: 3789621155129416943}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5922660272011896682 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7396868266554899333, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+  m_PrefabInstance: {fileID: 3789621155129416943}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3725994945949144018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5922660272011896682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36be5761ccc11e14a8b9594d8935a1bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIPullFocus
+  eventSystem: {fileID: 7002268296874924430}
+  newFocus: {fileID: 2796022483660304884}
+  dialogueManager: {fileID: 8740965625450218032}
+--- !u!114 &8740965625450218032 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5609609027317604063, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+  m_PrefabInstance: {fileID: 3789621155129416943}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5922660272011896682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf6d38aacf65a2f44931f6a277209af0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1001 &6243316980520832482
 PrefabInstance:
   m_ObjectHideFlags: 0

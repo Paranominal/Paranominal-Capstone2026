@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2924528, g: 0.2924528, b: 0.2924528, a: 1}
+  m_Color: {r: 0.7660377, g: 0.7660377, b: 0.7660377, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -246,8 +246,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSway
   playerInputReader: {fileID: 8956652460274281639}
-  moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
-  lookAction: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   enableSway: 1
   smooth: 2
   swayMultiplier: 0.05
@@ -641,7 +639,7 @@ CharacterController:
   m_Height: 1.6
   m_Radius: 0.3
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0.2
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.8, z: 0}
@@ -658,14 +656,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInputReader
   moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
-  sprintAction: {fileID: 0}
+  sprintAction: {fileID: -6258012809421553100, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   slowWalkAction: {fileID: 4707686780592785771, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   jumpAction: {fileID: 156809300950686061, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   dashAction: {fileID: 6790621974129141125, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookActionMouse: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookActionGamepad: {fileID: 3901640413146405176, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   gamepadLookSens: 100
-  canMove: 1
   startLockMode: 1
   startCursorVisible: 0
   debugMode: 0
@@ -699,7 +696,7 @@ MonoBehaviour:
   maxFear: 100
   fearLevel: 0
   fearDamage: 10
-  fearHealPerShot: 5
+  fearHealPerShot: 2
   tickRateFine: 0
   tickRateLow: 0
   tickRateMedium: 0
@@ -755,12 +752,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FearPostProcessEffects
   postProcessVolume: {fileID: 0}
-  vignetteColor: {r: 0.5018867, g: 0, b: 0.30405334, a: 1}
+  vignetteColor: {r: 1, g: 0.7137255, b: 0.84047383, a: 1}
   blendMode: 3
   effectStrength: 1
-  vignetteIntensityMax: 0.8
-  vignetteSoftness: 0.3
-  noiseIntensityMax: 0.5
+  vignetteIntensityMax: 0.7
+  vignetteSoftness: 0.97
+  noiseIntensityMax: 1.24
   noiseScale: 6
   noiseSpeedMin: 0.1
   noiseSpeedMax: 0.5
@@ -1090,9 +1087,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMover
   inputReader: {fileID: 8956652460274281639}
   walkSpeed: 5
-  sprintStrength: 5
+  sprintStrength: 1
   slowWalkPercent: 0.3
-  jumpHeight: 1.5
+  jumpHeight: 0.8
   playerDash: {fileID: 2707172803116468795}
   inertiaPower: 0.1
   airInertiaMultiplier: 1.5
@@ -1126,339 +1123,13 @@ MonoBehaviour:
   speedLines: {fileID: 1862415195859651775}
   fadeOutDuration: 0.5
   playerCamera: {fileID: 6654618607449089807}
-  dashFovIncrease: 12
+  dashFovIncrease: 30
   fovLerpSpeed: 8
   dashUsesCharges: 1
   maxDashCharges: 2
   chargeDashCooldown: 0.5
   chargeBar: {fileID: 6680789912771449556}
   chargeBarContainer: {fileID: 4257555257623666494}
---- !u!1 &3099048999305915253
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6214099045475069039}
-  - component: {fileID: 5142763873091300579}
-  - component: {fileID: 760400300445362401}
-  - component: {fileID: 5938327952430835157}
-  - component: {fileID: 388963745840226906}
-  - component: {fileID: 6220519373086259579}
-  m_Layer: 14
-  m_Name: DoorBlocker
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6214099045475069039
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3099048999305915253}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0.0000009238719}
-  m_LocalPosition: {x: -21.06, y: 0, z: 11.678}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2455314481387094819}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!114 &5142763873091300579
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3099048999305915253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8233d90336aea43098adf6dbabd606a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ProBuilder::UnityEngine.ProBuilder.ProBuilderMesh
-  m_MeshFormatVersion: 2
-  m_Faces:
-  - m_Indexes: 020000000300000001000000020000000100000000000000
-    m_SmoothingGroup: 0
-    m_Uv:
-      m_UseWorldSpace: 0
-      m_FlipU: 0
-      m_FlipV: 0
-      m_SwapUV: 0
-      m_Fill: 1
-      m_Scale: {x: 0.25, y: 0.25}
-      m_Offset: {x: 0, y: 0}
-      m_Rotation: 0
-      m_Anchor: 0
-    m_Material: {fileID: 0}
-    m_SubmeshIndex: 0
-    m_ManualUV: 0
-    elementGroup: -1
-    m_TextureGroup: -1
-  - m_Indexes: 060000000700000005000000060000000500000004000000
-    m_SmoothingGroup: 0
-    m_Uv:
-      m_UseWorldSpace: 0
-      m_FlipU: 0
-      m_FlipV: 0
-      m_SwapUV: 0
-      m_Fill: 1
-      m_Scale: {x: 0.25, y: 0.25}
-      m_Offset: {x: 0, y: 0}
-      m_Rotation: 0
-      m_Anchor: 0
-    m_Material: {fileID: 0}
-    m_SubmeshIndex: 0
-    m_ManualUV: 0
-    elementGroup: -1
-    m_TextureGroup: -1
-  - m_Indexes: 0a0000000b000000090000000a0000000900000008000000
-    m_SmoothingGroup: 0
-    m_Uv:
-      m_UseWorldSpace: 0
-      m_FlipU: 0
-      m_FlipV: 0
-      m_SwapUV: 0
-      m_Fill: 1
-      m_Scale: {x: 0.25, y: 0.25}
-      m_Offset: {x: 0, y: 0}
-      m_Rotation: 0
-      m_Anchor: 0
-    m_Material: {fileID: 0}
-    m_SubmeshIndex: 0
-    m_ManualUV: 0
-    elementGroup: -1
-    m_TextureGroup: -1
-  - m_Indexes: 0e0000000f0000000d0000000e0000000d0000000c000000
-    m_SmoothingGroup: 0
-    m_Uv:
-      m_UseWorldSpace: 0
-      m_FlipU: 0
-      m_FlipV: 0
-      m_SwapUV: 0
-      m_Fill: 1
-      m_Scale: {x: 0.25, y: 0.25}
-      m_Offset: {x: 0, y: 0}
-      m_Rotation: 0
-      m_Anchor: 0
-    m_Material: {fileID: 0}
-    m_SubmeshIndex: 0
-    m_ManualUV: 0
-    elementGroup: -1
-    m_TextureGroup: -1
-  - m_Indexes: 110000001200000013000000110000001300000010000000
-    m_SmoothingGroup: 0
-    m_Uv:
-      m_UseWorldSpace: 0
-      m_FlipU: 0
-      m_FlipV: 0
-      m_SwapUV: 0
-      m_Fill: 1
-      m_Scale: {x: 0.25, y: 0.25}
-      m_Offset: {x: 0, y: 0}
-      m_Rotation: 0
-      m_Anchor: 0
-    m_Material: {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
-    m_SubmeshIndex: 0
-    m_ManualUV: 0
-    elementGroup: 0
-    m_TextureGroup: -1
-  m_SharedVertices:
-  - m_Vertices: 000000000d00000010000000
-  - m_Vertices: 020000000f000000
-  - m_Vertices: 090000000c00000013000000
-  - m_Vertices: 0b0000000e000000
-  - m_Vertices: 010000000400000011000000
-  - m_Vertices: 0300000006000000
-  - m_Vertices: 070000000a000000
-  - m_Vertices: 050000000800000012000000
-  m_SharedTextures: []
-  m_Positions:
-  - {x: -0.6, y: 0, z: 0}
-  - {x: -0.6, y: 2.802694, z: 0}
-  - {x: -0.6, y: 0, z: 0.19999027}
-  - {x: -0.6, y: 2.802694, z: 0.19999027}
-  - {x: -0.6, y: 2.802694, z: 0}
-  - {x: 0.6, y: 2.802694, z: 0}
-  - {x: -0.6, y: 2.802694, z: 0.19999027}
-  - {x: 0.6, y: 2.802694, z: 0.19999027}
-  - {x: 0.6, y: 2.802694, z: 0}
-  - {x: 0.6, y: 0, z: 0}
-  - {x: 0.6, y: 2.802694, z: 0.19999027}
-  - {x: 0.6, y: 0, z: 0.19999027}
-  - {x: 0.6, y: 0, z: 0}
-  - {x: -0.6, y: 0, z: 0}
-  - {x: 0.6, y: 0, z: 0.19999027}
-  - {x: -0.6, y: 0, z: 0.19999027}
-  - {x: -0.6, y: 0, z: 0}
-  - {x: -0.6, y: 2.802694, z: 0}
-  - {x: 0.6, y: 2.802694, z: 0}
-  - {x: 0.6, y: 0, z: 0}
-  m_Textures0:
-  - {x: 0.049997568, y: 0.29932648}
-  - {x: 0.049997568, y: 1}
-  - {x: 0, y: 0.29932648}
-  - {x: 0, y: 1}
-  - {x: 0, y: 0.95000243}
-  - {x: 0.3, y: 0.95000243}
-  - {x: 0, y: 1}
-  - {x: 0.3, y: 1}
-  - {x: 0, y: 1}
-  - {x: 0, y: 0.29932648}
-  - {x: 0.049997568, y: 1}
-  - {x: 0.049997568, y: 0.29932648}
-  - {x: 0, y: 0.95000243}
-  - {x: 0.3, y: 0.95000243}
-  - {x: 0, y: 1}
-  - {x: 0.3, y: 1}
-  - {x: 0, y: 0.29932648}
-  - {x: 0, y: 1}
-  - {x: 0.3, y: 1}
-  - {x: 0.3, y: 0.29932648}
-  m_Textures2: []
-  m_Textures3: []
-  m_Tangents:
-  - {x: 0, y: 0, z: -1, w: -1}
-  - {x: 0, y: 0, z: -1, w: -1}
-  - {x: 0, y: 0, z: -1, w: -1}
-  - {x: 0, y: 0, z: -1, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
-  - {x: 0, y: 0, z: 1, w: -1}
-  - {x: 0, y: 0, z: 1, w: -1}
-  - {x: 0, y: 0, z: 1, w: -1}
-  - {x: 0, y: 0, z: 1, w: -1}
-  - {x: -1, y: 0, z: 0, w: -1}
-  - {x: -1, y: 0, z: 0, w: -1}
-  - {x: -1, y: 0, z: 0, w: -1}
-  - {x: -1, y: 0, z: 0, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
-  m_Colors: []
-  m_UnwrapParameters:
-    m_HardAngle: 88
-    m_PackMargin: 20
-    m_AngleError: 8
-    m_AreaError: 15
-  m_PreserveMeshAssetOnDestroy: 0
-  assetGuid: 
-  m_Mesh: {fileID: 0}
-  m_VersionIndex: 10376
-  m_IsSelectable: 1
-  m_SelectedFaces: 
-  m_SelectedEdges: []
-  m_SelectedVertices: 
---- !u!114 &760400300445362401
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3099048999305915253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ca002da428252441b92f28d83c8a65f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ProBuilder::UnityEngine.ProBuilder.Shapes.ProBuilderShape
-  m_Shape:
-    rid: 4752881264482844871
-  m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_UnmodifiedMeshVersion: 4382
-  m_Size: {x: 10, y: 5, z: 10}
-  m_LocalCenter: {x: 0, y: 0, z: 0}
-  references:
-    version: 2
-    RefIds:
-    - rid: 4752881264482844871
-      type: {class: Cube, ns: UnityEngine.ProBuilder.Shapes, asm: Unity.ProBuilder}
-      data: 
---- !u!23 &5938327952430835157
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3099048999305915253}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: b549a481e3adaeb4dad2565d1ccd5bb7, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 2
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &388963745840226906
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3099048999305915253}
-  m_Mesh: {fileID: 0}
---- !u!65 &6220519373086259579
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3099048999305915253}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.2, y: 2.802694, z: 0.19999027}
-  m_Center: {x: 0, y: 1.401347, z: 0.099995136}
 --- !u!1 &3289152189649261460
 GameObject:
   m_ObjectHideFlags: 0
@@ -1676,7 +1347,7 @@ MonoBehaviour:
   player: {fileID: 2579260593497910125}
   playerCamera: {fileID: 6654618607449089807}
   inputReader: {fileID: 8956652460274281639}
-  playerMover: {fileID: 0}
+  playerMover: {fileID: 7893351746387300568}
   cameraRecoil: {fileID: 260499741174559401}
   lookSensitivity: 0.05
   lookXLimit: 60
@@ -1884,10 +1555,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 820e610de7b182645aa4a8f0a0368164, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 1
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
@@ -3159,8 +2830,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSway
   playerInputReader: {fileID: 8956652460274281639}
-  moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
-  lookAction: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   enableSway: 1
   smooth: 1
   swayMultiplier: 0.05
@@ -3374,10 +3043,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 2499876187857685873, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6214099045475069039}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 862d5399246033345b4cb9ada9b944d3, type: 3}
 --- !u!4 &2455314481387094819 stripped
@@ -3403,7 +3069,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.0041703708
+      value: 0.003293256
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.y
