@@ -11,13 +11,13 @@ GameObject:
   - component: {fileID: 4798954612814379618}
   - component: {fileID: 3568241263418442985}
   - component: {fileID: 5445272703306835462}
-  - component: {fileID: 2637620344956863188}
   - component: {fileID: 5425350769874602465}
   - component: {fileID: 8192007907820673360}
   - component: {fileID: 4206877478203493182}
   - component: {fileID: 8622962237435936167}
+  - component: {fileID: 996114371388078208}
   m_Layer: 8
-  m_Name: (Updated) Ghost
+  m_Name: CursedSword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52,14 +52,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1606917a069cd2d45a63fbf757bb38b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  enemyClass: 2
-  skipSpawn: 0
+  enemyClass: 0
+  skipSpawn: 1
   spawnDelay: 3
   alwaysAggro: 0
   aggroRange: 30
   movementScript: {fileID: 5445272703306835462}
   attacks:
-  - {fileID: 2637620344956863188}
+  - {fileID: 996114371388078208}
   stagger: {fileID: 8192007907820673360}
   animator: {fileID: 0}
   numberOfPhases: 3
@@ -82,7 +82,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlyingMovement
   chaseEnabled: 1
-  engagementDistance: 6
+  engagementDistance: 4
   chaseSpeed: 6
   acceleration: 10
   onlyChaseIfAttackReady: 0
@@ -105,30 +105,6 @@ MonoBehaviour:
   groundCheckDistance: 50
   bobAmplitude: 0.3
   bobFrequency: 2
---- !u!114 &2637620344956863188
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 272941483086651391}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4d0d56790b55b74db46814550ad28a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_Kamikaze
-  attackRange: 5
-  cooldownTime: 2
-  windupIndicator: {fileID: 0}
-  moveWhileWindingUp: 0
-  rushSpeed: 12
-  damage: 10
-  contactRadius: 1
-  targetLayers:
-    serializedVersion: 2
-    m_Bits: 64
-  debugMode: 0
-  targetHeightOffset: 1
 --- !u!114 &5425350769874602465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,6 +118,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeakPointManager
   resetSequenceEveryStagger: 0
+  alwaysShowAll: 0
   weakpoints:
   - {fileID: 4419145138689798848}
   debugMode: 0
@@ -221,6 +198,37 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &996114371388078208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272941483086651391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae32cdccd217da34db40c47ced2c6507, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_Melee
+  attackRange: 5
+  cooldownTime: 2
+  windupIndicator: {fileID: 8865687178892460569}
+  moveWhileWindingUp: 0
+  damageFieldPrefab: {fileID: 5792883796589563391, guid: 436770d337914f544b39a71aaa614273, type: 3}
+  damageFieldHeight: 0.5
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  persistAfterHit: 0
+  damageOverTime: 0
+  damageTickRate: 0.5
+  windupDuration: 0.6
+  strikeDuration: 0.15
+  recoveryDuration: 0.4
+  windupTurnSpeed: 90
+  damage: 10
+  attackIndicator: {fileID: 0}
+  debugMode: 0
 --- !u!1 &3649698560257739166
 GameObject:
   m_ObjectHideFlags: 0
@@ -252,6 +260,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 8807018606182058875}
   - {fileID: 6959259694330694764}
   m_Father: {fileID: 4798954612814379618}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -319,7 +328,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -274133415, guid: 82996cf26ef161c4484ae5992d52c384, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 05dd31d742edcfd4a99d5985c6f52ea4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -409,6 +418,73 @@ MonoBehaviour:
 Transform:
   m_CorrespondingSourceObject: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
   m_PrefabInstance: {fileID: 61327701195846995}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &4939442711439025895
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2016468724972947523}
+    m_Modifications:
+    - target: {fileID: 4518443289695481244, guid: 912c22c56556b094aa30e21b7ee63108, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.21
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518443289695481244, guid: 912c22c56556b094aa30e21b7ee63108, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.94
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518443289695481244, guid: 912c22c56556b094aa30e21b7ee63108, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.04987
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518443289695481244, guid: 912c22c56556b094aa30e21b7ee63108, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.999239
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518443289695481244, guid: 912c22c56556b094aa30e21b7ee63108, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518443289695481244, guid: 912c22c56556b094aa30e21b7ee63108, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518443289695481244, guid: 912c22c56556b094aa30e21b7ee63108, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.03900437
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518443289695481244, guid: 912c22c56556b094aa30e21b7ee63108, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518443289695481244, guid: 912c22c56556b094aa30e21b7ee63108, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518443289695481244, guid: 912c22c56556b094aa30e21b7ee63108, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -4.471
+      objectReference: {fileID: 0}
+    - target: {fileID: 6123131204270901887, guid: 912c22c56556b094aa30e21b7ee63108, type: 3}
+      propertyPath: m_Name
+      value: WindUpIndicator
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 912c22c56556b094aa30e21b7ee63108, type: 3}
+--- !u!4 &8807018606182058875 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4518443289695481244, guid: 912c22c56556b094aa30e21b7ee63108, type: 3}
+  m_PrefabInstance: {fileID: 4939442711439025895}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &8865687178892460569 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 4577156394778223870, guid: 912c22c56556b094aa30e21b7ee63108, type: 3}
+  m_PrefabInstance: {fileID: 4939442711439025895}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5019260053121476036
 PrefabInstance:
