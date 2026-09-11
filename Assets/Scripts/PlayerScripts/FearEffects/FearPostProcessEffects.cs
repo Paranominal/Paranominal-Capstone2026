@@ -44,12 +44,14 @@ public class FearPostProcessEffects : MonoBehaviour
     {
         if (postProcessVolume == null)
         {
-            postProcessVolume = FindFirstObjectByType<Volume>();
+            GameObject bundle = GameObject.Find("SceneEssentialsBundle");
+            if (bundle != null)
+                postProcessVolume = bundle.GetComponentInChildren<Volume>();
         }
 
-        if (postProcessVolume != null && postProcessVolume.profile != null)
+        if (postProcessVolume != null && postProcessVolume.sharedProfile != null)
         {
-            postProcessVolume.profile.TryGet(out vignetteVolume);
+            postProcessVolume.sharedProfile.TryGet(out vignetteVolume);
         }
     }
 
