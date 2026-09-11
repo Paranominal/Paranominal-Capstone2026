@@ -1,6 +1,6 @@
 // Summary:
-// Abstract base class for all modular enemy attacks. Provides a shared interface for the behaviour script: range, cooldown, state queries, lifecycle events,
-// and windup indicator management. Subclasses implement their own attack sequences and call StartCooldown() when finished.
+// Abstract base class for all modular enemy attacks. Provides a shared interface for the behaviour script: range, cooldown, state queries, lifecycle events, and windup indicator management. 
+// Subclasses implement their own attack sequences and call StartCooldown() when finished.
 
 using System;
 using System.Collections;
@@ -23,6 +23,11 @@ public abstract class EnemyAttack_Base : MonoBehaviour
     public float AttackRange => attackRange;
     public float CooldownTime => cooldownTime;
 
+    [Header("Windup Movement")]
+    [Tooltip("If enabled, the enemy continues moving during the windup phase instead of stopping immediately.")]
+    [SerializeField] private bool moveWhileWindingUp;
+    public bool MoveWhileWindingUp => moveWhileWindingUp;
+
     // state
     private bool isOnCooldown;
     private Coroutine cooldownRoutine;
@@ -43,18 +48,20 @@ public abstract class EnemyAttack_Base : MonoBehaviour
     public abstract void PerformAttack(Transform target);
     public abstract void CancelAttack();
 
-    // Override for attack-specific usage conditions (e.g. "only on stationary targets"). Returns true by default. the behaviour script checks this during attack selection.
+    // override for attack-specific usage conditions (e.g. "only on stationary targets").
+    // returns true by default. the behaviour script checks this during attack selection.
     public virtual bool ShouldUse(Transform target) => true;
 
 
-    // Attack Lifecycle
+    // Lifecycle
     // hide indicator on spawn so it's never visible before the first attack
     protected virtual void Awake()
     {
         SetWindupIndicator(false);
     }
 
-    // Attack Cooldown
+
+    // Cooldowm
     protected void StartCooldown()
     {
         if (cooldownRoutine != null) StopCoroutine(cooldownRoutine);
@@ -80,15 +87,18 @@ public abstract class EnemyAttack_Base : MonoBehaviour
         cooldownRoutine = null;
     }
 
-    // Attack Indicators
+
+    // Indicators
     // toggle the windup indicator directly if needed outside the event invokers
     protected void SetWindupIndicator(bool show)
     {
         if (windupIndicator != null) windupIndicator.enabled = show;
     }
 
-    // Event Invokers
-    // subclasses call these to fire the shared events. Windup indicator is managed automatically through these.
+
+    // Evemt Invokers
+    // subclasses call these to fire the shared events.
+    // windup indicator is managed automatically through these.
     protected void InvokeWindupStart()
     {
         SetWindupIndicator(true);

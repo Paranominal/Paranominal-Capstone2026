@@ -25,10 +25,13 @@ public class EnemyAttack_Charge : EnemyAttack_Base
     [Tooltip("Radius used for hit detection during the charge (OverlapSphere radius or DamageField radius).")]
     [SerializeField] private float hitDetectionRadius = 0.5f;
     [SerializeField] private LayerMask targetLayers;
+    [Tooltip("Height offset on the target to aim at (e.g. 1.0 for chest height).")]
+    [SerializeField] private float targetHeightOffset = 1f;
 
-    [Header("Damage Field (ignored if Use Body Collider is on)")]
+    [ShowIf("useBodyCollider", false, Header = "Damage Field")]
     [Tooltip("DamageField prefab parented to the enemy during the charge.")]
     [SerializeField] private DamageField damageFieldPrefab;
+    [ShowIf("useBodyCollider", false)]
     [SerializeField] private float damageFieldHeight = 1f;
 
     [Header("Timing")]
@@ -41,6 +44,8 @@ public class EnemyAttack_Charge : EnemyAttack_Base
 
     [Header("Charge")]
     [SerializeField] private float chargeSpeed = 14f;
+    [Tooltip("How quickly the enemy reaches charge speed. Higher = snappier.")]
+    [SerializeField] private float chargeAcceleration = 40f;
     [Tooltip("How far past the snapshotted position the charge continues on a miss.")]
     [SerializeField] private float chargePastDistance = 2f;
 
@@ -158,7 +163,8 @@ public class EnemyAttack_Charge : EnemyAttack_Base
         }
         else if (rb != null)
         {
-            rb.linearVelocity = direction * speed;
+            Vector3 desiredVel = direction * speed;
+            rb.linearVelocity = Vector3.MoveTowards(rb.linearVelocity, desiredVel, chargeAcceleration * Time.deltaTime);
         }
         else
         {
@@ -170,6 +176,22 @@ public class EnemyAttack_Charge : EnemyAttack_Base
     {
         if (rb != null && !useNavMesh)
             rb.linearVelocity = Vector3.zero;
+    }
+
+    // smooth deceleration over a brief window instead of instant zero
+    private IEnumerator Decelerate(float duration)
+    {
+        if (rb == null || useNavMesh) yield break;
+
+        Vector3 startVel = rb.linearVelocity;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            rb.linearVelocity = Vector3.Lerp(startVel, Vector3.zero, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        rb.linearVelocity = Vector3.zero;
     }
 
     // returns true if geometry is within the next frame's movement (flying enemies only)
@@ -195,8 +217,8 @@ public class EnemyAttack_Charge : EnemyAttack_Base
         isWindingUp = true;
         chargeLandedHit = false;
 
-        // snapshot the target position
-        Vector3 snapshotPos = target.position;
+        // snapshot the target position at chest height
+        Vector3 snapshotPos = target.position + Vector3.up * targetHeightOffset;
 
         // disable NavAgent pathfinding during charge
         if (useNavMesh && navAgent.isOnNavMesh)
@@ -258,8 +280,8 @@ public class EnemyAttack_Charge : EnemyAttack_Base
                 chargeLandedHit = true;
         }
 
-        // stop and clean up
-        ChargeStop();
+        // smooth stop and clean up
+        yield return Decelerate(0.15f);
         CleanupDamageField();
         InvokeStrikeEnd();
 
@@ -304,6 +326,6 @@ public class EnemyAttack_Charge : EnemyAttack_Base
             yield return null;
         }
 
-        ChargeStop();
+        yield return Decelerate(0.15f);
     }
 }

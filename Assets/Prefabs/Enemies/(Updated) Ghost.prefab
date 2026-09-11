@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4798954612814379618}
   - component: {fileID: 3568241263418442985}
   - component: {fileID: 5445272703306835462}
+  - component: {fileID: 2637620344956863188}
   - component: {fileID: 5425350769874602465}
   - component: {fileID: 8192007907820673360}
   - component: {fileID: 4206877478203493182}
@@ -57,18 +58,13 @@ MonoBehaviour:
   alwaysAggro: 0
   aggroRange: 30
   movementScript: {fileID: 5445272703306835462}
-  chasePlayer: 1
-  onlyChaseIfAttackReady: 0
-  neverGiveUpChase: 0
-  chaseRange: 20
-  kamikazeOnContact: 1
-  contactDamage: 15
-  attacks: []
+  attacks:
+  - {fileID: 2637620344956863188}
   stagger: {fileID: 8192007907820673360}
   animator: {fileID: 0}
   numberOfPhases: 3
   doSummons: 1
-  summonOnCycles: 01000000
+  summonOnCycles: 
   summonsPrefab: {fileID: 0}
   numberOfSummons: 3
   summonRadius: 3
@@ -85,9 +81,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b822e32bd4727ef4c9b62f566be59d03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlyingMovement
+  chaseEnabled: 1
+  engagementDistance: 6
   chaseSpeed: 6
-  chaseStopDistance: 6
   acceleration: 10
+  onlyChaseIfAttackReady: 0
+  neverGiveUpChase: 0
+  chaseRange: 20
   returnToOrigin: 1
   returnSpeed: 3
   retreatEnabled: 0
@@ -98,12 +98,37 @@ MonoBehaviour:
   strafeDirectionInterval: 2
   hoverHeight: 2.5
   verticalOffset: 1.5
+  altitudeCorrectionSpeed: 5
   groundLayers:
     serializedVersion: 2
     m_Bits: 4096
   groundCheckDistance: 50
   bobAmplitude: 0.3
   bobFrequency: 2
+--- !u!114 &2637620344956863188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272941483086651391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4d0d56790b55b74db46814550ad28a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_Kamikaze
+  attackRange: 5
+  cooldownTime: 2
+  windupIndicator: {fileID: 0}
+  moveWhileWindingUp: 0
+  rushSpeed: 12
+  damage: 10
+  contactRadius: 1
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  debugMode: 0
+  targetHeightOffset: 1
 --- !u!114 &5425350769874602465
 MonoBehaviour:
   m_ObjectHideFlags: 0
