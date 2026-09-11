@@ -21,8 +21,8 @@ public class DialogueManager : MonoBehaviour
         UpdateDialogue(pickupDialogue);
         //Time.timeScale = 0f; //pause game
         dialogueCanvas.SetActive(true); //activate UI
-        if (playerInputReader != null) playerInputReader.canMove = false;
-        if (weaponInputReader != null) weaponInputReader.canShoot = false;
+        if (playerInputReader != null) playerInputReader.InputLock(true);
+        if (weaponInputReader != null) weaponInputReader.InputLock(true);
         SetCursorModeLocked(false); //unlock cursor
     }
 
@@ -36,8 +36,8 @@ public class DialogueManager : MonoBehaviour
     public void CloseDialogue(bool openGrimoire = false) // public for menu button presses to activate
     {
         if (dialogueObject != null) SetCursorModeLocked(dialogueObject.GetComponent<Dialogue>().cursorLockOnClose); //lock cursor again
-        if (playerInputReader != null) playerInputReader.canMove = true;
-        if (weaponInputReader != null) weaponInputReader.canShoot = true;
+        if (playerInputReader != null) playerInputReader.InputLock(false);
+        if (weaponInputReader != null) weaponInputReader.InputLock(false);
         dialogueCanvas.gameObject.SetActive(false); //deactivate dialogue
         if (grimoireAnimManager != null && openGrimoire) grimoireAnimManager.OpenFromDialogue(); //open grimoire
         // Time.timeScale = 1f; //resume game

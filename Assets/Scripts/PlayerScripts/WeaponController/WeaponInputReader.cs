@@ -8,7 +8,7 @@ public class WeaponInputReader : MonoBehaviour
     [SerializeField] private InputActionReference shootIronAction;
     [SerializeField] private InputActionReference shootSilverAction;
     [SerializeField] private InputActionReference reloadAction;
-    public bool canShoot = true;
+    private bool canShoot = true;
     public bool CanShoot => canShoot;
 
     public bool WasIronPressedThisFrame() => shootIronAction != null && shootIronAction.action.WasPressedThisFrame();
@@ -19,6 +19,11 @@ public class WeaponInputReader : MonoBehaviour
     private void Update()
     {
         AnyInput();
+    }
+
+    public void InputLock(bool enabled) // if InputLock(true) is called, it disables all movement from the player reader
+    {
+        canShoot = !enabled;
     }
     public bool AnyInput()
     {

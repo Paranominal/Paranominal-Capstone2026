@@ -13,7 +13,15 @@ public class PlayerInputReader : MonoBehaviour
     [SerializeField] private InputActionReference lookActionMouse;
     [SerializeField] private InputActionReference lookActionGamepad;
     [SerializeField] private float gamepadLookSens = 100f;
-    public bool canMove = true;
+    public InputActionReference MoveAction => moveAction;
+    public InputActionReference SprintAction => sprintAction;
+    public InputActionReference SlowWalkActon => slowWalkAction;
+    public InputActionReference JumpAction => jumpAction;
+    public InputActionReference DashAction => dashAction;
+    public InputActionReference LookAction => lookActionMouse.action.ReadValue<Vector2>().sqrMagnitude >= lookActionGamepad.action.ReadValue<Vector2>().sqrMagnitude 
+        ? lookActionMouse
+        : lookActionGamepad;
+    private bool canMove = true;
     public bool CanMove => canMove;
 
     [Header("Cursor")]
@@ -57,6 +65,11 @@ public class PlayerInputReader : MonoBehaviour
     private void Start()
     {
         SetCursorState(startLockMode, startCursorVisible);
+    }
+
+    public void InputLock(bool enabled) // if InputLock(true) is called, it disables all movement from the player reader
+    {
+        canMove = !enabled;
     }
 
     public void SetCursorState(CursorLockMode lockMode, bool visible)

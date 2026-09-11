@@ -42,7 +42,7 @@ public class ShotOrchestrator : MonoBehaviour
     {
         if (weaponInputReader == null || weaponFiringLogic == null)
             return;
-        if (!weaponInputReader.canShoot) return;
+        if (!weaponInputReader.CanShoot) return;
 
         if (weaponFiringLogic.IsReloading)
         {

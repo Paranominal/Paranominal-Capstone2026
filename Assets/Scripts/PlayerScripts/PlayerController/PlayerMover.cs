@@ -55,7 +55,7 @@ public class PlayerMover : MonoBehaviour
     private void Update()
     {
         // If the input reader is not set or cannot move, skip processing movement
-        if (!inputReader.canMove)
+        if (!inputReader.CanMove)
             return;
 
         // Read input values
