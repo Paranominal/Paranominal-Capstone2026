@@ -1,6 +1,6 @@
 // Summary:
 // NavMeshAgent-based ground movement. Implements IEnemyMovement for use with Enemy.
-// Handles chase, strafe (with NavMesh obstacle checking), retreat, and return to origin.
+// Handles chase, strafe (with NavMesh obstacle checking), retreat, return to origin, and chase territory management.
 
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,11 +9,24 @@ using UnityEngine.AI;
 public class GroundMovement : MonoBehaviour, IEnemyMovement
 {
     [Header("Chase")]
+    [SerializeField] private bool chaseEnabled = true;
+    [ShowIf("chaseEnabled")]
+    [Tooltip("How close the enemy stops to the player. Also used as the strafe orbit radius.")]
+    [SerializeField] private float engagementDistance = 5f;
+    [ShowIf("chaseEnabled")]
     [SerializeField] private float chaseSpeed = 5f;
-    [SerializeField] private float chaseStopDistance = 2.5f;
+    [ShowIf("chaseEnabled")]
     [Range(0, 1)]
     [Tooltip("Controls how quickly the agent accelerates. 0 = sluggish, 1 = snappy.")]
     [SerializeField] private float chaseEasing = 0.5f;
+    [ShowIf("chaseEnabled")]
+    [SerializeField] private bool onlyChaseIfAttackReady;
+
+    [ShowIf("chaseEnabled", Header = "Chase Territory")]
+    [SerializeField] private bool neverGiveUpChase;
+    [ShowIf("neverGiveUpChase", false)]
+    [Tooltip("Max distance the enemy will chase from its spawn point.")]
+    [SerializeField] private float chaseRange = 20f;
 
     [Header("Return")]
     [SerializeField] private bool returnToOrigin = true;
@@ -42,7 +55,7 @@ public class GroundMovement : MonoBehaviour, IEnemyMovement
     private float strafeDirection = 1f;
     private float strafeTimer;
 
-    public float ChaseStopDistance => chaseStopDistance;
+    public float EngagementDistance => engagementDistance;
     public bool ReturnEnabled => returnToOrigin;
     public bool RetreatEnabled => retreatEnabled;
     public bool StrafeEnabled => strafeEnabled;
@@ -70,14 +83,13 @@ public class GroundMovement : MonoBehaviour, IEnemyMovement
 
 
     // Movement Commands
-    public void Chase(Vector3 target, float stopDistance)
+    public void Chase(Vector3 target)
     {
-        Move(target, chaseSpeed, stopDistance);
+        Move(target, chaseSpeed, engagementDistance);
     }
 
-    public void Strafe(Vector3 orbitCenter, float orbitRadius)
+    public void Strafe(Vector3 orbitCenter)
     {
-        // update direction timer
         strafeTimer -= Time.deltaTime;
         if (strafeTimer <= 0f)
         {
@@ -85,12 +97,11 @@ public class GroundMovement : MonoBehaviour, IEnemyMovement
             strafeTimer = strafeDirectionInterval;
         }
 
-        Vector3 target = ComputeStrafeTarget(orbitCenter, orbitRadius, strafeDirection);
+        Vector3 target = ComputeStrafeTarget(orbitCenter, engagementDistance, strafeDirection);
 
-        // if blocked, try the other direction. if both blocked, stop.
         if (!IsStrafeClear(target))
         {
-            target = ComputeStrafeTarget(orbitCenter, orbitRadius, -strafeDirection);
+            target = ComputeStrafeTarget(orbitCenter, engagementDistance, -strafeDirection);
             if (!IsStrafeClear(target))
             {
                 Stop();
@@ -130,13 +141,25 @@ public class GroundMovement : MonoBehaviour, IEnemyMovement
             transform.rotation = Quaternion.LookRotation(dir);
     }
 
-    public void SetDirectChase(bool direct) { } // no-op for ground enemies
-
     public void SetPaused(bool paused)
     {
         if (navAgent == null || !navAgent.isOnNavMesh) return;
         if (paused) Stop();
         else navAgent.isStopped = false;
+    }
+
+    public bool ShouldExitChase(bool playerInAggroRange)
+    {
+        if (neverGiveUpChase) return false;
+        float distFromSpawn = (transform.position - spawnPosition).magnitude;
+        return !playerInAggroRange || distFromSpawn > chaseRange;
+    }
+
+    public bool CanChase(bool anyAttackReady)
+    {
+        if (!chaseEnabled) return false;
+        if (onlyChaseIfAttackReady && !anyAttackReady) return false;
+        return true;
     }
 
 
