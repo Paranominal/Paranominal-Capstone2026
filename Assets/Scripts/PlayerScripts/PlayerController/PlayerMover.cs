@@ -13,20 +13,9 @@ public class PlayerMover : MonoBehaviour
 
     [Tooltip("Jump height in meters.")]
     [SerializeField] private float jumpHeight = 1.5f;
-    [Tooltip("Cooldown after jumping before miriam can jump again.")]
-    [SerializeField] private float jumpCooldown = 1f;
 
     [Header("Dash")]
-    [Tooltip("Horizontal dash speed applied while dashing.")]
-    [SerializeField] private float dashSpeed = 15f;
-    [Tooltip("Duration of the dash in seconds.")]
-    [SerializeField] private float dashDuration = 0.2f;
-    [Tooltip("Allow dashing while airborne. If false, dash can only start when grounded.")]
-    [SerializeField] private bool allowAirDash = false;
-    [Tooltip("Allow the player to jump during a dash. When enabled, jumping while dashing launches the player into the air and ends the dash.")]
-    [SerializeField] private bool allowDashJump = false;
-    [Tooltip("Cooldown after a dash before another dash can be started.")]
-    [SerializeField] private float dashCooldown = 1f;
+    [SerializeField] private PlayerDash playerDash;
 
     [Header("Inertia")]
     [Tooltip("Time value (seconds) that controls how quickly velocity changes. Larger = more inertia (slower accel and deccel).")]
@@ -53,20 +42,14 @@ public class PlayerMover : MonoBehaviour
     private Vector3 currentVelocity = Vector3.zero;
     private float verticalVelocity;
 
-    // Dash state control variables
-    private bool isDashing = false;
-    private float dashTimer = 0f;
-    private Vector3 dashDirection = Vector3.zero;
-    private bool dashHeldLastFrame = false;
-    private float dashCooldownTimer = 0f;
-    private float jumpCooldownTimer = 0f;
-
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
 
         if (inputReader == null)
             inputReader = GetComponent<PlayerInputReader>();
+        if (playerDash == null)
+            playerDash = GetComponent<PlayerDash>();
     }
 
     private void Update()
@@ -98,7 +81,7 @@ public class PlayerMover : MonoBehaviour
         float timeConstant = Mathf.Max(0.0001f, appliedInertia);
         float smoothFactor = 1f - Mathf.Exp(-Time.deltaTime / timeConstant);
         // Apply smoothing toward desired velocity (same inertia for accel and decel)
-        if (!isDashing)
+        if (playerDash == null || !playerDash.IsDashing)
         {
             if (moveInput.sqrMagnitude > 0.01f)
             {
@@ -110,54 +93,25 @@ public class PlayerMover : MonoBehaviour
                 currentVelocity = Vector3.Lerp(currentVelocity, Vector3.zero, smoothFactor);
             }
         }
+        // PlayerDash handles dash state and input
+        if (playerDash != null)
+            playerDash.HandleDashInput(dashInput, desiredDirection, transform, characterController, Time.deltaTime);
 
-        // Tick dash cooldown timer
-        if (dashCooldownTimer > 0f)
-            dashCooldownTimer -= Time.deltaTime;
-
-        // Handle dash start (rising edge: pressed this frame)
-        if (dashInput && !dashHeldLastFrame && !isDashing && dashCooldownTimer <= 0f)
-        {
-            // Only allow starting a dash when grounded unless air dashing is enabled
-            if (!characterController.isGrounded && !allowAirDash)
-            {
-                // cannot start dash in air
-                goto SKIP_DASH;
-            }
-
-            // if player is giving movement input use that for desired direction, otherwise send them forward
-            if (desiredDirection.sqrMagnitude > 0.01f)
-                dashDirection = desiredDirection.normalized;
-            else
-                dashDirection = transform.forward;
-
-            isDashing = true;
-            dashTimer = dashDuration;
-
-            // lock horizontal velocity to dash direction
-            currentVelocity = dashDirection * dashSpeed;
-        }
-    SKIP_DASH:;
-
-
-        // Tick jump cooldown timer
-        if (jumpCooldownTimer > 0f)
-            jumpCooldownTimer -= Time.deltaTime;
-            
         // Handle jump input. If allowDashJump is enabled, jumping while dashing is allowed and will end the dash.
-        if (jumpInput && characterController.isGrounded && jumpCooldownTimer <= 0f)
+        if (jumpInput && characterController.isGrounded)
         {
-            if (!isDashing || allowDashJump)
+            bool dashActive = playerDash != null && playerDash.IsDashing;
+            bool allowDashJumpLocal = playerDash != null ? playerDash.AllowDashJump : false;
+
+            if (!dashActive || allowDashJumpLocal)
             {
                 // v = sqrt(2 * g * h)
                 verticalVelocity = Mathf.Sqrt(2f * gravity * jumpHeight);
-                jumpCooldownTimer = jumpCooldown;
 
-                if (isDashing)
+                if (dashActive && playerDash != null)
                 {
                     // end dash early and start cooldown
-                    isDashing = false;
-                    dashCooldownTimer = dashCooldown;
+                    playerDash.CancelDashAndStartCooldown();
                 }
             }
         }
@@ -172,33 +126,17 @@ public class PlayerMover : MonoBehaviour
             verticalVelocity -= gravity * Time.deltaTime;
         }
 
-        // Update dash timer
-        if (isDashing)
-        {
-            dashTimer -= Time.deltaTime;
-            if (dashTimer <= 0f)
-            {
-                isDashing = false;
-                // start cooldown
-                dashCooldownTimer = dashCooldown;
-                // after dash, keep currentVelocity as whatever horizontal component remains
-                // we leave currentVelocity as-is so inertia smoothing will take over
-            }
-        }
-
-        // When dashing, force horizontal movement along dashDirection at dashSpeed
-        Vector3 horizontal = isDashing ? dashDirection * dashSpeed : currentVelocity;
+        // When dashing, PlayerDash provides the horizontal dash velocity
+        Vector3 horizontal = (playerDash != null && playerDash.IsDashing) ? playerDash.CurrentDashVelocity : currentVelocity;
 
         // Combine horizontal and vertical movement
         Vector3 move = horizontal + Vector3.up * verticalVelocity;
         characterController.Move(move * Time.deltaTime);
 
         // Footsteps only when not dashing
-        if (!isDashing)
+        if (playerDash == null || !playerDash.IsDashing)
             HandleFootsteps(moveInput);
 
-        // update dash input edge detection
-        dashHeldLastFrame = dashInput;
     }
 
     // Plays a footstep when the player is actively moving on the ground, on a fixed interval.
