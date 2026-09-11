@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 5445272703306835462}
   - component: {fileID: 5425350769874602465}
   - component: {fileID: 8192007907820673360}
-  - component: {fileID: 4206877478203493182}
   - component: {fileID: 8622962237435936167}
   - component: {fileID: 996114371388078208}
+  - component: {fileID: 2822648997167648662}
   m_Layer: 8
   m_Name: CursedSword
   m_TagString: Untagged
@@ -93,7 +93,7 @@ MonoBehaviour:
   retreatEnabled: 0
   retreatDistance: 5
   retreatSpeed: 4
-  strafeEnabled: 0
+  strafeEnabled: 1
   strafeSpeed: 4
   strafeDirectionInterval: 2
   hoverHeight: 2.5
@@ -150,27 +150,6 @@ MonoBehaviour:
   debugMode: 1
   canBeHit: 1
   windingUp: 0
---- !u!135 &4206877478203493182
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 272941483086651391}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &8622962237435936167
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -229,6 +208,29 @@ MonoBehaviour:
   damage: 10
   attackIndicator: {fileID: 0}
   debugMode: 0
+--- !u!136 &2822648997167648662
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272941483086651391}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.25
+  m_Height: 3
+  m_Direction: 1
+  m_Center: {x: 0, y: -0.3, z: 0}
 --- !u!1 &3649698560257739166
 GameObject:
   m_ObjectHideFlags: 0
@@ -256,7 +258,7 @@ Transform:
   m_GameObject: {fileID: 3649698560257739166}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.039, y: -0.276, z: 0}
+  m_LocalPosition: {x: 0, y: -0.276, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -360,11 +362,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.046
+      value: -0.002
       objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.282
+      value: 0.545
       objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalPosition.z
