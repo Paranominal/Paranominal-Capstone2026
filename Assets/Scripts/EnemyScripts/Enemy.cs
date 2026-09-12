@@ -1,7 +1,7 @@
 // Summary:
 // Core enemy behaviour controller. Owns the state machine, aggro, class/death/summon logic, animation, and spawner lifecycle. 
-// Movement is delegated to a pluggable IEnemyMovement script. Attacks are modular components in a priority-ordered array.
-// If no movement script is assigned, the enemy is stationary (idles and attacks in place).
+// Movement is delegated to a pluggable IEnemyMovement script. If no movement script is assigned, the enemy is stationary (idles and attacks in place).
+// Attacks are modular components in a priority-ordered array.
 
 using System.Collections;
 using System;
@@ -61,6 +61,15 @@ public class Enemy : MonoBehaviour
     [Header("Debug")]
     public bool debugMode;
 
+    #if UNITY_EDITOR
+    [ShowIf("debugMode", Header = "Runtime State (Play Mode)")]
+    [SerializeField] private string _state = "Inactive";
+    [ShowIf("debugMode")]
+    [SerializeField] private string _activeAttack = "None";
+    [ShowIf("debugMode")]
+    [SerializeField] private float _orbitDistance;
+    #endif
+
     // state
     private BehaviourState behaviourState = BehaviourState.Inactive;
     public BehaviourState CurrentState => behaviourState;
@@ -104,10 +113,36 @@ public class Enemy : MonoBehaviour
 
     private void Reset()
     {
+        // auto-find stagger
         if (!GetComponent<EnemyStagger>())
         {
             Debug.LogWarning($"[{this}] no Stagger component found! Adding one now.");
             gameObject.AddComponent(typeof(EnemyStagger));
+        }
+        stagger = GetComponent<EnemyStagger>();
+
+        // auto-find animator
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+
+        // auto-find movement script
+        if (movementScript == null)
+        {
+            foreach (var comp in GetComponents<MonoBehaviour>())
+            {
+                if (comp is IEnemyMovement && comp != this)
+                {
+                    movementScript = comp;
+                    break;
+                }
+            }
+        }
+
+        // auto-find attacks
+        if (attacks == null || attacks.Length == 0)
+        {
+            var found = GetComponents<EnemyAttack_Base>();
+            if (found.Length > 0) attacks = found;
         }
     }
 
@@ -128,6 +163,12 @@ public class Enemy : MonoBehaviour
         StateControl();
         if (animator != null) Animations();
         if (stagger && stagger.weakPointManager) CheckDie();
+
+        #if UNITY_EDITOR
+        _state = behaviourState.ToString();
+        _activeAttack = currentAttack != null ? currentAttack.GetType().Name : "None";
+        _orbitDistance = GetEffectiveOrbitDistance();
+        #endif
     }
 
 
@@ -174,7 +215,7 @@ public class Enemy : MonoBehaviour
         if (movement != null)
         {
             movement.FaceTarget(playerTransform.position);
-            movement.Chase(playerTransform.position);
+            movement.Chase(playerTransform.position, GetEffectiveOrbitDistance());
         }
 
         if (debugMode) Debug.Log($"[{this}] Chasing to {playerTransform.position}");
@@ -191,7 +232,7 @@ public class Enemy : MonoBehaviour
         if (currentAttack != null && currentAttack.IsWindingUp && !attackMovementPaused)
         {
             if (movement != null && movement.StrafeEnabled)
-                movement.Strafe(playerTransform.position);
+                movement.Strafe(playerTransform.position, GetEffectiveOrbitDistance());
             else if (movement != null)
                 movement.FaceTarget(playerTransform.position);
         }
@@ -233,7 +274,7 @@ public class Enemy : MonoBehaviour
         if (movement != null && movement.StrafeEnabled)
         {
             FacePlayer();
-            movement.Strafe(playerTransform.position);
+            movement.Strafe(playerTransform.position, GetEffectiveOrbitDistance());
         }
         else
         {
@@ -350,6 +391,46 @@ public class Enemy : MonoBehaviour
     private bool CanAttack()
     {
         return SelectAttack() != null;
+    }
+
+    // returns the highest-priority ready attack regardless of distance
+    private EnemyAttack_Base GetFirstReadyAttack()
+    {
+        if (attacks == null) return null;
+        for (int i = 0; i < attacks.Length; i++)
+        {
+            if (attacks[i] == null || !attacks[i].isActiveAndEnabled) continue;
+            if (!attacks[i].IsReady) continue;
+            return attacks[i];
+        }
+        return null;
+    }
+
+    // determines orbit/chase stop distance based on attack state
+    private float GetEffectiveOrbitDistance()
+    {
+        if (attacks == null || attacks.Length == 0)
+            return movement != null ? movement.StrafeRadius : 2.5f;
+
+        // single attack: always use its range
+        int activeCount = 0;
+        EnemyAttack_Base singleAttack = null;
+        for (int i = 0; i < attacks.Length; i++)
+        {
+            if (attacks[i] != null && attacks[i].isActiveAndEnabled)
+            {
+                activeCount++;
+                singleAttack = attacks[i];
+            }
+        }
+        if (activeCount == 1) return singleAttack.AttackRange;
+
+        // multiple attacks: use the highest-priority ready attack's range
+        EnemyAttack_Base readyAttack = GetFirstReadyAttack();
+        if (readyAttack != null) return readyAttack.AttackRange;
+
+        // nothing ready: fall back to engagement distance
+        return movement != null ? movement.StrafeRadius : 2.5f;
     }
 
 
@@ -566,4 +647,44 @@ public class Enemy : MonoBehaviour
         hasReportedDeathToSpawner = true;
         ownerSpawner.NotifyEnemyDeath(this);
     }
+
+
+    // Scene Gizmos
+    #if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        // aggro range (yellow)
+        if (!alwaysAggro)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, aggroRange);
+        }
+
+        // attack ranges (red, one per attack)
+        if (attacks != null)
+        {
+            Gizmos.color = Color.red;
+            for (int i = 0; i < attacks.Length; i++)
+            {
+                if (attacks[i] != null)
+                    Gizmos.DrawWireSphere(transform.position, attacks[i].AttackRange);
+            }
+        }
+
+        // strafe radius from movement script (cyan)
+        IEnemyMovement mov = movementScript as IEnemyMovement;
+        if (mov != null)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(transform.position, mov.StrafeRadius);
+        }
+
+        // effective orbit distance during play mode (green)
+        if (Application.isPlaying)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(transform.position, GetEffectiveOrbitDistance());
+        }
+    }
+    #endif
 }
