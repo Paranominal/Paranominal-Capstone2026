@@ -11,7 +11,7 @@ using UnityEngine;
 /// All effects are independent and optional - leave any reference null to skip
 /// that layer. The component cleans itself up if the attack is cancelled mid-swing.
 
-[RequireComponent(typeof(MeleeAttack))]
+[RequireComponent(typeof(EnemyAttack_Melee))]
 public class HobgoblinAttackFeedback : MonoBehaviour
 {
     [Header("Rear-Back")]
@@ -33,13 +33,13 @@ public class HobgoblinAttackFeedback : MonoBehaviour
     [Tooltip("TrailRenderer enabled during the strike. Disable Auto Destruct on the trail itself.")]
     [SerializeField] private TrailRenderer swingTrail;
 
-    private MeleeAttack meleeAttack;
+    private EnemyAttack_Melee meleeAttack;
     private Vector3 clawRestPosition;
     private Coroutine rearBackRoutine;
 
     private void Awake()
     {
-        meleeAttack = GetComponent<MeleeAttack>();
+        meleeAttack = GetComponent<EnemyAttack_Melee>();
 
         if (clawPivot != null) clawRestPosition = clawPivot.localPosition;
         if (swingTrail != null) swingTrail.emitting = false;

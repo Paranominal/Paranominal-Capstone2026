@@ -81,7 +81,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     private Coroutine resetCoroutine;
 
     private readonly List<EnemyEntry> enemiesToSpawn = new List<EnemyEntry>();
-    private readonly List<EnemyBehaviourBase> spawnedEnemies = new List<EnemyBehaviourBase>();
+    private readonly List<Enemy> spawnedEnemies = new List<Enemy>();
 
     // Gathers child spawn points and keeps their enemy pools synced to the current maximum number of waves.
     private void OnValidate()
@@ -372,7 +372,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
                 continue;
             }
 
-            EnemyBehaviourBase spawnedEnemy = spawnPoint.SpawnEnemy(currentWave, this);
+            Enemy spawnedEnemy = spawnPoint.SpawnEnemy(currentWave, this);
 
             if (spawnedEnemy != null)
             {
@@ -498,7 +498,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         }
 
         GameObject spawnedObject = Instantiate(enemyEntry.enemyPrefab, spawnPosition, spawnRotation);
-        EnemyBehaviourBase enemyBehaviour = spawnedObject.GetComponent<EnemyBehaviourBase>();
+        Enemy enemyBehaviour = spawnedObject.GetComponent<Enemy>();
 
         if (enemyBehaviour != null)
         {
@@ -512,7 +512,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         }
         else
         {
-            Debug.LogWarning($"{spawnedObject.name} is missing an EnemyBehaviourBase component.");
+            Debug.LogWarning($"{spawnedObject.name} is missing an Enemy component.");
         }
     }
 
@@ -597,7 +597,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     {
         for (int i = 0; i < spawnedEnemies.Count; i++)
         {
-            EnemyBehaviourBase enemy = spawnedEnemies[i];
+            Enemy enemy = spawnedEnemies[i];
 
             if (enemy == null)
             {
@@ -613,7 +613,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     {
         for (int i = 0; i < spawnedEnemies.Count; i++)
         {
-            EnemyBehaviourBase enemy = spawnedEnemies[i];
+            Enemy enemy = spawnedEnemies[i];
 
             if (enemy == null)
             {
@@ -679,7 +679,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
 
         for (int i = 0; i < spawnedEnemies.Count; i++)
         {
-            EnemyBehaviourBase enemy = spawnedEnemies[i];
+            Enemy enemy = spawnedEnemies[i];
 
             if (enemy == null)
             {
@@ -722,7 +722,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     }
 
     // Removes a dead enemy from the active enemy list.
-    public void NotifyEnemyDeath(EnemyBehaviourBase deadEnemy)
+    public void NotifyEnemyDeath(Enemy deadEnemy)
     {
         if (deadEnemy == null)
         {
