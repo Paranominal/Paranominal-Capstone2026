@@ -23,6 +23,7 @@ public class EnemyAttack_AoE : EnemyAttack_Base
     [SerializeField] private bool persistAfterHit;
     [Tooltip("If enabled, deals damage repeatedly while the player stays in the field.")]
     [SerializeField] private bool damageOverTime;
+    [ShowIf("damageOverTime")]
     [Tooltip("Time between damage ticks when Damage Over Time is enabled.")]
     [SerializeField] private float damageTickRate = 0.5f;
 

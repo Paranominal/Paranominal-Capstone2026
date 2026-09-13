@@ -10,8 +10,8 @@ public interface IEnemyMovement
     void Initialize();
 
     // called each frame during the respective state
-    void Chase(Vector3 target);
-    void Strafe(Vector3 orbitCenter);
+    void Chase(Vector3 target, float stopDistance);
+    void Strafe(Vector3 orbitCenter, float orbitRadius);
 
     // called once when entering the state, movement continues toward stored target
     void BeginRetreat(Vector3 awayFrom);
@@ -26,7 +26,7 @@ public interface IEnemyMovement
     bool CanChase(bool anyAttackReady);
 
     bool HasReachedTarget { get; }
-    float EngagementDistance { get; }
+    float StrafeRadius { get; }
     bool ReturnEnabled { get; }
     bool RetreatEnabled { get; }
     bool StrafeEnabled { get; }

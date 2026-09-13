@@ -50,8 +50,12 @@ public class EnemyAttack_Charge : EnemyAttack_Base
     [SerializeField] private float chargePastDistance = 2f;
 
     [Header("Back Off")]
+    [Tooltip("If enabled, the enemy retreats after landing a hit. Disable when strafe handles repositioning.")]
+    [SerializeField] private bool useBackOff = true;
+    [ShowIf("useBackOff")]
     [Tooltip("How far the enemy retreats from the player after landing a hit.")]
     [SerializeField] private float backOffDistance = 3f;
+    [ShowIf("useBackOff")]
     [SerializeField] private float backOffSpeed = 5f;
 
     [Header("Damage")]
@@ -285,8 +289,8 @@ public class EnemyAttack_Charge : EnemyAttack_Base
         CleanupDamageField();
         InvokeStrikeEnd();
 
-        // resolve: back off on hit, stay in place on miss
-        if (chargeLandedHit && target != null)
+        // resolve: back off on hit if enabled, otherwise stay in place
+        if (useBackOff && chargeLandedHit && target != null)
         {
             if (debugMode) Debug.Log($"[EnemyAttack_Charge] Hit landed. Backing off.", this);
             yield return BackOff(target);

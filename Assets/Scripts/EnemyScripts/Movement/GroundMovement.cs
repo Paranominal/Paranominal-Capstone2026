@@ -11,8 +11,8 @@ public class GroundMovement : MonoBehaviour, IEnemyMovement
     [Header("Chase")]
     [SerializeField] private bool chaseEnabled = true;
     [ShowIf("chaseEnabled")]
-    [Tooltip("How close the enemy stops to the player. Also used as the strafe orbit radius.")]
-    [SerializeField] private float engagementDistance = 5f;
+    [Tooltip("Default orbit/strafe radius. For multi-attack enemies, used as fallback when all attacks are on cooldown. Single-attack enemies use their attack range instead.")]
+    [SerializeField] private float strafeRadius = 5f;
     [ShowIf("chaseEnabled")]
     [SerializeField] private float chaseSpeed = 5f;
     [ShowIf("chaseEnabled")]
@@ -55,7 +55,7 @@ public class GroundMovement : MonoBehaviour, IEnemyMovement
     private float strafeDirection = 1f;
     private float strafeTimer;
 
-    public float EngagementDistance => engagementDistance;
+    public float StrafeRadius => strafeRadius;
     public bool ReturnEnabled => returnToOrigin;
     public bool RetreatEnabled => retreatEnabled;
     public bool StrafeEnabled => strafeEnabled;
@@ -83,12 +83,12 @@ public class GroundMovement : MonoBehaviour, IEnemyMovement
 
 
     // Movement Commands
-    public void Chase(Vector3 target)
+    public void Chase(Vector3 target, float stopDistance)
     {
-        Move(target, chaseSpeed, engagementDistance);
+        Move(target, chaseSpeed, stopDistance);
     }
 
-    public void Strafe(Vector3 orbitCenter)
+    public void Strafe(Vector3 orbitCenter, float orbitRadius)
     {
         strafeTimer -= Time.deltaTime;
         if (strafeTimer <= 0f)
@@ -97,11 +97,11 @@ public class GroundMovement : MonoBehaviour, IEnemyMovement
             strafeTimer = strafeDirectionInterval;
         }
 
-        Vector3 target = ComputeStrafeTarget(orbitCenter, engagementDistance, strafeDirection);
+        Vector3 target = ComputeStrafeTarget(orbitCenter, orbitRadius, strafeDirection);
 
         if (!IsStrafeClear(target))
         {
-            target = ComputeStrafeTarget(orbitCenter, engagementDistance, -strafeDirection);
+            target = ComputeStrafeTarget(orbitCenter, orbitRadius, -strafeDirection);
             if (!IsStrafeClear(target))
             {
                 Stop();
