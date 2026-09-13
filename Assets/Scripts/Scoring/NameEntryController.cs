@@ -15,6 +15,9 @@ public class NameEntryController : MonoBehaviour
     //initialise with empty field with max length setup
     private void Awake()
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         if (nameInputField != null)
         {
             nameInputField.characterLimit = maxNameLength;
