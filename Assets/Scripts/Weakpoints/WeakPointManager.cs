@@ -2,10 +2,16 @@ using UnityEngine;
 
 public class WeakPointManager : MonoBehaviour
 {
+    [SerializeField] private bool resetSequenceEveryStagger = false;
+    [SerializeField] private bool alwaysShowAll;
     public WeakPoint[] weakpoints;
-    public int currentWeakpoint = 0;
-    [SerializeField] private bool resetSequenceEveryStagger = true;
+    private int currentWeakpoint = 0;
+    public int CurrentWeakpoint => currentWeakpoint;
     public bool debugMode;
+    [HideInInspector] public bool dieOnWeakpointsComplete = true;
+    private int cyclesComplete = 0;
+    public int CyclesComplete => cyclesComplete;
+    [HideInInspector] public bool handleOwnDestruction = true;
 
     void Start()
     {
@@ -44,6 +50,7 @@ public class WeakPointManager : MonoBehaviour
         }
         if (debugMode) Debug.Log($"[{this}] Setup Weakpoints: [{weakpoints}] for {gameObject}");
         // weakpoints[0].Show(); // activate the first weakpoint in the index
+        if (alwaysShowAll) StartSequence();
     }
 
     public void StartSequence()
@@ -51,7 +58,11 @@ public class WeakPointManager : MonoBehaviour
         if (!HasWeakpoints()) return;
 
         if (resetSequenceEveryStagger) SetupWeakpoints();
-        weakpoints[currentWeakpoint].Show(); // activate the first weakpoint in the index
+        if (alwaysShowAll)
+        {
+            foreach (WeakPoint weakpoint in weakpoints) weakpoint.Show();
+        }
+        else weakpoints[currentWeakpoint].Show(); // activate the first weakpoint in the index
         if (debugMode) Debug.Log($"[{this}] Started Weakpoint Sequence for {gameObject}");
     }
 
@@ -75,11 +86,11 @@ public class WeakPointManager : MonoBehaviour
 
     private void SequenceComplete() //checks for miniboss cycles
     {
-        ToMiniBoss miniBoss = GetComponentInParent<ToMiniBoss>();
-        if (miniBoss != null) miniBoss.OnCycleComplete();
-        else
+        cyclesComplete++; 
+        if (!dieOnWeakpointsComplete) SetupWeakpoints();
+        else if (handleOwnDestruction)
         {
-            Debug.Log("Enemy Killed!");
+            Debug.Log($"[{this}] was killed!");
             Destroy(gameObject);
         }
     }

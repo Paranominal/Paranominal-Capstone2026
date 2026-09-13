@@ -214,7 +214,7 @@ public class ShotOrchestrator : MonoBehaviour
     private IEnumerator DelayedMisfireVisuals()
     {
         // shouldn't be using magic number, but this is just the amount of time the shotgun shot sound plays because they use the same audio source, they tend to overlap without it
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(0.3f);
 
         if (weaponEvents != null)
             weaponEvents.RaiseMisfired();

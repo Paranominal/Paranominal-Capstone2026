@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class RememberSelectedUI : MonoBehaviour
 {
     [SerializeField] private EventSystem eventSystem;
-    private GameObject lastSelectedElement;
+    public GameObject lastSelectedElement;
     // [SerializeField] private float selectionTimeoutSeconds = 4f;
     // [SerializeField] private bool doSelectionTimeout = true;
     [SerializeField] private InputActionReference uiNavigateAction;

@@ -2970,6 +2970,8 @@ MonoBehaviour:
   moveAction: {fileID: -1680190386980627800, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   sprintAction: {fileID: 6790621974129141125, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   slowWalkAction: {fileID: 4707686780592785771, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  jumpAction: {fileID: 156809300950686061, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  dashAction: {fileID: 0}
   lookActionMouse: {fileID: -5630151704836100654, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   lookActionGamepad: {fileID: 3901640413146405176, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   gamepadLookSens: 100
@@ -2977,22 +2979,6 @@ MonoBehaviour:
   startLockMode: 1
   startCursorVisible: 0
   debugMode: 0
---- !u!114 &1844408759094502599
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5190490495989894971}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd30b5d39a07c7b45b135c75afab90ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerGravity
-  playerInputReader: {fileID: 1697689617573677297}
-  playerMover: {fileID: 0}
-  gravity: -25
-  groundedStickForce: -2
 --- !u!1 &4040723973963595958
 GameObject:
   m_ObjectHideFlags: 0
@@ -3045,7 +3031,6 @@ GameObject:
   m_Component:
   - component: {fileID: 357654973871588142}
   - component: {fileID: 8814912706813601134}
-  - component: {fileID: 1844408759094502599}
   - component: {fileID: 1697689617573677297}
   - component: {fileID: 4443859612801492433}
   m_Layer: 6
