@@ -5,58 +5,48 @@ using UnityEngine.Audio;
 public class FearAudioEffects : MonoBehaviour
 {
     [Header("Heartbeat Clips")]
-    [SerializeField] private SoundDataSO mediumIdleBeat;
-    [SerializeField] private SoundDataSO mediumActionBeat;
-    [SerializeField] private SoundDataSO lowIdleBeat;
-    [SerializeField] private SoundDataSO lowActionBeat;
+    [SerializeField] private SoundDataSO lowBeat;
+    [SerializeField] private SoundDataSO mediumBeat;
+    [SerializeField] private SoundDataSO highBeat;
 
     [Header("Heartbeat Volume")]
-    [SerializeField] private float mediumVolumeMin = 0.1f;
-    [SerializeField] private float mediumVolumeMax = 0.4f;
-    [SerializeField] private float lowVolumeMin = 0.4f;
-    [SerializeField] private float lowVolumeMax = 1.0f;
+    [SerializeField] private float volumeMin = 0.1f;
+    [SerializeField] private float volumeMax = 1.0f;
 
     [Header("Heartbeat Interval (Seconds)")]
-    [SerializeField] private float mediumInterval = 1.2f;
-    [SerializeField] private float mediumActionInterval = 0.9f;
-    [SerializeField] private float lowInterval = 0.8f;
-    [SerializeField] private float lowActionInterval = 0.6f;
+    [SerializeField] private float lowInterval = 1.2f;
+    [SerializeField] private float mediumInterval = 0.9f;
+    [SerializeField] private float highInterval = 0.6f;
 
     private AudioSource heartbeatSource;
     private float beatTimer;
     private bool heartbeatActive;
     private FearBar.FearRank currentRank;
 
-    // Normalized fear boundaries for each rank (derived from FearBar thresholds: 33, 66)
-    private const float MediumFearMin = 0.34f;
-    private const float MediumFearMax = 0.66f;
-    private const float LowFearMin = 0.67f;
-    private const float LowFearMax = 1.0f;
-
     private void Awake()
     {
         heartbeatSource = gameObject.AddComponent<AudioSource>();
         heartbeatSource.playOnAwake = false;
 
-        if (mediumIdleBeat != null)
-            heartbeatSource.outputAudioMixerGroup = mediumIdleBeat.mixerGroup;
+        if (lowBeat != null)
+            heartbeatSource.outputAudioMixerGroup = lowBeat.mixerGroup;
     }
 
     public void UpdateIntensity(float normalizedFear, bool isInEncounter)
     {
-        UpdateHeartbeat(normalizedFear, isInEncounter);
+        UpdateHeartbeat(normalizedFear);
     }
 
     public void OnRankChanged(FearBar.FearRank rank)
     {
         currentRank = rank;
 
-        bool shouldPlay = rank == FearBar.FearRank.Medium || rank == FearBar.FearRank.Low;
+        bool shouldPlay = rank != FearBar.FearRank.Fine;
 
         if (shouldPlay && !heartbeatActive)
         {
             heartbeatActive = true;
-            beatTimer = 0f; // first beat plays immediately
+            beatTimer = 0f;
         }
         else if (!shouldPlay && heartbeatActive)
         {
@@ -64,7 +54,7 @@ public class FearAudioEffects : MonoBehaviour
         }
     }
 
-    private void UpdateHeartbeat(float normalizedFear, bool isInEncounter)
+    private void UpdateHeartbeat(float normalizedFear)
     {
         if (!heartbeatActive) return;
 
@@ -72,24 +62,25 @@ public class FearAudioEffects : MonoBehaviour
 
         if (beatTimer <= 0f)
         {
-            PlayBeat(normalizedFear, isInEncounter);
-            beatTimer = GetCurrentInterval(isInEncounter);
+            PlayBeat(normalizedFear);
+            beatTimer = GetCurrentInterval();
         }
     }
 
-    private float GetCurrentInterval(bool isInEncounter)
+    private float GetCurrentInterval()
     {
         return currentRank switch
         {
-            FearBar.FearRank.Medium => isInEncounter ? mediumActionInterval : mediumInterval,
-            FearBar.FearRank.Low => isInEncounter ? lowActionInterval : lowInterval,
-            _ => mediumInterval,
+            FearBar.FearRank.Low => lowInterval,
+            FearBar.FearRank.Medium => mediumInterval,
+            FearBar.FearRank.High => highInterval,
+            _ => lowInterval,
         };
     }
-    
-    private void PlayBeat(float normalizedFear, bool isInEncounter)
+
+    private void PlayBeat(float normalizedFear)
     {
-        SoundDataSO beatSO = GetCurrentBeatSO(isInEncounter);
+        SoundDataSO beatSO = GetCurrentBeatSO();
         if (beatSO == null) return;
 
         AudioClip clip = beatSO.GetClip();
@@ -100,33 +91,19 @@ public class FearAudioEffects : MonoBehaviour
         heartbeatSource.PlayOneShot(clip);
     }
 
-    private SoundDataSO GetCurrentBeatSO(bool isInEncounter)
+    private SoundDataSO GetCurrentBeatSO()
     {
         return currentRank switch
         {
-            FearBar.FearRank.Medium => isInEncounter ? mediumActionBeat : mediumIdleBeat,
-            FearBar.FearRank.Low => isInEncounter ? lowActionBeat : lowIdleBeat,
+            FearBar.FearRank.Low => lowBeat,
+            FearBar.FearRank.Medium => mediumBeat,
+            FearBar.FearRank.High => highBeat,
             _ => null,
         };
     }
 
-    // Remaps normalizedFear within the current rank's range and lerps between min/max volume.
     private float GetHeartbeatVolume(float normalizedFear)
     {
-        float fearMin, fearMax, volMin, volMax;
-
-        if (currentRank == FearBar.FearRank.Low)
-        {
-            fearMin = LowFearMin; fearMax = LowFearMax;
-            volMin = lowVolumeMin; volMax = lowVolumeMax;
-        }
-        else
-        {
-            fearMin = MediumFearMin; fearMax = MediumFearMax;
-            volMin = mediumVolumeMin; volMax = mediumVolumeMax;
-        }
-
-        float t = Mathf.InverseLerp(fearMin, fearMax, normalizedFear);
-        return Mathf.Lerp(volMin, volMax, t);
+        return Mathf.Lerp(volumeMin, volumeMax, normalizedFear);
     }
 }

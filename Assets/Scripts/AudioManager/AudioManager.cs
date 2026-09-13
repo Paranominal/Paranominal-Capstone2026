@@ -19,7 +19,6 @@ public class AudioManager : MonoBehaviour
 
         instance = this;
         ownSource = GetComponent<AudioSource>();
-        DontDestroyOnLoad(gameObject);
     }
 
     // Plays a sound through the manager's own 2D AudioSource using PlayOneShot. 

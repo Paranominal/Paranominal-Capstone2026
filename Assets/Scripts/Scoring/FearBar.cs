@@ -97,11 +97,11 @@ public class FearBar : MonoBehaviour
     private void EvaluateRank()
     {
         FearRank newRank = fearLevel switch // check this bad boy out
-        {
-            <= 0 => FearRank.Fine, // no more overflow! yay!!!
-            <= 33 => FearRank.Low,
-            <= 66 => FearRank.Medium,
-            _ => FearRank.High
+        {      
+            <= 75       => FearRank.Low,
+            <= 150      => FearRank.Medium,
+            <= 200      => FearRank.High,
+            _           => FearRank.Fine, // no more overflow! yay!!!
         };
 
         if (newRank != CurrentRank)
