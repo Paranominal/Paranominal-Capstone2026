@@ -128,10 +128,10 @@ public class ALTALTScan : MonoBehaviour
                             grimoire.AddEntry(currentTarget.entry);
                         }
 
-                        if (scannedEnemy != null)
-                        {
-                            scannedEnemy.OnEnemyScanned();
-                        }
+                        // if (scannedEnemy != null)
+                        // {
+                        //     scannedEnemy.OnEnemyScanned();
+                        // }
 
                         currentTarget.SetOutlineColor(Color.white); // scan complete, back to plain hover white
                         scanProgress = 0f;

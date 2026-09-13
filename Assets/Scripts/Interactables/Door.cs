@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
+// Michael feature (interaction-rework): stripped per-object raycasting and input handling. InteractionFocusController now handles aim detection and input routing.
 [RequireComponent(typeof(AudioSource))]
 public class Door : MonoBehaviour, IInteractable
 {
@@ -11,11 +11,8 @@ public class Door : MonoBehaviour, IInteractable
         Closed,
     }
 
-    public LayerMask interactable;
-    InputAction collectAction;  // this could be rebound to a different action if you prefer
-
-    public bool unlocked;   // at the moment the door can theoretically be "locked" open but thats neither here nor there
-    public bool isEncounterLocked;  // This is just for specifying that the door was locked by an encounter/arena - basically only needed if specific visuals will be implemented
+    public bool unlocked;
+    public bool isEncounterLocked;
     public DoorState state;
     public float speed = 10;
     public float slamSpeed = 20;
@@ -29,7 +26,6 @@ public class Door : MonoBehaviour, IInteractable
     public bool isArenaLocked;
     public float ajarDistance = 3;
     private PlayerMover player;
-    private Raycaster raycaster;
 
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
@@ -40,43 +36,22 @@ public class Door : MonoBehaviour, IInteractable
 
     void Start()
     {
-        collectAction = InputSystem.actions.FindAction("Collect");
-
         targetRotation = transform.rotation;
         startAngle = transform.rotation;
         actualSpeed = speed;
 
         if (doorCollider == null)
-        {
             doorCollider = GetComponentInChildren<Collider>();
-        }
 
         if (audioSource == null)
-        {
             audioSource = GetComponent<AudioSource>();
-        }
+
         if (player == null)
-        {
-            player = FindAnyObjectByType<PlayerMover>();    //there is no failsafe here if there's more than one playermover in the scene. don't fuck this up.
-        }
-        if (raycaster == null)
-        {
-            raycaster = FindAnyObjectByType<Raycaster>();
-            if (raycaster == null) Debug.LogWarning("There is no Raycast Manager in this scene!");
-        }
+            player = FindAnyObjectByType<PlayerMover>();
     }
 
-    // Handles interaction input and lerps the door toward its target rotation.
     void Update()
     {
-        if (Physics.Raycast(raycaster.Ray, out RaycastHit hit, ajarDistance, interactable))
-        {
-            if (collectAction.WasReleasedThisFrame() && GetComponentInChildren<Collider>() == hit.collider)
-            {
-                TryDoor();
-            }
-        }
-
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, actualSpeed * Time.deltaTime);
 
         if (transform.rotation != targetRotation && doorCollider.enabled)
@@ -88,7 +63,7 @@ public class Door : MonoBehaviour, IInteractable
             doorCollider.enabled = true;
         }
 
-        if (transform.rotation == targetRotation && actualSpeed != speed)   // used to reset speed whenever the door comes to a stop
+        if (transform.rotation == targetRotation && actualSpeed != speed)
         {
             actualSpeed = speed;
         }
@@ -97,6 +72,25 @@ public class Door : MonoBehaviour, IInteractable
         {
             Ajar();
         }
+    }
+
+    // Michael feature (interaction-rework): routed from InteractionFocusController.
+    public void Interact(InteractionContext context)
+    {
+        TryDoor();
+    }
+
+    // Michael feature (interaction-rework): prompt based on door state.
+    public InteractionPrompt ResolvePrompt(InteractionContext context)
+    {
+        if (isArenaLocked || !unlocked)
+            return InteractionPrompt.None;
+
+        return new InteractionPrompt
+        {
+            label = state == DoorState.Open ? "Close" : "Open",
+            actionName = "Collect"
+        };
     }
 
     public void Open()
@@ -109,7 +103,7 @@ public class Door : MonoBehaviour, IInteractable
         }
     }
 
-    public void ForceOpen() //this will unlock the door in the process. does not play unlocking sound
+    public void ForceOpen()
     {
         unlocked = true;
         Open();
@@ -119,19 +113,10 @@ public class Door : MonoBehaviour, IInteractable
     {
         targetRotation = startAngle * Quaternion.AngleAxis(ajarAngle, transform.up);
         state = DoorState.Ajar;
-        AudioManager.PlaySound(closeSound, audioSource);    //a seperate ajar and closed sound would be ideal
+        AudioManager.PlaySound(closeSound, audioSource);
     }
 
-    public void Interact()  //This is an IInteract Interface function. It should only ever be called by Interaction objects unless you know what you are doing.
-    {
-        if (!unlocked)
-        {
-            unlocked = true;
-            AudioManager.PlaySound(lockedSound, audioSource);   //this should probably be a different sound?? idfk
-        }
-    }
-
-    public void TryDoor()   //attempts to toggle the door's state
+    public void TryDoor()
     {
         if (unlocked)
         {
@@ -152,15 +137,15 @@ public class Door : MonoBehaviour, IInteractable
 
     public void Slam()
     {
-        Close(true, true);    //this can be set to false depending on what you want the default behaviour to be
+        Close(true, true);
     }
 
     public void Close()
     {
-        Close(false, false);    //by default this closes calm and chill and nothing bad happens
+        Close(false, false);
     }
 
-    public void Close(bool locked, bool fast)  //locked bool determines if door locks on close, fast bool determines if the speed is multiplied or not
+    public void Close(bool locked, bool fast)
     {
         targetRotation = startAngle * Quaternion.AngleAxis(closedAngle, transform.up);
         state = DoorState.Closed;
@@ -179,16 +164,14 @@ public class Door : MonoBehaviour, IInteractable
         }
     }
 
-    // Locks the door.
     public void Lock()
     {
         unlocked = false;
     }
 
-    // Unlocks the door.
     public void Unlock()
     {
-        Interact();
+        unlocked = true;
     }
 
     public void StartArena()
@@ -218,5 +201,4 @@ public class Door : MonoBehaviour, IInteractable
             Debug.LogWarning("Door is not in Arena mode. Did you mean StartArena()?");
         }
     }
-
 }

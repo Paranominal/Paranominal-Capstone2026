@@ -1,28 +1,30 @@
 using UnityEngine;
 using System.Collections.Generic;
+
+// Michael feature (interaction-rework): updated IInteractable signature.
 public class Container : MonoBehaviour, IInteractable
 {
     private ALTGrimoire grimoire;
     public List<ALTGrimoireEntry> contents;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         if (grimoire == null)
-        {
             grimoire = FindAnyObjectByType<ALTGrimoire>();
-        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void Interact()
+    public void Interact(InteractionContext context)
     {
         contents.Add(grimoire.GetCurrentEntry());
+    }
+
+    public InteractionPrompt ResolvePrompt(InteractionContext context)
+    {
+        return new InteractionPrompt
+        {
+            label = "Store",
+            actionName = "Collect"
+        };
     }
 
     public void Empty()

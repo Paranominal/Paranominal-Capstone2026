@@ -1,0 +1,108 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
+using Unity.VisualScripting;
+using UnityEngine;
+
+public class EnemyAttack_Melee : EnemyAttack
+{
+    public enum AttackState { Ready, WindUp, Attacking,  WindDown,Cooldown }
+    public AttackState attackState = AttackState.Ready;
+    [SerializeField] private LayerMask targetLayers;
+    [SerializeField] private int damage = 10;
+    [Tooltip("Time between each attack in Seconds")]
+    [SerializeField] private float coolDownTime = 2f;
+    [Tooltip("Wind Up time in Seconds")]
+    public float windUpTime = 1f;
+    [SerializeField] private SpriteRenderer windupIndicator;
+    [SerializeField] private SpriteRenderer attackIndicator;
+    [Header("Damage Field")]
+    [SerializeField] private GameObject damageFieldPrefab;
+    public float attackRange = 1f;
+    [SerializeField] private float damageFieldHeight = 0.5f;
+    [Tooltip("Number of seconds the Damage Field persists after appearing")]
+    [SerializeField] private float damageWindow = 1f;
+    // [SerializeField] private bool doInterrupt = true;
+    // Michael edit (spawn-visual-fix): hide indicator in Awake so it's never visible on spawn.
+    void Awake()
+    {
+        SetWindupIndicator(false);
+        SetAttackIndicator(false);
+    }
+
+    void Start()
+    {
+    }
+    public void InitiateAttack()
+    {
+        if (attackState != AttackState.Ready) return;
+        currentWindUpTime = windUpTime;
+        StartCoroutine(WindUp());
+    }
+    float currentWindUpTime;
+    IEnumerator WindUp()
+    {
+        attackState = AttackState.WindUp;
+        SetWindupIndicator(true);
+        SetAttackIndicator(true);
+        // yield return new WaitForSeconds(windUpTime);
+        while (currentWindUpTime > 0)
+        {
+            currentWindUpTime -= Time.deltaTime;
+            yield return null;
+        }
+        DoDamageField();
+        if (currentAttack != null && !currentAttack.attackComplete && !currentAttack.hitRegistered) StartCoroutine(WaitForAttackEnd());
+        else DoCooldown();
+        SetWindupIndicator(false);
+        SetAttackIndicator(false);
+    }
+    
+    IEnumerator WaitForAttackEnd()
+    {
+        attackState = AttackState.WindDown;
+        yield return new WaitUntil(() => currentAttack == null || currentAttack.attackComplete);
+        DoCooldown();
+    }
+    float currentCooldownTime;
+    void DoCooldown(float multiplier = 1)
+    {
+        currentCooldownTime = coolDownTime * multiplier;
+        StartCoroutine(Cooldown());
+    }
+    IEnumerator Cooldown() // additional multipler incase we want interrupts to be more impactful
+    {
+        attackState = AttackState.Cooldown;
+        // yield return new WaitForSeconds(coolDownTime * multiplier);
+        while (currentCooldownTime > 0)
+        {
+            currentCooldownTime -= Time.deltaTime;
+            yield return null;
+        }
+        attackState = AttackState.Ready;
+    }
+    DamageField currentAttack;
+    private void DoDamageField()
+    {
+        currentAttack = Instantiate(damageFieldPrefab, transform.position + (transform.forward * attackRange / 2) + (Vector3.up * damageFieldHeight * 0.5001f), transform.rotation).GetComponent<DamageField>();
+        currentAttack.DoDamageField(damage, damageWindow, attackRange/2, damageFieldHeight, targetLayers, this);
+    }
+    private void SetWindupIndicator(bool warn)
+    {
+        if (windupIndicator) windupIndicator.enabled = warn;
+    }
+    private void SetAttackIndicator(bool warn)
+    {
+        if (attackIndicator) attackIndicator.enabled = warn;
+    }
+    bool isInterrupted;
+    public bool IsInterrupted => isInterrupted; 
+    public void InterruptAttack()
+    {
+        StopCoroutine(WindUp());
+        DoCooldown(2);
+        SetWindupIndicator(false);
+        SetAttackIndicator(false);
+    }
+}

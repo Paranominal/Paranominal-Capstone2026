@@ -1,33 +1,42 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
+// Michael feature (raycaster-upgrade): added Instance accessor, HasHit, Hit properties.
 public class Raycaster : MonoBehaviour
 {
+    [Tooltip("Maximum raycast distance.")]
+    [SerializeField] private float maxRange = 100f;
+    [Tooltip("Layers the raycast can hit.")]
+    [SerializeField] private LayerMask raycastMask = ~0;
+
+    private static Raycaster _instance;
+    public static Raycaster Instance => _instance;
+
     private Ray ray;
-    static Raycaster instance;
+    private RaycastHit hit;
+    private bool hasHit;
 
-    public Ray Ray
+    public Ray Ray => ray;
+    public RaycastHit Hit => hit;
+    public bool HasHit => hasHit;
+
+    void Awake()
     {
-        get { return ray; }
-    }
-    void Start()
-    {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        if (instance != this)
-        {
+        if (_instance == null)
+            _instance = this;
+        else if (_instance != this)
             Debug.LogError("Multiple Raycasters found in the scene.");
-        }
     }
-
 
     void Update()
     {
-        if (Camera.main != null)
+        Camera cam = Camera.main;
+        if (cam == null)
         {
-            ray = Camera.main.ScreenPointToRay(Pointer.current.position.ReadValue());
+            hasHit = false;
+            return;
         }
+
+        ray = new Ray(cam.transform.position, cam.transform.forward);
+        hasHit = Physics.Raycast(ray, out hit, maxRange, raycastMask);
     }
 }

@@ -112,9 +112,9 @@ public class FearBar : MonoBehaviour
         OnFearChanged?.Invoke(CurrentRank); // event for fearbarUI & spiritbar to update, happens every time player takes damage
     }
 
-    private void HandleShotResolved(WeakPointType shotType, ShotOutcome outcome)
+    private void HandleShotResolved(ShotResult result)
     {
-        if (outcome.IsRewarded())
+        if (result.Outcome.IsRewarded())
         {
             ModifyFear(-fearHealPerShot);
         }

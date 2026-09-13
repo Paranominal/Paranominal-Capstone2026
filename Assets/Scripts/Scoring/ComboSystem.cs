@@ -25,17 +25,17 @@ public class ComboSystem : MonoBehaviour
 
         if (TimeRemaining <= 0f)
         {
-            if (debugMode) Debug.Log($"Combo timed out at {Multiplier:0.0}x");
+            if (debugMode) Debug.Log($"Combo timed out at {1f + Multiplier:0.0}x");
             BreakCombo();
         }
     }
 
-    public void RegisterWeakPointHit()
+    public void RegisterHit()
     {
         Multiplier += multiplierPerHit;
         TimeRemaining = comboDuration;
 
-        if (debugMode) Debug.Log($"Combo up! Multiplier now {Multiplier:0.0}x, timer reset to {comboDuration}s");
+        if (debugMode) Debug.Log($"Combo up! Multiplier now {1f + Multiplier:0.0}x, timer reset to {comboDuration}s");
         OnComboChanged?.Invoke(Multiplier);
     }
 
@@ -43,7 +43,7 @@ public class ComboSystem : MonoBehaviour
     {
         if (!IsActive && Multiplier <= 0f) return; // already broken, nothing to announce
 
-        if (debugMode) Debug.Log($"Combo broken at {Multiplier:0.0}x");
+        if (debugMode) Debug.Log($"Combo broken at {1f + Multiplier:0.0}x");
 
         Multiplier = 0f;
         TimeRemaining = 0f;

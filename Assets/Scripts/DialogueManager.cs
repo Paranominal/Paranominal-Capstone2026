@@ -9,6 +9,8 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private GameObject dialogueCanvas;
     public PlayerInputReader playerInputReader;
     public WeaponInputReader weaponInputReader;
+    [Tooltip("Add this here to open grimoire after hitting continue on an pick-up dialogue!")]
+    [SerializeField] GrimoireAnimManager grimoireAnimManager;
 
     void Start()
     {
@@ -31,12 +33,13 @@ public class DialogueManager : MonoBehaviour
         //++page number
     }
 
-    public void CloseDialogue() // public for menu button presses to activate
+    public void CloseDialogue(bool openGrimoire = false) // public for menu button presses to activate
     {
         if (dialogueObject != null) SetCursorModeLocked(dialogueObject.GetComponent<Dialogue>().cursorLockOnClose); //lock cursor again
         if (playerInputReader != null) playerInputReader.canMove = true;
         if (weaponInputReader != null) weaponInputReader.canShoot = true;
         dialogueCanvas.gameObject.SetActive(false); //deactivate dialogue
+        if (grimoireAnimManager != null && openGrimoire) grimoireAnimManager.OpenFromDialogue(); //open grimoire
         // Time.timeScale = 1f; //resume game
     }
 
