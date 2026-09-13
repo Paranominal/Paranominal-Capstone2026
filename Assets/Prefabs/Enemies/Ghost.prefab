@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8192007907820673360}
   - component: {fileID: 4206877478203493182}
   - component: {fileID: 8622962237435936167}
+  - component: {fileID: 3913454102463298061}
   m_Layer: 8
   m_Name: Ghost
   m_TagString: Untagged
@@ -54,16 +55,11 @@ MonoBehaviour:
   enemyClass: 2
   skipSpawn: 0
   spawnDelay: 3
-  alwaysAggro: 0
+  alwaysAggro: 1
   aggroRange: 30
   movementScript: {fileID: 5445272703306835462}
-  chasePlayer: 1
-  onlyChaseIfAttackReady: 0
-  neverGiveUpChase: 0
-  chaseRange: 20
-  kamikazeOnContact: 1
-  contactDamage: 15
-  attacks: []
+  attacks:
+  - {fileID: 3913454102463298061}
   stagger: {fileID: 8192007907820673360}
   animator: {fileID: 0}
   numberOfPhases: 3
@@ -73,6 +69,9 @@ MonoBehaviour:
   numberOfSummons: 3
   summonRadius: 3
   debugMode: 0
+  _state: Inactive
+  _activeAttack: None
+  _orbitDistance: 0
 --- !u!114 &5445272703306835462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,9 +84,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b822e32bd4727ef4c9b62f566be59d03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlyingMovement
+  chaseEnabled: 1
+  strafeRadius: 6
   chaseSpeed: 6
-  chaseStopDistance: 6
   acceleration: 10
+  onlyChaseIfAttackReady: 0
+  neverGiveUpChase: 0
+  chaseRange: 20
   returnToOrigin: 1
   returnSpeed: 3
   retreatEnabled: 0
@@ -98,6 +101,7 @@ MonoBehaviour:
   strafeDirectionInterval: 2
   hoverHeight: 2.5
   verticalOffset: 1.5
+  altitudeCorrectionSpeed: 5
   groundLayers:
     serializedVersion: 2
     m_Bits: 4096
@@ -117,6 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeakPointManager
   resetSequenceEveryStagger: 0
+  alwaysShowAll: 0
   weakpoints:
   - {fileID: 4419145138689798848}
   debugMode: 0
@@ -196,6 +201,30 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &3913454102463298061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272941483086651391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4d0d56790b55b74db46814550ad28a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_Kamikaze
+  attackRange: 5
+  cooldownTime: 2
+  windupIndicator: {fileID: 0}
+  moveWhileWindingUp: 0
+  rushSpeed: 12
+  damage: 10
+  contactRadius: 1
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  debugMode: 0
+  targetHeightOffset: 1
 --- !u!1 &3649698560257739166
 GameObject:
   m_ObjectHideFlags: 0

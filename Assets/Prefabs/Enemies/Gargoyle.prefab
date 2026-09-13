@@ -105,16 +105,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   enemyClass: 0
   skipSpawn: 0
-  spawnDelay: 3
+  spawnDelay: 1
   alwaysAggro: 0
   aggroRange: 10
   movementScript: {fileID: 0}
-  chasePlayer: 0
-  onlyChaseIfAttackReady: 0
-  neverGiveUpChase: 0
-  chaseRange: 20
-  kamikazeOnContact: 0
-  contactDamage: 10
   attacks:
   - {fileID: 1351871940050473298}
   stagger: {fileID: 3580518955538096315}
@@ -126,6 +120,9 @@ MonoBehaviour:
   numberOfSummons: 3
   summonRadius: 3
   debugMode: 0
+  _state: Inactive
+  _activeAttack: None
+  _orbitDistance: 0
 --- !u!114 &1351871940050473298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,6 +138,7 @@ MonoBehaviour:
   attackRange: 12
   cooldownTime: 2
   windupIndicator: {fileID: 1018914182935538455}
+  moveWhileWindingUp: 0
   projectilePrefab: {fileID: 7624500336100165174, guid: 149546affb6a6e94ab12ce1b5afe0c2f, type: 3}
   damage: 8
   initialVelocity: 0
