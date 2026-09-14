@@ -1,138 +1,117 @@
+// Summary:
+// Self-managing projectile. Accelerates along its launch direction, deals damage to
+// IDamageable targets on trigger contact, and destroys itself on hit or after its lifetime expires.
+// The projectile's collider should be set to Is Trigger on the prefab.
+
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class Projectile : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private Transform playerTransform;
-    [SerializeField] private Rigidbody projectileBody;
-
     [Header("Properties")]
-    [SerializeField] private float baseDamage = 1.0f;
+    [SerializeField] private int damage = 8;
     [SerializeField] private float initialVelocity = 0f;
-    [SerializeField] private float maxVelocity = 20.0f;
-    [SerializeField] private float acceleration = 1.0f;
-    [SerializeField] private float lifetime = 5.0f;
+    [SerializeField] private float maxVelocity = 20f;
+    [SerializeField] private float acceleration = 1f;
+    [SerializeField] private float lifetime = 5f;
+    [Tooltip("Layers the projectile can interact with. Leave at Everything to hit all layers.")]
+    [SerializeField] private LayerMask hitLayers = ~0;
 
+    private Rigidbody rb;
     private Vector3 travelDirection;
-    private GameObject ownerEnemy;
+    private GameObject owner;
+    private bool initialized;
 
-    public void Initialize(
-        GameObject owner,
-        Vector3 direction,
-        float baseDamage,
-        float initialVelocity,
-        float maxVelocity,
-        float acceleration,
-        float lifetime)
+    [Header("Debug")]
+    [SerializeField] private bool debugMode;
+
+    public void Initialize(GameObject owner, Vector3 direction, int damage, float initialVelocity, float maxVelocity, float acceleration, float lifetime)
     {
-        ownerEnemy = owner;
+        this.owner = owner;
         travelDirection = direction.normalized;
-        this.baseDamage = baseDamage;
+        this.damage = damage;
         this.initialVelocity = initialVelocity;
         this.maxVelocity = maxVelocity;
         this.acceleration = acceleration;
         this.lifetime = lifetime;
+        initialized = true;
+        if (debugMode) Debug.Log($"[Projectile] Initialized. Owner: {owner.name}, Damage: {damage}, Direction: {travelDirection}, Speed: {initialVelocity}->{maxVelocity}, Accel: {acceleration}");
     }
 
     private void Awake()
     {
-        if (projectileBody == null)
-        {
-            projectileBody = GetComponent<Rigidbody>();
-        }
-
-        if (playerTransform == null)
-        {
-            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj != null)
-            {
-                playerTransform = playerObj.transform;
-            }
-        }
+        rb = GetComponent<Rigidbody>();
     }
 
     private void Start()
     {
-        // Fallback in case no direction was provided by the launcher
-        if (travelDirection.sqrMagnitude < 0.0001f)
+        if (!initialized || travelDirection.sqrMagnitude < 0.0001f)
         {
-            if (playerTransform != null)
-            {
-                travelDirection = (playerTransform.position - transform.position).normalized;
-            }
-            else
-            {
-                travelDirection = transform.forward;
-            }
+            travelDirection = transform.forward;
+            if (debugMode) Debug.LogWarning($"[Projectile] Not initialized or no direction. Falling back to transform.forward.");
         }
 
-        if (projectileBody != null)
+        if (rb != null)
         {
-            projectileBody.linearVelocity = travelDirection * initialVelocity;
-        }
-        else
-        {
-            Debug.LogWarning("Projectile: projectileBody is null. Cannot move projectile.");
+            rb.linearVelocity = travelDirection * initialVelocity;
+            if (debugMode) Debug.Log($"[Projectile] Start velocity: {rb.linearVelocity}, Is Trigger: {GetComponent<Collider>()?.isTrigger}, Layer: {LayerMask.LayerToName(gameObject.layer)}");
         }
 
-        // Ignore collision with the owner if both have colliders
-        Collider projectileCollider = GetComponent<Collider>();
-
-        if (ownerEnemy != null && projectileCollider != null)
-        {
-            Collider[] ownerColliders = ownerEnemy.GetComponentsInChildren<Collider>();
-
-            foreach (Collider ownerCollider in ownerColliders)
-            {
-                Physics.IgnoreCollision(projectileCollider, ownerCollider);
-            }
-        }
-
-        // Rotate to face the travel direction
         if (travelDirection.sqrMagnitude > 0.0001f)
-        {
             transform.rotation = Quaternion.LookRotation(travelDirection, Vector3.up);
-        }
     }
 
     private void FixedUpdate()
     {
-        if (projectileBody != null)
-        {
-            float currentSpeed = projectileBody.linearVelocity.magnitude;
+        if (rb == null) return;
 
-            // Accelerate along the stored launch direction, even if starting from rest
-            currentSpeed += acceleration * Time.fixedDeltaTime;
+        float currentSpeed = rb.linearVelocity.magnitude;
+        currentSpeed += acceleration * Time.fixedDeltaTime;
 
-            if (maxVelocity > 0f)
-            {
-                currentSpeed = Mathf.Min(currentSpeed, maxVelocity);
-            }
+        if (maxVelocity > 0f)
+            currentSpeed = Mathf.Min(currentSpeed, maxVelocity);
 
-            projectileBody.linearVelocity = travelDirection * currentSpeed;
-        }
+        rb.linearVelocity = travelDirection * currentSpeed;
     }
 
     private void Update()
     {
         lifetime -= Time.deltaTime;
-
         if (lifetime <= 0f)
         {
+            if (debugMode) Debug.Log($"[Projectile] Expired without hitting anything.");
             Destroy(gameObject);
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (playerTransform != null && (collision.transform == playerTransform || collision.transform.IsChildOf(playerTransform)))
+        // skip layers the projectile shouldn't interact with
+        if (hitLayers != (hitLayers | (1 << other.gameObject.layer))) return;
+
+        if (debugMode) Debug.Log($"[Projectile] OnTriggerEnter hit: '{other.gameObject.name}' | Layer: {LayerMask.LayerToName(other.gameObject.layer)} | Tag: {other.gameObject.tag} | IsTrigger: {other.isTrigger}", other.gameObject);
+
+        // don't hit the enemy that fired us
+        if (owner != null && (other.transform == owner.transform || other.transform.IsChildOf(owner.transform)))
         {
-            Debug.Log("Enemy projectile hit Player!");
-            Destroy(gameObject);
+            if (debugMode) Debug.Log($"[Projectile] Skipped '{other.gameObject.name}' (owner or child of owner).");
             return;
         }
 
-        Debug.Log("Enemy projectile hit something else.");
+        IDamageable damageable = other.GetComponentInParent<IDamageable>();
+        if (damageable != null)
+        {
+            GameObject source = owner != null ? owner : gameObject;
+            DamageInfo info = new DamageInfo(damage, other.ClosestPoint(transform.position), travelDirection, source);
+            if (debugMode) Debug.Log($"[Projectile] Found IDamageable on '{damageable}' (via '{other.gameObject.name}'). Dealing {damage} damage.");
+            damageable.TakeDamage(info);
+        }
+        else
+        {
+            if (debugMode) Debug.Log($"[Projectile] No IDamageable found on '{other.gameObject.name}' or any parent. Hierarchy root: '{other.transform.root.name}'");
+        }
+
+        if (debugMode) Debug.Log($"[Projectile] Destroying projectile after hitting '{other.gameObject.name}'.");
         Destroy(gameObject);
     }
 }
