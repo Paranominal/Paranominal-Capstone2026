@@ -142,7 +142,7 @@ Transform:
   m_GameObject: {fileID: 827877862285555472}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.1, z: 0}
+  m_LocalPosition: {x: 0, y: 0.72, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -190,12 +190,6 @@ MonoBehaviour:
   alwaysAggro: 0
   aggroRange: 100
   movementScript: {fileID: 0}
-  chasePlayer: 0
-  onlyChaseIfAttackReady: 0
-  neverGiveUpChase: 0
-  chaseRange: 20
-  kamikazeOnContact: 0
-  contactDamage: 10
   attacks:
   - {fileID: 6403643788848522719}
   stagger: {fileID: 3580518955538096315}
@@ -207,6 +201,9 @@ MonoBehaviour:
   numberOfSummons: 3
   summonRadius: 3
   debugMode: 0
+  _state: Inactive
+  _activeAttack: None
+  _orbitDistance: 0
 --- !u!114 &6403643788848522719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,6 +219,7 @@ MonoBehaviour:
   attackRange: 50
   cooldownTime: 2
   windupIndicator: {fileID: 1018914182935538455}
+  moveWhileWindingUp: 0
   damageFieldPrefab: {fileID: 5792883796589563391, guid: 69f641cc01b72464eb8479f0d3d12619, type: 3}
   spellRadius: 2
   damageFieldHeight: 0.5
@@ -711,7 +709,7 @@ Transform:
   m_GameObject: {fileID: 3473899205186899472}
   serializedVersion: 2
   m_LocalRotation: {x: -0.03900699, y: 0.99923897, z: -0, w: 0}
-  m_LocalPosition: {x: -0.01, y: 4.012, z: 0}
+  m_LocalPosition: {x: -0.01, y: 3.447, z: 0}
   m_LocalScale: {x: 0.070664845, y: 0.070664845, z: 0.070664816}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1470,7 +1468,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.593
+      value: 2.5650957
       objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1547,7 +1545,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.91
+      value: 2.1038084
       objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalPosition.z

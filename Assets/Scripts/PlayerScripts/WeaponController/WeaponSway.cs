@@ -49,9 +49,7 @@ public class WeaponSway : MonoBehaviour
         if (enableSway)
         {
             // read look input from the Input System action and scale to serialized input
-            Vector2 lookInput = playerInputReader.LookAction != null && playerInputReader.LookAction.action != null
-                ? playerInputReader.LookAction.action.ReadValue<Vector2>()
-                : Vector2.zero;
+            Vector2 lookInput = playerInputReader.LookInput;
 
             float mouseX = lookInput.x * swayMultiplier;
             float mouseY = lookInput.y * swayMultiplier;
@@ -63,9 +61,7 @@ public class WeaponSway : MonoBehaviour
 
             // read movement input to drive directional offsets and to scale bob by movement amount
             // magnitude is clamped so diagonal input does not exceed intended max bob strength.
-            Vector2 moveInput = playerInputReader.MoveAction != null && playerInputReader.MoveAction.action != null
-                ? playerInputReader.MoveAction.action.ReadValue<Vector2>()
-                : Vector2.zero;
+            Vector2 moveInput = playerInputReader.MoveInput;
 
             float horizontal = moveInput.x;
             float vertical = moveInput.y;

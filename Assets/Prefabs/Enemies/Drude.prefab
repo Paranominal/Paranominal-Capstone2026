@@ -141,12 +141,6 @@ MonoBehaviour:
   alwaysAggro: 0
   aggroRange: 15
   movementScript: {fileID: 311667976775771018}
-  chasePlayer: 1
-  onlyChaseIfAttackReady: 0
-  neverGiveUpChase: 0
-  chaseRange: 20
-  kamikazeOnContact: 0
-  contactDamage: 10
   attacks:
   - {fileID: 8872695807947338100}
   stagger: {fileID: 8548854153099920675}
@@ -158,6 +152,9 @@ MonoBehaviour:
   numberOfSummons: 3
   summonRadius: 3
   debugMode: 0
+  _state: Inactive
+  _activeAttack: None
+  _orbitDistance: 0
 --- !u!114 &311667976775771018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,9 +167,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a643fed73d423384c9d7779bfe27306c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GroundMovement
+  chaseEnabled: 1
+  strafeRadius: 5
   chaseSpeed: 2.5
-  chaseStopDistance: 2.5
   chaseEasing: 0.5
+  onlyChaseIfAttackReady: 1
+  neverGiveUpChase: 0
+  chaseRange: 20
   returnToOrigin: 1
   returnSpeed: 3
   retreatEnabled: 0
@@ -196,6 +197,7 @@ MonoBehaviour:
   attackRange: 4
   cooldownTime: 4
   windupIndicator: {fileID: 8589463809482336887}
+  moveWhileWindingUp: 0
   damageFieldPrefab: {fileID: 5792883796589563391, guid: 436770d337914f544b39a71aaa614273, type: 3}
   damageFieldHeight: 1
   targetLayers:
@@ -204,10 +206,10 @@ MonoBehaviour:
   persistAfterHit: 1
   damageOverTime: 0
   damageTickRate: 0.5
-  windupDuration: 2
-  strikeDuration: 0.15
+  windupDuration: 1.5
+  strikeDuration: 0.2
   recoveryDuration: 0.4
-  windupTurnSpeed: 90
+  windupTurnSpeed: 25
   damage: 15
   attackIndicator: {fileID: 2418657446696558699}
   debugMode: 0

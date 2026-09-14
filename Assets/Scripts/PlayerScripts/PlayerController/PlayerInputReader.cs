@@ -23,26 +23,28 @@ public class PlayerInputReader : MonoBehaviour
         : lookActionGamepad;
     private bool canMove = true;
     public bool CanMove => canMove;
+    private bool canLook = true;
+    public bool CanLook => canLook;
 
     [Header("Cursor")]
     [SerializeField] private CursorLockMode startLockMode = CursorLockMode.Locked;
     [SerializeField] private bool startCursorVisible = false;
     public bool debugMode;
 
-    public Vector2 MoveInput => moveAction != null && moveAction.action != null
+    public Vector2 MoveInput => moveAction != null && moveAction.action != null  && CanMove
         ? moveAction.action.ReadValue<Vector2>()
         : Vector2.zero;
-    public bool SprintInput => sprintAction != null && sprintAction.action != null
+    public bool SprintInput => sprintAction != null && sprintAction.action != null && CanMove
         ? sprintAction.action.IsPressed()
         : false;
-    public bool SlowWalkInput => slowWalkAction != null && slowWalkAction.action != null
+    public bool SlowWalkInput => slowWalkAction != null && slowWalkAction.action != null && CanMove
         ? slowWalkAction.action.IsPressed()
         : false;
-    public bool jumpInput => jumpAction != null && jumpAction.action != null
+    public bool jumpInput => jumpAction != null && jumpAction.action != null && CanMove
         ? jumpAction.action.IsPressed()
         : false;
 
-    public bool dashInput => dashAction != null && dashAction.action != null
+    public bool dashInput => dashAction != null && dashAction.action != null && CanMove
         ? dashAction.action.IsPressed()
         : false;
 
@@ -58,7 +60,7 @@ public class PlayerInputReader : MonoBehaviour
         ? lookActionGamepad.action.ReadValue<Vector2>()
         : Vector2.zero;
 
-    public Vector2 LookInput => Math.Abs(LookInputGamepad.x) > Math.Abs(LookInputMouse.x) || Math.Abs(LookInputGamepad.y) > Math.Abs(LookInputMouse.y)
+    public Vector2 LookInput => (Math.Abs(LookInputGamepad.x) > Math.Abs(LookInputMouse.x) || Math.Abs(LookInputGamepad.y) > Math.Abs(LookInputMouse.y))  && CanLook
         ? LookInputGamepad * gamepadLookSens
         : LookInputMouse;
 
