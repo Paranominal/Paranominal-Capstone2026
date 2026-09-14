@@ -27,6 +27,8 @@ public class Door : MonoBehaviour, IInteractable
     public float ajarDistance = 3;
     private PlayerMover player;
 
+    [SerializeField] private GameObject[] doorLocks;
+
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private SoundDataSO slamSound;
@@ -172,6 +174,18 @@ public class Door : MonoBehaviour, IInteractable
     public void Unlock()
     {
         unlocked = true;
+
+        //destroy lock objects if they exist
+        if (doorLocks != null)
+        {
+            foreach (GameObject lockObj in doorLocks)
+            {
+                if (lockObj != null)
+                {
+                    Destroy(lockObj);
+                }
+            }
+        }
     }
 
     public void StartArena()
