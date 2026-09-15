@@ -1,4 +1,5 @@
-// Summary: URP Renderer Feature that applies the speed lines post-processing effect.
+// Summary: URP Renderer Feature that applies the dash post-processing effects.
+// Matches the project's established blit pattern (AddBlitPass + AddCopyPass).
 
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -6,19 +7,19 @@ using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
-public class SpeedLinesRendererFeature : ScriptableRendererFeature
+public class DashEffectsRendererFeature : ScriptableRendererFeature
 {
     [SerializeField] private Shader shader;
 
     private Material material;
-    private SpeedLinesRenderPass pass;
+    private DashEffectsRenderPass pass;
 
     public override void Create()
     {
         if (shader == null) return;
 
         material = new Material(shader);
-        pass = new SpeedLinesRenderPass(material);
+        pass = new DashEffectsRenderPass(material);
         pass.renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
     }
 
@@ -27,7 +28,7 @@ public class SpeedLinesRendererFeature : ScriptableRendererFeature
         if (pass == null) return;
         if (renderingData.cameraData.cameraType != CameraType.Game) return;
 
-        var volume = VolumeManager.instance.stack.GetComponent<SpeedLinesVolumeComponent>();
+        var volume = VolumeManager.instance.stack.GetComponent<DashEffectsVolumeComponent>();
         if (volume == null || !volume.IsActive()) return;
 
         renderer.EnqueuePass(pass);
@@ -42,14 +43,24 @@ public class SpeedLinesRendererFeature : ScriptableRendererFeature
     }
 }
 
-// Summary: Render pass that blits the camera colour through the speed lines material.
-public class SpeedLinesRenderPass : ScriptableRenderPass
+// Summary: Render pass that blits the camera colour through the dash effects material.
+public class DashEffectsRenderPass : ScriptableRenderPass
 {
-    // zoom blur
-    private static readonly int IntensityID     = Shader.PropertyToID("_Intensity");
+    // master
+    private static readonly int IntensityID = Shader.PropertyToID("_Intensity");
+
+    // toggles
+    private static readonly int EnableBlurID  = Shader.PropertyToID("_EnableBlur");
+    private static readonly int EnableWarpID  = Shader.PropertyToID("_EnableWarp");
+    private static readonly int EnableLinesID = Shader.PropertyToID("_EnableLines");
+
+    // blur
     private static readonly int BlurStrengthID  = Shader.PropertyToID("_BlurStrength");
     private static readonly int SampleCountID   = Shader.PropertyToID("_SampleCount");
     private static readonly int CenterFalloffID = Shader.PropertyToID("_CenterFalloff");
+
+    // warp
+    private static readonly int WarpStrengthID = Shader.PropertyToID("_WarpStrength");
 
     // action lines
     private static readonly int LinesColourID      = Shader.PropertyToID("_LinesColour");
@@ -59,15 +70,15 @@ public class SpeedLinesRenderPass : ScriptableRenderPass
     private static readonly int LinesRemapID        = Shader.PropertyToID("_LinesRemap");
     private static readonly int LinesAnimationID    = Shader.PropertyToID("_LinesAnimation");
 
-    // center mask
+    // mask
     private static readonly int MaskScaleID    = Shader.PropertyToID("_MaskScale");
     private static readonly int MaskHardnessID = Shader.PropertyToID("_MaskHardness");
     private static readonly int MaskPowerID    = Shader.PropertyToID("_MaskPower");
 
-    private const string PassName = "SpeedLinesRenderPass";
+    private const string PassName = "DashEffectsRenderPass";
     private Material material;
 
-    public SpeedLinesRenderPass(Material material)
+    public DashEffectsRenderPass(Material material)
     {
         this.material = material;
     }
@@ -76,13 +87,20 @@ public class SpeedLinesRenderPass : ScriptableRenderPass
     {
         if (material == null) return;
 
-        var vol = VolumeManager.instance.stack.GetComponent<SpeedLinesVolumeComponent>();
+        var vol = VolumeManager.instance.stack.GetComponent<DashEffectsVolumeComponent>();
         if (vol == null) return;
 
         material.SetFloat(IntensityID, vol.intensity.value);
+
+        material.SetFloat(EnableBlurID, vol.enableBlur.value ? 1f : 0f);
+        material.SetFloat(EnableWarpID, vol.enableWarp.value ? 1f : 0f);
+        material.SetFloat(EnableLinesID, vol.enableLines.value ? 1f : 0f);
+
         material.SetFloat(BlurStrengthID, vol.blurStrength.value);
         material.SetFloat(SampleCountID, vol.sampleCount.value);
         material.SetFloat(CenterFalloffID, vol.centerFalloff.value);
+
+        material.SetFloat(WarpStrengthID, vol.warpStrength.value);
 
         material.SetColor(LinesColourID, vol.linesColour.value);
         material.SetFloat(LinesTilingID, vol.linesTiling.value);
@@ -106,7 +124,7 @@ public class SpeedLinesRenderPass : ScriptableRenderPass
         TextureHandle src = resourceData.activeColorTexture;
 
         var desc = src.GetDescriptor(renderGraph);
-        desc.name = "_SpeedLinesTexture";
+        desc.name = "_DashEffectsTexture";
         desc.depthBufferBits = 0;
         TextureHandle dst = renderGraph.CreateTexture(desc);
 
@@ -116,11 +134,9 @@ public class SpeedLinesRenderPass : ScriptableRenderPass
 
         if (!src.IsValid() || !dst.IsValid()) return;
 
-        // apply the effect from source to temp texture
         RenderGraphUtils.BlitMaterialParameters blitOut = new(src, dst, material, 0);
         renderGraph.AddBlitPass(blitOut, PassName);
 
-        // copy back without applying the effect again
         renderGraph.AddCopyPass(dst, src);
     }
 }

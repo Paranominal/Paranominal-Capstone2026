@@ -56,7 +56,7 @@ MonoBehaviour:
     m_Value: 10
   vignetteWidth:
     m_OverrideState: 1
-    m_Value: 63.9
+    m_Value: 100
   scanlineIntensity:
     m_OverrideState: 1
     m_Value: 0.031
@@ -108,17 +108,56 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpeedLinesVolumeComponent
   active: 1
   intensity:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
+  enableBlur:
+    m_OverrideState: 1
+    m_Value: 1
   sampleCount:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 8
   blurStrength:
-    m_OverrideState: 0
-    m_Value: 0.1
+    m_OverrideState: 1
+    m_Value: 0.2
   centerFalloff:
-    m_OverrideState: 0
-    m_Value: 0.3
+    m_OverrideState: 1
+    m_Value: 0.486
+  enableWarp:
+    m_OverrideState: 1
+    m_Value: 1
+  warpStrength:
+    m_OverrideState: 1
+    m_Value: -2
+  enableLines:
+    m_OverrideState: 1
+    m_Value: 0
+  linesColour:
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  linesTiling:
+    m_OverrideState: 1
+    m_Value: 200
+  linesRadialScale:
+    m_OverrideState: 1
+    m_Value: 0.1
+  linesPower:
+    m_OverrideState: 1
+    m_Value: 1
+  linesRemap:
+    m_OverrideState: 1
+    m_Value: 0.8
+  linesAnimation:
+    m_OverrideState: 1
+    m_Value: 3
+  maskScale:
+    m_OverrideState: 1
+    m_Value: 1.04
+  maskHardness:
+    m_OverrideState: 1
+    m_Value: 0
+  maskPower:
+    m_OverrideState: 1
+    m_Value: 5
 --- !u!114 &-2948373080095487420
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -211,7 +250,7 @@ MonoBehaviour:
     m_Value: 1
   noiseSpeed:
     m_OverrideState: 1
-    m_Value: -4.21
+    m_Value: -3.0772002
   cycleDuration:
     m_OverrideState: 1
     m_Value: 2
@@ -288,10 +327,10 @@ MonoBehaviour:
   - {fileID: 1317798265248090415}
   - {fileID: 5312064039933448571}
   - {fileID: -2048086351416764788}
+  - {fileID: -6898977460747097792}
   - {fileID: -1841643297785110551}
   - {fileID: 8343280942440788295}
   - {fileID: 9140998113213102055}
-  - {fileID: -6898977460747097792}
 --- !u!114 &1317798265248090415
 MonoBehaviour:
   m_ObjectHideFlags: 3

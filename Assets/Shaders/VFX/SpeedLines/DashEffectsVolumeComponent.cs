@@ -1,16 +1,19 @@
-// Summary: Volume Component exposing speed lines parameters to the URP Volume system.
-// Covers the radial zoom blur, the simplex-noise action lines, and the center mask.
+// Summary: Volume Component for the dash post-processing effects.
+// Exposes toggleable radial blur, UV warp, and action lines with a shared center mask.
 // Intensity is driven at runtime by PlayerDash during the dash fade in/out.
 
 using UnityEngine;
 using UnityEngine.Rendering;
 
-[VolumeComponentMenu("Custom Post-Processing/Speed Lines")]
-public class SpeedLinesVolumeComponent : VolumeComponent
+[VolumeComponentMenu("Custom Post-Processing/Dash Effects")]
+public class DashEffectsVolumeComponent : VolumeComponent
 {
-    [Header("Radial Blur")]
     [Tooltip("Overall effect intensity. 0 = no effect, 1 = full strength. Driven by PlayerDash at runtime.")]
     public ClampedFloatParameter intensity = new ClampedFloatParameter(0f, 0f, 1f);
+
+    [Header("Radial Blur")]
+    [Tooltip("Enable the radial zoom blur layer.")]
+    public BoolParameter enableBlur = new BoolParameter(true);
 
     [Tooltip("Number of samples along the radial direction. Higher = smoother but more expensive.")]
     public ClampedFloatParameter sampleCount = new ClampedFloatParameter(8f, 4f, 16f);
@@ -21,7 +24,17 @@ public class SpeedLinesVolumeComponent : VolumeComponent
     [Tooltip("Distance from screen center where the blur begins. Lower values blur closer to center.")]
     public ClampedFloatParameter centerFalloff = new ClampedFloatParameter(0.3f, 0f, 1f);
 
+    [Header("Warp Distortion")]
+    [Tooltip("Enable the radial UV warp layer.")]
+    public BoolParameter enableWarp = new BoolParameter(true);
+
+    [Tooltip("How much the screen stretches outward from center. Negative values pull inward.")]
+    public ClampedFloatParameter warpStrength = new ClampedFloatParameter(0.3f, -3f, 3f);
+
     [Header("Action Lines")]
+    [Tooltip("Enable the animated action lines layer.")]
+    public BoolParameter enableLines = new BoolParameter(true);
+
     [Tooltip("Colour and alpha of the speed lines. Alpha controls blend strength.")]
     public ColorParameter linesColour = new ColorParameter(Color.white);
 
