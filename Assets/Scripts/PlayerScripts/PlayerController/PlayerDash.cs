@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Rendering; 
+
+// Michael-edit: (SpeedLines) added for Volume access
 
 public class PlayerDash : MonoBehaviour
 {
@@ -26,7 +29,6 @@ public class PlayerDash : MonoBehaviour
     [SerializeField] private float dullFadeAlpha = 0.5f;
     [Tooltip("How long to keep the full arrow visible once the cooldown completes (seconds).")]
     [SerializeField] private float showFullAfterCooldownSeconds = 1f;
-    [SerializeField] private Image speedLines = null;
     [Tooltip("Duration of the fade-out after the arrow display (seconds).")]
     [SerializeField] private float fadeOutDuration = 0.5f;
 
@@ -37,6 +39,15 @@ public class PlayerDash : MonoBehaviour
     [SerializeField] private float dashFovIncrease = 12f;
     [Tooltip("How fast to lerp the camera FOV (higher = faster).")]
     [SerializeField] private float fovLerpSpeed = 8f;
+
+    // EDIT (SpeedLines): replaced static Image with Volume-driven speed lines
+    [Header("Speed Lines")]
+    [Tooltip("Volume containing the SpeedLinesVolumeComponent. If null, searches the scene.")]
+    [SerializeField] private Volume speedLinesVolume = null;
+    [Tooltip("How quickly the speed lines reach full intensity when dashing (seconds).")]
+    [SerializeField] private float speedLinesFadeIn = 0.05f;
+    [Tooltip("How quickly the speed lines fade out after a dash ends (seconds).")]
+    [SerializeField] private float speedLinesFadeOut = 0.2f;
 
     [Header("Charge Dash")]
     [Tooltip("When enabled, dash consumes charges instead of using the normal cooldown behaviour.")]
@@ -67,6 +78,10 @@ public class PlayerDash : MonoBehaviour
 
     // reference to weapon events for listening to shot results
     private WeaponEvents weaponEvents = null;
+
+    // Michael-edit: (SpeedLines) cached volume component reference and current fade value
+    private SpeedLinesVolumeComponent speedLinesComponent = null;
+    private float speedLinesCurrent = 0f;
 
     // FOV handling
     private Camera cam = null;
@@ -104,12 +119,27 @@ public class PlayerDash : MonoBehaviour
 
         if (weaponEvents != null)
             weaponEvents.ShotResolved += OnShotResolved;
+
+        // EDIT (SpeedLines): resolve volume reference and cache the component
+        if (speedLinesVolume == null)
+            speedLinesVolume = Object.FindAnyObjectByType<Volume>();
+
+        if (speedLinesVolume != null)
+            speedLinesVolume.sharedProfile.TryGet(out speedLinesComponent);
+
+        // ensure effect starts off
+        if (speedLinesComponent != null)
+            speedLinesComponent.intensity.Override(0f);
     }
 
     private void OnDestroy()
     {
         if (weaponEvents != null)
             weaponEvents.ShotResolved -= OnShotResolved;
+
+        // Michael-edit: (SpeedLines) zero out the effect so it doesn't persist after player is destroyed
+        if (speedLinesComponent != null)
+            speedLinesComponent.intensity.Override(0f);
     }
 
     private void OnShotResolved(ShotResult result)
@@ -243,9 +273,8 @@ public class PlayerDash : MonoBehaviour
 
         UpdateDashUI();
 
-        // Show speed lines while dashing
-        if (speedLines != null)
-            speedLines.enabled = isDashing;
+        // Michael-edit: (SpeedLines) fade speed lines intensity toward target via volume component
+        UpdateSpeedLines();
 
         // Handle FOV interpolation
         if (cam == null)
@@ -266,6 +295,20 @@ public class PlayerDash : MonoBehaviour
 
         // Update charge UI each frame (instant jumps per requirement)
         UpdateChargeUI();
+    }
+
+    // Michael-edit: (SpeedLines) drives the volume component intensity based on dash state
+    private void UpdateSpeedLines()
+    {
+        if (speedLinesComponent == null)
+            return;
+
+        float target = isDashing ? 1f : 0f;
+        float fadeDuration = isDashing ? speedLinesFadeIn : speedLinesFadeOut;
+        float step = fadeDuration > 0f ? Time.deltaTime / fadeDuration : 1f;
+
+        speedLinesCurrent = Mathf.MoveTowards(speedLinesCurrent, target, step);
+        speedLinesComponent.intensity.Override(speedLinesCurrent);
     }
 
     private void UpdateDashUI()

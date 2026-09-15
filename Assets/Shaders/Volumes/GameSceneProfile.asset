@@ -94,6 +94,31 @@ MonoBehaviour:
   gain:
     m_OverrideState: 1
     m_Value: {x: 1, y: 1, z: 1, w: 0.20285504}
+--- !u!114 &-6898977460747097792
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88a65961985fba643ab03cbe18fdbfba, type: 3}
+  m_Name: SpeedLinesVolumeComponent
+  m_EditorClassIdentifier: Assembly-CSharp::SpeedLinesVolumeComponent
+  active: 1
+  intensity:
+    m_OverrideState: 0
+    m_Value: 0
+  sampleCount:
+    m_OverrideState: 0
+    m_Value: 8
+  blurStrength:
+    m_OverrideState: 0
+    m_Value: 0.1
+  centerFalloff:
+    m_OverrideState: 0
+    m_Value: 0.3
 --- !u!114 &-2948373080095487420
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -174,22 +199,22 @@ MonoBehaviour:
     m_Value: 0
   vignetteSoftness:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.51
   vignetteColor:
     m_OverrideState: 1
-    m_Value: {r: 0.8113208, g: 0.73860806, b: 0.80526143, a: 1}
+    m_Value: {r: 1, g: 0.7137255, b: 0.84047383, a: 1}
   noiseIntensity:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   noiseScale:
     m_OverrideState: 1
-    m_Value: 6.08
+    m_Value: 1
   noiseSpeed:
     m_OverrideState: 1
-    m_Value: 0.3
+    m_Value: -4.21
   cycleDuration:
     m_OverrideState: 1
-    m_Value: 10
+    m_Value: 2
   blendMode:
     m_OverrideState: 1
     m_Value: 3
@@ -266,6 +291,7 @@ MonoBehaviour:
   - {fileID: -1841643297785110551}
   - {fileID: 8343280942440788295}
   - {fileID: 9140998113213102055}
+  - {fileID: -6898977460747097792}
 --- !u!114 &1317798265248090415
 MonoBehaviour:
   m_ObjectHideFlags: 3

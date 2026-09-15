@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 // Summary: Volume component for the CRT post-processing effect.
-[Serializable, VolumeComponentMenu("Post-processing/CRT")]
+[Serializable, VolumeComponentMenu("Custom Post-Processing/CRT")]
 public class CRTVolume : VolumeComponent
 {
     [Tooltip("Controls how strongly the image curves toward the screen edges.")]
