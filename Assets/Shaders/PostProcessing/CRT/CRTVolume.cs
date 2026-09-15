@@ -6,24 +6,30 @@ using UnityEngine.Rendering;
 [Serializable, VolumeComponentMenu("Custom Post-Processing/CRT")]
 public class CRTVolume : VolumeComponent
 {
-    [Tooltip("Controls how strongly the image curves toward the screen edges.")]
-    public ClampedFloatParameter curvature = new ClampedFloatParameter(1.0f, 1.0f, 10.0f);
+    [Tooltip("Texel distance for the soft blur samples. 0 = no blur.")]
+    public ClampedFloatParameter blurOffset = new ClampedFloatParameter(1.0f, 0.0f, 3.0f);
 
-    [Tooltip("Controls how wide the vignette fade is at the edges.")]
-    public ClampedFloatParameter vignetteWidth = new ClampedFloatParameter(30.0f, 1.0f, 100.0f);
-
-    [Tooltip("How dark the gaps between scanline rows are. 0 = no scanlines, 1 = fully dark gaps.")]
-    public ClampedFloatParameter scanlineIntensity = new ClampedFloatParameter(0.3f, 0f, 1f);
+    [Tooltip("How dark the gaps between scanline rows are. 0 = no scanlines.")]
+    public ClampedFloatParameter scanlineIntensity = new ClampedFloatParameter(0.3f, 0.0f, 1.0f);
 
     [Tooltip("Number of scanlines across the screen height.")]
     public ClampedFloatParameter scanlineCount = new ClampedFloatParameter(300f, 50f, 1000f);
 
-    [Tooltip("How rounded the screen corners are. 0 = sharp corners.")]
-    public ClampedFloatParameter cornerRadius = new ClampedFloatParameter(0.05f, 0f, 0.2f);
+    [Tooltip("How fast the scanlines scroll vertically.")]
+    public ClampedFloatParameter scanlineSpeed = new ClampedFloatParameter(0.5f, 0.0f, 5.0f);
 
-    [Tooltip("How hard the transition from screen to black is at the corners.")]
-    public ClampedFloatParameter cornerSharpness = new ClampedFloatParameter(20.0f, 1.0f, 100.0f);
+    [Tooltip("Strength of the edge vignette darkening.")]
+    public ClampedFloatParameter vignetteIntensity = new ClampedFloatParameter(0.3f, 0.0f, 1.0f);
+
+    [Tooltip("How gradual the vignette falloff is.")]
+    public ClampedFloatParameter vignetteSmoothness = new ClampedFloatParameter(0.3f, 0.01f, 1.0f);
+
+    [Tooltip("Enable the RGB phosphor dot pattern.")]
+    public BoolParameter usePhosphor = new BoolParameter(false);
 
     [Tooltip("How visible the RGB phosphor dot pattern is. 0 = no pattern.")]
-    public ClampedFloatParameter phosphorIntensity = new ClampedFloatParameter(0.15f, 0f, 1f);
+    public ClampedFloatParameter phosphorIntensity = new ClampedFloatParameter(0.15f, 0.0f, 1.0f);
+
+    [Tooltip("Pixel width of each phosphor column. Higher values reduce moire with dithering.")]
+    public ClampedFloatParameter phosphorScale = new ClampedFloatParameter(2.0f, 1.0f, 6.0f);
 }
