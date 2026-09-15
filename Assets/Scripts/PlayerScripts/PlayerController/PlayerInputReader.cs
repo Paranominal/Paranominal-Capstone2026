@@ -13,28 +13,38 @@ public class PlayerInputReader : MonoBehaviour
     [SerializeField] private InputActionReference lookActionMouse;
     [SerializeField] private InputActionReference lookActionGamepad;
     [SerializeField] private float gamepadLookSens = 100f;
-    public bool canMove = true;
+    public InputActionReference MoveAction => moveAction;
+    public InputActionReference SprintAction => sprintAction;
+    public InputActionReference SlowWalkActon => slowWalkAction;
+    public InputActionReference JumpAction => jumpAction;
+    public InputActionReference DashAction => dashAction;
+    public InputActionReference LookAction => lookActionMouse.action.ReadValue<Vector2>().sqrMagnitude >= lookActionGamepad.action.ReadValue<Vector2>().sqrMagnitude 
+        ? lookActionMouse
+        : lookActionGamepad;
+    private bool canMove = true;
     public bool CanMove => canMove;
+    private bool canLook = true;
+    public bool CanLook => canLook;
 
     [Header("Cursor")]
     [SerializeField] private CursorLockMode startLockMode = CursorLockMode.Locked;
     [SerializeField] private bool startCursorVisible = false;
     public bool debugMode;
 
-    public Vector2 MoveInput => moveAction != null && moveAction.action != null
+    public Vector2 MoveInput => moveAction != null && moveAction.action != null  && CanMove
         ? moveAction.action.ReadValue<Vector2>()
         : Vector2.zero;
-    public bool SprintInput => sprintAction != null && sprintAction.action != null
+    public bool SprintInput => sprintAction != null && sprintAction.action != null && CanMove
         ? sprintAction.action.IsPressed()
         : false;
-    public bool SlowWalkInput => slowWalkAction != null && slowWalkAction.action != null
+    public bool SlowWalkInput => slowWalkAction != null && slowWalkAction.action != null && CanMove
         ? slowWalkAction.action.IsPressed()
         : false;
-    public bool jumpInput => jumpAction != null && jumpAction.action != null
+    public bool jumpInput => jumpAction != null && jumpAction.action != null && CanMove
         ? jumpAction.action.IsPressed()
         : false;
 
-    public bool dashInput => dashAction != null && dashAction.action != null
+    public bool dashInput => dashAction != null && dashAction.action != null && CanMove
         ? dashAction.action.IsPressed()
         : false;
 
@@ -50,13 +60,18 @@ public class PlayerInputReader : MonoBehaviour
         ? lookActionGamepad.action.ReadValue<Vector2>()
         : Vector2.zero;
 
-    public Vector2 LookInput => Math.Abs(LookInputGamepad.x) > Math.Abs(LookInputMouse.x) || Math.Abs(LookInputGamepad.y) > Math.Abs(LookInputMouse.y)
+    public Vector2 LookInput => (Math.Abs(LookInputGamepad.x) > Math.Abs(LookInputMouse.x) || Math.Abs(LookInputGamepad.y) > Math.Abs(LookInputMouse.y))  && CanLook
         ? LookInputGamepad * gamepadLookSens
         : LookInputMouse;
 
     private void Start()
     {
         SetCursorState(startLockMode, startCursorVisible);
+    }
+
+    public void InputLock(bool enabled) // if InputLock(true) is called, it disables all movement from the player reader
+    {
+        canMove = !enabled;
     }
 
     public void SetCursorState(CursorLockMode lockMode, bool visible)

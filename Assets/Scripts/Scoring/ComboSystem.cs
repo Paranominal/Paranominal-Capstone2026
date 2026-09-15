@@ -21,7 +21,7 @@ public class ComboSystem : MonoBehaviour
     {
         if (!IsActive) return;
 
-        TimeRemaining -= Time.deltaTime;
+        TimeRemaining -= Time.deltaTime * Multiplier;
 
         if (TimeRemaining <= 0f)
         {
