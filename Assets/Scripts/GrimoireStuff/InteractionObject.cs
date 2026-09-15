@@ -11,6 +11,9 @@ public class InteractionObject : MonoBehaviour
     public IInteractable target;
     public bool consumesItem;
     private Raycaster raycaster;
+    public bool deleteOnInteract = false;
+
+    [SerializeField] private GameObject[] objectsToDelete;
 
     void Start()
     {
@@ -36,6 +39,14 @@ public class InteractionObject : MonoBehaviour
                     if (door != null) door.Unlock();
 
                     target.Interact(new InteractionContext());
+
+                    if (deleteOnInteract)
+                    {
+                        foreach (GameObject obj in objectsToDelete)
+                        {
+                            Destroy(obj);
+                        }
+                    }
 
                     if (consumesItem)
                     {
