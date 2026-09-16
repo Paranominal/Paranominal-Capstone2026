@@ -563,9 +563,21 @@ public class Enemy : MonoBehaviour
         IsDying = true;
         behaviourState = BehaviourState.Dying;
         if (movement != null) movement.Stop();
+        if (stagger != null) stagger.canBeHit = false;
 
         ReportDeathToSpawner();
-        Destroy(gameObject);
+
+        // play dissolve if available, otherwise destroy immediately
+        var dissolve = GetComponentInChildren<DissolveEffect>();
+        if (dissolve != null)
+        {
+            dissolve.OnDissolveComplete += () => Destroy(gameObject);
+            dissolve.Play();
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
 

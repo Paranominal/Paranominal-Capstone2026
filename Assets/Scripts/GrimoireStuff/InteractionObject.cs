@@ -44,7 +44,16 @@ public class InteractionObject : MonoBehaviour
                     {
                         foreach (GameObject obj in objectsToDelete)
                         {
-                            Destroy(obj);
+                            var dissolve = obj.GetComponentInChildren<DissolveEffect>();
+                            if (dissolve != null)
+                            {
+                                dissolve.OnDissolveComplete += () => Destroy(obj);
+                                dissolve.Play();
+                            }
+                            else
+                            {
+                                Destroy(obj);
+                            }
                         }
                     }
 
