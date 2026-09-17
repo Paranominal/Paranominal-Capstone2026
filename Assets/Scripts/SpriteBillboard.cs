@@ -26,7 +26,7 @@ public class SpriteBillboard : MonoBehaviour
 
     void DoImmediate()
     {
-        targetRotation = Quaternion.LookRotation(Camera.main.transform.position - transform.position).eulerAngles;
+        targetRotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position).eulerAngles;
         if (!rotateX) targetRotation = new Vector3(0, targetRotation.y, targetRotation.z);
         transform.rotation = Quaternion.Euler(targetRotation);
     }
