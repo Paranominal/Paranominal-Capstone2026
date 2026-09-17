@@ -55,8 +55,6 @@ public class PlayerMover : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log("Velocity " + currentVelocity.magnitude);
-
         // If the input reader is not set or cannot move, skip processing movement
         if (!inputReader.CanMove)
             return;
