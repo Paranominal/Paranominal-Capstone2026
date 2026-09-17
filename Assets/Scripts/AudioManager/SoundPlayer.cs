@@ -12,6 +12,15 @@ public class SoundPlayer : MonoBehaviour
 
     // Called when the component is first added or Reset is clicked.
     // Pre-fills the source field with the AudioSource on this GameObject so designers don't need to drag it in manually.
+    private void Start()
+    {
+        if (sounds.Count < 1)
+        {
+            Debug.LogWarning($"[{this}] No Sounds set! disabling SoundPlayer");
+            enabled = false;
+        } 
+    }
+
     private void Reset()
     {
         if (!source)
@@ -21,14 +30,17 @@ public class SoundPlayer : MonoBehaviour
             if (!source) Debug.LogWarning($"[{this}] AudioSource was not found!");
             else Debug.LogWarning($"[{this}] AudioSource was found! ({source})");
         }
-            
     }
 
     // Plays the configured sound through the configured source.
     // Public so Animation Events, UnityEvents, and other scripts can call it.
     public void PlaySound(int index)
     {
-        if (sounds[index] == null) return;
+        if (index < 0 || index > sounds.Count)
+        {
+            Debug.LogWarning($"[{this}] PlaySound() index was not in range!");
+            return; 
+        }
         AudioManager.PlaySound(sounds[index], source);
     }
 }
