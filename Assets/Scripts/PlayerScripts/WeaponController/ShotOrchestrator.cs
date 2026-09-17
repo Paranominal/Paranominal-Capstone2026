@@ -40,6 +40,7 @@ public class ShotOrchestrator : MonoBehaviour
 
     private void Update()
     {
+
         if (weaponInputReader == null || weaponFiringLogic == null)
             return;
         if (!weaponInputReader.CanShoot) return;
@@ -109,9 +110,6 @@ public class ShotOrchestrator : MonoBehaviour
 
         if (isMisfire)
         {
-            weaponFiringLogic.StartMisfireCooldown();
-            isMisfireEffectsActive = true;
-
             if (!result.Outcome.RetainsAmmo())
                 weaponFiringLogic.ConsumeAmmo();
 
@@ -122,10 +120,20 @@ public class ShotOrchestrator : MonoBehaviour
                 weaponEvents.RaiseShotResolved(result);
             }
 
-            StartCoroutine(DelayedMisfireVisuals());
-
             if (!weaponFiringLogic.HasAmmo() && autoReloadEnabled)
+            {
+                weaponFiringLogic.StartShotCooldown();
                 StartCoroutine(DelayedAutoReload());
+            }
+            else
+            {
+                weaponFiringLogic.StartMisfireCooldown();
+                isMisfireEffectsActive = true;
+                StartCoroutine(DelayedMisfireVisuals());
+
+                if (autoReloadEnabled)
+                    StartCoroutine(DelayedAutoReload());
+            }
         }
         else
         {
