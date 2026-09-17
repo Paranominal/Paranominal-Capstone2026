@@ -52,11 +52,11 @@ public class PlayerInputReader : MonoBehaviour
     //     ? lookActionMouse.action.ReadValue<Vector2>()
     //     : Vector2.zero;
 
-    private Vector2 LookInputMouse => lookActionMouse != null && lookActionMouse.action != null
+    private Vector2 LookInputMouse => lookActionMouse != null && lookActionMouse.action != null && CanLook
         ? lookActionMouse.action.ReadValue<Vector2>()
         : Vector2.zero;
 
-    private Vector2 LookInputGamepad => lookActionGamepad != null && lookActionGamepad.action != null
+    private Vector2 LookInputGamepad => lookActionGamepad != null && lookActionGamepad.action != null && CanLook
         ? lookActionGamepad.action.ReadValue<Vector2>()
         : Vector2.zero;
 

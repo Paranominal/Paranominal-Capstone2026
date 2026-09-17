@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
 
 public class PlayerStatus : MonoBehaviour, IDamageable
 {
     [SerializeField] private FearBar fearBar;
     [SerializeField] private CameraEffects cameraEffects;
+    [SerializeField] private PlayerMover playerMover;
+    [SerializeField] private float stunDuration = 0.3f;
 
     // Michael feature (fear-effects): tracks whether the player is in an active encounter. Set by encounter managers externally.
     public bool IsInEncounter { get; set; }
@@ -20,5 +23,6 @@ public class PlayerStatus : MonoBehaviour, IDamageable
         Debug.Log($"[PlayerStatus] Player hit for {info.amount}.");
         fearBar.TakeDamage(info.amount);
         cameraEffects?.Shake();
+        playerMover.stunPlayer(stunDuration);
     }
 }

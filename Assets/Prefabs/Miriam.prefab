@@ -680,6 +680,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatus
   fearBar: {fileID: 1642531195737763663}
   cameraEffects: {fileID: 8357035724081902887}
+  playerMover: {fileID: 7893351746387300568}
+  stunDuration: 0.5
 --- !u!114 &1642531195737763663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1095,7 +1097,7 @@ MonoBehaviour:
   airInertiaMultiplier: 1.5
   gravity: 9.81
   groundedStickForce: -2
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 795694508415802441}
   playerFootstep: {fileID: 11400000, guid: 95221a47635bbbf4693a9f1c94b2689b, type: 2}
   footstepInterval: 0.45
 --- !u!114 &2707172803116468795
@@ -3064,7 +3066,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 273836561670073298, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -3084,11 +3086,11 @@ PrefabInstance:
       objectReference: {fileID: 8956652460274281639}
     - target: {fileID: 1553545264737492289, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1553545264737492289, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2847827877754305373, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: fearBar

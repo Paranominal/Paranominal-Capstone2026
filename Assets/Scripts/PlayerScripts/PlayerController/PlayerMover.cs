@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMover : MonoBehaviour
@@ -160,6 +161,22 @@ public class PlayerMover : MonoBehaviour
 
             footstepTimer = footstepInterval;
         }
+    }
+
+    public void stunPlayer(float stunDuration)
+    {
+        StartCoroutine(StunCoroutine(stunDuration));
+    }
+
+    private IEnumerator StunCoroutine(float stunDuration)
+    {
+        if (inputReader != null)
+            inputReader.InputLock(true);
+
+        yield return new WaitForSeconds(stunDuration);
+
+        if (inputReader != null)
+            inputReader.InputLock(false);
     }
 
 }
