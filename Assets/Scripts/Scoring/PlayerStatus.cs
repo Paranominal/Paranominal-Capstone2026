@@ -6,7 +6,9 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     [SerializeField] private FearBar fearBar;
     [SerializeField] private CameraEffects cameraEffects;
     [SerializeField] private PlayerMover playerMover;
-    [SerializeField] private float stunDuration = 0.3f;
+
+    [Header("Stun")]
+    [SerializeField] private float knockbackForce = 5f;
 
     // Michael feature (fear-effects): tracks whether the player is in an active encounter. Set by encounter managers externally.
     public bool IsInEncounter { get; set; }
@@ -20,9 +22,10 @@ public class PlayerStatus : MonoBehaviour, IDamageable
 
     public void TakeDamage(DamageInfo info)
     {
+
         Debug.Log($"[PlayerStatus] Player hit for {info.amount}.");
         fearBar.TakeDamage(info.amount);
         cameraEffects?.Shake();
-        playerMover.stunPlayer(stunDuration);
+        playerMover.stunPlayer(cameraEffects.shakeDuration, info, knockbackForce);
     }
 }

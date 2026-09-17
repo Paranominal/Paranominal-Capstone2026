@@ -60,7 +60,7 @@ public class PlayerInputReader : MonoBehaviour
         ? lookActionGamepad.action.ReadValue<Vector2>()
         : Vector2.zero;
 
-    public Vector2 LookInput => (Math.Abs(LookInputGamepad.x) > Math.Abs(LookInputMouse.x) || Math.Abs(LookInputGamepad.y) > Math.Abs(LookInputMouse.y))  && CanLook
+    public Vector2 LookInput => (Math.Abs(LookInputGamepad.x) > Math.Abs(LookInputMouse.x) || Math.Abs(LookInputGamepad.y) > Math.Abs(LookInputMouse.y)) && CanLook
         ? LookInputGamepad * gamepadLookSens
         : LookInputMouse;
 
