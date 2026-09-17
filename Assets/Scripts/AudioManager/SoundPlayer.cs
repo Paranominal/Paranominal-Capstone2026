@@ -36,7 +36,7 @@ public class SoundPlayer : MonoBehaviour
     // Public so Animation Events, UnityEvents, and other scripts can call it.
     public void PlaySound(int index)
     {
-        if (index < 0 || index > sounds.Count)
+        if (index < 0 || index >= sounds.Count)
         {
             Debug.LogWarning($"[{this}] PlaySound() index was not in range!");
             return; 
