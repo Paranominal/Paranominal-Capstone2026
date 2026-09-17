@@ -2,34 +2,32 @@ using System;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.UIElements.Experimental;
 
 public class SpriteBillboard : MonoBehaviour
 {
     [Header("Billboard Rotations")] 
     [SerializeField] private bool rotateX = false;
     [Header("Preferences")] 
-    [SerializeField] private bool slowBillboard = false;
-    [SerializeField] private float slowBillboardTime = 0.1f;
+    [SerializeField] bool easing = false;
+    [ShowIf("easing", true), SerializeField] private float easeSpeed = 0.1f;
     void Update()
     {
-        if (slowBillboard) DoSlow();
+        if (easing) DoSlow();
         else DoImmediate();
     }
-
-    Vector3 currentSmoothVelocity;
-    Quaternion targetRotation;
+    Vector3 targetRotation;
     void DoSlow()
     {
-        if (!rotateX) targetRotation = Quaternion.Euler(0f, Camera.main.transform.rotation.eulerAngles.y, 0f);
-        else targetRotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, 0f);
-        Vector3 smoothedRotation = Vector3.Lerp(transform.rotation.eulerAngles, targetRotation.eulerAngles, slowBillboardTime);
-        Quaternion newRotation = Quaternion.Euler(smoothedRotation);
-        transform.rotation = newRotation;
+        targetRotation = Quaternion.LookRotation(Camera.main.transform.position - transform.position).eulerAngles;
+        if (!rotateX) targetRotation = new Vector3(0, targetRotation.y, targetRotation.z);
+        Vector3.Slerp(transform.rotation.eulerAngles, targetRotation, Time.deltaTime * easeSpeed);
     }
 
     void DoImmediate()
     {
-        if (!rotateX) transform.rotation = Quaternion.Euler(0f, Camera.main.transform.rotation.eulerAngles.y, 0f);
-        else transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, 0f);
+        targetRotation = Quaternion.LookRotation(Camera.main.transform.position - transform.position).eulerAngles;
+        if (!rotateX) targetRotation = new Vector3(0, targetRotation.y, targetRotation.z);
+        transform.rotation = Quaternion.Euler(targetRotation);
     }
 }
