@@ -825,7 +825,6 @@ GameObject:
   - component: {fileID: 1159866380}
   - component: {fileID: 1159866379}
   - component: {fileID: 1159866378}
-  - component: {fileID: 1159866383}
   m_Layer: 12
   m_Name: Platform
   m_TagString: Untagged
@@ -926,38 +925,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1747664839}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1159866383
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1159866377}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 2
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 20480
-  m_UseGeometry: 0
-  m_DefaultArea: 0
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 434a14d2f70426443b23f160adf95847, type: 2}
-  m_BuildHeightMesh: 0
 --- !u!1001 &1179226840
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1450,18 +1417,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4165901649735431468, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4165901649735431468, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4165901649735431468, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 783066953878243693, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -1568,6 +1523,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8931028048626215500, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4165901649735431468, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4165901649735431468, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4165901649735431468, guid: 4c11b27d1b54b974f9621b2ee8dee937, type: 3}
+      propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1807,67 +1774,49 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1760184086862445261, guid: f3cbe991208ee324e936889e8572d872, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 10.630952
-      objectReference: {fileID: 0}
-    - target: {fileID: 1760184086862445261, guid: f3cbe991208ee324e936889e8572d872, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2.2016428
-      objectReference: {fileID: 0}
-    - target: {fileID: 1760184086862445261, guid: f3cbe991208ee324e936889e8572d872, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 5.6670413
-      objectReference: {fileID: 0}
-    - target: {fileID: 1760184086862445261, guid: f3cbe991208ee324e936889e8572d872, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1760184086862445261, guid: f3cbe991208ee324e936889e8572d872, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1760184086862445261, guid: f3cbe991208ee324e936889e8572d872, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1760184086862445261, guid: f3cbe991208ee324e936889e8572d872, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1760184086862445261, guid: f3cbe991208ee324e936889e8572d872, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1760184086862445261, guid: f3cbe991208ee324e936889e8572d872, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1760184086862445261, guid: f3cbe991208ee324e936889e8572d872, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2274695431603113221, guid: f3cbe991208ee324e936889e8572d872, type: 3}
-      propertyPath: m_Name
-      value: (Updated) Drude
-      objectReference: {fileID: 0}
-    - target: {fileID: 2274695431603113221, guid: f3cbe991208ee324e936889e8572d872, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8219591352246310843, guid: f3cbe991208ee324e936889e8572d872, type: 3}
+    - target: {fileID: 2679287820087534063, guid: f3cbe991208ee324e936889e8572d872, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8219591352246310843, guid: f3cbe991208ee324e936889e8572d872, type: 3}
+    - target: {fileID: 2679287820087534063, guid: f3cbe991208ee324e936889e8572d872, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8977637115294892976, guid: f3cbe991208ee324e936889e8572d872, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.1648006
+      objectReference: {fileID: 0}
+    - target: {fileID: 8977637115294892976, guid: f3cbe991208ee324e936889e8572d872, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.1439085
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6451794592179634668, guid: f3cbe991208ee324e936889e8572d872, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1636893206}
   m_SourcePrefab: {fileID: 100100000, guid: f3cbe991208ee324e936889e8572d872, type: 3}
+--- !u!1 &1636893205 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6451794592179634668, guid: f3cbe991208ee324e936889e8572d872, type: 3}
+  m_PrefabInstance: {fileID: 1636893204}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1636893206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1636893205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed2f517028968bc4eb6dc4af113c91de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundPlayer
+  sounds: []
+  source: {fileID: 0}
 --- !u!1 &1747664838
 GameObject:
   m_ObjectHideFlags: 0
@@ -1878,9 +1827,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1747664839}
   - component: {fileID: 1747664840}
-  - component: {fileID: 1747664843}
   - component: {fileID: 1747664842}
-  - component: {fileID: 1747664841}
   m_Layer: 0
   m_Name: Stage
   m_TagString: Untagged
@@ -1942,38 +1889,6 @@ MonoBehaviour:
   resetCounter: 5
   useDoorGating: 0
   doors: []
---- !u!114 &1747664841
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1747664838}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 2
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 20480
-  m_UseGeometry: 0
-  m_DefaultArea: 0
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 0}
-  m_BuildHeightMesh: 0
 --- !u!114 &1747664842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2006,38 +1921,6 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 34bf4b2deff37e0498dcf5ec91ed7237, type: 2}
   m_BuildHeightMesh: 0
---- !u!114 &1747664843
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1747664838}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 2
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 20480
-  m_UseGeometry: 0
-  m_DefaultArea: 0
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 0}
-  m_BuildHeightMesh: 0
 --- !u!1001 &1812010134
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2052,7 +1935,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 272941483086651391, guid: c4934a1a33bace2449f73ccff1e83337, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2637620344956863188, guid: c4934a1a33bace2449f73ccff1e83337, type: 3}
       propertyPath: moveWhileWindingUp
