@@ -75,13 +75,11 @@ GameObject:
   - component: {fileID: 8548854153099920675}
   - component: {fileID: 1351760802009251764}
   - component: {fileID: 8235556267777150077}
-  - component: {fileID: 626628679151542720}
   - component: {fileID: 895717910277464556}
+  - component: {fileID: 626628679151542720}
   - component: {fileID: 6920230202476624714}
   - component: {fileID: 6774845802357550530}
   - component: {fileID: 3242840789396315087}
-  - component: {fileID: 7186748809602904590}
-  - component: {fileID: 462467371661835227}
   m_Layer: 17
   m_Name: Drude
   m_TagString: Untagged
@@ -267,21 +265,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 2
---- !u!114 &626628679151542720
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6451794592179634668}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed2f517028968bc4eb6dc4af113c91de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoundPlayer
-  sounds:
-  - {fileID: 11400000, guid: fb3c274af03cb9b4e9cba33fb64a27b3, type: 2}
-  source: {fileID: 0}
 --- !u!95 &895717910277464556
 Animator:
   serializedVersion: 7
@@ -304,6 +287,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &626628679151542720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6451794592179634668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed2f517028968bc4eb6dc4af113c91de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundPlayer
+  sounds:
+  - {fileID: 11400000, guid: fb3c274af03cb9b4e9cba33fb64a27b3, type: 2}
+  source: {fileID: 6920230202476624714}
 --- !u!82 &6920230202476624714
 AudioSource:
   m_ObjectHideFlags: 0
@@ -445,34 +443,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5, y: 1.8, z: 0.5}
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!114 &7186748809602904590
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6451794592179634668}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed2f517028968bc4eb6dc4af113c91de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoundPlayer
-  sounds: []
-  source: {fileID: 0}
---- !u!114 &462467371661835227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6451794592179634668}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed2f517028968bc4eb6dc4af113c91de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoundPlayer
-  sounds: []
-  source: {fileID: 0}
 --- !u!1 &7342923084279259073
 GameObject:
   m_ObjectHideFlags: 0
