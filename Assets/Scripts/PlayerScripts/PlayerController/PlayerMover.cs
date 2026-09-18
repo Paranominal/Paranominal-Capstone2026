@@ -170,6 +170,13 @@ public class PlayerMover : MonoBehaviour
 
     private IEnumerator StunCoroutine(float stunDuration, DamageInfo damageInfo, float knockbackForce)
     {
+
+        if (knockbackForce < 0f) 
+        {
+            knockbackForce = damageInfo.amount / 4;
+        }
+
+
         // player's input is locked when stunned
         if (inputReader != null)
             inputReader.InputLock(true);

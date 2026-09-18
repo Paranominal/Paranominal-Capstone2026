@@ -9,7 +9,9 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     [SerializeField] private PlayerMover playerMover;
 
     [Header("Stun")]
-    [SerializeField] private float knockbackForce = 5f;
+    [Tooltip("The amount of force applied to the stun knockback when the player is hit. -1 will use the damage amount.")]
+    [SerializeField] private float knockbackForce = 2f;
+    
     [SerializeField] private float invincibleDuration = 1f;
 
     // Michael feature (fear-effects): tracks whether the player is in an active encounter. Set by encounter managers externally.
