@@ -15,7 +15,7 @@ MonoBehaviour:
   active: 1
   pixelSize:
     m_OverrideState: 1
-    m_Value: 4
+    m_Value: 1
 --- !u!114 &-7954653342275197760
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -56,13 +56,13 @@ MonoBehaviour:
     m_Value: 10
   vignetteWidth:
     m_OverrideState: 1
-    m_Value: 68.8
+    m_Value: 63.9
   scanlineIntensity:
     m_OverrideState: 1
-    m_Value: 0.15
+    m_Value: 0.031
   scanlineCount:
     m_OverrideState: 1
-    m_Value: 400
+    m_Value: 123
   cornerRadius:
     m_OverrideState: 1
     m_Value: 0.2
@@ -90,10 +90,10 @@ MonoBehaviour:
     m_Value: {x: 1, y: 1, z: 1, w: 0}
   gamma:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 1, z: 1, w: 0.08058018}
+    m_Value: {x: 1, y: 1, z: 1, w: 0}
   gain:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 0.56702, z: 0.918009, w: 0.20285504}
+    m_Value: {x: 1, y: 1, z: 1, w: 0.20285504}
 --- !u!114 &-2948373080095487420
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -140,7 +140,7 @@ MonoBehaviour:
     m_Value: {x: 0.5710965, y: 0.64011365, z: 1, w: 0.49940825}
   midtones:
     m_OverrideState: 1
-    m_Value: {x: 0.1401244, y: 0.030928016, z: 1, w: 0.5136094}
+    m_Value: {x: 0.1401244, y: 0.030928016, z: 1, w: 0.40495077}
   highlights:
     m_OverrideState: 1
     m_Value: {x: 0.9966684, y: 0.99499804, z: 1, w: 0.08757425}
@@ -174,25 +174,53 @@ MonoBehaviour:
     m_Value: 0
   vignetteSoftness:
     m_OverrideState: 1
-    m_Value: 0.451
+    m_Value: 1
   vignetteColor:
     m_OverrideState: 1
-    m_Value: {r: 0.8117647, g: 0.7372549, b: 0.8039216, a: 1}
+    m_Value: {r: 0.8113208, g: 0.73860806, b: 0.80526143, a: 1}
   noiseIntensity:
     m_OverrideState: 1
-    m_Value: 0.6
+    m_Value: 1
   noiseScale:
     m_OverrideState: 1
-    m_Value: 10
+    m_Value: 6.08
   noiseSpeed:
     m_OverrideState: 1
-    m_Value: 0.35
+    m_Value: 0.3
   cycleDuration:
     m_OverrideState: 1
     m_Value: 10
   blendMode:
     m_OverrideState: 1
     m_Value: 3
+--- !u!114 &-1841643297785110551
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66f335fb1ffd8684294ad653bf1c7564, type: 3}
+  m_Name: ColorAdjustments
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.ColorAdjustments
+  active: 1
+  postExposure:
+    m_OverrideState: 1
+    m_Value: 0.2
+  contrast:
+    m_OverrideState: 1
+    m_Value: 14
+  colorFilter:
+    m_OverrideState: 0
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  hueShift:
+    m_OverrideState: 0
+    m_Value: 0
+  saturation:
+    m_OverrideState: 0
+    m_Value: 0
 --- !u!114 &-445072511358724795
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -235,6 +263,9 @@ MonoBehaviour:
   - {fileID: 1317798265248090415}
   - {fileID: 5312064039933448571}
   - {fileID: -2048086351416764788}
+  - {fileID: -1841643297785110551}
+  - {fileID: 8343280942440788295}
+  - {fileID: 9140998113213102055}
 --- !u!114 &1317798265248090415
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -262,10 +293,10 @@ MonoBehaviour:
     m_Value: 0.3
   ditherStrength:
     m_OverrideState: 1
-    m_Value: 0.58
+    m_Value: 0.578
   bayerSize:
     m_OverrideState: 1
-    m_Value: 4
+    m_Value: 2
   usePS1Matrix:
     m_OverrideState: 1
     m_Value: 1
@@ -274,7 +305,7 @@ MonoBehaviour:
     m_Value: 1
   perceptualGamma:
     m_OverrideState: 1
-    m_Value: 0.69
+    m_Value: 0.639
 --- !u!114 &2405007435555921013
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -359,10 +390,10 @@ MonoBehaviour:
   active: 1
   sharpness:
     m_OverrideState: 1
-    m_Value: 0.2
+    m_Value: 0.1
   sampleDistance:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 2.08
 --- !u!114 &8214733505025932202
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -403,3 +434,235 @@ MonoBehaviour:
   maxNits:
     m_OverrideState: 1
     m_Value: 1000
+--- !u!114 &8343280942440788295
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3eb4b772797da9440885e8bd939e9560, type: 3}
+  m_Name: ColorCurves
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.ColorCurves
+  active: 1
+  master:
+    m_OverrideState: 0
+    m_Value:
+      <length>k__BackingField: 2
+      m_Loop: 0
+      m_ZeroValue: 0
+      m_Range: 1
+      m_Curve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 1
+          outSlope: 1
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 1
+          outSlope: 1
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+  red:
+    m_OverrideState: 0
+    m_Value:
+      <length>k__BackingField: 2
+      m_Loop: 0
+      m_ZeroValue: 0
+      m_Range: 1
+      m_Curve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 1
+          outSlope: 1
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 1
+          outSlope: 1
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+  green:
+    m_OverrideState: 0
+    m_Value:
+      <length>k__BackingField: 2
+      m_Loop: 0
+      m_ZeroValue: 0
+      m_Range: 1
+      m_Curve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 1
+          outSlope: 1
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 1
+          outSlope: 1
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+  blue:
+    m_OverrideState: 0
+    m_Value:
+      <length>k__BackingField: 2
+      m_Loop: 0
+      m_ZeroValue: 0
+      m_Range: 1
+      m_Curve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 1
+          outSlope: 1
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 1
+          outSlope: 1
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+  hueVsHue:
+    m_OverrideState: 0
+    m_Value:
+      <length>k__BackingField: 0
+      m_Loop: 1
+      m_ZeroValue: 0.5
+      m_Range: 1
+      m_Curve:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+  hueVsSat:
+    m_OverrideState: 0
+    m_Value:
+      <length>k__BackingField: 0
+      m_Loop: 1
+      m_ZeroValue: 0.5
+      m_Range: 1
+      m_Curve:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+  satVsSat:
+    m_OverrideState: 1
+    m_Value:
+      <length>k__BackingField: 2
+      m_Loop: 0
+      m_ZeroValue: 0.5
+      m_Range: 1
+      m_Curve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0.22566585
+          value: 0.19693929
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 0.9539952
+          value: 0.50714236
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+  lumVsSat:
+    m_OverrideState: 0
+    m_Value:
+      <length>k__BackingField: 0
+      m_Loop: 0
+      m_ZeroValue: 0.5
+      m_Range: 1
+      m_Curve:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+--- !u!114 &9140998113213102055
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29fa0085f50d5e54f8144f766051a691, type: 3}
+  m_Name: FilmGrain
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FilmGrain
+  active: 1
+  type:
+    m_OverrideState: 1
+    m_Value: 0
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.475
+  response:
+    m_OverrideState: 1
+    m_Value: 0.212
+  texture:
+    m_OverrideState: 0
+    m_Value: {fileID: 0}

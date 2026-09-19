@@ -6,9 +6,10 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Projectile : MonoBehaviour
+public class Projectile : MonoBehaviour, IDamageable
 {
     [Header("Properties")]
+    [SerializeField] private bool canBeShot = false;
     [SerializeField] private int damage = 8;
     [SerializeField] private float initialVelocity = 0f;
     [SerializeField] private float maxVelocity = 20f;
@@ -113,5 +114,10 @@ public class Projectile : MonoBehaviour
 
         if (debugMode) Debug.Log($"[Projectile] Destroying projectile after hitting '{other.gameObject.name}'.");
         Destroy(gameObject);
+    }
+
+    public void TakeDamage(DamageInfo damageInfo)
+    {
+        if (canBeShot) Destroy(gameObject);
     }
 }

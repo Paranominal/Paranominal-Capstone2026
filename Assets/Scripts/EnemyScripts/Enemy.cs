@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private bool skipSpawn;
     [ShowIf("skipSpawn", false)]
     [Tooltip("Time in seconds it takes the enemy to spawn.")]
-    [SerializeField] private float spawnDelay = 3f;
+    [SerializeField] private float spawnDelay = 1f;
 
     [Header("Aggro")]
     [SerializeField] private bool alwaysAggro;
@@ -43,7 +43,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private int numberOfPhases = 3;
 
     [ShowIf("enemyClass", (int)EnemyClass.Champion, Header = "Summons (Champion Only)")]
-    [SerializeField] private bool doSummons = true;
+    [SerializeField] private bool doSummons = false;
     public bool DoSummons
     {
         get => doSummons;

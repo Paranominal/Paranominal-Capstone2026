@@ -1,14 +1,13 @@
 using UnityEngine;
 
-// Summary: 
-// Listens to WeaponEvents and plays sounds for firing, reloading, and misfiring.
-// Uses a single AudioSource and PlayOneShot via the AudioManager's new overload, so overlapping sounds (e.g. reload starting immediately after the final shot) don't interrupt each other.
+// Listens to WeaponEvents and plays sounds for firing and reloading. Sits alongside the other weapon components on the weapon GameObject.
 [RequireComponent(typeof(AudioSource))]
 public class WeaponAudio : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private WeaponEvents weaponEvents;
-    [SerializeField] private AudioSource source;
+    [SerializeField] private AudioSource fireSource;
+    [SerializeField] private AudioSource reloadSource;
 
     [Header("Sounds")]
     [SerializeField] private SoundDataSO shotgunFire;
@@ -18,13 +17,16 @@ public class WeaponAudio : MonoBehaviour
     private void Reset()
     {
         weaponEvents = GetComponent<WeaponEvents>();
-        source = GetComponent<AudioSource>();
+        // Pre-fill fireSource with the first AudioSource on this GameObject.
+        fireSource = GetComponent<AudioSource>();
+        // reloadSource must be wired up manually in the inspector (designer adds a second AudioSource and drags it into the slot).
     }
 
     private void Awake()
     {
         if (weaponEvents == null) weaponEvents = GetComponent<WeaponEvents>();
-        if (source == null) source = GetComponent<AudioSource>();
+        if (fireSource == null) fireSource = GetComponent<AudioSource>();
+        if (reloadSource == null) reloadSource = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
@@ -45,16 +47,16 @@ public class WeaponAudio : MonoBehaviour
 
     private void OnShotFired(WeakPointType shotType)
     {
-        if (shotgunFire != null) AudioManager.PlaySound(shotgunFire, source, true);
+        if (shotgunFire != null) AudioManager.PlaySound(shotgunFire, fireSource);
     }
 
     private void OnReloadStarted()
     {
-        if (shotgunReload != null) AudioManager.PlaySound(shotgunReload, source, true);
+        if (shotgunReload != null) AudioManager.PlaySound(shotgunReload, reloadSource);
     }
 
     private void OnMisfired()
     {
-        if (shotgunMisfire != null) AudioManager.PlaySound(shotgunMisfire, source, true);
+        if (shotgunMisfire != null) AudioManager.PlaySound(shotgunMisfire, reloadSource);
     }
 }

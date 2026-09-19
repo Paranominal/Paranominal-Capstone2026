@@ -16,14 +16,14 @@ public class FearBar : MonoBehaviour
     [SerializeField] private float fearHealPerShot = 5f; // fear reduced on each rewarded shot
 
     [Header("Tick Rates (fear per second)")]
-    [Tooltip("How fast fear creeps up automatically at each rank. Fine = all chill, High = panic time!!")]
+    [Tooltip("How fast fear creeps up automatically at each rank. Healthy = all chill, Doomed! = panic time!!")]
     [SerializeField] private float tickRateFine = 0f;
     [SerializeField] private float tickRateLow = 0.5f;
     [SerializeField] private float tickRateMedium = 1f;
     [SerializeField] private float tickRateHigh = 2f;
 
-    public enum FearRank { Fine, Low, Medium, High }
-    public FearRank CurrentRank { get; private set; } = FearRank.Fine;
+    public enum FearRank { Healthy, Fine, Critical, Doomed }
+    public FearRank CurrentRank { get; private set; } = FearRank.Healthy;
 
     public event System.Action<FearRank> OnFearChanged;
     public event System.Action OnFearMaxed;
@@ -45,10 +45,10 @@ public class FearBar : MonoBehaviour
 
         float rate = CurrentRank switch
         {
-            FearRank.Fine => tickRateFine,
-            FearRank.Low => tickRateLow,
-            FearRank.Medium => tickRateMedium,
-            FearRank.High => tickRateHigh,
+            FearRank.Healthy => tickRateFine,
+            FearRank.Fine => tickRateLow,
+            FearRank.Critical => tickRateMedium,
+            FearRank.Doomed => tickRateHigh,
             _ => 0f
         };
 
@@ -97,11 +97,11 @@ public class FearBar : MonoBehaviour
     private void EvaluateRank()
     {
         FearRank newRank = fearLevel switch // check this bad boy out
-        {      
-            <= 75       => FearRank.Low,
-            <= 150      => FearRank.Medium,
-            <= 200      => FearRank.High,
-            _           => FearRank.Fine, // no more overflow! yay!!!
+        {
+            <= 0 => FearRank.Healthy, // no more overflow! yay!!!
+            <= 33 => FearRank.Fine,
+            <= 66 => FearRank.Critical,
+            _ => FearRank.Doomed!
         };
 
         if (newRank != CurrentRank)
