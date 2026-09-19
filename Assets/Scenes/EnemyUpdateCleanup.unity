@@ -282,12 +282,6 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 869928682464300566, guid: 5453a7bcd76fffd43aa2419247328e70, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 185635020}
-    - targetCorrespondingSourceObject: {fileID: 7450467843227706175, guid: 5453a7bcd76fffd43aa2419247328e70, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 185635019}
     - targetCorrespondingSourceObject: {fileID: 2483014397987775305, guid: 5453a7bcd76fffd43aa2419247328e70, type: 3}
       insertIndex: -1
       addedObject: {fileID: 185635018}
@@ -295,16 +289,6 @@ PrefabInstance:
 --- !u!1 &185635015 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2483014397987775305, guid: 5453a7bcd76fffd43aa2419247328e70, type: 3}
-  m_PrefabInstance: {fileID: 185635014}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &185635016 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7450467843227706175, guid: 5453a7bcd76fffd43aa2419247328e70, type: 3}
-  m_PrefabInstance: {fileID: 185635014}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &185635017 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 869928682464300566, guid: 5453a7bcd76fffd43aa2419247328e70, type: 3}
   m_PrefabInstance: {fileID: 185635014}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &185635018
@@ -336,36 +320,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!114 &185635019
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 185635016}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b768b6bfde5f8bd488d3581699533a07, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DissolveEffect
-  dissolveDuration: 1.5
-  destroyOnComplete: 1
-  dissolveMaterial: {fileID: 2100000, guid: 20d998251e7ae96429d4ad4eb945f03e, type: 2}
---- !u!114 &185635020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 185635017}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b768b6bfde5f8bd488d3581699533a07, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DissolveEffect
-  dissolveDuration: 1.5
-  destroyOnComplete: 0
-  dissolveMaterial: {fileID: 2100000, guid: 20d998251e7ae96429d4ad4eb945f03e, type: 2}
 --- !u!1001 &211237817
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1709,7 +1663,7 @@ PrefabInstance:
       objectReference: {fileID: 832457902}
     - target: {fileID: 7800545496170677898, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_RenderPostProcessing
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8013496993476994936, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2083,6 +2037,10 @@ PrefabInstance:
     - target: {fileID: 3366302954975271396, guid: f3cbe991208ee324e936889e8572d872, type: 3}
       propertyPath: dissolveDuration
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6451794592179634668, guid: f3cbe991208ee324e936889e8572d872, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8219591352246310843, guid: f3cbe991208ee324e936889e8572d872, type: 3}
       propertyPath: m_AnchorMax.x

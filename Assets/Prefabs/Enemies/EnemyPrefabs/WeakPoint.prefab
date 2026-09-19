@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6939379527075051839}
   - component: {fileID: 4434378975981373331}
   - component: {fileID: 6347886040529473197}
+  - component: {fileID: 3847659394300872278}
   - component: {fileID: 1083474672853033318}
   - component: {fileID: 7691931419884270143}
   m_Layer: 7
@@ -50,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e6060fe9bced6b418ce272ee8a1a18f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  manager: {fileID: 0}
+  weakpointManager: {fileID: 0}
   weakPointType: 0
   pointId: 
   isWarded: 0
@@ -59,6 +60,7 @@ MonoBehaviour:
   wardedOverlayRenderer: {fileID: 8353869160142383616}
   ironElement: {fileID: 2524705058797880500}
   silverElement: {fileID: 1508864970875896522}
+  hasBeenHit: 0
 --- !u!135 &6347886040529473197
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -80,6 +82,25 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.22
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3847659394300872278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 203305178815565052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 542fb89efbfb33e488b10719bf34201f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShatterEffect
+  shatterDuration: 1.5
+  destroyOnComplete: 1
+  shatterMaterial: {fileID: 2100000, guid: 9ab132ebd98630146b78bbeb385e9740, type: 2}
+  gridResolution: 60
+  cellCount: 45
+  seed: 42
+  randomiseSeed: 1
 --- !u!114 &1083474672853033318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,6 +129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DistanceScale
   influence: 0.15
+  finalSizeModifier: 1
 --- !u!1 &1508864970875896522
 GameObject:
   m_ObjectHideFlags: 0

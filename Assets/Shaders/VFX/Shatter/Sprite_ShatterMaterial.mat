@@ -7,12 +7,13 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Sprite_Dissolve
-  m_Shader: {fileID: 4800000, guid: 25b3fc7cb3fd7234092c22b90f8e00ea, type: 3}
+  m_Name: Sprite_ShatterMaterial
+  m_Shader: {fileID: 4800000, guid: 4e1b031fb3ad1474f915db6197551e02, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _FLATSHATTER_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -29,12 +30,15 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _DissolveAmount: 0
-    - _EdgeWidth: 0.3
-    - _NoiseScale: 10
+    - _EnableGravity: 0
+    - _FadeSpeed: 9
+    - _FadeStart: 0.05
+    - _FlatShatter: 1
+    - _GravityStrength: 5
+    - _RotationSpeed: 15
+    - _ShatterAmount: 0
+    - _SpreadForce: 12
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EdgeColor1: {r: 0, g: 0, b: 0, a: 1}
-    - _EdgeColor2: {r: 2, g: 0, b: 1.2647381, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

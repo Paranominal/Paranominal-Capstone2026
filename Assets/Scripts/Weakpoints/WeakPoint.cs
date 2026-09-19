@@ -175,11 +175,21 @@ public class WeakPoint : MonoBehaviour
         remainingShots -= 1;
         if (remainingShots > 0) return;
 
-        // Correct hit: hide this point and advance sequence to the next one
-        Hide();
-        // set state to hasbeenhit.
+        // play shatter on the active element if available, otherwise hide immediately
+        ShatterEffect shatter = GetComponent<ShatterEffect>();
+
+        if (shatter != null && currentRenderers != null && currentRenderers.Length > 0)
+        {
+            shatter.Play(currentRenderers[0]);
+            if (weakPointCollider != null)
+                weakPointCollider.enabled = false;
+        }
+        else
+        {
+            Hide();
+        }
+
         hasBeenHit = true;
-        // weakpointManager.NextInSequence();
     }
 
     public float GetAccuracy(Ray ray)
