@@ -9,7 +9,7 @@ public class GameOverDisplay : MonoBehaviour
     {
         if (scoreText != null)
         {
-            scoreText.text = $"Final score: {GameOverHandler.FinalScore}";
+            scoreText.text = $"{GameOverHandler.FinalScore}";
         }
     }
 }
