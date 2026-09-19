@@ -30,7 +30,8 @@ public class NameEntryController : MonoBehaviour
         string enteredName = nameInputField != null ? nameInputField.text : string.Empty;
         if (string.IsNullOrWhiteSpace(enteredName))
         {
-            enteredName = defaultName;
+            // enteredName = defaultName;
+            return;
         }
 
         if (LeaderboardManager.Instance != null)
