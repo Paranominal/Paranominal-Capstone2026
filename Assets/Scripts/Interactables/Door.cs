@@ -15,6 +15,15 @@ public class Door : MonoBehaviour, IInteractable
     [SerializeField] private DoorState state = DoorState.Closed;
     [SerializeField] private DoorLock[] doorLocks;
 
+    [Header("One-Way")]
+    [SerializeField] private bool isOneWay = false;
+    [ShowIf("isOneWay")]
+    [Tooltip("When enabled, the accessible side is flipped to the door's back face.")]
+    [SerializeField] private bool flipAccessibleSide = false;
+    [ShowIf("isOneWay")]
+    [Tooltip("When enabled, the door becomes two-way once all locks are unlocked.")]
+    [SerializeField] private bool twoWayWhenUnlocked = true;
+
     [Header("Movement")]
     [SerializeField] private float speed = 10f;
     [SerializeField] private float openAngle = -90f;
@@ -61,31 +70,65 @@ public class Door : MonoBehaviour, IInteractable
         if (player != null && state == DoorState.Open &&
             Vector3.Distance(player.transform.position, transform.position) > ajarDistance)
         {
-            Ajar();
+            // one-way locked doors close fully so the lock remains meaningful
+            if (isOneWay && HasLockedLocks())
+                Close();
+            else
+                Ajar();
         }
     }
 
     public void Interact(InteractionContext context)
     {
-        DoorLock firstRemainingLock = null;
+        bool locked = HasLockedLocks();
+        bool effectivelyOneWay = IsEffectivelyOneWay();
+        bool onAccessibleSide = IsPlayerOnAccessibleSide();
 
-        if (doorLocks != null)
+        if (locked)
         {
-            foreach (DoorLock doorLock in doorLocks)
+            // one-way + locked: accessible side bypasses locks entirely
+            if (effectivelyOneWay && onAccessibleSide)
             {
-                if (doorLock == null || !doorLock.IsLocked)
-                    continue;
-
-                if (doorLock.CanUnlock(context))
-                    doorLock.TryUnlock(context, false);
-                else if (firstRemainingLock == null)
-                    firstRemainingLock = doorLock;
+                Toggle();
+                return;
             }
-        }
 
-        if (HasLockedLocks())
+            // standard lock logic (both sides for non-one-way, inaccessible side for one-way)
+            DoorLock firstRemainingLock = null;
+            bool unlockedSomething = false;
+
+            if (doorLocks != null)
+            {
+                foreach (DoorLock doorLock in doorLocks)
+                {
+                    if (doorLock == null || !doorLock.IsLocked)
+                        continue;
+
+                    if (doorLock.CanUnlock(context))
+                    {
+                        doorLock.TryUnlock(context, false);
+                        unlockedSomething = true;
+                    }
+                    else if (firstRemainingLock == null)
+                    {
+                        firstRemainingLock = doorLock;
+                    }
+                }
+            }
+
+            if (HasLockedLocks())
+            {
+                firstRemainingLock?.PlayLockedFeedback();
+                return;
+            }
+
+            // just unlocked the last lock: don't auto-open, player interacts again to open
+            if (unlockedSomething)
+                return;
+        }
+        else if (effectivelyOneWay && !onAccessibleSide)
         {
-            firstRemainingLock?.PlayLockedFeedback();
+            // no locks, one-way, wrong side: blocked
             return;
         }
 
@@ -94,12 +137,34 @@ public class Door : MonoBehaviour, IInteractable
 
     public InteractionPrompt ResolvePrompt(InteractionContext context)
     {
-        if (HasLockedLocks())
+        bool locked = HasLockedLocks();
+        bool effectivelyOneWay = IsEffectivelyOneWay();
+        bool onAccessibleSide = IsPlayerOnAccessibleSide();
+
+        if (locked)
         {
+            if (effectivelyOneWay && onAccessibleSide)
+            {
+                return new InteractionPrompt
+                {
+                    label = state == DoorState.Open ? "Close" : "Open",
+                    actionName = "Collect"
+                };
+            }
+
             return new InteractionPrompt
             {
                 label = CanUnlockAnyLock(context) ? "Unlock" : "Locked",
                 actionName = "Collect"
+            };
+        }
+
+        if (effectivelyOneWay && !onAccessibleSide)
+        {
+            return new InteractionPrompt
+            {
+                label = "Won't open from this side",
+                actionName = ""
             };
         }
 
@@ -113,7 +178,7 @@ public class Door : MonoBehaviour, IInteractable
     public void Toggle()
     {
         if (state == DoorState.Open)
-            Ajar();
+            Close();
         else
             Open();
     }
@@ -174,4 +239,44 @@ public class Door : MonoBehaviour, IInteractable
 
         return false;
     }
+
+    // One-Way
+    private bool IsEffectivelyOneWay()
+    {
+        if (!isOneWay) return false;
+        if (twoWayWhenUnlocked && !HasLockedLocks()) return false;
+        return true;
+    }
+
+    private bool IsPlayerOnAccessibleSide()
+    {
+        if (player == null) return true;
+
+        Vector3 toPlayer = player.transform.position - transform.position;
+        toPlayer.y = 0f;
+        if (toPlayer.sqrMagnitude < 0.001f) return true;
+
+        bool inFront = Vector3.Dot(transform.forward, toPlayer.normalized) > 0f;
+        return flipAccessibleSide ? !inFront : inFront;
+    }
+
+    #if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        if (!isOneWay) return;
+
+        Vector3 direction = flipAccessibleSide ? -transform.forward : transform.forward;
+        Vector3 start = transform.position + Vector3.up * 1f;
+        Vector3 end = start + direction * 1.5f;
+
+        // arrow shaft
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(start, end);
+
+        // arrowhead
+        Vector3 right = Vector3.Cross(Vector3.up, direction).normalized;
+        Gizmos.DrawLine(end, end + (-direction + right) * 0.3f);
+        Gizmos.DrawLine(end, end + (-direction - right) * 0.3f);
+    }
+    #endif
 }
