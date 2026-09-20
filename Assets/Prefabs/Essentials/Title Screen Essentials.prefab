@@ -232,7 +232,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RememberSelectedUI
   eventSystem: {fileID: 2149148507806674314}
   lastSelectedElement: {fileID: 0}
-  uiNavigateAction: {fileID: -8784545083839296357, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  uiNavigateAction: {fileID: 6954989629675941952, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  uiMouseMoveAction: {fileID: 3001919216989983466, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
 --- !u!1 &4655600509328943638
 GameObject:
   m_ObjectHideFlags: 0
@@ -607,6 +608,42 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3857157547349359798, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+      propertyPath: m_Navigation.m_Mode
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3857157547349359798, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3857157547349359798, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3857157547349359798, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1339639178176877565}
+    - target: {fileID: 3857157547349359798, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3857157547349359798, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: PullFocus
+      objectReference: {fileID: 0}
+    - target: {fileID: 3857157547349359798, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: UIPullFocus, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3857157547349359798, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_BoolArgument
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3857157547349359798, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 6404910134959271696, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -618,7 +655,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1322378229337074971, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1339639178176877565}
   m_SourcePrefab: {fileID: 100100000, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
 --- !u!4 &1792018561709135174 stripped
 Transform:
@@ -630,6 +670,37 @@ Camera:
   m_CorrespondingSourceObject: {fileID: 1833726786471812915, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
   m_PrefabInstance: {fileID: 3084807918960725728}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &4077296477002523643 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1322378229337074971, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+  m_PrefabInstance: {fileID: 3084807918960725728}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1339639178176877565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4077296477002523643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36be5761ccc11e14a8b9594d8935a1bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIPullFocus
+  eventSystem: {fileID: 2149148507806674314}
+  newFocus: {fileID: 0}
+  dialogueManager: {fileID: 7428166164169117759}
+--- !u!114 &7428166164169117759 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5609609027317604063, guid: 327d4097f40ff3141a40fc39dc695aa2, type: 3}
+  m_PrefabInstance: {fileID: 3084807918960725728}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf6d38aacf65a2f44931f6a277209af0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1001 &3450672147488257541
 PrefabInstance:
   m_ObjectHideFlags: 0
