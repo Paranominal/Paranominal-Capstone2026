@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Rendering; 
 
 public class PlayerDash : MonoBehaviour
 {
@@ -26,7 +27,6 @@ public class PlayerDash : MonoBehaviour
     [SerializeField] private float dullFadeAlpha = 0.5f;
     [Tooltip("How long to keep the full arrow visible once the cooldown completes (seconds).")]
     [SerializeField] private float showFullAfterCooldownSeconds = 1f;
-    [SerializeField] private Image speedLines = null;
     [Tooltip("Duration of the fade-out after the arrow display (seconds).")]
     [SerializeField] private float fadeOutDuration = 0.5f;
 
@@ -37,6 +37,15 @@ public class PlayerDash : MonoBehaviour
     [SerializeField] private float dashFovIncrease = 12f;
     [Tooltip("How fast to lerp the camera FOV (higher = faster).")]
     [SerializeField] private float fovLerpSpeed = 8f;
+
+    // Michael edit: replaced static Image with Volume-driven dash effects
+    [Header("Dash Effects")]
+    [Tooltip("Volume containing the DashEffectsVolumeComponent. If null, searches the scene.")]
+    [SerializeField] private Volume dashEffectsVolume = null;
+    [Tooltip("How quickly the dash effects reach full intensity when dashing (seconds).")]
+    [SerializeField] private float dashEffectsFadeIn = 0.05f;
+    [Tooltip("How quickly the dash effects fade out after a dash ends (seconds).")]
+    [SerializeField] private float dashEffectsFadeOut = 0.2f;
 
     [Header("Charge Dash")]
     [Tooltip("When enabled, dash consumes charges instead of using the normal cooldown behaviour.")]
@@ -68,6 +77,10 @@ public class PlayerDash : MonoBehaviour
     // reference to weapon events for listening to shot results
     private WeaponEvents weaponEvents = null;
 
+    // Michael edit: cached volume component reference and current fade value
+    private DashEffectsVolumeComponent dashEffectsComponent = null;
+    private float dashEffectsCurrent = 0f;
+
     // FOV handling
     private Camera cam = null;
     private bool fovActive = false; // whether we are currently lerping FOV
@@ -80,6 +93,9 @@ public class PlayerDash : MonoBehaviour
 
     private void Awake()
     {
+        // resolve UI references if not assigned (UI lives on SceneEssentialsBundle)
+        ResolveUIReferences();
+
         if (!dashUsesCharges)
         {
             chargeBarContainer.SetActive(false);
@@ -104,12 +120,27 @@ public class PlayerDash : MonoBehaviour
 
         if (weaponEvents != null)
             weaponEvents.ShotResolved += OnShotResolved;
+
+        // Michael edit: resolve volume reference and cache the component
+        if (dashEffectsVolume == null)
+            dashEffectsVolume = Object.FindAnyObjectByType<Volume>();
+
+        if (dashEffectsVolume != null)
+            dashEffectsVolume.sharedProfile.TryGet(out dashEffectsComponent);
+
+        // ensure effect starts off
+        if (dashEffectsComponent != null)
+            dashEffectsComponent.intensity.Override(0f);
     }
 
     private void OnDestroy()
     {
         if (weaponEvents != null)
             weaponEvents.ShotResolved -= OnShotResolved;
+
+        // Michael edit: zero out the effect so it doesn't persist after player is destroyed
+        if (dashEffectsComponent != null)
+            dashEffectsComponent.intensity.Override(0f);
     }
 
     private void OnShotResolved(ShotResult result)
@@ -243,9 +274,8 @@ public class PlayerDash : MonoBehaviour
 
         UpdateDashUI();
 
-        // Show speed lines while dashing
-        if (speedLines != null)
-            speedLines.enabled = isDashing;
+        // Michael edit: fade dash effects intensity toward target via volume component
+        UpdateDashEffects();
 
         // Handle FOV interpolation
         if (cam == null)
@@ -266,6 +296,44 @@ public class PlayerDash : MonoBehaviour
 
         // Update charge UI each frame (instant jumps per requirement)
         UpdateChargeUI();
+    }
+
+    // Michael edit: drives the volume component intensity based on dash state
+    private void UpdateDashEffects()
+    {
+        if (dashEffectsComponent == null)
+            return;
+
+        float target = isDashing ? 1f : 0f;
+        float fadeDuration = isDashing ? dashEffectsFadeIn : dashEffectsFadeOut;
+        float step = fadeDuration > 0f ? Time.deltaTime / fadeDuration : 1f;
+
+        dashEffectsCurrent = Mathf.MoveTowards(dashEffectsCurrent, target, step);
+        dashEffectsComponent.intensity.Override(dashEffectsCurrent);
+    }
+
+    private void ResolveUIReferences()
+    {
+        if (arrowContainer == null)
+        {
+            GameObject dashArrow = GameObject.Find("DashArrow");
+            if (dashArrow != null)
+            {
+                arrowContainer = dashArrow;
+                if (dullArrow == null) dullArrow = dashArrow.transform.Find("DullArrow")?.GetComponent<Image>();
+                if (fullArrow == null) fullArrow = dashArrow.transform.Find("FullArrow")?.GetComponent<Image>();
+            }
+        }
+
+        if (chargeBarContainer == null)
+        {
+            GameObject chargeBarObj = GameObject.Find("ChargeBar");
+            if (chargeBarObj != null)
+            {
+                chargeBarContainer = chargeBarObj;
+                if (chargeBar == null) chargeBar = chargeBarObj.transform.Find("BarCharge")?.GetComponent<Image>();
+            }
+        }
     }
 
     private void UpdateDashUI()

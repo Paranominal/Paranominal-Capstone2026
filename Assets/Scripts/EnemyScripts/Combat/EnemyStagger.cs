@@ -1,6 +1,7 @@
 // Summary:
 // Handles enemy stagger mechanics: tracks hits, triggers stagger when threshold is reached (or 1-hit during windup),
 // manages stagger duration with weakpoint extensions, and drives the stagger bar UI.
+// Bar fills from center outward (Sekiro-style) via the MiddleOutFill shader's _FillAmount property.
 
 using UnityEngine;
 using System.Collections;
@@ -10,7 +11,8 @@ using UnityEngine.UI;
 public class EnemyStagger : MonoBehaviour, IDamageable
 {
     [Header("Stagger Bar")]
-    [SerializeField] private Slider staggerBar;
+    [Tooltip("Root object to show/hide the stagger bar.")]
+    [SerializeField] private GameObject staggerBarRoot;
     [SerializeField] private Image staggerBarFill;
     [SerializeField] private Color barColor = new Color(1f, 1f, 1f, 1f);
     [SerializeField] private Color barResetColor = new Color(1f, 3f, 5f, 1f);
@@ -50,15 +52,41 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     public float DamageTaken => damageTaken;
     private float currentRecoveryBuffer = 0;
 
-    // hide stagger bar in Awake so it's never visible on spawn
+    // per-instance material for the fill shader
+    private Material fillMaterial;
+    private static readonly int FillAmountID = Shader.PropertyToID("_FillAmount");
+
+    // hide stagger bar in Awake and create a material instance so each enemy is independent
     private void Awake()
     {
-        if (staggerBar != null) staggerBar.gameObject.SetActive(false);
+        // resolve bar references if not assigned
+        if (staggerBarFill == null)
+        {
+            foreach (var img in GetComponentsInChildren<Image>(true))
+            {
+                if (img.name == "Fill") { staggerBarFill = img; break; }
+            }
+        }
+        if (staggerBarRoot == null && staggerBarFill != null)
+            staggerBarRoot = staggerBarFill.transform.parent.gameObject;
+
+        if (staggerBarFill != null)
+        {
+            fillMaterial = new Material(staggerBarFill.material);
+            staggerBarFill.material = fillMaterial;
+            fillMaterial.SetFloat(FillAmountID, 0f);
+        }
+        if (staggerBarRoot != null) staggerBarRoot.SetActive(false);
     }
 
     private void Update()
     {
         UpdateStaggerBar();
+    }
+
+    private void OnDestroy()
+    {
+        if (fillMaterial != null) Destroy(fillMaterial);
     }
 
 
@@ -130,30 +158,33 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     }
 
 
-    // Stagger Bar
+    // Stagger Bar (middle-out fill via shader _FillAmount)
     private void UpdateStaggerBar()
     {
-        if (staggerBar == null) return;
+        if (fillMaterial == null || staggerBarRoot == null) return;
 
         // drain the bar over time when not being hit
         if (currentRecoveryBuffer > 0) currentRecoveryBuffer -= Time.deltaTime;
         else if (damageTaken > 0) damageTaken -= Time.deltaTime * staggerResistance;
         else damageTaken = 0;
 
-        // show/hide bar based on value
-        if (staggerBar.value == 0) staggerBar.gameObject.SetActive(false);
-        else staggerBar.gameObject.SetActive(true);
-
         // bar display: stagger duration when staggered, hit progress when not
+        float fillAmount;
         if (isStaggered)
         {
-            staggerBar.value = currentStaggerTimeRemaining / staggerTime;
+            fillAmount = currentStaggerTimeRemaining / staggerTime;
             if (staggerBarFill != null) staggerBarFill.color = barResetColor;
         }
         else
         {
-            staggerBar.value = damageTaken / hitsToStagger;
+            fillAmount = damageTaken / hitsToStagger;
             if (staggerBarFill != null) staggerBarFill.color = barColor;
         }
+
+        fillAmount = Mathf.Clamp01(fillAmount);
+        fillMaterial.SetFloat(FillAmountID, fillAmount);
+
+        // show/hide bar based on value
+        staggerBarRoot.SetActive(fillAmount > 0f);
     }
 }

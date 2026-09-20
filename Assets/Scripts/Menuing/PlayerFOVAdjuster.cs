@@ -11,6 +11,10 @@ public class PlayerFOVAdjuster : MonoBehaviour
 
     void Start()
     {
+        // resolve camera reference (PlayerCam should be tagged MainCamera)
+        if (playerCamera == null)
+            playerCamera = Camera.main;
+
         fovValue = playerCamera.fieldOfView;
 
         if (fovSlider != null)

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 // Summary: Volume component for the Quantised Dither post-processing effect.
-[Serializable, VolumeComponentMenu("Post-processing/Quantised Dither")]
+[Serializable, VolumeComponentMenu("Custom Post-Processing/Quantised Dither")]
 public class QuantisedDitherVolume : VolumeComponent
 {
     [Tooltip("Number of quantisation levels for the red channel.")]

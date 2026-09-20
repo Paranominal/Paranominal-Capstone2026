@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 
 // Summary: Volume component for the Fear Vignette post-processing effect.
 // Parameters are driven programmatically by FearPostProcessEffects at runtime.
-[Serializable, VolumeComponentMenu("Post-processing/Fear Vignette")]
+[Serializable, VolumeComponentMenu("Custom Post-Processing/Fear Vignette")]
 public class FearVignetteVolume : VolumeComponent
 {
     [Tooltip("How far the vignette encroaches from the edges. 0 = none, 1 = full coverage.")]

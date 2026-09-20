@@ -16,12 +16,12 @@ MonoBehaviour:
   shader: {fileID: 4800000, guid: 2fd73c7f4202c2844aa4b47f69e48ae9, type: 3}
   defaultSettings:
     vignetteIntensity: 0
-    vignetteSoftness: 0.3
+    vignetteSoftness: 0.01
     vignetteColor: {r: 0, g: 0, b: 0, a: 1}
     noiseIntensity: 0
-    noiseScale: 6
-    noiseSpeed: 0.3
-    cycleDuration: 10
+    noiseScale: 1
+    noiseSpeed: 0
+    cycleDuration: 0
     blendMode: 0
 --- !u!114 &-6632190853482328111
 MonoBehaviour:
@@ -38,15 +38,15 @@ MonoBehaviour:
   m_Active: 1
   shader: {fileID: 4800000, guid: ea1da7bdb18994a49b465e6678af1f0b, type: 3}
   defaultSettings:
-    redSteps: 8
-    greenSteps: 8
-    blueSteps: 8
-    effectStrength: 1
-    ditherStrength: 1
-    bayerSize: 16
+    redSteps: 2
+    greenSteps: 2
+    blueSteps: 2
+    effectStrength: 0
+    ditherStrength: 0
+    bayerSize: 2
     usePS1Matrix: 0
     usePerceivedBrightness: 0
-    perceptualGamma: 0.5
+    perceptualGamma: 0.2
 --- !u!114 &-4580449277675019056
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,9 +62,9 @@ MonoBehaviour:
   m_Active: 1
   shader: {fileID: 4800000, guid: d826d02e526355d4dbe6480afca3d66c, type: 3}
   defaultSettings:
-    sharpness: 0.25
-    sampleDistance: 1
---- !u!114 &-4023522189989383855
+    sharpness: 0
+    sampleDistance: 0.25
+--- !u!114 &-3834394518179701780
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -73,19 +73,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d784d4e8cc601ce41a0f58993a3bc49a, type: 3}
-  m_Name: CRTRendererFeature
-  m_EditorClassIdentifier: Assembly-CSharp::CRTRendererFeature
+  m_Script: {fileID: 11500000, guid: 15212bc770a5be54099871fda74c4931, type: 3}
+  m_Name: DashEffects
+  m_EditorClassIdentifier: Assembly-CSharp::SpeedLinesRendererFeature
   m_Active: 1
-  shader: {fileID: 4800000, guid: 21ae8d357c065e8498d28a80d8726f54, type: 3}
-  defaultSettings:
-    curvature: 1
-    vignetteWidth: 30
-    scanlineIntensity: 0.3
-    scanlineCount: 300
-    cornerRadius: 0.05
-    cornerSharpness: 20
-    phosphorIntensity: 0.15
+  shader: {fileID: 4800000, guid: 28af316500bc58d44a0f8bbacaa25896, type: 3}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,8 +108,9 @@ MonoBehaviour:
   - {fileID: -6632190853482328111}
   - {fileID: 5538159499667830741}
   - {fileID: -6917648197494371644}
-  - {fileID: -4023522189989383855}
-  m_RendererFeatureMap: ad6b866f10d7b46cd0647c74a6f96ec0d14f97bf8eb9f5a3d5f727f7b87edb4cc40a3a9b9d93ff9f51f1c7bfe29329c8
+  - {fileID: -3834394518179701780}
+  - {fileID: 187165999634447737}
+  m_RendererFeatureMap: ad6b866f10d7b46cd0647c74a6f96ec0d14f97bf8eb9f5a3d5f727f7b87edb4cc40a3a9b9d93ff9fec9b314f807ec9ca79fd3d2a7cf29802
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -146,6 +139,30 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 0
+--- !u!114 &187165999634447737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d784d4e8cc601ce41a0f58993a3bc49a, type: 3}
+  m_Name: CRTRendererFeature
+  m_EditorClassIdentifier: Assembly-CSharp::CRTRendererFeature
+  m_Active: 1
+  shader: {fileID: 4800000, guid: 21ae8d357c065e8498d28a80d8726f54, type: 3}
+  defaultSettings:
+    blurOffset: 1
+    scanlineIntensity: 0.3
+    scanlineCount: 300
+    scanlineSpeed: 0.5
+    vignetteIntensity: 0.3
+    vignetteSmoothness: 0.3
+    usePhosphor: 0
+    phosphorIntensity: 0.15
+    phosphorScale: 2
 --- !u!114 &5538159499667830741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,7 +178,7 @@ MonoBehaviour:
   m_Active: 1
   shader: {fileID: 4800000, guid: f115d8cc24cf19b4783ed43bc62af2aa, type: 3}
   defaultSettings:
-    pixelSize: 4
+    pixelSize: 1
 --- !u!114 &7833122117494664109
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -15,6 +15,14 @@ public class PauseMenu : MonoBehaviour
 
     private void OnEnable()
     {
+        // resolve cross-prefab references
+        if (grimoire == null)
+            grimoire = FindFirstObjectByType<ALTGrimoire>();
+        if (playerUI == null)
+        {
+            GameObject uiObj = GameObject.Find("UI");
+            if (uiObj != null) playerUI = uiObj;
+        }
 
         UIResumeGame();
 

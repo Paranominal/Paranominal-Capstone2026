@@ -15,7 +15,7 @@ MonoBehaviour:
   active: 1
   pixelSize:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 2
 --- !u!114 &-7954653342275197760
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -38,40 +38,6 @@ MonoBehaviour:
   balance:
     m_OverrideState: 1
     m_Value: 28
---- !u!114 &-7622891503101639036
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e4136331b92bf04580dc6abad2aedba, type: 3}
-  m_Name: CRTVolume
-  m_EditorClassIdentifier: Assembly-CSharp::CRTVolume
-  active: 1
-  curvature:
-    m_OverrideState: 1
-    m_Value: 10
-  vignetteWidth:
-    m_OverrideState: 1
-    m_Value: 63.9
-  scanlineIntensity:
-    m_OverrideState: 1
-    m_Value: 0.031
-  scanlineCount:
-    m_OverrideState: 1
-    m_Value: 123
-  cornerRadius:
-    m_OverrideState: 1
-    m_Value: 0.2
-  cornerSharpness:
-    m_OverrideState: 1
-    m_Value: 100
-  phosphorIntensity:
-    m_OverrideState: 1
-    m_Value: 0.02
 --- !u!114 &-7465803131807806113
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -90,10 +56,74 @@ MonoBehaviour:
     m_Value: {x: 1, y: 1, z: 1, w: 0}
   gamma:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 1, z: 1, w: 0}
+    m_Value: {x: 1, y: 1, z: 1, w: 0.04389173}
   gain:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 1, z: 1, w: 0.20285504}
+    m_Value: {x: 1, y: 0.93438154, z: 0.9251053, w: 0.04191869}
+--- !u!114 &-6898977460747097792
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88a65961985fba643ab03cbe18fdbfba, type: 3}
+  m_Name: SpeedLinesVolumeComponent
+  m_EditorClassIdentifier: Assembly-CSharp::SpeedLinesVolumeComponent
+  active: 1
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0
+  enableBlur:
+    m_OverrideState: 1
+    m_Value: 1
+  sampleCount:
+    m_OverrideState: 1
+    m_Value: 8
+  blurStrength:
+    m_OverrideState: 1
+    m_Value: 0.2
+  centerFalloff:
+    m_OverrideState: 1
+    m_Value: 0.486
+  enableWarp:
+    m_OverrideState: 1
+    m_Value: 0
+  warpStrength:
+    m_OverrideState: 1
+    m_Value: -2
+  enableLines:
+    m_OverrideState: 1
+    m_Value: 1
+  linesColour:
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  linesTiling:
+    m_OverrideState: 1
+    m_Value: 200
+  linesRadialScale:
+    m_OverrideState: 1
+    m_Value: 0.1
+  linesPower:
+    m_OverrideState: 1
+    m_Value: 1
+  linesRemap:
+    m_OverrideState: 1
+    m_Value: 0.8
+  linesAnimation:
+    m_OverrideState: 1
+    m_Value: 3
+  maskScale:
+    m_OverrideState: 1
+    m_Value: 1.04
+  maskHardness:
+    m_OverrideState: 1
+    m_Value: 0
+  maskPower:
+    m_OverrideState: 1
+    m_Value: 5
 --- !u!114 &-2948373080095487420
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -186,7 +216,7 @@ MonoBehaviour:
     m_Value: 1
   noiseSpeed:
     m_OverrideState: 1
-    m_Value: -4.21
+    m_Value: -3.4312
   cycleDuration:
     m_OverrideState: 1
     m_Value: 2
@@ -208,7 +238,7 @@ MonoBehaviour:
   active: 1
   postExposure:
     m_OverrideState: 1
-    m_Value: 0.2
+    m_Value: 0.5
   contrast:
     m_OverrideState: 1
     m_Value: 14
@@ -258,11 +288,12 @@ MonoBehaviour:
   - {fileID: 3572142203986694889}
   - {fileID: -7954653342275197760}
   - {fileID: 2405007435555921013}
-  - {fileID: -7622891503101639036}
   - {fileID: -8989162280575926094}
   - {fileID: 1317798265248090415}
   - {fileID: 5312064039933448571}
   - {fileID: -2048086351416764788}
+  - {fileID: 2062061486308834597}
+  - {fileID: -6898977460747097792}
   - {fileID: -1841643297785110551}
   - {fileID: 8343280942440788295}
   - {fileID: 9140998113213102055}
@@ -290,10 +321,10 @@ MonoBehaviour:
     m_Value: 8
   effectStrength:
     m_OverrideState: 1
-    m_Value: 0.3
+    m_Value: 0.43
   ditherStrength:
     m_OverrideState: 1
-    m_Value: 0.578
+    m_Value: 0.43
   bayerSize:
     m_OverrideState: 1
     m_Value: 2
@@ -305,7 +336,47 @@ MonoBehaviour:
     m_Value: 1
   perceptualGamma:
     m_OverrideState: 1
-    m_Value: 0.639
+    m_Value: 0.657
+--- !u!114 &2062061486308834597
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e4136331b92bf04580dc6abad2aedba, type: 3}
+  m_Name: CRTVolume
+  m_EditorClassIdentifier: Assembly-CSharp::CRTVolume
+  active: 1
+  blurOffset:
+    m_OverrideState: 1
+    m_Value: 1
+  scanlineIntensity:
+    m_OverrideState: 1
+    m_Value: 0.2
+  scanlineCount:
+    m_OverrideState: 1
+    m_Value: 150
+  scanlineSpeed:
+    m_OverrideState: 1
+    m_Value: 3
+  vignetteIntensity:
+    m_OverrideState: 1
+    m_Value: 0.43
+  vignetteSmoothness:
+    m_OverrideState: 1
+    m_Value: 0.4
+  usePhosphor:
+    m_OverrideState: 1
+    m_Value: 1
+  phosphorIntensity:
+    m_OverrideState: 1
+    m_Value: 0.3
+  phosphorScale:
+    m_OverrideState: 1
+    m_Value: 2.09
 --- !u!114 &2405007435555921013
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -598,7 +669,7 @@ MonoBehaviour:
         m_PostInfinity: 2
         m_RotationOrder: 4
   satVsSat:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value:
       <length>k__BackingField: 2
       m_Loop: 0
