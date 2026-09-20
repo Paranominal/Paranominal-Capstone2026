@@ -379,16 +379,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   enemyClass: 0
   skipSpawn: 0
-  spawnDelay: 1.5
+  spawnDelay: 1
   alwaysAggro: 0
   aggroRange: 15
   movementScript: {fileID: 3311171845288023246}
-  chasePlayer: 1
-  onlyChaseIfAttackReady: 0
-  neverGiveUpChase: 0
-  chaseRange: 20
-  kamikazeOnContact: 0
-  contactDamage: 10
   attacks:
   - {fileID: 7537058298590536078}
   stagger: {fileID: 1700465578617832570}
@@ -400,6 +394,9 @@ MonoBehaviour:
   numberOfSummons: 3
   summonRadius: 3
   debugMode: 0
+  _state: Inactive
+  _activeAttack: None
+  _orbitDistance: 0
 --- !u!114 &3311171845288023246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -412,17 +409,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a643fed73d423384c9d7779bfe27306c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GroundMovement
-  chaseSpeed: 4
-  chaseStopDistance: 2.5
+  chaseEnabled: 1
+  strafeRadius: 5
+  chaseSpeed: 6
   chaseEasing: 0.5
+  onlyChaseIfAttackReady: 1
+  neverGiveUpChase: 0
+  chaseRange: 20
   returnToOrigin: 1
   returnSpeed: 3
   retreatEnabled: 0
   retreatDistance: 5
   retreatSpeed: 4
   strafeEnabled: 0
-  strafeSpeed: 3
-  strafeDirectionInterval: 2
+  strafeSpeed: 0.1
+  strafeDirectionInterval: 3
 --- !u!114 &7537058298590536078
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -438,7 +439,8 @@ MonoBehaviour:
   attackRange: 2
   cooldownTime: 2
   windupIndicator: {fileID: 2368134177575591389}
-  damageFieldPrefab: {fileID: 5792883796589563391, guid: 436770d337914f544b39a71aaa614273, type: 3}
+  moveWhileWindingUp: 0
+  damageFieldPrefab: {fileID: 5792883796589563391, guid: feb51d2839177d141b3b4a6aff0c20df, type: 3}
   damageFieldHeight: 1
   targetLayers:
     serializedVersion: 2
@@ -447,9 +449,9 @@ MonoBehaviour:
   damageOverTime: 0
   damageTickRate: 0.5
   windupDuration: 0.6
-  strikeDuration: 0.15
+  strikeDuration: 0.2
   recoveryDuration: 0.4
-  windupTurnSpeed: 90
+  windupTurnSpeed: 25
   damage: 10
   attackIndicator: {fileID: 4629690271324483430}
   debugMode: 0

@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private bool skipSpawn;
     [ShowIf("skipSpawn", false)]
     [Tooltip("Time in seconds it takes the enemy to spawn.")]
-    [SerializeField] private float spawnDelay = 3f;
+    [SerializeField] private float spawnDelay = 1f;
 
     [Header("Aggro")]
     [SerializeField] private bool alwaysAggro;
@@ -372,7 +372,7 @@ public class Enemy : MonoBehaviour
         {
             if (attacks[i] == null || !attacks[i].isActiveAndEnabled) continue;
             if (!attacks[i].IsReady) continue;
-            if (dist > attacks[i].AttackRange) continue;
+            if (dist > attacks[i].AttackRange + 0.5f) continue;
             if (attacks[i].ShouldUse(playerTransform)) return attacks[i];
         }
 
@@ -381,7 +381,7 @@ public class Enemy : MonoBehaviour
         {
             if (attacks[i] == null || !attacks[i].isActiveAndEnabled) continue;
             if (!attacks[i].IsReady) continue;
-            if (dist > attacks[i].AttackRange) continue;
+            if (dist > attacks[i].AttackRange + 0.5f) continue;
             return attacks[i];
         }
 
@@ -447,7 +447,7 @@ public class Enemy : MonoBehaviour
         float dist = DistanceToPlayer();
         for (int i = 0; i < attacks.Length; i++)
         {
-            if (attacks[i] != null && attacks[i].isActiveAndEnabled && dist < attacks[i].AttackRange)
+            if (attacks[i] != null && attacks[i].isActiveAndEnabled && dist < attacks[i].AttackRange + 0.5f)
                 return true;
         }
         return false;

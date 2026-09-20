@@ -182,6 +182,37 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &1509884874783530826
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1178210139682359718}
+  m_Layer: 0
+  m_Name: ProjectileOrigin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1178210139682359718
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1509884874783530826}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.492, z: -0.45039997}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8888016279020907817}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3405094692788164722
 GameObject:
   m_ObjectHideFlags: 0
@@ -1191,7 +1222,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 480061418811518783, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
       propertyPath: summonRadius
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 480061418811518783, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
       propertyPath: summonsPrefab
@@ -1205,6 +1236,14 @@ PrefabInstance:
       propertyPath: numberOfSummons
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 480061418811518783, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
+      propertyPath: attacks.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 480061418811518783, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
+      propertyPath: 'attacks.Array.data[1]'
+      value: 
+      objectReference: {fileID: 5422026018652403176}
     - target: {fileID: 480061418811518783, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
       propertyPath: summonOnCycles.Array.size
       value: 2
@@ -1243,7 +1282,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1049033662998195316, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
       propertyPath: m_Name
-      value: (Updated) Haunted Statue (Boss)
+      value: Haunted Statue (Boss)
       objectReference: {fileID: 0}
     - target: {fileID: 1199629963655329915, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
       propertyPath: weakpoints.Array.size
@@ -1337,6 +1376,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1777833132711805493, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.81
+      objectReference: {fileID: 0}
     - target: {fileID: 1999240443998552573, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1374,6 +1417,10 @@ PrefabInstance:
       value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 3147146313295953652, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.39
+      objectReference: {fileID: 0}
+    - target: {fileID: 3147146313295953652, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
@@ -1388,6 +1435,10 @@ PrefabInstance:
     - target: {fileID: 3580518955538096315, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
       propertyPath: barResetColor.b
       value: 0.05433607
+      objectReference: {fileID: 0}
+    - target: {fileID: 4686161657858057583, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.36
       objectReference: {fileID: 0}
     - target: {fileID: 4940717367297730836, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
       propertyPath: m_LocalScale.x
@@ -1503,6 +1554,9 @@ PrefabInstance:
     - {fileID: 4098680645419583886, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 9002036258510447634, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
+      insertIndex: 0
+      addedObject: {fileID: 1178210139682359718}
+    - targetCorrespondingSourceObject: {fileID: 9002036258510447634, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8940663537644137109}
     - targetCorrespondingSourceObject: {fileID: 9002036258510447634, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
@@ -1523,8 +1577,49 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 9002036258510447634, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3556363054842388683}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 827877862285555472, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5422026018652403176}
   m_SourcePrefab: {fileID: 100100000, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
+--- !u!212 &690971530832077356 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 1018914182935538455, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
+  m_PrefabInstance: {fileID: 555416096784353595}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &921000936160968235 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 827877862285555472, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
+  m_PrefabInstance: {fileID: 555416096784353595}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5422026018652403176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 921000936160968235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1ef647f0810f5f4f96d9ee7d842cc95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_Ranged
+  attackRange: 12
+  cooldownTime: 2
+  windupIndicator: {fileID: 690971530832077356}
+  moveWhileWindingUp: 0
+  projectilePrefab: {fileID: 7624500336100165174, guid: fe5693905aa37ea469a828f41d5b32d5, type: 3}
+  damage: 8
+  initialVelocity: 0
+  maxVelocity: 20
+  acceleration: 5
+  lifetime: 2
+  launchPoint: {fileID: 1178210139682359718}
+  targetHeightOffset: 1
+  windupDuration: 0.4
+  recoveryDuration: 0.5
+  windupTurnSpeed: 180
+  debugMode: 0
 --- !u!4 &8888016279020907817 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9002036258510447634, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
@@ -1746,7 +1841,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.992583
+      value: 2.392583
       objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalPosition.z

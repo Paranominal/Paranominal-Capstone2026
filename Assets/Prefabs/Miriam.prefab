@@ -52,7 +52,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 64847747541597050}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -755,13 +755,13 @@ MonoBehaviour:
   vignetteColor: {r: 1, g: 0.7137255, b: 0.84047383, a: 1}
   blendMode: 3
   effectStrength: 1
-  vignetteIntensityMax: 0.7
-  vignetteSoftness: 0.97
-  noiseIntensityMax: 1.24
-  noiseScale: 6
-  noiseSpeedMin: 0.1
-  noiseSpeedMax: 0.5
-  cycleDuration: 10
+  vignetteIntensityMax: 0.53
+  vignetteSoftness: 0.51
+  noiseIntensityMax: 0.85
+  noiseScale: -1.13
+  noiseSpeedMin: -4.21
+  noiseSpeedMax: -1.85
+  cycleDuration: 2
 --- !u!114 &2395450753178358459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -862,7 +862,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.506
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -959,7 +959,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.251
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -1095,7 +1095,7 @@ MonoBehaviour:
   airInertiaMultiplier: 1.5
   gravity: 9.81
   groundedStickForce: -2
-  audioSource: {fileID: 795694508415802441}
+  audioSource: {fileID: 0}
   playerFootstep: {fileID: 11400000, guid: 95221a47635bbbf4693a9f1c94b2689b, type: 2}
   footstepInterval: 0.45
 --- !u!114 &2707172803116468795
@@ -1120,7 +1120,7 @@ MonoBehaviour:
   arrowContainer: {fileID: 3289152189649261460}
   dullFadeAlpha: 0.5
   showFullAfterCooldownSeconds: 1
-  speedLines: {fileID: 1862415195859651775}
+  speedLines: {fileID: 0}
   fadeOutDuration: 0.5
   playerCamera: {fileID: 6654618607449089807}
   dashFovIncrease: 30
@@ -1288,7 +1288,6 @@ MonoBehaviour:
   m_CameraType: 0
   m_Cameras:
   - {fileID: 5940204994785997246}
-  - {fileID: 0}
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
@@ -3065,7 +3064,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 273836561670073298, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -3085,11 +3084,11 @@ PrefabInstance:
       objectReference: {fileID: 8956652460274281639}
     - target: {fileID: 1553545264737492289, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1553545264737492289, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2847827877754305373, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: fearBar
