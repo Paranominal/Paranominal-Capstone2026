@@ -525,14 +525,14 @@ MonoBehaviour:
   mediumActionBeat: {fileID: 11400000, guid: 22bc890138b5f3e40a6dc36d71175f8c, type: 2}
   lowIdleBeat: {fileID: 11400000, guid: 0314c87769513fd42bcc1b4d4b137ed6, type: 2}
   lowActionBeat: {fileID: 11400000, guid: cc9e08c105181bf45be5ee90f495a25e, type: 2}
-  mediumVolumeMin: 0.1
+  mediumVolumeMin: 1
   mediumVolumeMax: 0.4
   lowVolumeMin: 0.4
-  lowVolumeMax: 1
-  mediumInterval: 1.2
-  mediumActionInterval: 0.9
-  lowInterval: 0.8
-  lowActionInterval: 0.6
+  lowVolumeMax: 0.1
+  mediumInterval: 0.8
+  mediumActionInterval: 0.6
+  lowInterval: 1.2
+  lowActionInterval: 0.9
 --- !u!114 &1075438856331412565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -619,7 +619,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameOverHandler
   fearBar: {fileID: 1642531195737763663}
   scoreManager: {fileID: 2395450753178358459}
-  endScreenBuildIndex: 2
+  nameEntrySceneBuildIndex: 0
 --- !u!114 &3000788553867072500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -884,6 +884,7 @@ MonoBehaviour:
   sprintStrength: 1
   slowWalkPercent: 0.3
   jumpHeight: 0.8
+  dashEnabled: 0
   playerDash: {fileID: 2707172803116468795}
   inertiaPower: 0.1
   airInertiaMultiplier: 1.5
@@ -906,8 +907,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDash
   dashSpeed: 15
   dashDuration: 0.2
-  allowAirDash: 0
-  allowDashJump: 0
+  allowAirDash: 1
+  allowDashJump: 1
   dashCooldown: 1
   dullArrow: {fileID: 0}
   fullArrow: {fileID: 0}
@@ -1252,7 +1253,7 @@ Light:
   serializedVersion: 12
   m_Type: 0
   m_Color: {r: 1, g: 0.4983992, b: 0, a: 1}
-  m_Intensity: 3
+  m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 81.444954
   m_InnerSpotAngle: 39.383453
@@ -1682,7 +1683,7 @@ Light:
   serializedVersion: 12
   m_Type: 0
   m_Color: {r: 0, g: 0.8787062, b: 1, a: 1}
-  m_Intensity: 5
+  m_Intensity: 4
   m_Range: 10
   m_SpotAngle: 58.900528
   m_InnerSpotAngle: 15.866337
@@ -2281,11 +2282,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.004920755
+      value: -0.00029782837
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.00046441454
+      value: -0.0003792724
       objectReference: {fileID: 0}
     - target: {fileID: 1090110928602918560, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: playerInputReader

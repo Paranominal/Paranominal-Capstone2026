@@ -393,7 +393,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_Ranged
   attackRange: 12
-  cooldownTime: 2
+  cooldownTime: 5
   windupIndicator: {fileID: 8589463809482336887}
   moveWhileWindingUp: 0
   projectilePrefab: {fileID: 7624500336100165174, guid: 149546affb6a6e94ab12ce1b5afe0c2f, type: 3}
@@ -402,7 +402,7 @@ MonoBehaviour:
   maxVelocity: 20
   acceleration: 5
   lifetime: 2
-  launchPoint: {fileID: 0}
+  launchPoint: {fileID: 405425814696291350}
   targetHeightOffset: 1
   windupDuration: 0.4
   recoveryDuration: 0.5
@@ -471,6 +471,7 @@ MonoBehaviour:
   dissolveDuration: 2
   destroyOnComplete: 1
   dissolveMaterial: {fileID: 2100000, guid: 93188b6e93fe3b747b991f0453519fd3, type: 2}
+  targetRenderers: []
 --- !u!195 &8235556267777150077
 NavMeshAgent:
   m_ObjectHideFlags: 0
