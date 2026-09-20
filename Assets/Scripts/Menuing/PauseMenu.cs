@@ -42,6 +42,7 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
+    private bool isPauseMenuOpen;
 
     void Update()
     {
@@ -49,7 +50,7 @@ public class PauseMenu : MonoBehaviour
         if (pauseAction != null && pauseAction.action != null && pauseAction.action.WasPressedThisFrame())
         {
             // Toggle pause state on Escape key press
-                        if (pauseManager.IsPaused)
+            if (!isPauseMenuOpen)
             {
                 UIPauseGame();
             }
@@ -63,6 +64,7 @@ public class PauseMenu : MonoBehaviour
     public void UIPauseGame()
     {
         pauseManager.PauseGame();
+        isPauseMenuOpen = true;
         // Make PauseMenu panel visible (activate its gameObject)
         playerUI.SetActive(false);
         pauseScreen.SetActive(true);
@@ -72,6 +74,7 @@ public class PauseMenu : MonoBehaviour
     public void UIResumeGame()
     {
         pauseManager.ResumeGame();
+        isPauseMenuOpen = false;
         if (grimoire != null)
         {
             grimoire.ForceCloseForPause();
