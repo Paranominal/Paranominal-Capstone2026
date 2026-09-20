@@ -8,7 +8,6 @@ public class WeaponAudio : MonoBehaviour
     [SerializeField] private WeaponEvents weaponEvents;
     [SerializeField] private AudioSource fireSource;
     [SerializeField] private AudioSource reloadSource;
-    [SerializeField] private AudioSource misfireSource;
 
     [Header("Sounds")]
     [SerializeField] private SoundDataSO shotgunFire;
@@ -27,6 +26,7 @@ public class WeaponAudio : MonoBehaviour
     {
         if (weaponEvents == null) weaponEvents = GetComponent<WeaponEvents>();
         if (fireSource == null) fireSource = GetComponent<AudioSource>();
+        if (reloadSource == null) reloadSource = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
@@ -57,6 +57,6 @@ public class WeaponAudio : MonoBehaviour
 
     private void OnMisfired()
     {
-        if (shotgunMisfire != null) AudioManager.PlaySound(shotgunMisfire, misfireSource != null ? misfireSource : fireSource);
+        if (shotgunMisfire != null) AudioManager.PlaySound(shotgunMisfire, reloadSource);
     }
 }
