@@ -2,15 +2,19 @@ using UnityEngine;
 
 public class AbilityManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] private ALTGrimoire grimoire;
+    [SerializeField] private PlayerMover playerMover;
+    [SerializeField] private string dashEntryName;
+    private bool dashObtained;
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if (!dashObtained && grimoire.entries.Exists(dashEntry => dashEntry.entryName == dashEntryName)) GainDash();
+    }
+
+    void GainDash()
+    {
+        playerMover.dashEnabled = true;
+        dashObtained = true;
     }
 }

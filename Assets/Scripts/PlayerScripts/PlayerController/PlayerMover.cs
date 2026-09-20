@@ -15,6 +15,7 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private float jumpHeight = 1.5f;
 
     [Header("Dash")]
+    public bool dashEnabled = true;
     [SerializeField] private PlayerDash playerDash;
 
     [Header("Inertia")]
@@ -94,7 +95,7 @@ public class PlayerMover : MonoBehaviour
             }
         }
         // PlayerDash handles dash state and input
-        if (playerDash != null)
+        if (playerDash != null && dashEnabled)
             playerDash.HandleDashInput(dashInput, desiredDirection, transform, characterController, Time.deltaTime);
 
         // Handle jump input. If allowDashJump is enabled, jumping while dashing is allowed and will end the dash.
