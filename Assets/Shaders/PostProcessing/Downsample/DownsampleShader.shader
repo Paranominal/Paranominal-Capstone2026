@@ -41,13 +41,15 @@ Shader "Custom/URP/DownsampleShader"
                 float _PixelSize; // Size of each pixel block.
             CBUFFER_END
 
+            float _ResolutionScale; // EDIT (RenderResolutionManager): Global resolution scale (set by RenderResolutionManager).
+
             half4 Frag(Varyings input) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
                 float2 uv = input.texcoord; // Use fullscreen pass UV coords to sample the current rendered screen image.
 
-                float pixelSize = max(_PixelSize, 1.0); // Make sure that pixel block size is never less than one screen pixel.
+                float pixelSize = max(_PixelSize, 1.0) * _ResolutionScale; // EDIT (RenderResolutionManager): Scale pixel blocks with resolution so they stay visually consistent.
 
                 float2 screenPos = uv * _ScreenParams.xy; // Convert from UV space to screen pixel space.
 

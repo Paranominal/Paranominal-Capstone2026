@@ -51,6 +51,8 @@ Shader "Custom/URP/CRTShader"
                 float _PhosphorScale;
             CBUFFER_END
 
+            float _ResolutionScale; // EDIT (RenderResolutionManager): Global resolution scale (set by RenderResolutionManager).
+
             half4 Frag(Varyings input) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
@@ -79,7 +81,7 @@ Shader "Custom/URP/CRTShader"
                 if (_UsePhosphor > 0.5 && _PhosphorIntensity > 0.001)
                 {
                     float2 screenPos = uv * _ScreenParams.xy;
-                    int pixel = (int)(screenPos.x / _PhosphorScale) % 3;
+                    int pixel = (int)(screenPos.x / (_PhosphorScale * _ResolutionScale)) % 3; // EDIT (RenderResolutionManager): Scale phosphor columns with resolution.
 
                     float dim = 1.0 - _PhosphorIntensity;
                     float3 mask = float3(1, 1, 1);
