@@ -11,20 +11,23 @@ public class SpriteBillboard : MonoBehaviour
     [Header("Preferences")] 
     [SerializeField] bool easing = false;
     [ShowIf("easing", true), SerializeField] private float easeSpeed = 0.1f;
-    void Update()
+
+    private void Update()
     {
         if (easing) DoSlow();
         else DoImmediate();
     }
+
     Vector3 targetRotation;
-    void DoSlow()
+
+    private void DoSlow()
     {
         targetRotation = Quaternion.LookRotation(Camera.main.transform.position - transform.position).eulerAngles;
         if (!rotateX) targetRotation = new Vector3(0, targetRotation.y, targetRotation.z);
         Vector3.Slerp(transform.rotation.eulerAngles, targetRotation, Time.deltaTime * easeSpeed);
     }
 
-    void DoImmediate()
+    public void DoImmediate()
     {
         targetRotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position).eulerAngles;
         if (!rotateX) targetRotation = new Vector3(0, targetRotation.y, targetRotation.z);
