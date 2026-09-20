@@ -159,27 +159,33 @@ MonoBehaviour:
   m_Name: CRTVolume
   m_EditorClassIdentifier: Assembly-CSharp::CRTVolume
   active: 1
-  curvature:
+  blurOffset:
     m_OverrideState: 1
     m_Value: 1
-  vignetteWidth:
-    m_OverrideState: 1
-    m_Value: 30
   scanlineIntensity:
     m_OverrideState: 1
     m_Value: 0.3
   scanlineCount:
     m_OverrideState: 1
     m_Value: 300
-  cornerRadius:
+  scanlineSpeed:
     m_OverrideState: 1
-    m_Value: 0.05
-  cornerSharpness:
+    m_Value: 0.5
+  vignetteIntensity:
     m_OverrideState: 1
-    m_Value: 20
+    m_Value: 0.3
+  vignetteSmoothness:
+    m_OverrideState: 1
+    m_Value: 0.3
+  usePhosphor:
+    m_OverrideState: 1
+    m_Value: 0
   phosphorIntensity:
     m_OverrideState: 1
     m_Value: 0.15
+  phosphorScale:
+    m_OverrideState: 1
+    m_Value: 2
 --- !u!114 &-6335409530604852063
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -333,6 +339,70 @@ MonoBehaviour:
   cropToFit:
     m_OverrideState: 1
     m_Value: 1
+--- !u!114 &-1663095977352337940
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88a65961985fba643ab03cbe18fdbfba, type: 3}
+  m_Name: DashEffectsVolumeComponent
+  m_EditorClassIdentifier: Assembly-CSharp::DashEffectsVolumeComponent
+  active: 1
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0
+  enableBlur:
+    m_OverrideState: 1
+    m_Value: 1
+  sampleCount:
+    m_OverrideState: 1
+    m_Value: 8
+  blurStrength:
+    m_OverrideState: 1
+    m_Value: 0.1
+  centerFalloff:
+    m_OverrideState: 1
+    m_Value: 0.3
+  enableWarp:
+    m_OverrideState: 1
+    m_Value: 1
+  warpStrength:
+    m_OverrideState: 1
+    m_Value: 0.3
+  enableLines:
+    m_OverrideState: 1
+    m_Value: 1
+  linesColour:
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  linesTiling:
+    m_OverrideState: 1
+    m_Value: 200
+  linesRadialScale:
+    m_OverrideState: 1
+    m_Value: 0.1
+  linesPower:
+    m_OverrideState: 1
+    m_Value: 1
+  linesRemap:
+    m_OverrideState: 1
+    m_Value: 0.8
+  linesAnimation:
+    m_OverrideState: 1
+    m_Value: 3
+  maskScale:
+    m_OverrideState: 1
+    m_Value: 1
+  maskHardness:
+    m_OverrideState: 1
+    m_Value: 0
+  maskPower:
+    m_OverrideState: 1
+    m_Value: 5
 --- !u!114 &-1594957042513838499
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -544,6 +614,7 @@ MonoBehaviour:
   - {fileID: 6622523080203350243}
   - {fileID: -1594957042513838499}
   - {fileID: 8269225185714537850}
+  - {fileID: -1663095977352337940}
 --- !u!114 &853819529557874667
 MonoBehaviour:
   m_ObjectHideFlags: 3

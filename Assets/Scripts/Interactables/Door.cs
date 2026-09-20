@@ -90,8 +90,8 @@ public class Door : MonoBehaviour, IInteractable
 
         if (locked)
         {
-            // one-way + locked: accessible side bypasses locks entirely
-            if (effectivelyOneWay && onAccessibleSide)
+            // one-way + locked: accessible side bypasses locks entirely //lies!
+            if (effectivelyOneWay && onAccessibleSide && !locked)
             {
                 if (twoWayOnceOpened) hasBeenOpened = true;
                 Toggle();

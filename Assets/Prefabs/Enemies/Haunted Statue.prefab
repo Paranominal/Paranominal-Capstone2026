@@ -126,6 +126,7 @@ GameObject:
   - component: {fileID: 6403643788848522719}
   - component: {fileID: 3580518955538096315}
   - component: {fileID: 1199629963655329915}
+  - component: {fileID: 500260618414329958}
   m_Layer: 17
   m_Name: Enemy
   m_TagString: Untagged
@@ -289,6 +290,22 @@ MonoBehaviour:
   debugMode: 0
   dieOnWeakpointsComplete: 1
   handleOwnDestruction: 1
+--- !u!114 &500260618414329958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 827877862285555472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b768b6bfde5f8bd488d3581699533a07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DissolveEffect
+  dissolveDuration: 2
+  destroyOnComplete: 1
+  dissolveMaterial: {fileID: 2100000, guid: 93188b6e93fe3b747b991f0453519fd3, type: 2}
+  targetRenderers: []
 --- !u!1 &1049033662998195316
 GameObject:
   m_ObjectHideFlags: 0

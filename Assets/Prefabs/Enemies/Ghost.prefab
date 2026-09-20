@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 4206877478203493182}
   - component: {fileID: 8622962237435936167}
   - component: {fileID: 3913454102463298061}
+  - component: {fileID: 8088654836910771327}
   m_Layer: 8
   m_Name: Ghost
   m_TagString: Untagged
@@ -139,7 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d49d50defecf244d9e2d39fcffcdd3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
-  staggerBar: {fileID: 0}
+  staggerBarRoot: {fileID: 0}
   staggerBarFill: {fileID: 0}
   barColor: {r: 1, g: 1, b: 1, a: 1}
   barResetColor: {r: 1, g: 3, b: 5, a: 1}
@@ -225,6 +226,22 @@ MonoBehaviour:
     m_Bits: 64
   debugMode: 0
   targetHeightOffset: 1
+--- !u!114 &8088654836910771327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272941483086651391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b768b6bfde5f8bd488d3581699533a07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DissolveEffect
+  dissolveDuration: 2
+  destroyOnComplete: 1
+  dissolveMaterial: {fileID: 2100000, guid: 93188b6e93fe3b747b991f0453519fd3, type: 2}
+  targetRenderers: []
 --- !u!1 &3649698560257739166
 GameObject:
   m_ObjectHideFlags: 0
@@ -272,8 +289,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
   rotateX: 1
-  slowBillboard: 0
-  slowBillboardTime: 0.1
+  easing: 0
+  easeSpeed: 0.1
 --- !u!212 &405706474175905397
 SpriteRenderer:
   serializedVersion: 2
