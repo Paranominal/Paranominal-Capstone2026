@@ -1399,6 +1399,53 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &98199958
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 98199959}
+  - component: {fileID: 98199960}
+  m_Layer: 0
+  m_Name: '[generated-meshes]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &98199959
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 98199958}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 845022299}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &98199960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 98199958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c3643d4978096d4880d7edbf4f65a50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: RealtimeCSG::InternalRealtimeCSG.GeneratedMeshes
+  Version: 1
+  owner: {fileID: 845022298}
+  helperSurfaces: []
 --- !u!1001 &110537531
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4491,53 +4538,6 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
---- !u!1 &216040550
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 216040551}
-  - component: {fileID: 216040552}
-  m_Layer: 0
-  m_Name: '[generated-meshes]'
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &216040551
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 216040550}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 974771697}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &216040552
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 216040550}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c3643d4978096d4880d7edbf4f65a50, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: RealtimeCSG::InternalRealtimeCSG.GeneratedMeshes
-  Version: 1
-  owner: {fileID: 974771696}
-  helperSurfaces: []
 --- !u!1001 &216713969
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9042,17 +9042,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1abb0f26285c5b34d834912e3e1d1ec2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMover
---- !u!114 &332140804 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2707172803116468795, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
-  m_PrefabInstance: {fileID: 499189816}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 332140784}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63650bc838100b1439f0deb459a1f2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerDash
 --- !u!1 &335167620
 GameObject:
   m_ObjectHideFlags: 0
@@ -14332,7 +14321,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1147441118498115418, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -0.000535232
+      value: 0.00037689856
       objectReference: {fileID: 0}
     - target: {fileID: 1147441118498115418, guid: 95fc9f0c6a84e414e830cab5c6f46bee, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -22730,6 +22719,74 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3b41da3830275a74b8dc0baeba71e3a2, type: 3}
+--- !u!1 &845022297
+GameObject:
+  m_ObjectHideFlags: 17
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 845022299}
+  - component: {fileID: 845022298}
+  m_Layer: 0
+  m_Name: '[default-CSGModel]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 124
+  m_IsActive: 1
+--- !u!114 &845022298
+MonoBehaviour:
+  m_ObjectHideFlags: 17
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 845022297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8672dcc90e16b0a489a41edf56e016f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: RealtimeCSG::RealtimeCSG.Components.CSGModel
+  PrefabBehaviour: 0
+  PrefabSourceAlignment: 4
+  PrefabDestinationAlignment: 0
+  Version: 1.1
+  infiniteBrush: {fileID: 0}
+  Settings: 1537
+  VertexChannels: 14
+  ReceiveGI: 2
+  MeshColliderCookingOptions: 14
+  ShowGeneratedMeshes: 0
+  DefaultPhysicsMaterial: {fileID: 13400000, guid: 0c5fdfb44d6f19646a41a0720fbf751a, type: 2}
+  exportType: 0
+  originType: 0
+  exportColliders: 0
+  exportPath: 
+  angleError: 1
+  areaError: 1
+  hardAngle: 60
+  packMargin: 20
+  scaleInLightmap: 1
+  autoUVMaxDistance: 0.5
+  autoUVMaxAngle: 89
+  minimumChartSize: 4
+--- !u!4 &845022299
+Transform:
+  m_ObjectHideFlags: 17
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 845022297}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 98199959}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &847761755
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26409,74 +26466,6 @@ Transform:
   - {fileID: 6685074753844599878}
   - {fileID: 7748812068465209408}
   m_Father: {fileID: 4861052479541989443}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &974771695
-GameObject:
-  m_ObjectHideFlags: 17
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 974771697}
-  - component: {fileID: 974771696}
-  m_Layer: 0
-  m_Name: '[default-CSGModel]'
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 124
-  m_IsActive: 1
---- !u!114 &974771696
-MonoBehaviour:
-  m_ObjectHideFlags: 17
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 974771695}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8672dcc90e16b0a489a41edf56e016f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: RealtimeCSG::RealtimeCSG.Components.CSGModel
-  PrefabBehaviour: 0
-  PrefabSourceAlignment: 4
-  PrefabDestinationAlignment: 0
-  Version: 1.1
-  infiniteBrush: {fileID: 0}
-  Settings: 1537
-  VertexChannels: 14
-  ReceiveGI: 2
-  MeshColliderCookingOptions: 14
-  ShowGeneratedMeshes: 0
-  DefaultPhysicsMaterial: {fileID: 13400000, guid: 0c5fdfb44d6f19646a41a0720fbf751a, type: 2}
-  exportType: 0
-  originType: 0
-  exportColliders: 0
-  exportPath: 
-  angleError: 1
-  areaError: 1
-  hardAngle: 60
-  packMargin: 20
-  scaleInLightmap: 1
-  autoUVMaxDistance: 0.5
-  autoUVMaxAngle: 89
-  minimumChartSize: 4
---- !u!4 &974771697
-Transform:
-  m_ObjectHideFlags: 17
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 974771695}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 216040551}
-  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &976030955
 Mesh:
@@ -41552,6 +41541,10 @@ PrefabInstance:
     - target: {fileID: 2353830285309781285, guid: 83ed298434b8cf64a959b500467ec45f, type: 3}
       propertyPath: m_Name
       value: Dash Tutorial
+      objectReference: {fileID: 0}
+    - target: {fileID: 2353830285309781285, guid: 83ed298434b8cf64a959b500467ec45f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3218691663672475408, guid: 83ed298434b8cf64a959b500467ec45f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -219208,29 +219201,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1810048303}
     - target: {fileID: 1006871125973090864, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: reloadTut
-      value: 
-      objectReference: {fileID: 4560274172574351173, guid: f3552d46de952c14c8264973e24bfa41, type: 3}
-    - target: {fileID: 1006871125973090864, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: weaponEvents
       value: 
       objectReference: {fileID: 499189817}
-    - target: {fileID: 1006871125973090864, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: shootDemonTut
-      value: 
-      objectReference: {fileID: 2078407106524109223, guid: 93a5e9b0644df164e876431f1567c9d3, type: 3}
-    - target: {fileID: 1006871125973090864, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: initialEntries.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1006871125973090864, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: 'initialEntries.Array.data[0]'
-      value: 
-      objectReference: {fileID: 248953390835185373, guid: e1384ef66ef060c49a3a5b3144640f27, type: 3}
-    - target: {fileID: 1006871125973090864, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: 'initialEntries.Array.data[1]'
-      value: 
-      objectReference: {fileID: 248953390835185373, guid: e1384ef66ef060c49a3a5b3144640f27, type: 3}
     - target: {fileID: 1704071766544820172, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -219272,10 +219245,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3395440904198210037, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: dash
-      value: 
-      objectReference: {fileID: 332140804}
-    - target: {fileID: 3395440904198210037, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: grimoire
       value: 
       objectReference: {fileID: 1973630573}
@@ -219283,10 +219252,6 @@ PrefabInstance:
       propertyPath: playerMover
       value: 
       objectReference: {fileID: 332140803}
-    - target: {fileID: 3395440904198210037, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: dashEntryName
-      value: Jar of Ether
-      objectReference: {fileID: 0}
     - target: {fileID: 8695808113338002025, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: playerInput
       value: 
@@ -219295,10 +219260,6 @@ PrefabInstance:
       propertyPath: weaponInput
       value: 
       objectReference: {fileID: 1297721264}
-    - target: {fileID: 8740965625450218032, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
-      propertyPath: pause
-      value: 
-      objectReference: {fileID: 8723667617613130008}
     - target: {fileID: 8740965625450218032, guid: 4f4e4c110bc2d664ea9f67e6205ccc4f, type: 3}
       propertyPath: playerInputReader
       value: 
@@ -223171,4 +223132,4 @@ SceneRoots:
   - {fileID: 209833418}
   - {fileID: 399236356}
   - {fileID: 373111207}
-  - {fileID: 974771697}
+  - {fileID: 845022299}
