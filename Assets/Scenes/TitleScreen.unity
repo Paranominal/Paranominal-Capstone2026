@@ -3585,9 +3585,9 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 471920504}
-    m_SelectOnDown: {fileID: 1947758049}
+    m_SelectOnDown: {fileID: 1422399527}
     m_SelectOnLeft: {fileID: 471920504}
-    m_SelectOnRight: {fileID: 1947758049}
+    m_SelectOnRight: {fileID: 1422399527}
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 0.1311712, g: 0.2603773, b: 0.18336032, a: 1}
@@ -3695,21 +3695,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4077296477002523643, guid: a4f061e9460795247b1617521012d014, type: 3}
   m_PrefabInstance: {fileID: 8453483189684778568}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1966852497
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1966852492}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36be5761ccc11e14a8b9594d8935a1bf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIPullFocus
-  eventSystem: {fileID: 1933797120}
-  newFocus: {fileID: 2019828283}
-  dialogueManager: {fileID: 1861227206}
 --- !u!1 &1969372642
 GameObject:
   m_ObjectHideFlags: 0
@@ -5843,46 +5828,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1339639178176877565, guid: a4f061e9460795247b1617521012d014, type: 3}
+      propertyPath: newFocus
+      value: 
+      objectReference: {fileID: 2019828283}
     - target: {fileID: 2149148507806674314, guid: a4f061e9460795247b1617521012d014, type: 3}
       propertyPath: m_FirstSelected
       value: 
       objectReference: {fileID: 1947758047}
-    - target: {fileID: 2254069408581218902, guid: a4f061e9460795247b1617521012d014, type: 3}
-      propertyPath: m_Navigation.m_Mode
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2254069408581218902, guid: a4f061e9460795247b1617521012d014, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2254069408581218902, guid: a4f061e9460795247b1617521012d014, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2254069408581218902, guid: a4f061e9460795247b1617521012d014, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
-      value: 
-      objectReference: {fileID: 1966852497}
-    - target: {fileID: 2254069408581218902, guid: a4f061e9460795247b1617521012d014, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2254069408581218902, guid: a4f061e9460795247b1617521012d014, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: PullFocus
-      objectReference: {fileID: 0}
-    - target: {fileID: 2254069408581218902, guid: a4f061e9460795247b1617521012d014, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
-      value: UIPullFocus, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 2254069408581218902, guid: a4f061e9460795247b1617521012d014, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_BoolArgument
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2254069408581218902, guid: a4f061e9460795247b1617521012d014, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 2351116058270724659, guid: a4f061e9460795247b1617521012d014, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5923,21 +5876,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3843067742102314590, guid: a4f061e9460795247b1617521012d014, type: 3}
+      propertyPath: uiNavigateAction
+      value: 
+      objectReference: {fileID: -3537207089744456394, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+    - target: {fileID: 3843067742102314590, guid: a4f061e9460795247b1617521012d014, type: 3}
+      propertyPath: uiMouseMoveAction
+      value: 
+      objectReference: {fileID: 6954989629675941952, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
     - target: {fileID: 4951425990308024933, guid: a4f061e9460795247b1617521012d014, type: 3}
       propertyPath: m_Name
       value: Title Screen Essentials
       objectReference: {fileID: 0}
-    - target: {fileID: 6403240286622920625, guid: a4f061e9460795247b1617521012d014, type: 3}
-      propertyPath: sharedProfile
-      value: 
-      objectReference: {fileID: 11400000, guid: 4f49b77addd395940a8b8fcfa8254448, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4077296477002523643, guid: a4f061e9460795247b1617521012d014, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1966852497}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a4f061e9460795247b1617521012d014, type: 3}
 --- !u!1 &8801859644718464329
 GameObject:
