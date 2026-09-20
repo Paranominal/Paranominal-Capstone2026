@@ -23,6 +23,11 @@ public class PointPopupSpawner : MonoBehaviour
         new PointPopupStyle { label = "Perfect", minPrecision = 10, suffix = "!", colour = new Color(255,0,181), scaleMultiplier = 0.25f },
     };
 
+    [Header("Miss Popup")]
+    [SerializeField] private string missText = "Miss";
+    [SerializeField]
+    private PointPopupStyle missStyle = new PointPopupStyle { label = "Miss", suffix = "", colour = Color.grey, scaleMultiplier = 0.8f };
+
     private PointPopup[] pool;
     private int nextIndex;
 
@@ -42,13 +47,19 @@ public class PointPopupSpawner : MonoBehaviour
     private void OnEnable()
     {
         if (scoreManager != null)
+        {
             scoreManager.OnPointsAwarded += HandlePointsAwarded;
+            scoreManager.OnShotMissed += HandleShotMissed;
+        }
     }
 
     private void OnDisable()
     {
         if (scoreManager != null)
+        {
             scoreManager.OnPointsAwarded -= HandlePointsAwarded;
+            scoreManager.OnShotMissed -= HandleShotMissed;
+        }
     }
 
     private void HandlePointsAwarded(int points, int precision, Vector3 worldPos, Vector3 ownerCentre)
@@ -61,11 +72,22 @@ public class PointPopupSpawner : MonoBehaviour
         float offset = Vector3.Dot(worldPos - ownerCentre, right);
         float side = Mathf.Clamp(offset / tiltFalloff, -1f, 1f);
 
+        SpawnPopup($"{points}{style.suffix}", style, worldPos, side);
+    }
+
+    private void SpawnPopup(string text, PointPopupStyle style, Vector3 worldPos, float side)
+    {
         PointPopup popup = pool[nextIndex];
         nextIndex = (nextIndex + 1) % poolSize;
 
         popup.gameObject.SetActive(true);
-        popup.Play($"{points}{style.suffix}", style, worldPos, side);
+        popup.Play(text, style, worldPos, side);
+    }
+
+    private void HandleShotMissed(Vector3 worldPos)
+    {
+        // aint no side to pop from cuz aint no enemy cuz aint no globe earth
+        SpawnPopup(missText, missStyle, worldPos, 0f);
     }
 
     private PointPopupStyle StyleFor(int precision)
