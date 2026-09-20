@@ -54,6 +54,8 @@ Shader "Custom/URP/QuantisedDitherShader"
                 float _PerceptualGamma;
             CBUFFER_END
 
+            float _ResolutionScale; // EDIT (RenderResolutionManager): Global resolution scale (set by RenderResolutionManager).
+
             float Bayer2x2(int x, int y)
             {
                 static const float bayer[4] =
@@ -203,7 +205,7 @@ Shader "Custom/URP/QuantisedDitherShader"
                 float2 uv = input.texcoord;
                 half4 col = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
 
-                float2 pixelPos = uv * _ScreenParams.xy;
+                float2 pixelPos = uv * _ScreenParams.xy / _ResolutionScale; // EDIT (RenderResolutionManager): Scale pixel position so dither density stays consistent across resolutions.
                 float thresholdOffset = GetDitherThreshold((int)pixelPos.x, (int)pixelPos.y);
 
                 float3 sourceColor = col.rgb;
