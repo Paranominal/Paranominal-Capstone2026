@@ -49,7 +49,7 @@ public class Inventory : MonoBehaviour
         if (grimoire != null)
         {
             ALTGrimoireEntry entry = item.GetComponent<CollectibleObject>().grimoireEntry;
-            if (entry.entryName != "") grimoire.AddEntry(entry, true); //makes no entry if it isnt named.
+            if (entry != null && entry.entryName != "") grimoire.AddEntry(entry, true); //makes no entry if it isnt named.
             else Debug.Log($"[{this}] Item Collected [{item}] has no named Entry");
         }
     }

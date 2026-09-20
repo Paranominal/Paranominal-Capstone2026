@@ -7,6 +7,7 @@ public class DialogueManager : MonoBehaviour
     //[HideInInspector] public Dialogue dialogue;
     private GameObject dialogueObject;
     [SerializeField] private GameObject dialogueCanvas;
+    public PauseManager pause;
     public PlayerInputReader playerInputReader;
     public WeaponInputReader weaponInputReader;
     [Tooltip("Add this here to open grimoire after hitting continue on an pick-up dialogue!")]
@@ -15,15 +16,16 @@ public class DialogueManager : MonoBehaviour
     void Start()
     {
         CloseDialogue();
+        if (!pause) Debug.LogWarning($"[{this}] No Pause Manager attached!! this might be a mistake.");
     }
     public void StartDialogue(GameObject pickupDialogue) // public so CollectibleObject can activate it
     {
         UpdateDialogue(pickupDialogue);
-        //Time.timeScale = 0f; //pause game
         dialogueCanvas.SetActive(true); //activate UI
         if (playerInputReader != null) playerInputReader.InputLock(true);
         if (weaponInputReader != null) weaponInputReader.InputLock(true);
         SetCursorModeLocked(false); //unlock cursor
+        if (pause) pause.PauseGame();
     }
 
     public void NextPage() // public for menu button presses to activate
@@ -40,7 +42,7 @@ public class DialogueManager : MonoBehaviour
         if (weaponInputReader != null) weaponInputReader.InputLock(false);
         dialogueCanvas.gameObject.SetActive(false); //deactivate dialogue
         if (grimoireAnimManager != null && openGrimoire) grimoireAnimManager.OpenFromDialogue(); //open grimoire
-        // Time.timeScale = 1f; //resume game
+        if (pause) pause.ResumeGame();
     }
 
     public void UpdateDialogue(GameObject pickupDialogue)

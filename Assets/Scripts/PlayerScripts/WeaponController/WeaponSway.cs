@@ -46,7 +46,7 @@ public class WeaponSway : MonoBehaviour
     // These are blended smoothly to keep first-person weapon motion readable
     void Update()
     {
-        if (enableSway)
+        if (enableSway && playerInputReader.CanMove)
         {
             // read look input from the Input System action and scale to serialized input
             Vector2 lookInput = playerInputReader.LookInput;
