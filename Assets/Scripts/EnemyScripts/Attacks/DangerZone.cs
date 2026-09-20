@@ -1,13 +1,7 @@
 using UnityEngine;
 
-/// Summary:
-/// Visual telegraph for an incoming area attack. Positions and scales the
-/// existing danger-zone GameObject (with its shader) and despawns itself
-/// once the telegraph window has elapsed.
-///
-/// This script does not deal damage; it is purely the visual indicator.
-/// Damage is handled by AoEAttack, which spawns and owns this object.
-
+/// Summary: Visual telegraph for an incoming area attack. Positions and scales the existing danger-zone GameObject (with its shader) and despawns itself once the telegraph window has elapsed.
+/// This script does not deal damage; it is purely the visual indicator. Damage is handled by AoEAttack, which spawns and owns this object.
 public class DangerZone : MonoBehaviour
 {
     [Header("Scaling")]
@@ -23,10 +17,7 @@ public class DangerZone : MonoBehaviour
     private float elapsed;
     private bool initialized;
 
-    /// Summary:
-    /// Place the zone in the world and start its countdown.
-    /// Called by AoEAttack right after instantiation.
-    
+    /// Place the zone in the world and start its countdown. Called by AoEAttack right after instantiation.
     public void Show(Vector3 position, float radius, float duration)
     {
         transform.position = position;
@@ -34,7 +25,7 @@ public class DangerZone : MonoBehaviour
         if (scaleToRadius)
         {
             float diameter = radius * 2f * scaleMultiplier;
-            //preserve y-scale so vertically-extruded meshes still render correctly
+            // preserve y-scale so vertically-extruded meshes still render correctly
             Vector3 currentScale = transform.localScale;
             transform.localScale = new Vector3(diameter, currentScale.y, diameter);
         }
@@ -55,10 +46,7 @@ public class DangerZone : MonoBehaviour
         }
     }
 
-    /// Summary:
-    /// Allow the owning attack to clean up the zone early
-    /// (e.g. if the attack is interrupted by a stagger).
-    
+    /// Allow the owning attack to clean up the zone early (e.g. if the attack is interrupted by a stagger).
     public void Cancel()
     {
         Destroy(gameObject);

@@ -127,6 +127,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Sprint",
+                    "type": "Button",
+                    "id": "ba8ec9e2-2b1b-4b7a-84d9-6be77d629500",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "SlowWalk",
                     "type": "Button",
                     "id": "181375cd-378e-408e-baa3-4520dcd4e02d",
@@ -139,6 +148,15 @@
                     "name": "Reload",
                     "type": "Button",
                     "id": "362450d9-ff32-428a-b2f0-5504de9a93ec",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "a21f8d09-a2ed-4cad-84cf-13cd90183467",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -391,11 +409,33 @@
                 {
                     "name": "",
                     "id": "ed8d1786-fb80-4292-892c-ab3b254d8192",
-                    "path": "<Gamepad>/leftStick/up",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fffd8953-6f8e-4179-b8ea-e7a5cc58ff2e",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Sprint",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0f008c57-448a-4b5c-a6c6-152f388efac2",
+                    "path": "<Gamepad>/leftStick/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Sprint",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -429,6 +469,28 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "89558d86-3e87-4d4f-b635-86bd1f3cc1af",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d1eb1ff5-58b2-4ba3-8af4-43d772e16855",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

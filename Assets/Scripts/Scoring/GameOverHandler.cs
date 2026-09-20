@@ -6,9 +6,13 @@ public class GameOverHandler : MonoBehaviour
     [Header("References")]
     [SerializeField] private FearBar fearBar;
     [SerializeField] private ScoreManager scoreManager;
-    [SerializeField] private int endScreenBuildIndex;
+
+    //was referencing end screen, now goes to name input field
+    [SerializeField] private int nameEntrySceneBuildIndex;
 
     public static int FinalScore { get; private set; }
+
+    public static string FinalRank {get; private set; }
 
     private void Awake()
     {
@@ -30,8 +34,9 @@ public class GameOverHandler : MonoBehaviour
         if (scoreManager != null)
         {
             FinalScore = scoreManager.currentScore;
+            FinalRank = scoreManager.currentRank;
         }
 
-        SceneManager.LoadScene(endScreenBuildIndex);
+        SceneManager.LoadScene(nameEntrySceneBuildIndex);
     }
 }
