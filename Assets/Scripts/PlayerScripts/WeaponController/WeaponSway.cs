@@ -48,6 +48,7 @@ public class WeaponSway : MonoBehaviour
     {
         if (enableSway)
         {
+
             // read look input from the Input System action and scale to serialized input
             Vector2 lookInput = playerInputReader.LookInput;
 

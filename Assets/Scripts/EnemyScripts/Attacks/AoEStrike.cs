@@ -66,7 +66,7 @@ public class AoEStrike : MonoBehaviour
         if (hitbox != null)
         {
             GameObject source = sourceOverride != null ? sourceOverride : gameObject;
-            DamageInfo info = new DamageInfo(damage, transform.position, Vector3.up, source);
+            DamageInfo info = new DamageInfo(damage, transform.position, Vector3.up, gameObject);
             hitbox.Activate(info);
         }
         else if (debugMode)

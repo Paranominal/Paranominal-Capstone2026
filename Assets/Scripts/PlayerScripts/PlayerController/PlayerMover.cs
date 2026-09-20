@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMover : MonoBehaviour
@@ -171,9 +172,15 @@ public class PlayerMover : MonoBehaviour
     private IEnumerator StunCoroutine(float stunDuration, DamageInfo damageInfo, float knockbackForce)
     {
 
-        if (knockbackForce < 0f) 
+        if (damageInfo.source?.name == "DamageField_Flames(Clone)") 
         {
-            knockbackForce = damageInfo.amount / 4;
+            knockbackForce = 0f;
+        }
+
+        if (knockbackForce < 0f)
+        {
+            knockbackForce = damageInfo.amount / 5f;
+
         }
 
 

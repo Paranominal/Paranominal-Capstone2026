@@ -29,6 +29,8 @@ public class PlayerStatus : MonoBehaviour, IDamageable
 
     public void TakeDamage(DamageInfo info)
     {
+
+        Debug.Log("Damage source: " + info.source?.name);
         if (isInvincible)
             return;
 
