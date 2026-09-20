@@ -23,6 +23,9 @@ public class Door : MonoBehaviour, IInteractable
     [ShowIf("isOneWay")]
     [Tooltip("When enabled, the door becomes two-way once all locks are unlocked.")]
     [SerializeField] private bool twoWayWhenUnlocked = true;
+    [ShowIf("isOneWay")]
+    [Tooltip("When enabled, the door becomes two-way after being opened from the accessible side.")]
+    [SerializeField] private bool twoWayOnceOpened = false;
 
     [Header("Movement")]
     [SerializeField] private float speed = 10f;
@@ -40,6 +43,7 @@ public class Door : MonoBehaviour, IInteractable
     private Quaternion startRotation;
     private Quaternion targetRotation;
     private PlayerMover player;
+    private bool hasBeenOpened;
 
     private void Start()
     {
@@ -89,6 +93,7 @@ public class Door : MonoBehaviour, IInteractable
             // one-way + locked: accessible side bypasses locks entirely
             if (effectivelyOneWay && onAccessibleSide)
             {
+                if (twoWayOnceOpened) hasBeenOpened = true;
                 Toggle();
                 return;
             }
@@ -131,6 +136,9 @@ public class Door : MonoBehaviour, IInteractable
             // no locks, one-way, wrong side: blocked
             return;
         }
+
+        if (twoWayOnceOpened && isOneWay && onAccessibleSide)
+            hasBeenOpened = true;
 
         Toggle();
     }
@@ -244,8 +252,20 @@ public class Door : MonoBehaviour, IInteractable
     private bool IsEffectivelyOneWay()
     {
         if (!isOneWay) return false;
-        if (twoWayWhenUnlocked && !HasLockedLocks()) return false;
+        if (twoWayOnceOpened && hasBeenOpened) return false;
+        // only disable one-way when locks exist but have all been unlocked
+        if (twoWayWhenUnlocked && HasAnyLocks() && !HasLockedLocks()) return false;
         return true;
+    }
+
+    private bool HasAnyLocks()
+    {
+        if (doorLocks == null || doorLocks.Length == 0) return false;
+        foreach (DoorLock doorLock in doorLocks)
+        {
+            if (doorLock != null) return true;
+        }
+        return false;
     }
 
     private bool IsPlayerOnAccessibleSide()
