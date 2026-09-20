@@ -98,9 +98,9 @@ public class FearBar : MonoBehaviour
     {
         FearRank newRank = fearLevel switch // check this bad boy out
         {
-            <= 0 => FearRank.Healthy, // no more overflow! yay!!!
-            <= 33 => FearRank.Fine,
-            <= 66 => FearRank.Critical,
+            <= 15 => FearRank.Healthy, // no more overflow! yay!!!
+            <= 40 => FearRank.Fine,
+            <= 80 => FearRank.Critical,
             _ => FearRank.Doomed!
         };
 
