@@ -1,6 +1,6 @@
-// Summary: Resolution picker for the settings screen. Populates a TMP_Dropdown with
-// target resolutions from RenderResolutionManager, marks unsupported ones with an asterisk,
-// and applies the player's selection.
+// Summary: Resolution picker for the settings screen. 
+// Populates a TMP_Dropdown with target resolutions from RenderResolutionManager, marks unsupported ones with an asterisk,
+// and applies the player's selection via URP render scale.
 
 using UnityEngine;
 using TMPro;
@@ -47,7 +47,7 @@ public class ResolutionPicker : MonoBehaviour
 
             options.Add(label);
 
-            // Match against the manager's selected resolution, not Screen.width/height.
+            // Match against the manager's selected resolution.
             if (res.x == selected.x && res.y == selected.y)
                 currentIndex = i;
         }
@@ -62,7 +62,7 @@ public class ResolutionPicker : MonoBehaviour
         if (resolutions == null || index < 0 || index >= resolutions.Length) return;
 
         Vector2Int selected = resolutions[index];
-        RenderResolutionManager.Instance.SetResolution(selected.x, selected.y, Screen.fullScreen);
+        RenderResolutionManager.Instance.SetResolution(selected.x, selected.y);
     }
 
     private void OnDisable()
