@@ -26,6 +26,9 @@ public class Door : MonoBehaviour, IInteractable
     [ShowIf("isOneWay")]
     [Tooltip("When enabled, the door becomes two-way after being opened from the accessible side.")]
     [SerializeField] private bool twoWayOnceOpened = false;
+    [ShowIf("isOneWay")]
+    [Tooltip("When enabled, the accessible side ignores locks entirely. When disabled, locks apply on the accessible side and the inaccessible side is blocked.")]
+    [SerializeField] private bool accessibleSideBypassesLocks = true;
 
     [Header("Movement")]
     [SerializeField] private float speed = 10f;
@@ -74,8 +77,7 @@ public class Door : MonoBehaviour, IInteractable
         if (player != null && state == DoorState.Open &&
             Vector3.Distance(player.transform.position, transform.position) > ajarDistance)
         {
-            // one-way locked doors close fully so the lock remains meaningful
-            if (isOneWay && HasLockedLocks())
+            if (isOneWay)
                 Close();
             else
                 Ajar();
@@ -90,15 +92,19 @@ public class Door : MonoBehaviour, IInteractable
 
         if (locked)
         {
-            // one-way + locked: accessible side bypasses locks entirely
-            if (effectivelyOneWay && onAccessibleSide)
+            // one-way + locked: accessible side bypasses locks when enabled
+            if (effectivelyOneWay && onAccessibleSide && accessibleSideBypassesLocks)
             {
                 if (twoWayOnceOpened) hasBeenOpened = true;
                 Toggle();
                 return;
             }
 
-            // standard lock logic (both sides for non-one-way, inaccessible side for one-way)
+            // one-way + locked + bypass off: inaccessible side is blocked entirely
+            if (effectivelyOneWay && !onAccessibleSide && !accessibleSideBypassesLocks)
+                return;
+
+            // standard lock logic (accessible side when bypass is off, or inaccessible side when bypass is on)
             DoorLock firstRemainingLock = null;
             bool unlockedSomething = false;
 
@@ -151,12 +157,21 @@ public class Door : MonoBehaviour, IInteractable
 
         if (locked)
         {
-            if (effectivelyOneWay && onAccessibleSide)
+            if (effectivelyOneWay && onAccessibleSide && accessibleSideBypassesLocks)
             {
                 return new InteractionPrompt
                 {
                     label = state == DoorState.Open ? "Close" : "Open",
                     actionName = "Collect"
+                };
+            }
+
+            if (effectivelyOneWay && !onAccessibleSide && !accessibleSideBypassesLocks)
+            {
+                return new InteractionPrompt
+                {
+                    label = "Won't open from this side",
+                    actionName = ""
                 };
             }
 
