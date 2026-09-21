@@ -1,4 +1,5 @@
-// Summary: Drives the Dissolve shader's _DissolveAmount from 0 to 1 on every configured renderer.
+// Summary: 
+// Drives the Dissolve shader's _DissolveAmount from 0 to 1 on every configured renderer.
 // If no renderers are assigned, all renderers on this object and its children are used.
 // If an object uses a non-dissolve shader, its material is replaced at play time while preserving its texture and colour.
 
@@ -17,6 +18,8 @@ public class DissolveEffect : MonoBehaviour
     [SerializeField] private Material dissolveMaterial;
     [Tooltip("Renderers affected by this dissolve. If empty, all renderers on this object and its children are gathered automatically.")]
     [SerializeField] private Renderer[] targetRenderers;
+    [Tooltip("Colliders disabled when the dissolve starts. If empty, all colliders on this object and its children are gathered automatically.")]
+    [SerializeField] private Collider[] targetColliders;
 
     public event Action OnDissolveComplete;
 
@@ -32,6 +35,7 @@ public class DissolveEffect : MonoBehaviour
     private void Awake()
     {
         GatherRenderersIfNeeded();
+        GatherCollidersIfNeeded();
     }
 
     public void Play()
@@ -40,6 +44,8 @@ public class DissolveEffect : MonoBehaviour
             return;
 
         GatherRenderersIfNeeded();
+        GatherCollidersIfNeeded();
+        DisableColliders();
 
         if (!PrepareMaterials())
         {
@@ -58,6 +64,24 @@ public class DissolveEffect : MonoBehaviour
     {
         if (targetRenderers == null || targetRenderers.Length == 0)
             targetRenderers = GetComponentsInChildren<Renderer>(true);
+    }
+
+    private void GatherCollidersIfNeeded()
+    {
+        if (targetColliders == null || targetColliders.Length == 0)
+            targetColliders = GetComponentsInChildren<Collider>(true);
+    }
+
+    private void DisableColliders()
+    {
+        if (targetColliders == null)
+            return;
+
+        foreach (Collider targetCollider in targetColliders)
+        {
+            if (targetCollider != null)
+                targetCollider.enabled = false;
+        }
     }
 
     private bool PrepareMaterials()
