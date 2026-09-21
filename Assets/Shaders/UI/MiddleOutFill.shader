@@ -9,6 +9,7 @@ Shader "Custom/UI/MiddleOutFill"
         _Color ("Tint", Color) = (1,1,1,1)
         _FillAmount ("Fill Amount", Range(0, 1)) = 0
         _SkewAmount ("Edge Skew", Float) = 0.1
+        [HideInInspector] _FillUVRect ("Fill UV Rect", Vector) = (0,0,1,1)
 
         // Unity UI stencil support (required for Mask components)
         _StencilComp ("Stencil Comparison", Float) = 8
@@ -69,6 +70,7 @@ Shader "Custom/UI/MiddleOutFill"
             float4 _Color;
             float _FillAmount;
             float _SkewAmount;
+            float4 _FillUVRect;
 
             v2f vert(appdata v)
             {
@@ -83,8 +85,12 @@ Shader "Custom/UI/MiddleOutFill"
             {
                 float4 col = tex2D(_MainTex, i.uv) * i.color;
 
+                // Remap the sprite's atlas region to a stable 0-1 coordinate.
+                // This scales with the UI mesh while preserving progressive fill.
+                float2 rectUV = (i.uv - _FillUVRect.xy) / max(_FillUVRect.zw, float2(0.0001, 0.0001));
+
                 // middle-out fill with skewed edges to match parallelogram angle
-                float skewedX = i.uv.x - (i.uv.y - 0.5) * _SkewAmount;
+                float skewedX = rectUV.x - (rectUV.y - 0.5) * _SkewAmount;
                 float distFromCenter = abs(skewedX - 0.5);
                 float maxDist = 0.5 + abs(_SkewAmount) * 0.5;
                 float halfFill = _FillAmount * maxDist;
@@ -98,3 +104,4 @@ Shader "Custom/UI/MiddleOutFill"
         }
     }
 }
+    
