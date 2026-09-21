@@ -1,6 +1,6 @@
-// Summary: Generates a Voronoi-subdivided mesh from a sprite in Awake, then drives the shatter
-// shader's _ShatterAmount from 0 to 1 when Play() is called. Each triangle belongs to a single
-// Voronoi cell so pieces move independently without stretching.
+// Summary: 
+// Generates a Voronoi-subdivided mesh from a sprite in Awake, then drives the shatter shader's _ShatterAmount from 0 to 1 when Play() is called. 
+// Each triangle belongs to a single Voronoi cell so pieces move independently without stretching.
 
 using UnityEngine;
 using System;
@@ -32,6 +32,8 @@ public class ShatterEffect : MonoBehaviour
     private MeshRenderer meshRenderer;
     private Material material;
     private Mesh shatterMesh;
+    private bool isPlaying;
+    private bool destroyOwnerOnCurrentComplete;
     private static readonly int ShatterAmountID = Shader.PropertyToID("_ShatterAmount");
 
     private void Awake()
@@ -57,6 +59,8 @@ public class ShatterEffect : MonoBehaviour
 
         meshRenderer = shatterObject.AddComponent<MeshRenderer>();
         meshRenderer.enabled = false;
+        meshRenderer.sortingLayerID = spriteRenderer.sortingLayerID;
+        meshRenderer.sortingOrder = spriteRenderer.sortingOrder;
 
         if (shatterMaterial != null)
         {
@@ -78,34 +82,61 @@ public class ShatterEffect : MonoBehaviour
     // targeted use: shatters a specific SpriteRenderer (e.g. the active weakpoint element)
     public void Play(SpriteRenderer targetRenderer)
     {
-        if (targetRenderer == null || targetRenderer.sprite == null) return;
-        if (shatterMaterial == null) return;
+        Play(targetRenderer, destroyOnComplete);
+    }
+
+    // Returns true only when a shatter was successfully started. The per-play
+    // destroy option lets reusable objects such as weakpoints keep their owner.
+    public bool Play(SpriteRenderer targetRenderer, bool destroyOwnerWhenComplete)
+    {
+        if (isPlaying) return false;
+        if (targetRenderer == null || targetRenderer.sprite == null)
+        {
+            Debug.LogWarning($"[{name}] ShatterEffect requires a SpriteRenderer with a sprite.", this);
+            return false;
+        }
+        if (shatterMaterial == null)
+        {
+            Debug.LogWarning($"[{name}] ShatterEffect is missing its shatter material.", this);
+            return false;
+        }
+
+        CleanupShatter();
 
         spriteRenderer = targetRenderer;
         PrepareShatterMesh();
 
-        if (meshRenderer == null || material == null) return;
+        if (meshRenderer == null || material == null)
+        {
+            CleanupShatter();
+            return false;
+        }
 
+        destroyOwnerOnCurrentComplete = destroyOwnerWhenComplete;
+        isPlaying = true;
         spriteRenderer.enabled = false;
         meshRenderer.enabled = true;
 
         StartCoroutine(ShatterCoroutine());
+        return true;
     }
 
     private IEnumerator ShatterCoroutine()
     {
+        float duration = Mathf.Max(shatterDuration, 0.01f);
         float elapsed = 0f;
-        while (elapsed < shatterDuration)
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            material.SetFloat(ShatterAmountID, Mathf.Clamp01(elapsed / shatterDuration));
+            material.SetFloat(ShatterAmountID, Mathf.Clamp01(elapsed / duration));
             yield return null;
         }
 
         material.SetFloat(ShatterAmountID, 1f);
+        isPlaying = false;
         OnShatterComplete?.Invoke();
 
-        if (destroyOnComplete)
+        if (destroyOwnerOnCurrentComplete)
             Destroy(gameObject);
         else
             CleanupShatter();
@@ -115,6 +146,7 @@ public class ShatterEffect : MonoBehaviour
     public void Stop()
     {
         StopAllCoroutines();
+        isPlaying = false;
         CleanupShatter();
     }
 
