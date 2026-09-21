@@ -1069,6 +1069,7 @@ MonoBehaviour:
   destroyOnComplete: 1
   dissolveMaterial: {fileID: 2100000, guid: 20d998251e7ae96429d4ad4eb945f03e, type: 2}
   targetRenderers: []
+  targetColliders: []
 --- !u!1 &865274767 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1401688111949138570, guid: 5453a7bcd76fffd43aa2419247328e70, type: 3}
@@ -2223,6 +2224,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 812228900959543441, guid: f3cbe991208ee324e936889e8572d872, type: 3}
+      propertyPath: shatterDuration
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1351760802009251764, guid: f3cbe991208ee324e936889e8572d872, type: 3}
       propertyPath: debugMode
       value: 0
@@ -2277,11 +2282,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2679287820087534063, guid: f3cbe991208ee324e936889e8572d872, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2679287820087534063, guid: f3cbe991208ee324e936889e8572d872, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3366302954975271396, guid: f3cbe991208ee324e936889e8572d872, type: 3}
       propertyPath: dissolveDuration
@@ -2289,7 +2294,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6451794592179634668, guid: f3cbe991208ee324e936889e8572d872, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8219591352246310843, guid: f3cbe991208ee324e936889e8572d872, type: 3}
       propertyPath: m_AnchorMax.x

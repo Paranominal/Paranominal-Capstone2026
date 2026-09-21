@@ -567,6 +567,7 @@ public class Enemy : MonoBehaviour
         behaviourState = BehaviourState.Dying;
         if (movement != null) movement.Stop();
         if (stagger != null) stagger.canBeHit = false;
+        DisableColliders();
 
         ReportDeathToSpawner();
 
@@ -580,6 +581,15 @@ public class Enemy : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+    }
+
+    private void DisableColliders()
+    {
+        foreach (Collider enemyCollider in GetComponentsInChildren<Collider>(true))
+        {
+            if (enemyCollider != null)
+                enemyCollider.enabled = false;
         }
     }
 

@@ -175,21 +175,27 @@ public class WeakPoint : MonoBehaviour
         remainingShots -= 1;
         if (remainingShots > 0) return;
 
-        // play shatter on the active element if available, otherwise hide immediately
-        ShatterEffect shatter = GetComponent<ShatterEffect>();
+        if (weakPointCollider != null)
+            weakPointCollider.enabled = false;
 
+        // Launch the visual effect, then resolve gameplay immediately. The
+        // generated shatter mesh continues independently after this weakpoint
+        // is hidden and the manager advances the sequence.
+        ShatterEffect shatter = GetComponent<ShatterEffect>();
         if (shatter != null && currentRenderers != null && currentRenderers.Length > 0)
         {
-            shatter.Play(currentRenderers[0]);
-            if (weakPointCollider != null)
-                weakPointCollider.enabled = false;
-        }
-        else
-        {
-            Hide();
+            // Weakpoints are reused between champion phases, so only the
+            // temporary shatter mesh should be destroyed on completion.
+            shatter.Play(currentRenderers[0], false);
         }
 
+        ResolveHit();
+    }
+
+    private void ResolveHit()
+    {
         hasBeenHit = true;
+        weakpointManager?.NotifyWeakPointResolved(this);
     }
 
     public float GetAccuracy(Ray ray)

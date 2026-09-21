@@ -1,6 +1,7 @@
-// Summary: Centralized resolution management. 
-// Controls URP render scale to set the internal rendering resolution, and exposes a global shader float (_ResolutionScale) 
-// so post-process effects stay visually consistent across resolutions.
+// Summary: Centralized resolution management. Locks the internal rendering resolution to
+// 1080p via URP render scale, while the display/output resolution is controlled separately
+// via Screen.SetResolution. Post-processing always sees a 1080p render target.
+// Lives on GameSystems (persistent).
 
 using System;
 using UnityEngine;
@@ -11,28 +12,23 @@ public class RenderResolutionManager : MonoBehaviour
 {
     public static RenderResolutionManager Instance { get; private set; }
 
-    // Reference resolution that all shaders and UI are designed around.
-    public const int ReferenceWidth = 1920;
-    public const int ReferenceHeight = 1080;
+    // Internal render resolution is always 1080p.
+    public const int InternalWidth = 1920;
+    public const int InternalHeight = 1080;
 
-    // Fires when the selected render resolution changes. Args: target width, target height.
+    // Fires when the display resolution changes. Args: display width, display height.
     public event Action<int, int> OnResolutionChanged;
 
-    // Current resolution scale relative to 1080p (e.g. 2.0 at 4K).
-    public float ResolutionScale { get; private set; } = 1f;
-
-    // The render resolution the player has selected.
+    // The display resolution the player has selected.
     public Vector2Int SelectedResolution { get; private set; }
 
-    // Cached screen dimensions to detect display/window size changes.
-    private int cachedScreenWidth;
     private int cachedScreenHeight;
-
     private UniversalRenderPipelineAsset pipelineAsset;
 
+    // Shader property ID for the global resolution scale (always 1.0 since internal res is fixed).
     private static readonly int ResolutionScaleID = Shader.PropertyToID("_ResolutionScale");
 
-    // Target resolutions shown in the picker.
+    // Target display resolutions shown in the picker.
     private static readonly Vector2Int[] targetResolutions = new Vector2Int[]
     {
         new Vector2Int(1920, 1080),
@@ -53,32 +49,32 @@ public class RenderResolutionManager : MonoBehaviour
         if (pipelineAsset == null)
             Debug.LogError("RenderResolutionManager: No UniversalRenderPipelineAsset found.");
 
-        // Default to the current screen resolution.
         SelectedResolution = new Vector2Int(Screen.width, Screen.height);
-        cachedScreenWidth = Screen.width;
         cachedScreenHeight = Screen.height;
+
+        // Internal res is always 1080p, so effect scale is always 1.0.
+        Shader.SetGlobalFloat(ResolutionScaleID, 1f);
         ApplyRenderScale();
     }
 
     private void Update()
     {
-        // If the display/window resized, recalculate render scale to maintain the selected target.
-        if (Screen.width != cachedScreenWidth || Screen.height != cachedScreenHeight)
+        // If the display/window height changed, recalculate render scale to maintain 1080p internal.
+        if (Screen.height != cachedScreenHeight)
         {
-            cachedScreenWidth = Screen.width;
             cachedScreenHeight = Screen.height;
             ApplyRenderScale();
         }
     }
 
-    // Sets the target render resolution and applies the corresponding URP render scale.
-    public void SetResolution(int width, int height)
+    // Sets the display resolution. Internal rendering stays at 1080p.
+    public void SetResolution(int width, int height, bool fullscreen)
     {
         SelectedResolution = new Vector2Int(width, height);
-        ApplyRenderScale();
+        Screen.SetResolution(width, height, fullscreen);
     }
 
-    // Returns the full list of target resolutions (all are always shown in the picker).
+    // Returns the full list of target display resolutions.
     public Vector2Int[] GetTargetResolutions()
     {
         return targetResolutions;
@@ -91,18 +87,11 @@ public class RenderResolutionManager : MonoBehaviour
         return resolution.x <= maxDisplay.width && resolution.y <= maxDisplay.height;
     }
 
+    // Adjusts URP render scale so the internal render target is always 1080p.
     private void ApplyRenderScale()
     {
         if (pipelineAsset == null) return;
 
-        // Render scale relative to the actual screen/window size.
-        float renderScale = (float)SelectedResolution.y / Screen.height;
-        pipelineAsset.renderScale = Mathf.Clamp(renderScale, 0.1f, 2.0f);
-
-        // Shader effect scale relative to the 1080p reference.
-        ResolutionScale = (float)SelectedResolution.y / ReferenceHeight;
-        Shader.SetGlobalFloat(ResolutionScaleID, ResolutionScale);
-
-        OnResolutionChanged?.Invoke(SelectedResolution.x, SelectedResolution.y);
+        pipelineAsset.renderScale = (float)InternalHeight / Screen.height;
     }
 }

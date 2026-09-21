@@ -29,14 +29,6 @@ public class WeakPointManager : MonoBehaviour
         return currentWeakpoint >= 0 && currentWeakpoint < weakpoints.Length;
     }
 
-    //the old method literally continues even after resetting, since it counted after the array, it would throw silent errors grrrrrrrrrr
-    void Update()
-    {
-        if (!HasWeakpoints() || !CurrentIndexValid()) return;
-        
-        if (weakpoints[currentWeakpoint].hasBeenHit) NextInSequence();
-    }
-
     public void SetupWeakpoints()
     {
         currentWeakpoint = 0;
@@ -82,6 +74,28 @@ public class WeakPointManager : MonoBehaviour
         currentWeakpoint += 1;
         if (currentWeakpoint < weakpoints.Length) weakpoints[currentWeakpoint].Show();
         else SequenceComplete();
+    }
+
+    // Called by a weakpoint after its hit VFX has finished. Completed weakpoints
+    // are consumed in sequence order, including queued hits when all are visible.
+    public void NotifyWeakPointResolved(WeakPoint weakpoint)
+    {
+        if (!HasWeakpoints() || weakpoint == null) return;
+
+        bool belongsToManager = false;
+        foreach (WeakPoint managedWeakpoint in weakpoints)
+        {
+            if (managedWeakpoint == weakpoint)
+            {
+                belongsToManager = true;
+                break;
+            }
+        }
+
+        if (!belongsToManager) return;
+
+        while (CurrentIndexValid() && weakpoints[currentWeakpoint] != null && weakpoints[currentWeakpoint].hasBeenHit)
+            NextInSequence();
     }
 
     private void SequenceComplete() //checks for miniboss cycles
