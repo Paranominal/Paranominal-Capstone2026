@@ -48,7 +48,7 @@ public class QuantisedDitherSettings
     [Range(2f, 32f)] public float blueSteps = 8f;
     [Range(0f, 1f)] public float effectStrength = 1f;
     [Range(0f, 1f)] public float ditherStrength = 1f;
-    public float bayerSize = 16f;
+    public BayerMatrixSize bayerSize = BayerMatrixSize.SixteenBySixteen;
     public bool usePS1Matrix = false;
     public bool usePerceivedBrightness = false;
     [Range(0.2f, 1.0f)] public float perceptualGamma = 0.5f;
@@ -88,7 +88,7 @@ public class QuantisedDitherRenderPass : ScriptableRenderPass
         float blueSteps = vol.blueSteps.overrideState ? vol.blueSteps.value : defaultSettings.blueSteps;
         float effectStrength = vol.effectStrength.overrideState ? vol.effectStrength.value : defaultSettings.effectStrength;
         float ditherStrength = vol.ditherStrength.overrideState ? vol.ditherStrength.value : defaultSettings.ditherStrength;
-        float bayerSize = vol.bayerSize.overrideState ? vol.bayerSize.value : defaultSettings.bayerSize;
+        BayerMatrixSize bayerSize = vol.bayerSize.overrideState ? vol.bayerSize.value : defaultSettings.bayerSize;
         bool usePS1 = vol.usePS1Matrix.overrideState ? vol.usePS1Matrix.value : defaultSettings.usePS1Matrix;
         bool usePerceived = vol.usePerceivedBrightness.overrideState ? vol.usePerceivedBrightness.value : defaultSettings.usePerceivedBrightness;
         float gamma = vol.perceptualGamma.overrideState ? vol.perceptualGamma.value : defaultSettings.perceptualGamma;
@@ -98,7 +98,7 @@ public class QuantisedDitherRenderPass : ScriptableRenderPass
         material.SetFloat(BlueStepsID, blueSteps);
         material.SetFloat(EffectStrengthID, effectStrength);
         material.SetFloat(DitherStrengthID, ditherStrength);
-        material.SetFloat(BayerSizeID, bayerSize);
+        material.SetFloat(BayerSizeID, (float)bayerSize);
         material.SetFloat(UsePS1MatrixID, usePS1 ? 1f : 0f);
         material.SetFloat(UsePerceivedBrightnessID, usePerceived ? 1f : 0f);
         material.SetFloat(PerceptualGammaID, gamma);

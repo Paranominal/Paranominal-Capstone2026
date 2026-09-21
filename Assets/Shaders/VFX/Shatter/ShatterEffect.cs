@@ -107,6 +107,42 @@ public class ShatterEffect : MonoBehaviour
 
         if (destroyOnComplete)
             Destroy(gameObject);
+        else
+            CleanupShatter();
+    }
+
+    // stops an in-progress shatter and cleans up immediately (e.g. stagger ended while shatter was playing)
+    public void Stop()
+    {
+        StopAllCoroutines();
+        CleanupShatter();
+    }
+
+    // tears down the shatter mesh and resets state so the effect can be played again (e.g. boss phase weakpoints)
+    private void CleanupShatter()
+    {
+        if (shatterObject != null)
+        {
+            Destroy(shatterObject);
+            shatterObject = null;
+        }
+
+        meshFilter = null;
+        meshRenderer = null;
+
+        if (material != null)
+        {
+            Destroy(material);
+            material = null;
+        }
+
+        if (shatterMesh != null)
+        {
+            Destroy(shatterMesh);
+            shatterMesh = null;
+        }
+
+        spriteRenderer = null;
     }
 
     // --- mesh generation ---

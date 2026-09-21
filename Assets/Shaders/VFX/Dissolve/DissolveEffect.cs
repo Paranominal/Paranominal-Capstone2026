@@ -1,6 +1,6 @@
 // Summary: Drives the Dissolve shader's _DissolveAmount from 0 to 1 over a configurable duration.
-// Call Play() on enemy death or object destruction. 
-// If the object uses a non-dissolve shader, swaps to the provided dissolve material at play time, copying the texture and color from the original.
+// Call Play() on enemy death or object destruction. If the object uses a non-dissolve shader,
+// swaps to the provided dissolve material at play time, copying the texture and color from the original.
 
 using UnityEngine;
 using System;
@@ -55,6 +55,11 @@ public class DissolveEffect : MonoBehaviour
 
         material.SetFloat(DissolveAmountID, 0f);
         targetRenderer.material = material;
+
+        // disable colliders so the dissolving object doesn't block movement
+        foreach (Collider col in GetComponentsInChildren<Collider>())
+            col.enabled = false;
+
         StartCoroutine(DissolveCoroutine());
     }
 
@@ -73,6 +78,10 @@ public class DissolveEffect : MonoBehaviour
             col = from.GetColor(BaseColorID);
         else if (from.HasProperty(ColorID))
             col = from.GetColor(ColorID);
+
+        // no base texture (e.g. procedural shaders), make transparent so only burn edges show
+        if (tex == null)
+            col.a = 0f;
 
         if (tex != null && to.HasProperty(MainTexID))
             to.SetTexture(MainTexID, tex);

@@ -253,7 +253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d49d50defecf244d9e2d39fcffcdd3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
-  staggerBar: {fileID: 5379846409219135353}
+  staggerBarRoot: {fileID: 5820241246767075552}
   staggerBarFill: {fileID: 877577972013227844}
   barColor: {r: 1, g: 0.9647059, b: 0.8039216, a: 1}
   barResetColor: {r: 1, g: 0, b: 0.6860709, a: 1}
@@ -568,8 +568,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
   rotateX: 0
-  slowBillboard: 0
-  slowBillboardTime: 0.1
+  easing: 0
+  easeSpeed: 0.1
 --- !u!1 &2899068827832080456
 GameObject:
   m_ObjectHideFlags: 0
@@ -787,8 +787,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
   rotateX: 1
-  slowBillboard: 0
-  slowBillboardTime: 0.1
+  easing: 0
+  easeSpeed: 0.1
 --- !u!1 &5195267941652961625
 GameObject:
   m_ObjectHideFlags: 0
@@ -1435,17 +1435,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 356628072145771322, guid: f382ba13663871241b58320f76dbadad, type: 3}
   m_PrefabInstance: {fileID: 3413191622358279630}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5379846409219135353 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7347370438813282999, guid: f382ba13663871241b58320f76dbadad, type: 3}
+--- !u!1 &5820241246767075552 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9195137823485850926, guid: f382ba13663871241b58320f76dbadad, type: 3}
   m_PrefabInstance: {fileID: 3413191622358279630}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!1001 &4193758004065879410
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -148,6 +148,10 @@ public class WeakPoint : MonoBehaviour
         if (weakPointCollider != null)
             weakPointCollider.enabled = false;
 
+        // stop any in-progress shatter so the mesh doesn't linger
+        ShatterEffect shatter = GetComponent<ShatterEffect>();
+        if (shatter != null) shatter.Stop();
+
         if (allRenderers != null) // <-- guard against pre-Awake calls
         {
             foreach (SpriteRenderer renderer in allRenderers)

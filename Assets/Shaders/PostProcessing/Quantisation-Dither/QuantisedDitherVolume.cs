@@ -2,6 +2,21 @@ using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+public enum BayerMatrixSize
+{
+    TwoByTwo = 2,
+    FourByFour = 4,
+    EightByEight = 8,
+    SixteenBySixteen = 16
+}
+
+[Serializable]
+public sealed class BayerMatrixSizeParameter : VolumeParameter<BayerMatrixSize>
+{
+    public BayerMatrixSizeParameter(BayerMatrixSize value, bool overrideState = false)
+        : base(value, overrideState) { }
+}
+
 // Summary: Volume component for the Quantised Dither post-processing effect.
 [Serializable, VolumeComponentMenu("Custom Post-Processing/Quantised Dither")]
 public class QuantisedDitherVolume : VolumeComponent
@@ -21,8 +36,8 @@ public class QuantisedDitherVolume : VolumeComponent
     [Tooltip("How strongly the dither pattern is applied.")]
     public ClampedFloatParameter ditherStrength = new ClampedFloatParameter(1f, 0f, 1f);
 
-    [Tooltip("Size of the Bayer matrix used for dithering. Ignored when using PS1 matrix.")]
-    public ClampedFloatParameter bayerSize = new ClampedFloatParameter(16f, 2f, 16f);
+    [Tooltip("Bayer matrix used for dithering. Ignored when using PS1 matrix.")]
+    public BayerMatrixSizeParameter bayerSize = new BayerMatrixSizeParameter(BayerMatrixSize.SixteenBySixteen);
 
     [Tooltip("Use the PS1-style dither matrix instead of standard Bayer.")]
     public BoolParameter usePS1Matrix = new BoolParameter(false);
