@@ -8,7 +8,10 @@ public class DeathPlane : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!other.CompareTag("Player")) return;
+
         // SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Debug.Log($"DeathPlane Hit!");
         DeathPlaneHit?.Invoke();
     }
 }

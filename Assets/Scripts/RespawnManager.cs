@@ -17,7 +17,7 @@ public class RespawnManager : MonoBehaviour
         roomEntryDetectors = FindObjectsByType<RoomEntryDetector>(FindObjectsSortMode.None);
     }
 
-    void Awake()
+    void Start()
     {
         deathPlane.DeathPlaneHit += RespawnMiriam;
 
@@ -29,8 +29,11 @@ public class RespawnManager : MonoBehaviour
 
     void RespawnMiriam()
     {
+        miriam.GetComponent<CharacterController>().enabled = false;
         miriam.position = currentRespawnPoint.transform.position;
         miriam.rotation = currentRespawnPoint.transform.rotation;
+        miriam.GetComponent<CharacterController>().enabled = true;
+        Debug.Log($"[{this}] Miriam Respawned at ( {currentRespawnPoint.transform.position} )!");
     }
 
     void SetRespawnPoint(RoomEntryDetector roomEntryDetector)
