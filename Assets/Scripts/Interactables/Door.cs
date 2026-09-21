@@ -170,7 +170,7 @@ public class Door : MonoBehaviour, IInteractable
             {
                 return new InteractionPrompt
                 {
-                    label = "Won't open from this side",
+                    label = "Locked", // "Won't open from this side"
                     actionName = ""
                 };
             }
@@ -186,7 +186,7 @@ public class Door : MonoBehaviour, IInteractable
         {
             return new InteractionPrompt
             {
-                label = "Won't open from this side",
+                label = "Locked", // "Won't open from this side"
                 actionName = ""
             };
         }
