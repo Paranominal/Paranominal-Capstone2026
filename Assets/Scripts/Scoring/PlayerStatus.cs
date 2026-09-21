@@ -4,9 +4,11 @@ using System.Collections;
 
 public class PlayerStatus : MonoBehaviour, IDamageable
 {
+    [Header("References")]
     [SerializeField] private FearBar fearBar;
     [SerializeField] private CameraEffects cameraEffects;
     [SerializeField] private PlayerMover playerMover;
+    [SerializeField] private ComboSystem comboSystem;
 
     [Header("Stun")]
     [Tooltip("The amount of force applied to the stun knockback when the player is hit. -1 will use the damage amount.")]
@@ -25,6 +27,9 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     {
         if (cameraEffects == null)
             cameraEffects = FindAnyObjectByType<CameraEffects>();
+
+        if (comboSystem == null)
+            comboSystem = FindAnyObjectByType<ComboSystem>();
     }
 
     public void TakeDamage(DamageInfo info)
@@ -41,9 +46,8 @@ public class PlayerStatus : MonoBehaviour, IDamageable
         float stunDuration = cameraEffects != null ? cameraEffects.shakeDuration : 0f;
         StartInvinciblePeriod(stunDuration + invincibleDuration);
         playerMover.stunPlayer(stunDuration, info, knockbackForce);
-
         
-
+        comboSystem?.ApplyDamagePenalty();
     }
 
     private Coroutine invincibleCoroutine;

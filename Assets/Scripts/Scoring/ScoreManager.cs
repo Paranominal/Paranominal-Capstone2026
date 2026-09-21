@@ -138,7 +138,7 @@ public class ScoreManager : MonoBehaviour
                 break;
 
             case ComboEffect.Break:
-                comboSystem.BreakCombo();
+                comboSystem.ApplyMissPenalty(); // EDIT (ScoreManager): penalize instead of full reset
                 break;
 
             case ComboEffect.Neutral:

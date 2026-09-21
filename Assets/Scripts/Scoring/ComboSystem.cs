@@ -6,8 +6,13 @@ public class ComboSystem : MonoBehaviour
     [SerializeField] private float comboDuration = 5f;
     [SerializeField] private float multiplierPerHit = 0.1f;
 
+    [Header("Penalties")]
+    [SerializeField] private float missPenalty = 0.1f;       // Michael edit: multiplier reduction on a missed shot
+    [SerializeField] private float drainPenalty = 0.1f;      // Michael edit: multiplier reduction when the combo bar drains
+    [SerializeField] private float damagePenalty = 0.1f;      // Michael edit: multiplier reduction when the player takes damage
+
     [Header("Debug")]
-    [SerializeField] private bool debugMode = true; // haven't assembled the ui yet
+    [SerializeField] private bool debugMode = true;
 
     public float Multiplier { get; private set; }
     public float TimeRemaining { get; private set; }
@@ -25,8 +30,7 @@ public class ComboSystem : MonoBehaviour
 
         if (TimeRemaining <= 0f)
         {
-            if (debugMode) Debug.Log($"Combo timed out at {1f + Multiplier:0.0}x");
-            BreakCombo();
+            PenalizeCombo(drainPenalty); // Michael edit: drop one tier instead of full reset
         }
     }
 
@@ -39,9 +43,45 @@ public class ComboSystem : MonoBehaviour
         OnComboChanged?.Invoke(Multiplier);
     }
 
+    // Michael edit: called by ScoreManager when a shot misses
+    public void ApplyMissPenalty()
+    {
+        PenalizeCombo(missPenalty);
+    }
+
+    // Michael edit: called externally when the player takes damage
+    public void ApplyDamagePenalty()
+    {
+        PenalizeCombo(damagePenalty);
+    }
+
+    // Michael edit: reduces multiplier by the given amount, resets timer if combo survives, ends it if it hits zero
+    private void PenalizeCombo(float penalty)
+    {
+        if (!IsActive && Multiplier <= 0f) return;
+
+        Multiplier = Mathf.Max(0f, Multiplier - penalty);
+
+        if (Multiplier <= 0f)
+        {
+            if (debugMode) Debug.Log("Combo ended (multiplier hit zero)");
+            Multiplier = 0f;
+            TimeRemaining = 0f;
+            OnComboChanged?.Invoke(Multiplier);
+            OnComboEnded?.Invoke();
+        }
+        else
+        {
+            TimeRemaining = comboDuration; // reset timer so the player gets a full window at the reduced tier
+            if (debugMode) Debug.Log($"Combo penalized: multiplier now {1f + Multiplier:0.0}x, timer reset");
+            OnComboChanged?.Invoke(Multiplier);
+        }
+    }
+
+    // Michael edit: hard reset, kept for edge cases
     public void BreakCombo()
     {
-        if (!IsActive && Multiplier <= 0f) return; // already broken, nothing to announce
+        if (!IsActive && Multiplier <= 0f) return;
 
         if (debugMode) Debug.Log($"Combo broken at {1f + Multiplier:0.0}x");
 
