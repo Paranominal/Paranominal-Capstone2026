@@ -63,4 +63,18 @@ public class Inventory : MonoBehaviour
         if (!inventory.Contains(item)) return;
         inventory.Remove(item);
     }
+
+    public bool HasItem(GameObject item)
+    {
+        return item != null && inventory != null && inventory.Contains(item);
+    }
+
+    public bool ConsumeItem(GameObject item)
+    {
+        if (!HasItem(item)) return false;
+
+        inventory.Remove(item);
+        Destroy(item);
+        return true;
+    }
 }

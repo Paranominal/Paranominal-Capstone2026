@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Michael feature (interaction-rework): stripped per-object raycasting and input handling. InteractionFocusController now handles aim detection and input routing.
+// Handles only the physical behaviour and player interaction of a door.
 [RequireComponent(typeof(AudioSource))]
 public class Door : MonoBehaviour, IInteractable
 {
@@ -11,34 +11,47 @@ public class Door : MonoBehaviour, IInteractable
         Closed,
     }
 
-    public bool unlocked;
-    public bool isEncounterLocked;
-    public DoorState state;
-    public float speed = 10;
-    public float slamSpeed = 20;
-    public float openAngle = -90;
-    public float ajarAngle = -20;
-    public float closedAngle = 0;
-    private Quaternion targetRotation;
-    private float actualSpeed;
-    public Collider doorCollider;
-    private Quaternion startAngle;
-    public bool isArenaLocked;
-    public float ajarDistance = 3;
-    private PlayerMover player;
+    [Header("Door State")]
+    [SerializeField] private DoorState state = DoorState.Closed;
+    [SerializeField] private DoorLock[] doorLocks;
+
+    [Header("One-Way")]
+    [SerializeField] private bool isOneWay = false;
+    [ShowIf("isOneWay")]
+    [Tooltip("When enabled, the accessible side is flipped to the door's back face.")]
+    [SerializeField] private bool flipAccessibleSide = false;
+    [ShowIf("isOneWay")]
+    [Tooltip("When enabled, the door becomes two-way once all locks are unlocked.")]
+    [SerializeField] private bool twoWayWhenUnlocked = true;
+    [ShowIf("isOneWay")]
+    [Tooltip("When enabled, the door becomes two-way after being opened from the accessible side.")]
+    [SerializeField] private bool twoWayOnceOpened = false;
+    [ShowIf("isOneWay")]
+    [Tooltip("When enabled, the accessible side ignores locks entirely. When disabled, locks apply on the accessible side and the inaccessible side is blocked.")]
+    [SerializeField] private bool accessibleSideBypassesLocks = true;
+
+    [Header("Movement")]
+    [SerializeField] private float speed = 10f;
+    [SerializeField] private float openAngle = -90f;
+    [SerializeField] private float ajarAngle = -20f;
+    [SerializeField] private float closedAngle = 0f;
+    [SerializeField] private float ajarDistance = 3f;
+    [SerializeField] private Collider doorCollider;
 
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
-    [SerializeField] private SoundDataSO slamSound;
     [SerializeField] private SoundDataSO openSound;
     [SerializeField] private SoundDataSO closeSound;
-    [SerializeField] private SoundDataSO lockedSound;
 
-    void Start()
+    private Quaternion startRotation;
+    private Quaternion targetRotation;
+    private PlayerMover player;
+    private bool hasBeenOpened;
+
+    private void Start()
     {
+        startRotation = transform.rotation;
         targetRotation = transform.rotation;
-        startAngle = transform.rotation;
-        actualSpeed = speed;
 
         if (doorCollider == null)
             doorCollider = GetComponentInChildren<Collider>();
@@ -46,45 +59,137 @@ public class Door : MonoBehaviour, IInteractable
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
 
-        if (player == null)
-            player = FindAnyObjectByType<PlayerMover>();
+        player = FindAnyObjectByType<PlayerMover>();
     }
 
-    void Update()
+    private void Update()
     {
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, actualSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.Lerp(
+            transform.rotation,
+            targetRotation,
+            speed * Time.deltaTime);
 
-        if (transform.rotation != targetRotation && doorCollider.enabled)
-        {
-            doorCollider.enabled = false;
-        }
-        else if (transform.rotation == targetRotation && !doorCollider.enabled)
-        {
-            doorCollider.enabled = true;
-        }
+        bool isMoving = Quaternion.Angle(transform.rotation, targetRotation) > 0.1f;
 
-        if (transform.rotation == targetRotation && actualSpeed != speed)
-        {
-            actualSpeed = speed;
-        }
+        if (doorCollider != null)
+            doorCollider.enabled = !isMoving;
 
-        if (Vector3.Distance(player.transform.position, transform.position) > ajarDistance && state == DoorState.Open)
+        if (player != null && state == DoorState.Open &&
+            Vector3.Distance(player.transform.position, transform.position) > ajarDistance)
         {
-            Ajar();
+            if (isOneWay)
+                Close();
+            else
+                Ajar();
         }
     }
 
-    // Michael feature (interaction-rework): routed from InteractionFocusController.
     public void Interact(InteractionContext context)
     {
-        TryDoor();
+        bool locked = HasLockedLocks();
+        bool effectivelyOneWay = IsEffectivelyOneWay();
+        bool onAccessibleSide = IsPlayerOnAccessibleSide();
+
+        if (locked)
+        {
+            // one-way + locked: accessible side bypasses locks when enabled
+            if (effectivelyOneWay && onAccessibleSide && accessibleSideBypassesLocks)
+            {
+                if (twoWayOnceOpened) hasBeenOpened = true;
+                Toggle();
+                return;
+            }
+
+            // one-way + locked + bypass off: inaccessible side is blocked entirely
+            if (effectivelyOneWay && !onAccessibleSide && !accessibleSideBypassesLocks)
+                return;
+
+            // standard lock logic (accessible side when bypass is off, or inaccessible side when bypass is on)
+            DoorLock firstRemainingLock = null;
+            bool unlockedSomething = false;
+
+            if (doorLocks != null)
+            {
+                foreach (DoorLock doorLock in doorLocks)
+                {
+                    if (doorLock == null || !doorLock.IsLocked)
+                        continue;
+
+                    if (doorLock.CanUnlock(context))
+                    {
+                        doorLock.TryUnlock(context, false);
+                        unlockedSomething = true;
+                    }
+                    else if (firstRemainingLock == null)
+                    {
+                        firstRemainingLock = doorLock;
+                    }
+                }
+            }
+
+            if (HasLockedLocks())
+            {
+                firstRemainingLock?.PlayLockedFeedback();
+                return;
+            }
+
+            // just unlocked the last lock: don't auto-open, player interacts again to open
+            if (unlockedSomething)
+                return;
+        }
+        else if (effectivelyOneWay && !onAccessibleSide)
+        {
+            // no locks, one-way, wrong side: blocked
+            return;
+        }
+
+        if (twoWayOnceOpened && isOneWay && onAccessibleSide)
+            hasBeenOpened = true;
+
+        Toggle();
     }
 
-    // Michael feature (interaction-rework): prompt based on door state.
     public InteractionPrompt ResolvePrompt(InteractionContext context)
     {
-        if (isArenaLocked || !unlocked)
-            return InteractionPrompt.None;
+        bool locked = HasLockedLocks();
+        bool effectivelyOneWay = IsEffectivelyOneWay();
+        bool onAccessibleSide = IsPlayerOnAccessibleSide();
+
+        if (locked)
+        {
+            if (effectivelyOneWay && onAccessibleSide && accessibleSideBypassesLocks)
+            {
+                return new InteractionPrompt
+                {
+                    label = state == DoorState.Open ? "Close" : "Open",
+                    actionName = "Collect"
+                };
+            }
+
+            if (effectivelyOneWay && !onAccessibleSide && !accessibleSideBypassesLocks)
+            {
+                return new InteractionPrompt
+                {
+                    label = "Won't open from this side",
+                    actionName = ""
+                };
+            }
+
+            return new InteractionPrompt
+            {
+                label = CanUnlockAnyLock(context) ? "Unlock" : "Locked",
+                actionName = "Collect"
+            };
+        }
+
+        if (effectivelyOneWay && !onAccessibleSide)
+        {
+            return new InteractionPrompt
+            {
+                label = "Won't open from this side",
+                actionName = ""
+            };
+        }
 
         return new InteractionPrompt
         {
@@ -93,112 +198,120 @@ public class Door : MonoBehaviour, IInteractable
         };
     }
 
+    public void Toggle()
+    {
+        if (state == DoorState.Open)
+            Close();
+        else
+            Open();
+    }
+
     public void Open()
     {
-        if (unlocked)
-        {
-            targetRotation = startAngle * Quaternion.AngleAxis(openAngle, transform.up);
-            state = DoorState.Open;
-            AudioManager.PlaySound(openSound, audioSource);
-        }
+        SetTargetRotation(openAngle, DoorState.Open);
+        AudioManager.PlaySound(openSound, audioSource);
     }
 
     public void ForceOpen()
     {
-        unlocked = true;
         Open();
     }
 
     public void Ajar()
     {
-        targetRotation = startAngle * Quaternion.AngleAxis(ajarAngle, transform.up);
-        state = DoorState.Ajar;
+        SetTargetRotation(ajarAngle, DoorState.Ajar);
         AudioManager.PlaySound(closeSound, audioSource);
-    }
-
-    public void TryDoor()
-    {
-        if (unlocked)
-        {
-            if (state == DoorState.Open)
-            {
-                Ajar();
-            }
-            else
-            {
-                Open();
-            }
-        }
-        else
-        {
-            AudioManager.PlaySound(lockedSound, audioSource);
-        }
-    }
-
-    public void Slam()
-    {
-        Close(true, true);
     }
 
     public void Close()
     {
-        Close(false, false);
+        SetTargetRotation(closedAngle, DoorState.Closed);
+        AudioManager.PlaySound(closeSound, audioSource);
     }
 
-    public void Close(bool locked, bool fast)
+    private void SetTargetRotation(float angle, DoorState newState)
     {
-        targetRotation = startAngle * Quaternion.AngleAxis(closedAngle, transform.up);
-        state = DoorState.Closed;
-        if (locked)
-        {
-            unlocked = false;
-        }
-        if (fast)
-        {
-            actualSpeed = slamSpeed;
-            AudioManager.PlaySound(slamSound, audioSource);
-        }
-        else
-        {
-            AudioManager.PlaySound(closeSound);
-        }
+        targetRotation = startRotation * Quaternion.AngleAxis(angle, Vector3.up);
+        state = newState;
     }
 
-    public void Lock()
+    private bool HasLockedLocks()
     {
-        unlocked = false;
+        if (doorLocks == null)
+            return false;
+
+        foreach (DoorLock doorLock in doorLocks)
+        {
+            if (doorLock != null && doorLock.IsLocked)
+                return true;
+        }
+
+        return false;
     }
 
-    public void Unlock()
+    private bool CanUnlockAnyLock(InteractionContext context)
     {
-        unlocked = true;
+        if (doorLocks == null)
+            return false;
+
+        foreach (DoorLock doorLock in doorLocks)
+        {
+            if (doorLock != null && doorLock.IsLocked && doorLock.CanUnlock(context))
+                return true;
+        }
+
+        return false;
     }
 
-    public void StartArena()
+    // One-Way
+    private bool IsEffectivelyOneWay()
     {
-        if (!isArenaLocked)
-        {
-            Slam();
-            isArenaLocked = true;
-            Debug.Log("Door locked in Arena mode.");
-        }
-        else
-        {
-            Debug.LogWarning("Door already in Arena mode. Did you mean EndArena()?");
-        }
+        if (!isOneWay) return false;
+        if (twoWayOnceOpened && hasBeenOpened) return false;
+        // only disable one-way when locks exist but have all been unlocked
+        if (twoWayWhenUnlocked && HasAnyLocks() && !HasLockedLocks()) return false;
+        return true;
     }
 
-    public void EndArena()
+    private bool HasAnyLocks()
     {
-        if (isArenaLocked)
+        if (doorLocks == null || doorLocks.Length == 0) return false;
+        foreach (DoorLock doorLock in doorLocks)
         {
-            Unlock();
-            isArenaLocked = false;
-            Debug.Log("Arena mode ended.");
+            if (doorLock != null) return true;
         }
-        else
-        {
-            Debug.LogWarning("Door is not in Arena mode. Did you mean StartArena()?");
-        }
+        return false;
     }
+
+    private bool IsPlayerOnAccessibleSide()
+    {
+        if (player == null) return true;
+
+        Vector3 toPlayer = player.transform.position - transform.position;
+        toPlayer.y = 0f;
+        if (toPlayer.sqrMagnitude < 0.001f) return true;
+
+        bool inFront = Vector3.Dot(transform.forward, toPlayer.normalized) > 0f;
+        return flipAccessibleSide ? !inFront : inFront;
+    }
+
+    #if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        if (!isOneWay) return;
+
+        Vector3 direction = flipAccessibleSide ? -transform.forward : transform.forward;
+        Vector3 start = transform.position + Vector3.up * 1f;
+        Vector3 end = start + direction * 1.5f;
+
+        // arrow shaft
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(start, end);
+
+        // arrowhead
+        Vector3 right = Vector3.Cross(Vector3.up, direction).normalized;
+        Gizmos.DrawLine(end, end + (-direction + right) * 0.3f);
+        Gizmos.DrawLine(end, end + (-direction - right) * 0.3f);
+    }
+    #endif
 }

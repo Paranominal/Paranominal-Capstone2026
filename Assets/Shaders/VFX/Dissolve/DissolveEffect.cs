@@ -1,10 +1,11 @@
-// Summary: Drives the Dissolve shader's _DissolveAmount from 0 to 1 over a configurable duration.
-// Call Play() on enemy death or object destruction. If the object uses a non-dissolve shader,
-// swaps to the provided dissolve material at play time, copying the texture and color from the original.
+// Summary: Drives the Dissolve shader's _DissolveAmount from 0 to 1 on every configured renderer.
+// If no renderers are assigned, all renderers on this object and its children are used.
+// If an object uses a non-dissolve shader, its material is replaced at play time while preserving its texture and colour.
 
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public class DissolveEffect : MonoBehaviour
 {
@@ -12,13 +13,16 @@ public class DissolveEffect : MonoBehaviour
     [SerializeField] private float dissolveDuration = 1.5f;
     [Tooltip("Destroy this GameObject when the dissolve finishes.")]
     [SerializeField] private bool destroyOnComplete = true;
-    [Tooltip("Dissolve material to swap to if the object uses a different shader. Leave empty if it already uses a dissolve shader.")]
-    [SerializeField] private Material dissolveMaterial = null;
+    [Tooltip("Dissolve material to swap to if an object uses a different shader. Leave empty if every material already uses a dissolve shader.")]
+    [SerializeField] private Material dissolveMaterial;
+    [Tooltip("Renderers affected by this dissolve. If empty, all renderers on this object and its children are gathered automatically.")]
+    [SerializeField] private Renderer[] targetRenderers;
 
     public event Action OnDissolveComplete;
 
-    private Renderer targetRenderer;
-    private Material material;
+    private readonly List<Material> runtimeMaterials = new List<Material>();
+    private bool isPlaying;
+
     private static readonly int DissolveAmountID = Shader.PropertyToID("_DissolveAmount");
     private static readonly int MainTexID = Shader.PropertyToID("_MainTex");
     private static readonly int ColorID = Shader.PropertyToID("_Color");
@@ -27,79 +31,148 @@ public class DissolveEffect : MonoBehaviour
 
     private void Awake()
     {
-        targetRenderer = GetComponent<Renderer>();
-        if (targetRenderer == null)
-            targetRenderer = GetComponentInChildren<Renderer>();
+        GatherRenderersIfNeeded();
     }
 
     public void Play()
     {
-        if (targetRenderer == null) return;
+        if (isPlaying)
+            return;
 
-        if (targetRenderer.material.HasProperty(DissolveAmountID))
+        GatherRenderersIfNeeded();
+
+        if (!PrepareMaterials())
         {
-            // already a dissolve shader, just create an instance
-            material = new Material(targetRenderer.material);
-        }
-        else if (dissolveMaterial != null)
-        {
-            // swap to dissolve material, copying texture and colour from original
-            Material original = targetRenderer.material;
-            material = new Material(dissolveMaterial);
-            CopyTextureAndColor(original, material);
-        }
-        else
-        {
+            Debug.LogWarning(
+                $"[{name}] DissolveEffect could not find a renderer/material with a _DissolveAmount property.",
+                this);
+            CompleteDissolve();
             return;
         }
 
-        material.SetFloat(DissolveAmountID, 0f);
-        targetRenderer.material = material;
-
-        // disable colliders so the dissolving object doesn't block movement
-        foreach (Collider col in GetComponentsInChildren<Collider>())
-            col.enabled = false;
-
+        isPlaying = true;
         StartCoroutine(DissolveCoroutine());
+    }
+
+    private void GatherRenderersIfNeeded()
+    {
+        if (targetRenderers == null || targetRenderers.Length == 0)
+            targetRenderers = GetComponentsInChildren<Renderer>(true);
+    }
+
+    private bool PrepareMaterials()
+    {
+        runtimeMaterials.Clear();
+
+        if (targetRenderers == null)
+            return false;
+
+        foreach (Renderer targetRenderer in targetRenderers)
+        {
+            if (targetRenderer == null)
+                continue;
+
+            Material[] originalMaterials = targetRenderer.sharedMaterials;
+            Material[] replacementMaterials = new Material[originalMaterials.Length];
+
+            for (int i = 0; i < originalMaterials.Length; i++)
+            {
+                Material original = originalMaterials[i];
+
+                if (original == null)
+                    continue;
+
+                Material replacement = CreateDissolveMaterial(original);
+
+                if (replacement == null)
+                {
+                    replacementMaterials[i] = original;
+                    continue;
+                }
+
+                replacement.SetFloat(DissolveAmountID, 0f);
+                replacementMaterials[i] = replacement;
+                runtimeMaterials.Add(replacement);
+            }
+
+            targetRenderer.materials = replacementMaterials;
+        }
+
+        return runtimeMaterials.Count > 0;
+    }
+
+    private Material CreateDissolveMaterial(Material original)
+    {
+        if (original.HasProperty(DissolveAmountID))
+            return new Material(original);
+
+        if (dissolveMaterial == null || !dissolveMaterial.HasProperty(DissolveAmountID))
+            return null;
+
+        Material replacement = new Material(dissolveMaterial);
+        CopyTextureAndColor(original, replacement);
+        return replacement;
     }
 
     private void CopyTextureAndColor(Material from, Material to)
     {
-        // URP Lit uses _BaseMap/_BaseColor, standard/custom shaders use _MainTex/_Color
-        Texture tex = null;
-        Color col = Color.white;
+        Texture texture = null;
+        Color colour = Color.white;
 
         if (from.HasProperty(BaseMapID))
-            tex = from.GetTexture(BaseMapID);
+            texture = from.GetTexture(BaseMapID);
         else if (from.HasProperty(MainTexID))
-            tex = from.GetTexture(MainTexID);
+            texture = from.GetTexture(MainTexID);
 
         if (from.HasProperty(BaseColorID))
-            col = from.GetColor(BaseColorID);
+            colour = from.GetColor(BaseColorID);
         else if (from.HasProperty(ColorID))
-            col = from.GetColor(ColorID);
+            colour = from.GetColor(ColorID);
 
-        // no base texture (e.g. procedural shaders), make transparent so only burn edges show
-        if (tex == null)
-            col.a = 0f;
+        if (texture != null)
+        {
+            if (to.HasProperty(BaseMapID))
+                to.SetTexture(BaseMapID, texture);
 
-        if (tex != null && to.HasProperty(MainTexID))
-            to.SetTexture(MainTexID, tex);
+            if (to.HasProperty(MainTexID))
+                to.SetTexture(MainTexID, texture);
+        }
+
+        if (to.HasProperty(BaseColorID))
+            to.SetColor(BaseColorID, colour);
+
         if (to.HasProperty(ColorID))
-            to.SetColor(ColorID, col);
+            to.SetColor(ColorID, colour);
     }
 
     private IEnumerator DissolveCoroutine()
     {
+        float duration = Mathf.Max(dissolveDuration, 0.01f);
         float elapsed = 0f;
-        while (elapsed < dissolveDuration)
+
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            material.SetFloat(DissolveAmountID, Mathf.Clamp01(elapsed / dissolveDuration));
+            SetDissolveAmount(Mathf.Clamp01(elapsed / duration));
             yield return null;
         }
 
-        material.SetFloat(DissolveAmountID, 1f);
+        SetDissolveAmount(1f);
+        CompleteDissolve();
+    }
+
+    private void SetDissolveAmount(float amount)
+    {
+        foreach (Material runtimeMaterial in runtimeMaterials)
+        {
+            if (runtimeMaterial != null)
+                runtimeMaterial.SetFloat(DissolveAmountID, amount);
+        }
+    }
+
+    private void CompleteDissolve()
+    {
+        isPlaying = false;
         OnDissolveComplete?.Invoke();
 
         if (destroyOnComplete)
@@ -108,6 +181,12 @@ public class DissolveEffect : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (material != null) Destroy(material);
+        foreach (Material runtimeMaterial in runtimeMaterials)
+        {
+            if (runtimeMaterial != null)
+                Destroy(runtimeMaterial);
+        }
+
+        runtimeMaterials.Clear();
     }
 }
