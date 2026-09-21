@@ -194,6 +194,10 @@ public class WeakPoint : MonoBehaviour
 
     private void ResolveHit()
     {
+        // Visual removal belongs to the weakpoint itself, not to its position
+        // in the manager's sequence. This is especially important when all
+        // weakpoints are visible and can be destroyed out of order.
+        Hide();
         hasBeenHit = true;
         weakpointManager?.NotifyWeakPointResolved(this);
     }

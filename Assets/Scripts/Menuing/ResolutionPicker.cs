@@ -11,7 +11,7 @@ public class ResolutionPicker : MonoBehaviour
 
     private Vector2Int[] resolutions;
 
-    private void OnEnable()
+    private void Start()
     {
         if (resolutionDropdown == null)
             resolutionDropdown = GetComponent<TMP_Dropdown>();
