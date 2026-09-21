@@ -9,13 +9,14 @@ public class PauseManager : MonoBehaviour
 
     [SerializeField] private string playerActionMapName = "Player";
     [SerializeField] private string grimoireActionMapName = "GrimoireUI";
+    [SerializeField] private PlayerInputReader playerInputReader;
     public void PauseGame()
     {
         // Set Time.timeScale to 0 to pause gameplay
         Time.timeScale = 0;
         InputSystem.actions.FindActionMap(playerActionMapName, true)?.Disable();
         InputSystem.actions.FindActionMap(grimoireActionMapName, true)?.Disable();
-        Cursor.lockState = CursorLockMode.None;
+        SetCursorModeLocked(false);
         Cursor.visible = true;
     }    
     
@@ -25,8 +26,22 @@ public class PauseManager : MonoBehaviour
         Time.timeScale = 1;
         InputSystem.actions.FindActionMap(playerActionMapName, true)?.Enable();
         InputSystem.actions.FindActionMap(grimoireActionMapName, true)?.Enable();
-        Cursor.lockState = CursorLockMode.Locked;
+        SetCursorModeLocked(true);
         Cursor.visible = false;
         isPaused = false;
+    }
+
+    void SetCursorModeLocked(bool mode) //true for locked, false for unlocked
+    {
+        if (mode) {
+            if (playerInputReader != null) playerInputReader.SetCursorState(CursorLockMode.Locked, false);
+            else {
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked; } }
+        else {
+            if (playerInputReader != null) playerInputReader.SetCursorState(CursorLockMode.None, true);
+            else {
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None; } }
     }
 }

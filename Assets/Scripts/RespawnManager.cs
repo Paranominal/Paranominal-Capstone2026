@@ -1,0 +1,45 @@
+using System;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime;
+using UnityEngine;
+
+public class RespawnManager : MonoBehaviour
+{
+    [SerializeField] private DeathPlane deathPlane;
+    [SerializeField] private Transform miriam;
+    [SerializeField] private RoomEntryDetector[] roomEntryDetectors;
+    private RespawnPoint currentRespawnPoint;
+
+    void Reset()
+    {
+        deathPlane = GetComponentInChildren<DeathPlane>();
+        roomEntryDetectors = FindObjectsByType<RoomEntryDetector>(FindObjectsSortMode.None);
+    }
+
+    void Awake()
+    {
+        deathPlane.DeathPlaneHit += RespawnMiriam;
+
+        foreach (RoomEntryDetector roomEntryDetector in roomEntryDetectors)
+        {
+            roomEntryDetector.PlayerEntry += SetRespawnPoint;
+        }
+    }
+
+    void RespawnMiriam()
+    {
+        miriam.position = currentRespawnPoint.transform.position;
+        miriam.rotation = currentRespawnPoint.transform.rotation;
+    }
+
+    void SetRespawnPoint(RoomEntryDetector roomEntryDetector)
+    {
+        RespawnPoint respawnPoint = roomEntryDetector.GetComponentInChildren<RespawnPoint>();
+        if (respawnPoint != null) currentRespawnPoint = respawnPoint;
+        else
+        {
+            Debug.LogWarning($"[{this}] Roombounds ({roomEntryDetector}) is missing a RespawnPoint! this might be a mistake.");
+        }
+    }
+}
