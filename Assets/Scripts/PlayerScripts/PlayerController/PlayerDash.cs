@@ -4,6 +4,7 @@ using UnityEngine.Rendering;
 
 public class PlayerDash : MonoBehaviour
 {
+    public bool dashEnabled = true;
     [Tooltip("Horizontal dash speed applied while dashing.")]
     [SerializeField] private float dashSpeed = 15f;
     [Tooltip("Duration of the dash in seconds.")]
@@ -96,16 +97,11 @@ public class PlayerDash : MonoBehaviour
         // resolve UI references if not assigned (UI lives on SceneEssentialsBundle)
         ResolveUIReferences();
 
-        if (!dashUsesCharges)
-        {
-            chargeBarContainer.SetActive(false);
-        }
-
-        if (dashUsesCharges)
+        if (!dashEnabled)
         {
             arrowContainer.SetActive(false);
+            chargeBarContainer.SetActive(false);
         }
-
 
         // initialize charges
         if (maxDashCharges < 1)
@@ -225,6 +221,16 @@ public class PlayerDash : MonoBehaviour
 
     private void Update()
     {
+        if (!dashUsesCharges)
+        {
+            chargeBarContainer.SetActive(false);
+        }
+
+        if (dashUsesCharges)
+        {
+            arrowContainer.SetActive(false);
+        }
+
         // Update post-full display timer and detect transition to start fading
         bool wasPostActive = postFullTimer > 0f;
         if (postFullTimer > 0f)
@@ -458,5 +464,22 @@ public class PlayerDash : MonoBehaviour
         }
 
         chargeBar.fillAmount = (float)currentDashCharges / (float)maxDashCharges;
+    }
+
+    public void DashVersionEnabled(string version)
+    {
+        dashEnabled = true;
+        if (version == "charges")
+        {
+            dashUsesCharges = true;
+            chargeBarContainer.SetActive(true);
+            arrowContainer.SetActive(false);
+        }
+        else
+        {
+            arrowContainer.SetActive(true);
+            chargeBarContainer.SetActive(false);
+        }
+    
     }
 }

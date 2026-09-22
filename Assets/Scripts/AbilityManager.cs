@@ -3,7 +3,7 @@ using UnityEngine;
 public class AbilityManager : MonoBehaviour
 {
     [SerializeField] private ALTGrimoire grimoire;
-    [SerializeField] private PlayerMover playerMover;
+    [SerializeField] private PlayerDash playerDash;
     [SerializeField] private string dashEntryName;
     private bool dashObtained;
 
@@ -14,7 +14,8 @@ public class AbilityManager : MonoBehaviour
 
     void GainDash()
     {
-        playerMover.dashEnabled = true;
+        playerDash.dashEnabled = true;
+        playerDash.DashVersionEnabled("charges");
         dashObtained = true;
     }
 }
