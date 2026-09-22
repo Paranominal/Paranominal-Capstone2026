@@ -1,6 +1,7 @@
 using UnityEngine;
+using System.Collections.Generic;
 using UnityEngine.UI;
-using UnityEngine.Rendering; 
+using UnityEngine.Rendering;
 
 public class PlayerDash : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class PlayerDash : MonoBehaviour
     [SerializeField] private float dashCooldown = 1f;
 
 
-    [Header("UI")]
+    [Header("Cooldown Arrow UI")]
     [Tooltip("Dull arrow image that is shown faded while dash is on cooldown.")]
     [SerializeField] private Image dullArrow = null;
     [Tooltip("Full arrow image that is filled bottom->top to indicate cooldown progress.")]
@@ -58,6 +59,10 @@ public class PlayerDash : MonoBehaviour
     [Tooltip("UI fill image representing dash charges (fillAmount = charges / maxCharges).")]
     [SerializeField] private Image chargeBar = null;
     [SerializeField] private GameObject chargeBarContainer = null;
+    [Tooltip("Time in seconds for the bar to go from 0 -> full via passive recharge.")]
+    [SerializeField] private float secondsToFullCharge = 30f;
+    [Tooltip("Fraction of the full bar to add on a weakpoint hit (e.g. 0.2 = +20% of full bar).")]
+    [SerializeField][Range(0f, 1f)] private float weakpointRechargeBonus = 0.2f;
 
     // UI state
     private bool cooldownActive = false;
@@ -73,7 +78,8 @@ public class PlayerDash : MonoBehaviour
     private Vector3 dashDirection = Vector3.zero;
     private bool dashHeldLastFrame = false;
     private float dashCooldownTimer = 0f;
-    private int currentDashCharges = 0;
+    // normalized 0..1 charge value (1 == full)
+    private float currentDashCharges = 0f;
 
     // reference to weapon events for listening to shot results
     private WeaponEvents weaponEvents = null;
@@ -106,7 +112,8 @@ public class PlayerDash : MonoBehaviour
         // initialize charges
         if (maxDashCharges < 1)
             maxDashCharges = 1;
-        currentDashCharges = maxDashCharges;
+        // start full (normalized)
+        currentDashCharges = 1f;
         UpdateChargeUI();
 
         // Try to find WeaponEvents to subscribe for shot results so we can grant charges on weakpoint hits
@@ -146,7 +153,8 @@ public class PlayerDash : MonoBehaviour
 
         if (result.Outcome == ShotOutcome.WeakPointHit)
         {
-            AddDashCharge(1);
+            // give a fractional bonus to the normalized charge bar (for example, 0.2 = +20% of the full bar)
+            AddDashChargeFraction(weakpointRechargeBonus);
         }
     }
 
@@ -166,7 +174,8 @@ public class PlayerDash : MonoBehaviour
         }
 
         // Handle dash start (pressed this frame)
-        if (dashInput && !dashHeldLastFrame && !isDashing && dashCooldownTimer <= 0f && (!dashUsesCharges || currentDashCharges > 0))
+        float needed = ChargePerDash;
+        if (dashInput && !dashHeldLastFrame && !isDashing && dashCooldownTimer <= 0f && (!dashUsesCharges || currentDashCharges >= needed - 0.0001f))
         {
             // Only allow starting a dash when grounded unless air dashing is enabled
             if (!characterController.isGrounded && !allowAirDash)
@@ -183,10 +192,10 @@ public class PlayerDash : MonoBehaviour
 
                 isDashing = true;
                 dashTimer = dashDuration;
-                // consume a charge if using the charge-based dash
+                // consume a charge if using the charge-based dash (consume fractional amount)
                 if (dashUsesCharges)
                 {
-                    currentDashCharges = Mathf.Max(0, currentDashCharges - 1);
+                    currentDashCharges = Mathf.Max(0f, currentDashCharges - needed);
                     UpdateChargeUI();
                 }
                 StartDashFOV();
@@ -231,6 +240,15 @@ public class PlayerDash : MonoBehaviour
             arrowContainer.SetActive(false);
         }
 
+        // Charges dash now has a passive recharge: normalized 0 to 1, increases toward 1 over secondsToFullCharge
+        if (dashUsesCharges)
+        {
+            if (currentDashCharges < 1f && secondsToFullCharge > 0f)
+            {
+                currentDashCharges = Mathf.Clamp01(currentDashCharges + (Time.deltaTime / secondsToFullCharge));
+            }
+        }
+
         // Update post-full display timer and detect transition to start fading
         bool wasPostActive = postFullTimer > 0f;
         if (postFullTimer > 0f)
@@ -260,7 +278,7 @@ public class PlayerDash : MonoBehaviour
             }
             else if (fadeTimer <= 0f)
             {
-                // Fade complete: disable images
+                // Fade complete and disable images
                 isFadingOut = false;
                 SetImageAlpha(dullArrow, 0f);
                 SetImageAlpha(fullArrow, 0f);
@@ -300,7 +318,7 @@ public class PlayerDash : MonoBehaviour
             }
         }
 
-        // Update charge UI each frame (instant jumps per requirement)
+        // Update charge UI each frame (reflect normalized value)
         UpdateChargeUI();
     }
 
@@ -448,7 +466,18 @@ public class PlayerDash : MonoBehaviour
         if (amount <= 0)
             return;
 
-        currentDashCharges = Mathf.Clamp(currentDashCharges + amount, 0, maxDashCharges);
+        float add = amount * ChargePerDash;
+        currentDashCharges = Mathf.Clamp01(currentDashCharges + add);
+        UpdateChargeUI();
+    }
+
+    // Adds a fraction of the full bar
+    public void AddDashChargeFraction(float amountNormalized = 1f)
+    {
+        if (amountNormalized <= 0f)
+            return;
+
+        currentDashCharges = Mathf.Clamp01(currentDashCharges + amountNormalized);
         UpdateChargeUI();
     }
 
@@ -457,14 +486,10 @@ public class PlayerDash : MonoBehaviour
         if (chargeBar == null)
             return;
 
-        if (maxDashCharges <= 0)
-        {
-            chargeBar.fillAmount = 0f;
-            return;
-        }
-
-        chargeBar.fillAmount = (float)currentDashCharges / (float)maxDashCharges;
+        chargeBar.fillAmount = Mathf.Clamp01(currentDashCharges);
     }
+
+    private float ChargePerDash => 1f / Mathf.Max(1, maxDashCharges);
 
     public void DashVersionEnabled(string version)
     {
@@ -480,6 +505,5 @@ public class PlayerDash : MonoBehaviour
             arrowContainer.SetActive(true);
             chargeBarContainer.SetActive(false);
         }
-    
     }
 }
