@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 520143117659569660, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 6.057
       objectReference: {fileID: 0}
     - target: {fileID: 520143117659569660, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
       propertyPath: m_LocalPosition.y
@@ -18,19 +18,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 520143117659569660, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.012703896
       objectReference: {fileID: 0}
     - target: {fileID: 520143117659569660, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 520143117659569660, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 520143117659569660, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0.70710677
       objectReference: {fileID: 0}
     - target: {fileID: 520143117659569660, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
       propertyPath: m_LocalRotation.z
@@ -42,7 +42,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 520143117659569660, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 520143117659569660, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -53,17 +53,29 @@ PrefabInstance:
       value: LockedDoorway
       objectReference: {fileID: 0}
     - target: {fileID: 4495634724647422031, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
+      propertyPath: isOneWay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4495634724647422031, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
       propertyPath: unlocked
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4495634724647422031, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
+      propertyPath: twoWayWhenUnlocked
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4495634724647422031, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
       propertyPath: doorLocks.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4495634724647422031, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
       propertyPath: 'doorLocks.Array.data[0]'
       value: 
       objectReference: {fileID: 2430460052800633830}
+    - target: {fileID: 4495634724647422031, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
+      propertyPath: accessibleSideBypassesLocks
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4495634724647422031, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
       propertyPath: doorLocksToRemove.Array.size
       value: 1
@@ -82,35 +94,8 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7228497878310599864, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3094371134402273628}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1203907827036965114, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8349299410967667754}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
---- !u!1 &58642616141727746 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1203907827036965114, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
-  m_PrefabInstance: {fileID: 1181479035474673912}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8349299410967667754
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 58642616141727746}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f88c309b4fe5244f95a8c5abab799d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InteractionObject
-  keyName: Staff Key
-  interactable:
-    serializedVersion: 2
-    m_Bits: 1024
-  consumesItem: 1
-  deleteOnInteract: 0
-  objectsToDelete: []
 --- !u!4 &8373806245136841792 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7228497878310599864, guid: c605fe4a38ed61042ba0982d6757a9af, type: 3}
@@ -131,6 +116,10 @@ PrefabInstance:
     - target: {fileID: 7471617361814050309, guid: ee243830c7e26794aad67b8313237b5b, type: 3}
       propertyPath: m_Layer
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7471617361814050309, guid: ee243830c7e26794aad67b8313237b5b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7852963609966611647, guid: ee243830c7e26794aad67b8313237b5b, type: 3}
       propertyPath: m_LocalPosition.x
