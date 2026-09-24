@@ -5,7 +5,10 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-
+// Summary: Grimoire controller. Holds the entries list (the player's items) and switches the book between two content modes:
+// the Minimised UI (current entry display + scrollable entry list) during gameplay, and the Full Interface, which is the pause menu.
+// Pausing goes through PauseManager. Full Interface tab content is delegated to the panel scripts (GrimoireInventoryPanel, etc.).
+// EDIT (grimoire-pause): Full Interface ported from the mid-year prototype. Pause, cursor and action map handling moved to PauseManager.
 public class ALTGrimoire : MonoBehaviour
 {
     public static ALTGrimoire instance;
@@ -18,6 +21,12 @@ public class ALTGrimoire : MonoBehaviour
     [HideInInspector] public bool grimoireActive;
 
     public event System.Action<bool> OnGrimoireToggled;
+
+    // EDIT (grimoire-pause): raised when an entry is added or its collected state changes. Used by GrimoireInventoryPanel.
+    public event System.Action OnEntriesChanged;
+
+    // EDIT (grimoire-pause): exposed so the Inventory page can highlight the current item.
+    public int CurrentEntryIndex => currentEntry;
 
     [Header("UI References: Content")]
     [SerializeField] private TextMeshProUGUI entryNameDisplay;
@@ -32,19 +41,63 @@ public class ALTGrimoire : MonoBehaviour
     [SerializeField] private GameObject entryButtonPrefab;
     [SerializeField] private Animator grimoireAnim;
 
+    // EDIT (grimoire-pause): Full Interface references.
+    [Header("Full Interface: Toggle")]
+    [Tooltip("Any of these actions opens and closes the Full Interface (e.g. GrimoireUI on Tab, Pause on Escape). Falls back to GrimoireUI if empty.")]
+    [SerializeField] private InputActionReference[] toggleActions;
+    [Tooltip("The X button that closes the Full Interface.")]
+    [SerializeField] private Button closeButton;
+
+    [Header("Full Interface: Panels")]
+    [Tooltip("Empty GameObjects holding the panel scripts. Not visual elements.")]
+    [SerializeField] private GameObject inventoryPanel;
+    [SerializeField] private GameObject bestiaryPanel;
+    [SerializeField] private GameObject settingsPanel;
+
+    [Header("Full Interface: Tab Buttons")]
+    [SerializeField] private Button inventoryTabButton;
+    [SerializeField] private Button bestiaryTabButton;
+    [SerializeField] private Button settingsTabButton;
+    [SerializeField] private Color tabNormalColor = new Color(1f, 1f, 1f, 0.5f);
+    [SerializeField] private Color tabActiveColor = new Color(1f, 1f, 1f, 1f);
+
+    [Header("Full Interface: Layout")]
+    [Tooltip("Heading text on BookL. Shows the active tab name.")]
+    [SerializeField] private TMP_Text headingText;
+    [Tooltip("The shared ScrollView (BookL) and DetailView (BookR) used by the Inventory and Bestiary tabs. Hidden on the Settings tab.")]
+    [SerializeField] private GameObject[] sharedListLayout;
+
+    [Header("Content Containers")]
+    [Tooltip("Parent of all Full Interface elements on BookL.")]
+    [SerializeField] private GameObject fullContentL;
+    [Tooltip("Parent of all Full Interface elements on BookR.")]
+    [SerializeField] private GameObject fullContentR;
+    [Tooltip("Parent of the Minimised UI elements on BookL.")]
+    [SerializeField] private GameObject minimisedContentL;
+    [Tooltip("Parent of the Minimised UI elements on BookR.")]
+    [SerializeField] private GameObject minimisedContentR;
+
     [Header("External Systems")]
     public PhotoSnapshots snapshotHandler;
-    [SerializeField] private PlayerInputReader playerInputReader;
     public PlayerHUD screenUI;
+    // EDIT (grimoire-pause): replaces the old PlayerInputReader reference. Cursor state is handled by PauseManager now.
+    [SerializeField] private PauseManager pauseManager;
 
     // Internal Navigation State
     private int currentEntry;
     private List<GameObject> entryButtons = new List<GameObject>();
     private Vector2 polaroidBasePosition;
 
+    // EDIT (grimoire-pause): Full Interface state.
+    private GrimoireTab activeTab = GrimoireTab.Inventory;
+    private GameObject[] panels;
+    private Button[] tabButtons;
+    private static readonly string[] tabNames = { "Inventory", "Bestiary", "Settings" };
+
     // Input Actions
     private InputAction scrollGrimoireAction;
-    private InputAction grimoireUIAction;
+    // EDIT (grimoire-pause): replaces grimoireUIAction.
+    private List<InputAction> toggles = new List<InputAction>();
 
 
     private void Awake()
@@ -57,14 +110,27 @@ public class ALTGrimoire : MonoBehaviour
         {
             instance = this;
         }
+
+        // EDIT (grimoire-pause): arrays in GrimoireTab order.
+        panels = new GameObject[] { inventoryPanel, bestiaryPanel, settingsPanel };
+        tabButtons = new Button[] { inventoryTabButton, bestiaryTabButton, settingsTabButton };
     }
 
     void Start()
     {
         scrollGrimoireAction = InputSystem.actions.FindAction("ScrollGrimoire");
-        grimoireUIAction = InputSystem.actions.FindAction("GrimoireUI");
 
-        InputSystem.actions.FindActionMap("UI").Disable(); //this will cause issues once we need a menu/pause system but it works for now
+        // EDIT (grimoire-pause): UI map disable moved to PauseManager. Cross-prefab fallbacks.
+        if (pauseManager == null)
+            pauseManager = PauseManager.Instance != null ? PauseManager.Instance : FindAnyObjectByType<PauseManager>();
+        if (screenUI == null)
+            screenUI = FindAnyObjectByType<PlayerHUD>();
+
+        // EDIT (grimoire-pause): Full Interface setup. Starts closed with the Minimised UI showing.
+        SetupToggleActions();
+        SetupButtons();
+        DisableAllPanels();
+        SetContentMode(full: false);
 
         polaroidBasePosition = imageFrameParent.rectTransform.anchoredPosition;
 
@@ -103,66 +169,65 @@ public class ALTGrimoire : MonoBehaviour
             }
         }
 
-        if (grimoireUIAction.WasPressedThisFrame())
+        // EDIT (grimoire-pause): open/close logic moved into OpenGrimoire and CloseGrimoire.
+        if (TogglePressedThisFrame())
         {
-            if (!grimoireActive) // GRIMOIRE ACTIVATE!
-            {
-                SetGrimoireUnscaledTime(true);
-                // if (grimoireAnim != null)
-                // {
-                //     grimoireAnim.Play("Grimoire_Menu_Up", 1);
-                // }
-                grimoireActive = true;
-                OnGrimoireToggled?.Invoke(true);
-                Time.timeScale = 0f;
-
-                if (playerInputReader != null)
-                    playerInputReader.SetCursorState(CursorLockMode.None, true);
-                else
-                {
-                    Cursor.visible = true;
-                    Cursor.lockState = CursorLockMode.None;
-                }
-
-                screenUI.UIVisible(false);
-
-                //disabling player input completely
-                InputSystem.actions.FindActionMap("Player").Disable();
-                InputSystem.actions.FindActionMap("UI").Enable();
-            }
-            else // GRIMOIRE AWAY!!
-            {
-                SetGrimoireUnscaledTime(false);
-                // if (grimoireAnim != null)
-                // {
-                //     grimoireAnim.Play("Grimoire_Menu_Down", 1);
-                // }
-                grimoireActive = false;
-                OnGrimoireToggled?.Invoke(false);
-                Time.timeScale = 1f;
-
-                if (playerInputReader != null)
-                    playerInputReader.SetCursorState(CursorLockMode.Locked, false);
-                else
-                {
-                    Cursor.visible = false;
-                    Cursor.lockState = CursorLockMode.Locked;
-                }
-
-                screenUI.UIVisible(true);
-
-                InputSystem.actions.FindActionMap("Player").Enable();
-                InputSystem.actions.FindActionMap("UI").Disable();
-            }
+            if (!grimoireActive) OpenGrimoire(); // GRIMOIRE ACTIVATE!
+            else CloseGrimoire(); // GRIMOIRE AWAY!!
         }
 
-        if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject == null) 
+        // EDIT (grimoire-pause): only while closed. The Full Interface has its own buttons and would lose focus to the hidden list.
+        if (!grimoireActive && EventSystem.current != null && EventSystem.current.currentSelectedGameObject == null) 
         {
-            if (entryButtons.Count > 0 && currentEntry < entryButtons.Count)
-            {
-                EventSystem.current.SetSelectedGameObject(entryButtons[currentEntry]); // grabbing the current entry selection if it drops off
-            }
+            SelectCurrentEntryButton(); // grabbing the current entry selection if it drops off
         }
+    }
+
+    // ---- Open / Close ----
+
+    // EDIT (grimoire-pause): Summary: Opens the Full Interface and pauses the game through PauseManager.
+    // Ignored if something else (e.g. dialogue) currently owns the pause, or released it this frame.
+    private void OpenGrimoire()
+    {
+        if (pauseManager != null && (pauseManager.IsPaused || pauseManager.ResumedThisFrame))
+            return;
+
+        grimoireActive = true;
+        SetGrimoireUnscaledTime(true);
+
+        if (pauseManager != null)
+            pauseManager.PauseGame();
+
+        if (screenUI != null)
+            screenUI.UIVisible(false);
+
+        SetContentMode(full: true);
+        SwitchTab(activeTab);
+
+        OnGrimoireToggled?.Invoke(true);
+    }
+
+    // EDIT (grimoire-pause): Summary: Closes the Full Interface and resumes the game. Public for the X button and Quit to Menu.
+    public void CloseGrimoire()
+    {
+        if (!grimoireActive) return;
+
+        // Disable panels first so they clear the shared list.
+        DisableAllPanels();
+        SetGrimoireUnscaledTime(false);
+
+        grimoireActive = false;
+        SetContentMode(full: false);
+
+        if (screenUI != null)
+            screenUI.UIVisible(true);
+
+        if (pauseManager != null)
+            pauseManager.ResumeGame();
+
+        SelectCurrentEntryButton();
+
+        OnGrimoireToggled?.Invoke(false);
     }
 
     private void SetGrimoireUnscaledTime(bool useUnscaledTime)
@@ -174,29 +239,118 @@ public class ALTGrimoire : MonoBehaviour
         }
     }
 
-    public void ForceCloseForPause()
+    // EDIT (grimoire-pause): ForceCloseForPause removed. The Grimoire is the pause menu now, so nothing else needs to force it closed.
+
+    // ---- Full Interface ----
+
+    // EDIT (grimoire-pause): Summary: Collects the toggle actions and registers them with PauseManager so they keep working while paused.
+    private void SetupToggleActions()
     {
-        if (!grimoireActive)
+        if (toggleActions != null)
         {
-            return;
+            foreach (InputActionReference reference in toggleActions)
+            {
+                if (reference != null && reference.action != null && !toggles.Contains(reference.action))
+                    toggles.Add(reference.action);
+            }
         }
 
-        SetGrimoireUnscaledTime(false);
-        // if (grimoireAnim != null)
-        // {
-        //     grimoireAnim.Play("Grimoire_Menu_Down", 1);
-        // }
-
-        grimoireActive = false;
-        OnGrimoireToggled?.Invoke(false);
-
-        if (screenUI != null)
+        // Fallback to the original GrimoireUI action if nothing is assigned.
+        if (toggles.Count == 0)
         {
-            screenUI.UIVisible(true);
+            InputAction fallback = InputSystem.actions.FindAction("GrimoireUI");
+            if (fallback != null) toggles.Add(fallback);
         }
 
-        InputSystem.actions.FindActionMap("UI")?.Disable();
+        if (pauseManager != null)
+        {
+            foreach (InputAction action in toggles)
+                pauseManager.RegisterPersistentAction(action);
+        }
     }
+
+    // EDIT (grimoire-pause): single toggle per frame, even if more than one toggle key is pressed.
+    private bool TogglePressedThisFrame()
+    {
+        foreach (InputAction action in toggles)
+        {
+            if (action.WasPressedThisFrame()) return true;
+        }
+        return false;
+    }
+
+    // EDIT (grimoire-pause): tab buttons and the X button.
+    private void SetupButtons()
+    {
+        if (inventoryTabButton != null)
+            inventoryTabButton.onClick.AddListener(() => SwitchTab(GrimoireTab.Inventory));
+        if (bestiaryTabButton != null)
+            bestiaryTabButton.onClick.AddListener(() => SwitchTab(GrimoireTab.Bestiary));
+        if (settingsTabButton != null)
+            settingsTabButton.onClick.AddListener(() => SwitchTab(GrimoireTab.Settings));
+        if (closeButton != null)
+            closeButton.onClick.AddListener(CloseGrimoire);
+    }
+
+    // EDIT (grimoire-pause): Summary: Shows the selected tab's panel and hides the others.
+    // All panels are disabled first so the old panel's OnDisable (clears the shared list) runs before the new panel's OnEnable (rebuilds it).
+    public void SwitchTab(GrimoireTab tab)
+    {
+        activeTab = tab;
+        int activeIndex = (int)tab;
+
+        DisableAllPanels();
+
+        // Settings uses its own pages instead of the shared list and detail view.
+        bool showSharedLayout = tab != GrimoireTab.Settings;
+        if (sharedListLayout != null)
+        {
+            foreach (GameObject layoutObject in sharedListLayout)
+            {
+                if (layoutObject != null) layoutObject.SetActive(showSharedLayout);
+            }
+        }
+
+        if (activeIndex < panels.Length && panels[activeIndex] != null)
+            panels[activeIndex].SetActive(true);
+
+        if (headingText != null && activeIndex < tabNames.Length)
+            headingText.SetText(tabNames[activeIndex]);
+
+        UpdateTabButtonVisuals(activeIndex);
+    }
+
+    private void DisableAllPanels()
+    {
+        for (int i = 0; i < panels.Length; i++)
+        {
+            if (panels[i] != null)
+                panels[i].SetActive(false);
+        }
+    }
+
+    private void UpdateTabButtonVisuals(int activeIndex)
+    {
+        for (int i = 0; i < tabButtons.Length; i++)
+        {
+            if (tabButtons[i] == null) continue;
+
+            Image buttonImage = tabButtons[i].GetComponent<Image>();
+            if (buttonImage != null)
+                buttonImage.color = (i == activeIndex) ? tabActiveColor : tabNormalColor;
+        }
+    }
+
+    // EDIT (grimoire-pause): Summary: Swaps between the Full Interface (open) and the Minimised UI (closed).
+    private void SetContentMode(bool full)
+    {
+        if (fullContentL != null) fullContentL.SetActive(full);
+        if (fullContentR != null) fullContentR.SetActive(full);
+        if (minimisedContentL != null) minimisedContentL.SetActive(!full);
+        if (minimisedContentR != null) minimisedContentR.SetActive(!full);
+    }
+
+    // ---- Entries ----
 
     public ALTGrimoireEntry GetEntry(int n)    //this could be overloaded to handle several means of accessing (by name, an ID, etc)
     {
@@ -302,6 +456,9 @@ public class ALTGrimoire : MonoBehaviour
             e.snapshotImage = snapshotHandler.TakeSnapshot();
 
             SelectEntry(currentEntry);
+
+            // EDIT (grimoire-pause): notify the Inventory page.
+            OnEntriesChanged?.Invoke();
         }
         else
         {
@@ -317,11 +474,23 @@ public class ALTGrimoire : MonoBehaviour
     public void SelectEntry(int index)
     {
         currentEntry = index;
-        if (entryButtons.Count > index)
+        // EDIT (grimoire-pause): skip EventSystem selection while the Full Interface is open, it would pull focus onto the hidden list.
+        if (!grimoireActive)
         {
-            EventSystem.current.SetSelectedGameObject(entryButtons[index]);
+            SelectCurrentEntryButton();
         }
         UpdateText();
+    }
+
+    // EDIT (grimoire-pause): pulled out of SelectEntry and Update so CloseGrimoire can reuse it.
+    private void SelectCurrentEntryButton()
+    {
+        if (EventSystem.current == null) return;
+
+        if (entryButtons.Count > 0 && currentEntry < entryButtons.Count)
+        {
+            EventSystem.current.SetSelectedGameObject(entryButtons[currentEntry]);
+        }
     }
 
     public bool CompareEntry(ALTGrimoireEntry entry) // Returns True if entry is already in the entry list, and False if not
@@ -344,6 +513,9 @@ public class ALTGrimoire : MonoBehaviour
     {
         entries[GetEntryID(entry.entryName)].collected = status;
         UpdateText();
+
+        // EDIT (grimoire-pause): notify the Inventory page.
+        OnEntriesChanged?.Invoke();
     }
 
     public void CollectEntry(ALTGrimoireEntry entry)   // true set as default since like. thats what collecting something is.
