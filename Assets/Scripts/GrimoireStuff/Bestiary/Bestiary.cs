@@ -3,6 +3,8 @@ using UnityEngine;
 
 // Summary: Tracks which enemy types the player has seen and killed. Keyed by EnemyDefinition.
 // Seeing an enemy adds a hidden record; the first kill reveals it. Records are kept in discovery order for the UI.
+// Owns the snapshot textures and releases them when destroyed.
+// Snapshot backfill in Add, snapshot cleanup in OnDestroy.
 public class Bestiary : MonoBehaviour
 {
     public class BestiaryRecord
@@ -11,7 +13,7 @@ public class Bestiary : MonoBehaviour
         public Texture snapshot;
         public int killCount;
 
-        // Summary: Full details (name, text, kill count) are only shown once the enemy has been killed.
+        // Full details (name, text, kill count) are only shown once the enemy has been killed.
         public bool IsRevealed => killCount > 0;
     }
 
@@ -20,13 +22,28 @@ public class Bestiary : MonoBehaviour
 
     public event System.Action OnBestiaryChanged;
 
-    // Summary: Registers an enemy as seen. Does nothing if it's already been discovered.
+    // Registers an enemy as seen. If it's already been discovered, only fills in a missing snapshot.
     public BestiaryRecord Add(EnemyDefinition definition, Texture snapshot = null)
     {
         if (definition == null) return null;
 
         if (records.TryGetValue(definition, out BestiaryRecord existing))
+        {
+            // fills in the image for a record that was added without one (e.g. killed before being seen).
+            if (snapshot != null)
+            {
+                if (existing.snapshot == null)
+                {
+                    existing.snapshot = snapshot;
+                    OnBestiaryChanged?.Invoke();
+                }
+                else
+                {
+                    DestroySnapshot(snapshot); // already has one, discard the spare
+                }
+            }
             return existing;
+        }
 
         BestiaryRecord record = new BestiaryRecord
         {
@@ -41,7 +58,7 @@ public class Bestiary : MonoBehaviour
         return record;
     }
 
-    // Summary: Counts a kill. Adds the record first if the enemy was killed without being seen.
+    // Counts a kill. Adds the record first if the enemy was killed without being seen.
     public void RecordKill(EnemyDefinition definition)
     {
         if (definition == null) return;
@@ -66,5 +83,21 @@ public class Bestiary : MonoBehaviour
     public List<BestiaryRecord> GetAllRecords()
     {
         return new List<BestiaryRecord>(discoveryOrder);
+    }
+
+    // snapshots are RenderTextures created at runtime, so they need freeing manually.
+    private void OnDestroy()
+    {
+        foreach (BestiaryRecord record in discoveryOrder)
+            DestroySnapshot(record.snapshot);
+    }
+
+    private void DestroySnapshot(Texture snapshot)
+    {
+        if (snapshot is RenderTexture renderTexture)
+        {
+            renderTexture.Release();
+            Destroy(renderTexture);
+        }
     }
 }

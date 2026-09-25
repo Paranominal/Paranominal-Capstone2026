@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1777833132711805493}
   - component: {fileID: 8871764274831795934}
+  - component: {fileID: 2713769647264080686}
   - component: {fileID: 5307842119942140418}
   - component: {fileID: 1351871940050473298}
   - component: {fileID: 3580518955538096315}
@@ -61,6 +62,26 @@ CapsuleCollider:
   m_Height: 1.63
   m_Direction: 1
   m_Center: {x: 0, y: 0.75, z: 0}
+--- !u!114 &2713769647264080686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 827877862285555472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b75243a2fe872646b34c4c5e0040e43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BestiaryTracker
+  definition: {fileID: 11400000, guid: 9674abee6417bc5429c26e9e47ebdbb8, type: 2}
+  sightRange: 25
+  obstructionLayers:
+    serializedVersion: 2
+    m_Bits: 151552
+  checkInterval: 0.4
+  bestiary: {fileID: 0}
+  playerCamera: {fileID: 0}
 --- !u!114 &5307842119942140418
 MonoBehaviour:
   m_ObjectHideFlags: 0
