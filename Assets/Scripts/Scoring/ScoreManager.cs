@@ -12,7 +12,7 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private int maxWeakpointPoints = 10;
 
     [Header("Ranks")]
-    [Tooltip("In ascending order of pointThreshold. Player holds the highest rank whose threshold they've met.")]
+    [Tooltip("In ascending order of point Threshold. Player holds the highest rank whose threshold they've met.")]
     [SerializeField]
     private RankDefinition[] ranks = new RankDefinition[]
     {
@@ -26,12 +26,13 @@ public class ScoreManager : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool debugMode = true;
 
-    public string CurrentRank { get; private set; } = string.Empty;
+    public string currentRank { get; private set; } = string.Empty;
     public event System.Action<string> OnRankChanged;
 
     public int currentScore = 0;
 
     public event System.Action<int> OnPointsAdded;
+    public event System.Action<Vector3> OnShotMissed;
 
     // points to display = final awarded (after combo), precision = 1-10 base, position = where it landed, ownerCentre = where the enemy is
     public event System.Action<int, int, Vector3, Vector3> OnPointsAwarded;
@@ -93,11 +94,11 @@ public class ScoreManager : MonoBehaviour
             if (currentScore >= rank.pointThreshold)
                 newRank = rank.label;
         }
-        if (newRank != CurrentRank)
+        if (newRank != currentRank)
         {
-            CurrentRank = newRank;
-            OnRankChanged?.Invoke(CurrentRank);
-            if (debugMode) Debug.Log($"Rank up! New rank: {CurrentRank}");
+            currentRank = newRank;
+            OnRankChanged?.Invoke(currentRank);
+            if (debugMode) Debug.Log($"Rank up! New rank: {currentRank}");
         }
     }
 
@@ -127,6 +128,8 @@ public class ScoreManager : MonoBehaviour
 
         if (rules.AwardsPoints)
             AwardHit(result);
+        else if (rules.ShowsMissPopup)
+            OnShotMissed?.Invoke(result.HitPoint);
 
         switch (rules.Combo)
         {

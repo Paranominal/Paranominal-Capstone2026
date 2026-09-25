@@ -8,5 +8,5 @@ public interface IEnemySpawner
 {
     // Called by an enemy when it dies, so the spawner can remove it from its active list.
     // Safe to call with a null argument; implementations should no-op in that case.
-    void NotifyEnemyDeath(EnemyBehaviourBase deadEnemy);
+    void NotifyEnemyDeath(Enemy deadEnemy);
 }

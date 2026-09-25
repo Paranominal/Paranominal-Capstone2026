@@ -1,9 +1,13 @@
 using TMPro;
 using UnityEngine;
 
+[RequireComponent(typeof(DistanceScale))]
 [RequireComponent(typeof(SpriteBillboard))]
 public class PointPopup : MonoBehaviour
 {
+    [SerializeField] private DistanceScale distanceScale;
+    [SerializeField] private SpriteBillboard spriteBillboard;
+
     [SerializeField] private TextMeshPro label;
 
     [Header("Lifetime")]
@@ -18,6 +22,7 @@ public class PointPopup : MonoBehaviour
     private Vector3 startPos;
     private Color colour;
     private float elapsed;
+    private float styleScale;
 
     private float yaw;
     private float roll;
@@ -27,11 +32,13 @@ public class PointPopup : MonoBehaviour
         startPos = position;
         transform.position = position;
 
+        spriteBillboard.DoImmediate();
+        distanceScale.SetBaseScale(Vector3.one * style.scaleMultiplier);
+
         label.text = text;
+        label.ForceMeshUpdate();
         colour = style.colour;
         label.color = colour;
-
-        transform.localScale = Vector3.one * style.scaleMultiplier;
 
         // sits left of the enemy -> turns inward to the right, and vice versa
         yaw = -side * yawAngle * (-1f);
@@ -58,8 +65,8 @@ public class PointPopup : MonoBehaviour
         label.color = colour;
     }
 
-    //had to put this here to avoid conflict with billboard rotation
-    private void LateUpdate()
+    // just does rotation again
+    private void LateUpdate() 
     {
         transform.Rotate(0f, yaw, roll, Space.Self);
     }

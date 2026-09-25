@@ -62,7 +62,7 @@ public class CameraEffects : MonoBehaviour
     private void LateUpdate()
     {
         if (playerCamera == null) return;
-        if (!inputReader.canMove) return;
+        if (!inputReader.CanMove) return;
 
         UpdateHeadBob();
         UpdateStrafeTilt();
