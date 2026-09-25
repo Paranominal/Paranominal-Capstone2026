@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+// EDIT (special-shot): needed for the Special Shot's hit list.
+using System.Collections.Generic;
 
 public class ShotOrchestrator : MonoBehaviour
 {
@@ -12,6 +14,8 @@ public class ShotOrchestrator : MonoBehaviour
     [SerializeField] private CameraRecoilController cameraRecoilController;
     [SerializeField] private GunVisuals gunVisuals;
     [SerializeField] private WeaponStateController weaponStateController;
+    // EDIT (special-shot): optional, leave empty on weapons without a Special Shot.
+    [SerializeField] private SpecialShot specialShot;
 
     [Header("Reload")]
     [SerializeField] private float postShotReloadDelay = 0.25f;
@@ -33,6 +37,8 @@ public class ShotOrchestrator : MonoBehaviour
         if (cameraRecoilController == null) cameraRecoilController = GetComponent<CameraRecoilController>();
         if (gunVisuals == null) gunVisuals = GetComponent<GunVisuals>();
         if (weaponStateController == null) weaponStateController = GetComponent<WeaponStateController>();
+        // EDIT (special-shot): fallback for the Special Shot reference.
+        if (specialShot == null) specialShot = GetComponent<SpecialShot>();
 
         if (weaponFiringLogic != null && weaponEvents != null)
             weaponEvents.RaiseAmmoChanged(weaponFiringLogic.CurrentAmmo, weaponFiringLogic.MagazineSize);
@@ -44,6 +50,9 @@ public class ShotOrchestrator : MonoBehaviour
         if (weaponInputReader == null || weaponFiringLogic == null)
             return;
         if (!weaponInputReader.CanShoot) return;
+
+        // EDIT (special-shot): arming is checked before reload handling so it works mid-reload.
+        HandleSpecialShotArming();
 
         if (weaponFiringLogic.IsReloading)
         {
@@ -91,6 +100,13 @@ public class ShotOrchestrator : MonoBehaviour
 
         if (!ironPressed && !silverPressed)
             return;
+
+        // EDIT (special-shot): an armed Special Shot replaces the next shot. It costs no ammo, so it skips the ammo checks.
+        if (specialShot != null && specialShot.IsArmed)
+        {
+            FireSpecialShot();
+            return;
+        }
 
         WeakPointType shotType = ironPressed ? WeakPointType.Iron : WeakPointType.Silver;
 
@@ -205,6 +221,95 @@ public class ShotOrchestrator : MonoBehaviour
         }
 
         return BuildResult(shotType, ShotOutcome.Miss, weaponHitscan.LogWorldHitOrMiss());
+    }
+
+    // EDIT (special-shot): arms a Ready Special Shot on input. Once armed it can't be cancelled.
+    private void HandleSpecialShotArming()
+    {
+        if (specialShot == null || !specialShot.IsReady) return;
+        if (weaponStateController != null && !weaponStateController.IsWeaponEnabled) return;
+
+        if (weaponInputReader.WasSpecialShotPressedThisFrame())
+            specialShot.TryArm();
+    }
+
+    // EDIT (special-shot): fires the Special Shot. Normal cooldown, no ammo cost, no misfire penalty.
+    // One ShotResolved is raised per target hit, or a single SpecialMiss if nothing was hit.
+    private void FireSpecialShot()
+    {
+        // consume first so the streak ignores this shot's own results
+        specialShot.Consume();
+        weaponFiringLogic.StartShotCooldown();
+
+        if (gunVisuals != null)
+            gunVisuals.PlayShotVisuals(WeakPointType.Special);
+
+        if (cameraRecoilController != null)
+            cameraRecoilController.PlayShotCameraRecoil();
+
+        List<ShotResult> results = ResolveSpecialShot();
+
+        if (weaponEvents != null)
+        {
+            weaponEvents.RaiseShotFired(WeakPointType.Special);
+            foreach (ShotResult result in results)
+                weaponEvents.RaiseShotResolved(result);
+        }
+    }
+
+    // EDIT (special-shot): applies the piercing shot to everything along the ray.
+    // Special weakpoints are destroyed, other weakpoints are passed through, enemies are killed or staggered (see Enemy.HandleSpecialShotHit).
+    private List<ShotResult> ResolveSpecialShot()
+    {
+        List<ShotResult> results = new List<ShotResult>();
+
+        if (weaponHitscan == null)
+        {
+            results.Add(BuildResult(WeakPointType.Special, ShotOutcome.SpecialMiss, Vector3.zero));
+            return results;
+        }
+
+        List<RaycastHit> hits = weaponHitscan.GetSpecialShotHits(out Vector3 missPoint);
+        HashSet<Enemy> checkedEnemies = new HashSet<Enemy>();   // body already tested this shot
+        HashSet<Enemy> resolvedEnemies = new HashSet<Enemy>();  // already produced a SpecialHit this shot
+        HashSet<WeakPoint> hitWeakPoints = new HashSet<WeakPoint>();
+
+        foreach (RaycastHit hit in hits)
+        {
+            WeakPoint weakPoint = hit.collider.GetComponentInParent<WeakPoint>();
+            if (weakPoint != null)
+            {
+                if (!weakPoint.IsSpecial || weakPoint.IsWarded || !hitWeakPoints.Add(weakPoint))
+                    continue;
+
+                // skip if the owner already died to this shot
+                Enemy owner = weakPoint.GetComponentInParent<Enemy>();
+                if (owner != null && owner.IsDying)
+                    continue;
+
+                // stops the owner's body counting as a second hit
+                if (owner != null) resolvedEnemies.Add(owner);
+
+                weakPoint.OnHit(WeakPointType.Special);
+                results.Add(BuildResult(WeakPointType.Special, ShotOutcome.SpecialHit, hit.point, 1f, weakPoint.OwnerCentre));
+                continue;
+            }
+
+            Enemy enemy = hit.collider.GetComponentInParent<Enemy>();
+            if (enemy == null || resolvedEnemies.Contains(enemy) || !checkedEnemies.Add(enemy))
+                continue;
+
+            if (enemy.HandleSpecialShotHit())
+            {
+                resolvedEnemies.Add(enemy);
+                results.Add(BuildResult(WeakPointType.Special, ShotOutcome.SpecialHit, hit.point, 1f, enemy.transform.position));
+            }
+        }
+
+        if (results.Count == 0)
+            results.Add(BuildResult(WeakPointType.Special, ShotOutcome.SpecialMiss, missPoint));
+
+        return results;
     }
 
     private IEnumerator DelayedAutoReload()

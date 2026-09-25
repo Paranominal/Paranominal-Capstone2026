@@ -560,6 +560,26 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // EDIT (special-shot): Special Shot body hit. Standard and Thrall enemies die, Champions are instantly staggered.
+    // Returns true if the hit did something, so the shot knows whether to count it as a SpecialHit.
+    public bool HandleSpecialShotHit()
+    {
+        if (IsDying) return false;
+        if (stagger != null && !stagger.canBeHit) return false; // still spawning
+
+        if (enemyClass == EnemyClass.Champion)
+        {
+            if (stagger == null || IsStunned()) return false;
+            if (debugMode) Debug.Log($"[{this}] Staggered by Special Shot");
+            stagger.TriggerStagger();
+            return true;
+        }
+
+        if (debugMode) Debug.Log($"[{this}] Killed by Special Shot");
+        Die();
+        return true;
+    }
+
     public void Die()
     {
         if (IsDying) return;

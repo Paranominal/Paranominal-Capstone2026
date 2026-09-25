@@ -25,7 +25,10 @@ public enum ShotOutcome
     EnemyHit,            // hit an unstaggered enemy body or a warded weakpoint
     EnemyHitStaggered,   // hit a staggered enemy body
     ShootableTargetHit,  // hit a destructible/trigger
-    WeakPointHit         // correct type, landed hit
+    WeakPointHit,        // correct type, landed hit
+    // EDIT (special-shot): outcomes for the Special Shot. One SpecialHit is raised per target hit.
+    SpecialHit,          // Special Shot killed/staggered an enemy or destroyed a Special weakpoint
+    SpecialMiss          // Special Shot hit nothing useful
 }
 
 public static class ShotOutcomeExtensions
@@ -42,6 +45,9 @@ public static class ShotOutcomeExtensions
         { ShotOutcome.EnemyHitStaggered,  new OutcomeRules(ComboEffect.Break,     false,  false,  false) },
         { ShotOutcome.ShootableTargetHit, new OutcomeRules(ComboEffect.Neutral,   false,  true,   false) },
         { ShotOutcome.WeakPointHit,       new OutcomeRules(ComboEffect.Increment, true,   true,   false) },
+        // EDIT (special-shot): Special Shot never costs ammo and never breaks the combo.
+        { ShotOutcome.SpecialHit,         new OutcomeRules(ComboEffect.Neutral,   true,   true,   false) },
+        { ShotOutcome.SpecialMiss,        new OutcomeRules(ComboEffect.Neutral,   false,  true,   true ) },
     };
 
     public static OutcomeRules Rules(this ShotOutcome outcome) => rules[outcome];
@@ -49,4 +55,4 @@ public static class ShotOutcomeExtensions
     // i'm keeping these as wrappers because i don't want to have to change everything againnnn
     public static bool IsRewarded(this ShotOutcome outcome) => rules[outcome].AwardsPoints;
     public static bool RetainsAmmo(this ShotOutcome outcome) => rules[outcome].RetainsAmmo;
-}
+}

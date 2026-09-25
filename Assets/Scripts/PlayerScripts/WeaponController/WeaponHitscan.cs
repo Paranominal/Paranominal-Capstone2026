@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+// EDIT (special-shot): needed for the piercing hit list.
+using System.Collections.Generic;
 
 public class WeaponHitscan : MonoBehaviour
 {
@@ -124,6 +126,49 @@ public class WeaponHitscan : MonoBehaviour
             return ray.origin + ray.direction * maxMissPopupDistance;
         }
             
+    }
+
+    // EDIT (special-shot): piercing raycast for the Special Shot.
+    // Returns hits on enemies and weakpoints along the aim ray, closest first, stopping at the first solid world collider.
+    // Triggers that aren't enemies or weakpoints are passed through. missPoint mirrors LogWorldHitOrMiss for the miss popup.
+    public List<RaycastHit> GetSpecialShotHits(out Vector3 missPoint)
+    {
+        List<RaycastHit> results = new List<RaycastHit>();
+        missPoint = Vector3.zero;
+
+        if (playerCamera == null || raycaster == null)
+            return results;
+
+        Ray ray = BuildAimRay();
+        LayerMask mask = ~ignoreLayer | weakPointLayer;
+        RaycastHit[] hits = Physics.RaycastAll(ray, rayDistance, mask, QueryTriggerInteraction.Collide);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        missPoint = ray.origin + ray.direction * maxMissPopupDistance;
+
+        foreach (RaycastHit hit in hits)
+        {
+            Collider col = hit.collider;
+            if (col.CompareTag("Player"))
+                continue;
+
+            bool isTarget = col.GetComponentInParent<WeakPoint>() != null || col.GetComponentInParent<Enemy>() != null;
+            if (isTarget)
+            {
+                results.Add(hit);
+                continue;
+            }
+
+            // non-target triggers (detectors, zones etc) don't block the shot
+            if (col.isTrigger)
+                continue;
+
+            // solid world geometry stops the shot
+            missPoint = ray.origin + ray.direction * Mathf.Max(hit.distance, minMissPopupDistance);
+            break;
+        }
+
+        return results;
     }
 
     public Ray AimRay => raycaster != null ? raycaster.Ray : default;
