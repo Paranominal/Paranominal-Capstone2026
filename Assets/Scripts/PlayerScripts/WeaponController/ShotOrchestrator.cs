@@ -200,7 +200,12 @@ public class ShotOrchestrator : MonoBehaviour
         if (weaponHitscan.TryGetDamageableHit(out IDamageable damageable, out RaycastHit damageHit))
         {
             bool wasStaggered = damageable is EnemyStagger stagger && stagger.IsStaggered;
-            damageable.TakeDamage(new DamageInfo());
+
+            //define damage info
+            DamageInfo info = new DamageInfo(0, damageHit.transform.position, transform.forward, gameObject);
+            damageable.TakeDamage(info);
+
+            // damageable.TakeDamage(new DamageInfo());
             return BuildResult(shotType, wasStaggered ? ShotOutcome.EnemyHitStaggered : ShotOutcome.EnemyHit, damageHit.point);
         }
 

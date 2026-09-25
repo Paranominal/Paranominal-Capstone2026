@@ -8,6 +8,7 @@ using System.Collections;
 using System;
 using UnityEngine.UI;
 using UnityEngine.Sprites;
+using UnityEngine.Rendering.Universal;
 
 public class EnemyStagger : MonoBehaviour, IDamageable
 {
@@ -32,6 +33,8 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     [SerializeField] private float staggerTime = 2;
     [SerializeField] private float timeBeforeBarDrain = 0.4f;
     [SerializeField] private float timeAddedOnHit = 0.5f;
+    [Header("Splatter")]
+    [SerializeField] private DecalProjector bloodSplatterPrefab;
 
     [Header("Debug")]
     public bool debugMode;
@@ -98,6 +101,11 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     {
         if (isStaggered) return;
         if (!canBeHit) return;
+
+        if (bloodSplatterPrefab) Instantiate (
+            bloodSplatterPrefab,
+            transform.position,
+            Quaternion.LookRotation(info.hitDirection));
 
         damageTaken++;
         currentRecoveryBuffer = timeBeforeBarDrain;
