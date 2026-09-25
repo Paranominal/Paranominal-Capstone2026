@@ -104,7 +104,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
 
         if (bloodSplatterPrefab) Instantiate (
             bloodSplatterPrefab,
-            transform.position,
+            info.hitPoint,
             Quaternion.LookRotation(info.hitDirection));
 
         damageTaken++;

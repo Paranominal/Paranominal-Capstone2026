@@ -202,7 +202,7 @@ public class ShotOrchestrator : MonoBehaviour
             bool wasStaggered = damageable is EnemyStagger stagger && stagger.IsStaggered;
 
             //define damage info
-            DamageInfo info = new DamageInfo(0, damageHit.transform.position, transform.forward, gameObject);
+            DamageInfo info = new DamageInfo(0, damageHit.point, transform.forward, gameObject);
             damageable.TakeDamage(info);
 
             // damageable.TakeDamage(new DamageInfo());
