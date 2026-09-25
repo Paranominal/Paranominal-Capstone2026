@@ -6,20 +6,24 @@ using UnityEngine;
 
 public class RespawnManager : MonoBehaviour
 {
-    [SerializeField] private DeathPlane deathPlane;
+    [SerializeField] private List<DeathPlane> deathPlane;
     [SerializeField] private Transform miriam;
     [SerializeField] private RoomEntryDetector[] roomEntryDetectors;
     private RespawnPoint currentRespawnPoint;
 
     void Reset()
     {
-        deathPlane = GetComponentInChildren<DeathPlane>();
+        deathPlane.Add(GetComponentInChildren<DeathPlane>());
         roomEntryDetectors = FindObjectsByType<RoomEntryDetector>(FindObjectsSortMode.None);
     }
 
     void Start()
     {
-        deathPlane.DeathPlaneHit += RespawnMiriam;
+        foreach (DeathPlane plane in deathPlane)
+        {
+            plane.DeathPlaneHit += RespawnMiriam;
+        }
+        
 
         foreach (RoomEntryDetector roomEntryDetector in roomEntryDetectors)
         {
