@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
@@ -8,13 +9,15 @@ public class RespawnManager : MonoBehaviour
 {
     [SerializeField] private List<DeathPlane> deathPlane;
     [SerializeField] private Transform miriam;
-    [SerializeField] private RoomEntryDetector[] roomEntryDetectors;
+    [SerializeField] private List<RoomEntryDetector> roomEntryDetectors;
     private RespawnPoint currentRespawnPoint;
 
     void Reset()
     {
-        deathPlane.Add(GetComponentInChildren<DeathPlane>());
-        roomEntryDetectors = FindObjectsByType<RoomEntryDetector>(FindObjectsSortMode.None);
+        deathPlane = FindObjectsByType<DeathPlane>(FindObjectsSortMode.None).ToList();
+        roomEntryDetectors = FindObjectsByType<RoomEntryDetector>(FindObjectsSortMode.None).ToList();
+
+        miriam = GameObject.FindWithTag("Player").transform;
     }
 
     void Start()
