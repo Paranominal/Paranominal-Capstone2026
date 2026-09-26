@@ -9,6 +9,8 @@ public class WeakPoint : MonoBehaviour
     public bool IsWarded => isWarded;
     public int RemainingShotsToDestroy => remainingShots;
 
+    public bool IsShown => isShown;
+
     [Header("Identity")]
     [SerializeField] private string pointId;
 
@@ -159,6 +161,7 @@ public class WeakPoint : MonoBehaviour
 
         currentAlpha = 0f;
     }
+    
     public void SetUpWeakpoint(WeakPointManager manager)
     {
         weakpointManager = manager; 
@@ -218,6 +221,12 @@ public class WeakPoint : MonoBehaviour
         float missDistance = Vector3.Distance(ray.origin + ray.direction * along, centre);
 
         return 1f - Mathf.Clamp01(missDistance / radius);
+    }
+
+    public Vector3 GetWorldCenter()
+    {
+        if (weakPointCollider == null) return transform.position;
+        return transform.TransformPoint(weakPointCollider.center);
     }
 
     public void UnlockWeakPoint()

@@ -21,6 +21,7 @@ public class PlayerInputReader : MonoBehaviour
     public InputActionReference LookAction => lookActionMouse.action.ReadValue<Vector2>().sqrMagnitude >= lookActionGamepad.action.ReadValue<Vector2>().sqrMagnitude 
         ? lookActionMouse
         : lookActionGamepad;
+
     private bool canMove = true;
     public bool CanMove => canMove;
     private bool canLook = true;
@@ -30,6 +31,9 @@ public class PlayerInputReader : MonoBehaviour
     [SerializeField] private CursorLockMode startLockMode = CursorLockMode.Locked;
     [SerializeField] private bool startCursorVisible = false;
     public bool debugMode;
+
+    [Header("Aim Assist")]
+    [SerializeField] private float gamepadActiveThreshold = 0.05f;
 
     public Vector2 MoveInput => moveAction != null && moveAction.action != null  && CanMove
         ? moveAction.action.ReadValue<Vector2>()
@@ -51,6 +55,10 @@ public class PlayerInputReader : MonoBehaviour
     // public Vector2 LookInput => lookActionMouse != null && lookActionMouse.action != null
     //     ? lookActionMouse.action.ReadValue<Vector2>()
     //     : Vector2.zero;
+
+    public bool IsUsingGamepad => LookInputGamepad.sqrMagnitude > gamepadActiveThreshold * gamepadActiveThreshold;
+
+    public float GamepadLookMagnitude => LookInputGamepad.magnitude;
 
     private Vector2 LookInputMouse => lookActionMouse != null && lookActionMouse.action != null && CanLook
         ? lookActionMouse.action.ReadValue<Vector2>()

@@ -184,7 +184,6 @@ public class PlayerMover : MonoBehaviour
 
         }
 
-
         // player's input is locked when stunned
         if (inputReader != null)
             inputReader.InputLock(true);
