@@ -18,6 +18,7 @@ public class PauseManager : MonoBehaviour
         InputSystem.actions.FindActionMap(grimoireActionMapName, true)?.Disable();
         SetCursorModeLocked(false);
         Cursor.visible = true;
+        isPaused = true;
     }    
     
     public void ResumeGame()

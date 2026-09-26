@@ -9,12 +9,12 @@ public class AbilityManager : MonoBehaviour
     [SerializeField] private string dashVersion;
     private bool dashObtained;
 
-    // EDIT (special-shot): Special Shot unlock, same grimoire entry pattern as the dash.
+    // Michael edit (special-shot): Special Shot unlock, same grimoire entry pattern as the dash.
     [SerializeField] private SpecialShot specialShot;
     [SerializeField] private string specialShotEntryName;
     private bool specialShotObtained;
 
-    // EDIT (special-shot): fallback for cross-prefab reference.
+    // Michael edit (special-shot): fallback for cross-prefab reference.
     void Awake()
     {
         if (specialShot == null) specialShot = FindAnyObjectByType<SpecialShot>();
@@ -23,7 +23,7 @@ public class AbilityManager : MonoBehaviour
     void Update()
     {
         if (!dashObtained && grimoire.entries.Exists(dashEntry => dashEntry.entryName == dashEntryName)) GainDash();
-        // EDIT (special-shot): unlock once its entry is collected.
+        // Michael edit (special-shot): unlock once its entry is collected.
         if (!specialShotObtained && specialShot != null && grimoire.entries.Exists(entry => entry.entryName == specialShotEntryName)) GainSpecialShot();
     }
 
@@ -34,7 +34,7 @@ public class AbilityManager : MonoBehaviour
         dashObtained = true;
     }
 
-    // EDIT (special-shot): unlocks the Special Shot.
+    // Michael edit (special-shot): unlocks the Special Shot.
     void GainSpecialShot()
     {
         specialShot.Unlock();
