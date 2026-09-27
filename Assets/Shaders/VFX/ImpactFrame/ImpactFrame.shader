@@ -24,6 +24,7 @@ Shader "Hidden/PostProcess/ImpactFrame"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareNormalsTexture.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Hashes.hlsl"
 
             // layer toggles (0 or 1, hard cut per frame by ImpactFrameController)
             float _FlashOn;
@@ -48,20 +49,22 @@ Shader "Hidden/PostProcess/ImpactFrame"
             float _LinesTiling;
             float _LinesNoiseScale;
             float _LinesThreshold;
-            float _LinesClearRadius;
+            float _LinesClearMin;
+            float _LinesClearMax;
+            float _LinesClearPower;
 
             // jitter
             float _JitterScale;
             float _JitterThreshold;
             float _JitterStrength;
 
-            // --- value noise (matches Shader Graph Simple Noise) ---
+            // --- value noise (uses Hash_Tchou_2_1_float from Hashes.hlsl to match Shader Graph) ---
 
-            float Hash21(float2 p)
+            float HashTchou(float2 p)
             {
-                p = frac(p * float2(123.34, 456.21));
-                p += dot(p, p + 45.32);
-                return frac(p.x * p.y);
+                float result;
+                Hash_Tchou_2_1_float(p, result);
+                return result;
             }
 
             float ValueNoise(float2 uv)
@@ -70,22 +73,22 @@ Shader "Hidden/PostProcess/ImpactFrame"
                 float2 f = frac(uv);
                 f = f * f * (3.0 - 2.0 * f);
 
-                float a = Hash21(i);
-                float b = Hash21(i + float2(1.0, 0.0));
-                float c = Hash21(i + float2(0.0, 1.0));
-                float d = Hash21(i + float2(1.0, 1.0));
+                float a = HashTchou(i);
+                float b = HashTchou(i + float2(1.0, 0.0));
+                float c = HashTchou(i + float2(0.0, 1.0));
+                float d = HashTchou(i + float2(1.0, 1.0));
 
                 return lerp(lerp(a, b, f.x), lerp(c, d, f.x), f.y);
             }
 
-            // 3 octaves like Simple Noise, normalised to 0 to 1 so thresholds are intuitive
+            // 3 octaves like Simple Noise, unnormalised 0 to 0.875 to match the graph
             float SimpleNoise(float2 uv, float scale)
             {
                 float t = 0.0;
                 t += ValueNoise(uv * scale)       * 0.125;
                 t += ValueNoise(uv * scale / 2.0) * 0.25;
                 t += ValueNoise(uv * scale / 4.0) * 0.5;
-                return t / 0.875;
+                return t;
             }
 
             // --- fragment ---
@@ -117,7 +120,12 @@ Shader "Hidden/PostProcess/ImpactFrame"
                     float angleNoise = SimpleNoise(angle.xx + _Seed, _LinesTiling);
                     float radial     = dist * angleNoise;
                     float lineNoise  = SimpleNoise(radial.xx + _Seed, _LinesNoiseScale);
-                    lines = step(_LinesThreshold, lineNoise) * step(_LinesClearRadius, dist);
+
+                    // EDIT (burst-clear): noise-driven clear zone with power curve,
+                    // most spikes stay tight to the centre, a few punch out to max
+                    float clearNoise = pow(angleNoise, _LinesClearPower);
+                    float clearDist  = lerp(_LinesClearMin, _LinesClearMax, clearNoise);
+                    lines = step(_LinesThreshold, lineNoise / 2.0) * step(clearDist, dist);
                 }
 
                 // --- UV jitter, pushes angular segments outward ---

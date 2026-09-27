@@ -73,7 +73,9 @@ public class ImpactFrameRenderPass : ScriptableRenderPass
     private static readonly int LinesTilingID      = Shader.PropertyToID("_LinesTiling");
     private static readonly int LinesNoiseScaleID  = Shader.PropertyToID("_LinesNoiseScale");
     private static readonly int LinesThresholdID   = Shader.PropertyToID("_LinesThreshold");
-    private static readonly int LinesClearRadiusID = Shader.PropertyToID("_LinesClearRadius");
+    private static readonly int LinesClearMinID   = Shader.PropertyToID("_LinesClearMin");
+    private static readonly int LinesClearMaxID   = Shader.PropertyToID("_LinesClearMax");
+    private static readonly int LinesClearPowerID = Shader.PropertyToID("_LinesClearPower");
 
     // jitter
     private static readonly int JitterScaleID     = Shader.PropertyToID("_JitterScale");
@@ -124,12 +126,13 @@ public class ImpactFrameRenderPass : ScriptableRenderPass
         material.SetFloat(LinesTilingID, vol.linesTiling.value);
         material.SetFloat(LinesNoiseScaleID, vol.linesNoiseScale.value);
         material.SetFloat(LinesThresholdID, vol.linesThreshold.value);
-        material.SetFloat(LinesClearRadiusID, vol.linesClearRadius.value);
 
         material.SetFloat(JitterScaleID, vol.jitterScale.value);
         material.SetFloat(JitterThresholdID, vol.jitterThreshold.value);
         material.SetFloat(JitterStrengthID, vol.jitterStrength.value);
-
+        material.SetFloat(LinesClearMinID, vol.linesClearMin.value);
+        material.SetFloat(LinesClearMaxID, vol.linesClearMax.value);
+        material.SetFloat(LinesClearPowerID, vol.linesClearPower.value);
         return true;
     }
 

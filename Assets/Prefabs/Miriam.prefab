@@ -479,6 +479,7 @@ GameObject:
   - component: {fileID: 5660757829747511445}
   - component: {fileID: 7893351746387300568}
   - component: {fileID: 2707172803116468795}
+  - component: {fileID: 2720132952008851057}
   m_Layer: 6
   m_Name: Miriam
   m_TagString: Player
@@ -1019,7 +1020,27 @@ MonoBehaviour:
   chargeBar: {fileID: 0}
   chargeBarContainer: {fileID: 0}
   secondsToFullCharge: 45
-  weakpointRechargeBonus: 0.2
+  weakpointRechargeBonus: 0.15
+--- !u!114 &2720132952008851057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19cf423bf62343c49ba9ab156d2555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ImpactFrameController
+  impactFrameVolume: {fileID: 0}
+  playerCamera: {fileID: 0}
+  cameraEffects: {fileID: 0}
+  pauseManager: {fileID: 0}
+  flashFrames: 2
+  holdFrames: 12
+  tailFrames: 4
+  stepsPerSecond: 7
 --- !u!1 &3524502881056351253
 GameObject:
   m_ObjectHideFlags: 0
@@ -2498,7 +2519,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.00011187151
+      value: 0.003417612
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -2696,6 +2717,14 @@ PrefabInstance:
       propertyPath: gunAnimator
       value: 
       objectReference: {fileID: 7810450073000329780}
+    - target: {fileID: 4143291898430807210, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
+      propertyPath: specialMuzzleFlash
+      value: 
+      objectReference: {fileID: 6951686225406976586}
+    - target: {fileID: 5110911200105199445, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
+      propertyPath: specialShot
+      value: 
+      objectReference: {fileID: 1215991152574122803}
     - target: {fileID: 5110911200105199445, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
       propertyPath: cameraRecoilController
       value: 
@@ -2704,20 +2733,48 @@ PrefabInstance:
       propertyPath: m_Name
       value: The Norwych
       objectReference: {fileID: 0}
+    - target: {fileID: 8944612012935059866, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
+      propertyPath: specialShotAction
+      value: 
+      objectReference: {fileID: -5088918832570832073, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 1734549147116464373, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
       insertIndex: 3
       addedObject: {fileID: 2123996375192957671}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8302036662431058484, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
+      insertIndex: 4
+      addedObject: {fileID: 1215991152574122803}
   m_SourcePrefab: {fileID: 100100000, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
+--- !u!1 &1158328128241736527 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8302036662431058484, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
+  m_PrefabInstance: {fileID: 7144388033751028091}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1215991152574122803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1158328128241736527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b69eade5ab0d6345b23ca757ee24787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpecialShot
+  weaponEvents: {fileID: 3940273567444085899}
+  startUnlocked: 1
+  streakToCharge: 5
+  debugMode: 1
 --- !u!114 &2989496672797078722 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5357353307771774393, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
   m_PrefabInstance: {fileID: 7144388033751028091}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1158328128241736527}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99ba48bb0711d5745901e467d1ef3ee5, type: 3}
@@ -2728,7 +2785,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6164124962284486128, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
   m_PrefabInstance: {fileID: 7144388033751028091}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1158328128241736527}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 66722f93cd366054a9aa6a2b0658429e, type: 3}

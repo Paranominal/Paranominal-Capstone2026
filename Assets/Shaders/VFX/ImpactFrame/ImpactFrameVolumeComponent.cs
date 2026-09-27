@@ -36,8 +36,8 @@ public class ImpactFrameVolumeComponent : VolumeComponent
     [Tooltip("Screen-space centre of the effect (0 to 1). Set to the destroyed weakpoint's screen position at runtime.")]
     public Vector2Parameter focalPoint = new Vector2Parameter(new Vector2(0.5f, 0.5f));
 
-    [Tooltip("Randomises the line and jitter pattern. Re-rolled on every trigger.")]
-    public ClampedFloatParameter seed = new ClampedFloatParameter(0f, 0f, 100f);
+    [Tooltip("Line and jitter pattern offset, equivalent to the graph's stepped time. Counts down while the effect plays.")]
+    public FloatParameter seed = new FloatParameter(0f);
 
     [Header("Colours")]
     [Tooltip("Colour used for the dark side of the mask.")]
@@ -50,34 +50,40 @@ public class ImpactFrameVolumeComponent : VolumeComponent
     public ImpactFlashColourParameter flashColour = new ImpactFlashColourParameter(ImpactFlashColour.Light);
 
     [Header("Scene Threshold")]
-    [Tooltip("Brightness cutoff between dark and light. Higher = more of the scene goes dark.")]
+    [Tooltip("Cutoff on the green channel of colour plus normals. Higher = more of the scene goes dark. (graph: Float (2))")]
     public ClampedFloatParameter sceneThreshold = new ClampedFloatParameter(0.5f, -1f, 2f);
 
-    [Tooltip("How much the upward-facing normals brighten the scene. Adds shape definition to geometry. Sprites don't write normals.")]
+    [Tooltip("How much the normals add to the scene before thresholding. 1 = same as the graph. Sprites don't write normals.")]
     public ClampedFloatParameter normalsWeight = new ClampedFloatParameter(1f, 0f, 2f);
 
     [Header("Speed Lines")]
-    [Tooltip("Number of angular divisions. Higher = more, thinner lines.")]
-    public ClampedFloatParameter linesTiling = new ClampedFloatParameter(250f, 10f, 500f);
+    [Tooltip("Angular noise scale. Higher = more, thinner lines. (graph: 149)")]
+    public ClampedFloatParameter linesTiling = new ClampedFloatParameter(149f, 10f, 500f);
 
-    [Tooltip("Noise scale along each line. Higher = lines break up into shorter segments.")]
+    [Tooltip("Noise scale along each line. Higher = lines break up into shorter segments. (graph: 6)")]
     public ClampedFloatParameter linesNoiseScale = new ClampedFloatParameter(6f, 1f, 30f);
 
-    [Tooltip("Line cutoff. Higher = fewer lines.")]
-    public ClampedFloatParameter linesThreshold = new ClampedFloatParameter(0.4f, 0f, 1f);
+    [Tooltip("Line cutoff, compared against noise / 2. Higher = fewer lines. (graph: 0.23)")]
+    public ClampedFloatParameter linesThreshold = new ClampedFloatParameter(0.23f, 0f, 0.5f);
 
-    [Tooltip("Radius around the focal point kept clear of lines.")]
-    public ClampedFloatParameter linesClearRadius = new ClampedFloatParameter(0.03f, 0f, 1f);
+    [Tooltip("Minimum clear radius around the focal point. Lines won't appear inside this distance.")]
+    public ClampedFloatParameter linesClearMin = new ClampedFloatParameter(0.05f, 0f, 0.5f);
+
+    [Tooltip("Maximum clear radius. The longest burst spikes push the clear zone out to this distance.")]
+    public ClampedFloatParameter linesClearMax = new ClampedFloatParameter(0.4f, 0f, 1.0f);
+
+    [Tooltip("Controls burst spike distribution. 1 = even spread, 2-3 = mostly tight with rare long spikes.")]
+    public ClampedFloatParameter linesClearPower = new ClampedFloatParameter(2.5f, 0.5f, 5f);
 
     [Header("UV Jitter")]
-    [Tooltip("Number of angular jitter segments.")]
-    public ClampedFloatParameter jitterScale = new ClampedFloatParameter(40f, 1f, 300f);
+    [Tooltip("Angular noise scale for the jitter segments. (graph: Float (1))")]
+    public ClampedFloatParameter jitterScale = new ClampedFloatParameter(20f, 1f, 300f);
 
-    [Tooltip("Jitter cutoff. Higher = fewer segments get pushed.")]
+    [Tooltip("Jitter cutoff. Higher = fewer segments get pushed. (graph: thr)")]
     public ClampedFloatParameter jitterThreshold = new ClampedFloatParameter(0.5f, 0f, 1f);
 
-    [Tooltip("How far jittered segments are pushed outward from the focal point.")]
-    public ClampedFloatParameter jitterStrength = new ClampedFloatParameter(0.04f, 0f, 0.1f);
+    [Tooltip("How far jittered segments are pushed outward from the focal point. (graph: Float)")]
+    public ClampedFloatParameter jitterStrength = new ClampedFloatParameter(0.05f, 0f, 0.2f);
 
     public bool IsActive() => flashActive.value || sceneActive.value || linesActive.value || jitterActive.value;
 }
