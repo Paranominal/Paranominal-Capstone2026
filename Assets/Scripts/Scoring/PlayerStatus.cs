@@ -41,9 +41,6 @@ public class PlayerStatus : MonoBehaviour, IDamageable
         float stunDuration = cameraEffects != null ? cameraEffects.shakeDuration : 0f;
         StartInvinciblePeriod(stunDuration + invincibleDuration);
         playerMover.stunPlayer(stunDuration, info, knockbackForce);
-
-        
-
     }
 
     private Coroutine invincibleCoroutine;

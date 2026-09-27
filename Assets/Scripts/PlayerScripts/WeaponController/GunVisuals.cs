@@ -8,6 +8,8 @@ public class GunVisuals : MonoBehaviour
     [SerializeField] private Transform gunModel;
     [SerializeField] private SpriteRenderer ironMuzzleFlash;
     [SerializeField] private SpriteRenderer silverMuzzleFlash;
+    // EDIT (special-shot): optional, falls back to the iron flash until Special Shot VFX are made.
+    [SerializeField] private SpriteRenderer specialMuzzleFlash;
     [SerializeField] private Animator gunAnimator;
     [SerializeField] private Renderer[] gunPartRenderers;
 
@@ -136,9 +138,14 @@ public class GunVisuals : MonoBehaviour
         // reset both flashes first, then enable only the selected one
         if (ironMuzzleFlash != null) ironMuzzleFlash.enabled = false;
         if (silverMuzzleFlash != null) silverMuzzleFlash.enabled = false;
+        // EDIT (special-shot): reset the special flash too.
+        if (specialMuzzleFlash != null) specialMuzzleFlash.enabled = false;
 
         // Iron vs Silver weak-point rounds can have distinct muzzle visual assets
-        SpriteRenderer target = shotType == WeakPointType.Iron ? ironMuzzleFlash : silverMuzzleFlash;
+        // EDIT (special-shot): Special gets its own branch instead of falling into Silver.
+        SpriteRenderer target;
+        if (shotType == WeakPointType.Special) target = specialMuzzleFlash != null ? specialMuzzleFlash : ironMuzzleFlash;
+        else target = shotType == WeakPointType.Iron ? ironMuzzleFlash : silverMuzzleFlash;
         if (target == null) return;
 
         muzzleFlashRoutine = StartCoroutine(MuzzleFlashRoutine(target));
