@@ -4,6 +4,17 @@ using UnityEngine.InputSystem;
 
 public class PlayerInputReader : MonoBehaviour
 {
+    public static PlayerInputReader Instance { get; private set; }
+    public static event Action<bool> OnActiveDeviceChanged;
+    public bool IsGamepadActive { get; private set; }
+
+    [Header("Mouse Movement Threshold")]
+    [SerializeField] private float deviceMouseMoveThreshold = 0.5f;
+
+    //placeholder debug variable to test if the input reader is working properly. Remove this later.
+    [SerializeField] private string interactActionName = "Collect";
+    private InputAction interactAction;
+
     [Header("Input Actions")]
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference sprintAction;
@@ -72,6 +83,12 @@ public class PlayerInputReader : MonoBehaviour
         ? LookInputGamepad * gamepadLookSens
         : LookInputMouse;
 
+    private void Awake()
+    {
+        Instance = this;
+        interactAction = InputSystem.actions != null ? InputSystem.actions.FindAction(interactActionName) : null;
+    }
+
     private void Start()
     {
         SetCursorState(startLockMode, startCursorVisible);
@@ -80,6 +97,11 @@ public class PlayerInputReader : MonoBehaviour
     public void InputLock(bool enabled) // if InputLock(true) is called, it disables all movement from the player reader
     {
         canMove = !enabled;
+        if (interactAction != null)
+        {
+            if (enabled) interactAction.Disable();
+            else interactAction.Enable();
+        }
     }
 
     public void SetCursorState(CursorLockMode lockMode, bool visible)
@@ -91,6 +113,50 @@ public class PlayerInputReader : MonoBehaviour
     {
         if (debugMode) DoDebug();
         AnyInput();
+        DetectActiveDevice();
+    }
+
+    private void DetectActiveDevice()
+    {
+        if (Gamepad.current != null && IsGamepadInUseRaw(Gamepad.current)) SetActiveDevice(true);
+        if (IsKeyboardOrMouseInUseRaw()) SetActiveDevice(false);
+    }
+
+    private bool IsGamepadInUseRaw(Gamepad gp)
+    {
+        return gp.buttonSouth.wasPressedThisFrame
+            || gp.buttonNorth.wasPressedThisFrame
+            || gp.buttonEast.wasPressedThisFrame
+            || gp.buttonWest.wasPressedThisFrame
+            || gp.startButton.wasPressedThisFrame
+            || gp.selectButton.wasPressedThisFrame
+            || gp.leftShoulder.wasPressedThisFrame
+            || gp.rightShoulder.wasPressedThisFrame
+            || gp.leftTrigger.wasPressedThisFrame
+            || gp.rightTrigger.wasPressedThisFrame
+            || gp.dpad.ReadValue() != Vector2.zero
+            || gp.leftStick.ReadValue().sqrMagnitude > gamepadActiveThreshold * gamepadActiveThreshold
+            || gp.rightStick.ReadValue().sqrMagnitude > gamepadActiveThreshold * gamepadActiveThreshold;
+    }
+
+    private bool IsKeyboardOrMouseInUseRaw()
+    {
+        bool keyboard = Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame;
+        bool mouseButton = Mouse.current != null &&
+            (Mouse.current.leftButton.wasPressedThisFrame ||
+             Mouse.current.rightButton.wasPressedThisFrame ||
+             Mouse.current.middleButton.wasPressedThisFrame);
+        bool mouseMoved = Mouse.current != null &&
+            Mouse.current.delta.ReadValue().sqrMagnitude > deviceMouseMoveThreshold * deviceMouseMoveThreshold;
+
+        return keyboard || mouseButton || mouseMoved;
+    }
+
+    private void SetActiveDevice(bool gamepad)
+    {
+        if (IsGamepadActive == gamepad) return;
+        IsGamepadActive = gamepad;
+        OnActiveDeviceChanged?.Invoke(gamepad);
     }
     public bool AnyInput()
     {

@@ -15,6 +15,10 @@ public class PlayerAimAssist : MonoBehaviour
     [Header("Override Settings")]
     [SerializeField] private float overrideStrength = 0.5f;
 
+    [Header("Smoothing")]
+    [SerializeField] private float assistSmoothTime = 0.05f;
+    private Vector2 smoothedAssistDelta;
+
     private void Awake()
     {
         if (inputReader == null) inputReader = GetComponent<PlayerInputReader>();
@@ -22,7 +26,16 @@ public class PlayerAimAssist : MonoBehaviour
         if (playerCamera == null) playerCamera = Camera.main;
     }
 
+    //smoothing using lerp
     public Vector2 AssistDelta()
+    {
+        Vector2 rawDelta = ComputeRawAssistDelta();
+        float smoothFactor = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, assistSmoothTime));
+        smoothedAssistDelta = Vector2.Lerp(smoothedAssistDelta, rawDelta, smoothFactor);
+        return smoothedAssistDelta;
+    }
+
+    private Vector2 ComputeRawAssistDelta()
     {
         if (inputReader == null || playerCamera == null || !inputReader.IsUsingGamepad) return Vector2.zero;
         
