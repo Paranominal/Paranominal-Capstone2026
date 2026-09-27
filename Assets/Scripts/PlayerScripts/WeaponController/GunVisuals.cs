@@ -12,6 +12,7 @@ public class GunVisuals : MonoBehaviour
     [SerializeField] private SpriteRenderer silverMuzzleFlash;
     // EDIT (special-shot): optional, falls back to the iron flash until Special Shot VFX are made.
     [SerializeField] private SpriteRenderer specialMuzzleFlash;
+    [SerializeField] private WeaponInputReader weaponInputReader;
     [SerializeField] private Animator gunAnimator;
     [SerializeField] private Renderer[] gunPartRenderers;
 
@@ -92,6 +93,25 @@ public class GunVisuals : MonoBehaviour
         {
             gunAnimator = GetComponent<Animator>();
         }
+    }
+
+    void Update()
+    {
+        if (trueShot && trueShot.IsUnlocked) DoTrueShotAnims();
+    }
+
+    void DoTrueShotAnims()
+    {
+        if (weaponInputReader.TrueShotInProgress() && trueShot.IsReady) AnimateTrueShot(true);
+        else if (weaponInputReader.AnyShotReleasedThisFrame()) AnimateTrueShot(false);
+    }
+    
+    void AnimateTrueShot(bool animate)
+    {
+        // transform.Rotate(Vector3.forward * 100);
+        if (animate) ChangeMaterials(trueShotMaterial);
+        else ResetMaterials();
+        gunAnimator.SetBool("trueshot", animate);
     }
 
     // entry point called by firing logic
@@ -269,7 +289,7 @@ public class GunVisuals : MonoBehaviour
         if (gunPartRenderers == null || gunPartRenderers.Length == 0)
             yield break;
 
-        ChangeMaterials(trueShotMaterial);
+        ChangeMaterials(misfireMaterial);
 
         // Keep the misfire texture visible for the configured duration
         yield return new WaitForSeconds(misfiresTextureChangeDuration);

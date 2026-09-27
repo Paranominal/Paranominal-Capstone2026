@@ -234,8 +234,9 @@ public class ShotOrchestrator : MonoBehaviour
         if (specialShot == null || !specialShot.IsReady) return;
         if (weaponStateController != null && !weaponStateController.IsWeaponEnabled) return;
 
-        if (weaponInputReader.WasSpecialShotPressedThisFrame())
-            specialShot.TryArm();
+        if (weaponInputReader.TrueShotCompletedThisFrame())
+            // specialShot.TryArm();
+            FireSpecialShot();
     }
 
     // EDIT (special-shot): fires the Special Shot. Normal cooldown, no ammo cost, no misfire penalty.

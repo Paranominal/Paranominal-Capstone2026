@@ -1,3 +1,4 @@
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,14 +11,21 @@ public class WeaponInputReader : MonoBehaviour
     [SerializeField] private InputActionReference reloadAction;
     // EDIT (special-shot): input to arm the Special Shot.
     [SerializeField] private InputActionReference specialShotAction;
+    [Tooltip("The ammount of time in seconds that the game waits to see if the player wants to charge a special shot")]
+    [SerializeField] private float specialShotBuffer;
     private bool canShoot = true;
     public bool CanShoot => canShoot;
 
-    public bool WasIronPressedThisFrame() => shootIronAction != null && shootIronAction.action.WasPressedThisFrame();
-    public bool WasSilverPressedThisFrame() => shootSilverAction != null && shootSilverAction.action.WasPressedThisFrame();
+    private float buffer;
+    public bool WasIronPressedThisFrame() => shootIronAction != null && shootIronAction.action.WasPerformedThisFrame() && !shootSilverAction.action.IsInProgress();
+    public bool WasSilverPressedThisFrame() => shootSilverAction != null && shootSilverAction.action.WasPerformedThisFrame() && !shootIronAction.action.IsInProgress();
     public bool WasReloadPressedThisFrame() => reloadAction != null && reloadAction.action.WasPressedThisFrame();
     // EDIT (special-shot): arm input check.
-    public bool WasSpecialShotPressedThisFrame() => specialShotAction != null && specialShotAction.action.WasPressedThisFrame();
+    // public bool WasSpecialShotPressedThisFrame() => specialShotAction != null && specialShotAction.action.WasPressedThisFrame();
+    public bool TrueShotInProgress() => shootIronAction != null && shootSilverAction != null && shootIronAction.action.IsInProgress() && shootSilverAction.action.IsInProgress();
+    public bool TrueShotCompletedThisFrame() => shootIronAction != null && shootSilverAction != null && shootIronAction.action.WasCompletedThisFrame() && shootSilverAction.action.IsInProgress() || shootSilverAction.action.WasCompletedThisFrame() && shootIronAction.action.IsInProgress();
+    // public bool TrueShotReleasedThisFrame() => shootIronAction != null && shootSilverAction != null && shootIronAction.action.WasReleasedThisFrame() && shootSilverAction.action.IsInProgress() || shootSilverAction.action.WasReleasedThisFrame() && shootIronAction.action.IsInProgress();
+    public bool AnyShotReleasedThisFrame() => shootIronAction != null && shootSilverAction != null && shootIronAction.action.WasReleasedThisFrame()|| shootSilverAction.action.WasReleasedThisFrame();
 
     
     private void Update()
