@@ -1,5 +1,7 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.UI;
 
 public class GunVisuals : MonoBehaviour
 {
@@ -25,6 +27,12 @@ public class GunVisuals : MonoBehaviour
     [Header("Misfire Visuals")]
     [SerializeField] private Material misfireMaterial;
     [SerializeField] private float misfiresTextureChangeDuration = 0.2f;
+
+    // TrueShot texture
+    [Header("TrueShot Visuals")]
+    [SerializeField] private SpecialShot trueShot;
+    [SerializeField] private Image trueShotCharge;
+    [SerializeField] private Material trueShotMaterial;
 
     // Rest pose cache for the gun model
     // Kick animation always returns to these values to prevent drift over repeated shots
@@ -71,6 +79,14 @@ public class GunVisuals : MonoBehaviour
             }
         }
 
+        if (trueShot == null) GetComponent<SpecialShot>();
+        if (trueShot)
+        {
+            trueShot.OnStreakChanged += TrueShotUI;
+            trueShot.OnStateChanged += TrueShotState;
+            TrueShotUI(0, 0);
+        }
+
         // Find the animator if not explicitly assigned in inspector
         if (gunAnimator == null)
         {
@@ -84,6 +100,41 @@ public class GunVisuals : MonoBehaviour
     {
         PlayMuzzleFlash(shotType);
         PlayRecoil();
+    }
+
+    private void TrueShotUI(int streak, int streakToCharge)
+    {
+        float f = (float) streak / streakToCharge;
+        Debug.LogWarning($"Streak: [{streak} / {streakToCharge}] = {f}");
+        
+        trueShotCharge.fillAmount = f;
+    }
+    private void TrueShotState(SpecialShot.SpecialShotState state)
+    {
+        if (state == SpecialShot.SpecialShotState.Armed) ChangeMaterials(trueShotMaterial);
+        else ResetMaterials();
+    }
+
+    private void ChangeMaterials(Material targetMaterial)
+    {
+        // Swap each gun part to the new material counterpart
+        for (int i = 0; i < gunPartRenderers.Length; i++)
+        {
+            if (gunPartRenderers[i] != null)
+            {
+                gunPartRenderers[i].material = targetMaterial;
+            }
+        }
+    }
+    private void ResetMaterials()
+    {
+        for (int i = 0; i < gunPartRenderers.Length; i++)
+        {
+            if (gunPartRenderers[i] != null && originalMaterials != null && i < originalMaterials.Length && originalMaterials[i] != null)
+            {
+                gunPartRenderers[i].material = originalMaterials[i];
+            }
+        }
     }
 
     // Returns the muzzle flash duration
@@ -218,26 +269,13 @@ public class GunVisuals : MonoBehaviour
         if (gunPartRenderers == null || gunPartRenderers.Length == 0)
             yield break;
 
-        // Swap each gun part to the misfire material counterpart to visually indicate the weapon misfired
-        for (int i = 0; i < gunPartRenderers.Length; i++)
-        {
-            if (gunPartRenderers[i] != null)
-            {
-                gunPartRenderers[i].material = misfireMaterial;
-            }
-        }
+        ChangeMaterials(trueShotMaterial);
 
         // Keep the misfire texture visible for the configured duration
         yield return new WaitForSeconds(misfiresTextureChangeDuration);
 
         // Restore the original materials for each part after the misfire effect concludes
-        for (int i = 0; i < gunPartRenderers.Length; i++)
-        {
-            if (gunPartRenderers[i] != null && originalMaterials != null && i < originalMaterials.Length && originalMaterials[i] != null)
-            {
-                gunPartRenderers[i].material = originalMaterials[i];
-            }
-        }
+        ResetMaterials();
     }
 
     public void SetVisualsVisible(bool visible)
@@ -269,13 +307,7 @@ public class GunVisuals : MonoBehaviour
             // Ensure the original materials are restored when visuals are disabled
             if (gunPartRenderers != null)
             {
-                for (int i = 0; i < gunPartRenderers.Length; i++)
-                {
-                    if (gunPartRenderers[i] != null && originalMaterials != null && i < originalMaterials.Length && originalMaterials[i] != null)
-                    {
-                        gunPartRenderers[i].material = originalMaterials[i];
-                    }
-                }
+                ResetMaterials();
             }
         }
 
