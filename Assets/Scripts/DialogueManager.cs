@@ -7,6 +7,7 @@ public class DialogueManager : MonoBehaviour
     //[SerializeField] private PauseManager
     //[HideInInspector] public Dialogue dialogue;
     private GameObject dialogueObject;
+    [SerializeField] private UIPullFocus pullFocus;
     [SerializeField] private InputActionReference closeInput;
     [SerializeField] private GameObject dialogueCanvas;
     public PauseManager pause;
@@ -53,6 +54,7 @@ public class DialogueManager : MonoBehaviour
         if (grimoireAnimManager != null && openGrimoire) grimoireAnimManager.OpenFromDialogue(); //open grimoire
         if (pause) pause.ResumeGame();
         isOpen = false;
+        pullFocus.PullFocus(); //pull focus back to the correct button
     }
 
     public void UpdateDialogue(GameObject pickupDialogue)
