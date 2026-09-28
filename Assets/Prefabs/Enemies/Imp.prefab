@@ -94,6 +94,7 @@ Transform:
   m_Children:
   - {fileID: 4218627948298413658}
   - {fileID: 2637155075661089668}
+  - {fileID: 241612862386715335}
   - {fileID: 4584756147743624500}
   - {fileID: 4946112005040516731}
   - {fileID: 6962200409459439366}
@@ -114,6 +115,7 @@ MonoBehaviour:
   rotateX: 0
   easing: 0
   easeSpeed: 0.1
+  forwardVector: {x: 0, y: 0, z: 1}
 --- !u!212 &2871479650561950337
 SpriteRenderer:
   serializedVersion: 2
@@ -302,6 +304,7 @@ MonoBehaviour:
   rotateX: 1
   easing: 0
   easeSpeed: 0.1
+  forwardVector: {x: 0, y: 0, z: 1}
 --- !u!1 &8722295293950930483
 GameObject:
   m_ObjectHideFlags: 0
@@ -381,6 +384,7 @@ MonoBehaviour:
   enemyClass: 0
   skipSpawn: 0
   spawnDelay: 1
+  immuneToSpecialShot: 0
   alwaysAggro: 0
   aggroRange: 15
   movementScript: {fileID: 3311171845288023246}
@@ -479,7 +483,7 @@ MonoBehaviour:
   staggerTime: 3.5
   timeBeforeBarDrain: 1
   timeAddedOnHit: 0.5
-  bloodSplatterPrefab: {fileID: 221025048475641500, guid: 22042b3e190135846b74cfb2ddb027cd, type: 3}
+  bloodSplatter: {fileID: 1359417843852715985}
   debugMode: 0
   canBeHit: 1
   windingUp: 0
@@ -968,3 +972,76 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e6060fe9bced6b418ce272ee8a1a18f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+--- !u!1001 &7950184194662334700
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2369710407965081307}
+    m_Modifications:
+    - target: {fileID: 2999233974441774136, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_Name
+      value: BloodSplatEmitter
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.207
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+--- !u!4 &241612862386715335 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+  m_PrefabInstance: {fileID: 7950184194662334700}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1359417843852715985 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8973744640497624893, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+  m_PrefabInstance: {fileID: 7950184194662334700}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a027d29e19fa014b86a367990c784cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BloodSplatter

@@ -29,12 +29,12 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     [Range(0, 2)]
     [Tooltip("The rate the stagger bar drains. Higher = harder to stagger.")]
     [SerializeField] private float staggerResistance = 0.3f;
-    [Range(0.5f, 5f)]
+    [Range(0.5f, 15f)]
     [SerializeField] private float staggerTime = 2;
     [SerializeField] private float timeBeforeBarDrain = 0.4f;
     [SerializeField] private float timeAddedOnHit = 0.5f;
     [Header("Splatter")]
-    [SerializeField] private DecalProjector bloodSplatterPrefab;
+    [SerializeField] private BloodSplatter bloodSplatter;
 
     [Header("Debug")]
     public bool debugMode;
@@ -102,10 +102,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         if (isStaggered) return;
         if (!canBeHit) return;
 
-        if (bloodSplatterPrefab) Instantiate (
-            bloodSplatterPrefab,
-            info.hitPoint,
-            Quaternion.LookRotation(info.hitDirection));
+       if (bloodSplatter) bloodSplatter.EnemyShot(info);
 
         damageTaken++;
         currentRecoveryBuffer = timeBeforeBarDrain;
