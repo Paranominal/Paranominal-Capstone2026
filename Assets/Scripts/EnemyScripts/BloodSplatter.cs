@@ -28,18 +28,18 @@ public class ParticleEmitter : MonoBehaviour
         collisionEvents = new List<ParticleCollisionEvent>();
     }
 
-    public void EnemyShot(DamageInfo info)
-    {
-        if (particle == null)
-        {
-            Debug.LogWarning($"[{this}] No Blood Splatter set on ({gameObject})!! This is likely a mistake. Fix it by adding a Particle System to the Script.");
-            return;
-        }
+    // public void EnemyShot(DamageInfo info)
+    // {
+    //     if (particle == null)
+    //     {
+    //         Debug.LogWarning($"[{this}] No Blood Splatter set on ({gameObject})!! This is likely a mistake. Fix it by adding a Particle System to the Script.");
+    //         return;
+    //     }
 
-        transform.position = info.hitPoint;
-        transform.rotation = Quaternion.LookRotation(info.hitDirection);
-        TriggerParticles();
-    }
+    //     transform.position = info.hitPoint;
+    //     transform.rotation = Quaternion.LookRotation(info.hitDirection);
+    //     TriggerParticles();
+    // }
 
     public void TriggerParticles()
     {

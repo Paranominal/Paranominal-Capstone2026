@@ -43,6 +43,9 @@ public class Enemy : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private Animator animator;
 
+    [Header("Particle Emissions")]
+    [SerializeField] private ParticleEmitter bloodEmitter;
+
     [ShowIf("enemyClass", (int)EnemyClass.Champion, Header = "Champion")]
     [SerializeField] private int numberOfPhases = 3;
 
@@ -113,6 +116,8 @@ public class Enemy : MonoBehaviour
         if (stagger && stagger.weakPointManager) stagger.weakPointManager.handleOwnDestruction = false;
         if (enemyClass == EnemyClass.Champion && stagger && stagger.weakPointManager)
             stagger.weakPointManager.dieOnWeakpointsComplete = false;
+
+        if (stagger && bloodEmitter) stagger.EnemyShot += BloodSplatter;
 
         if (skipSpawn) DoSpawn();
         else StartCoroutine(SpawnSequence());
@@ -591,6 +596,7 @@ public class Enemy : MonoBehaviour
         IsDying = true;
         behaviourState = BehaviourState.Dying;
         if (movement != null) movement.Stop();
+        if ( bloodEmitter) bloodEmitter.TriggerParticles();
         if (stagger != null) stagger.canBeHit = false;
         DisableColliders();
 
@@ -678,6 +684,13 @@ public class Enemy : MonoBehaviour
             animator.speed = 1f / currentAttack.WindupDuration;
         else
             animator.speed = 1f;
+    }
+
+    private void BloodSplatter(DamageInfo info)
+    {
+        bloodEmitter.transform.position = info.hitPoint;
+        bloodEmitter.transform.rotation = Quaternion.LookRotation(info.hitDirection);
+        bloodEmitter.TriggerParticles();
     }
 
 
