@@ -118,7 +118,6 @@ public class ShotOrchestrator : MonoBehaviour
             queuedSpecialShot = false;
             if (specialShot != null && specialShot.IsReady)
                 FireSpecialShot();
-                if (gunVisuals) gunVisuals.DoTrueShotFX();
             return;
         }
 
@@ -145,7 +144,8 @@ public class ShotOrchestrator : MonoBehaviour
 
         if (!weaponFiringLogic.HasAmmo())
             return;
-
+        
+        if (gunVisuals) gunVisuals.DoTrueShotFX(); 
         ShotResult result = Fire(shotType);
         bool isMisfire = result.Outcome == ShotOutcome.Miss || result.Outcome == ShotOutcome.WrongAmmo || result.Outcome == ShotOutcome.EnemyHitStaggered;
 
@@ -263,7 +263,10 @@ public class ShotOrchestrator : MonoBehaviour
         weaponFiringLogic.StartShotCooldown();
 
         if (gunVisuals != null)
+        {
             gunVisuals.PlayShotVisuals(WeakPointType.Special);
+            if (gunVisuals) gunVisuals.DoTrueShotFX(); 
+        }
 
         if (cameraRecoilController != null)
             cameraRecoilController.PlayShotCameraRecoil();
