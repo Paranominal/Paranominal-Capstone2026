@@ -92,7 +92,7 @@ public class ALTGrimoire : MonoBehaviour
     private GrimoireTab activeTab = GrimoireTab.Inventory;
     private GameObject[] panels;
     private Button[] tabButtons;
-    private static readonly string[] tabNames = { "Inventory", "Bestiary", "Settings" };
+    private static readonly string[] tabNames = { "Grimoire", "Bestiary", "Options" };
 
     // Input Actions
     private InputAction scrollGrimoireAction;
