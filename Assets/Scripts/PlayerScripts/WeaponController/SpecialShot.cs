@@ -79,7 +79,7 @@ public class SpecialShot : MonoBehaviour
     // Called by ShotOrchestrator once the Special Shot has been fired
     public void Consume()
     {
-        if (state != SpecialShotState.Ready) return;
+        if (state != SpecialShotState.Ready && state != SpecialShotState.Armed) return;
 
         if (debugMode) Debug.Log($"[{this}] Special Shot fired, charge reset");
         SetStreak(0);

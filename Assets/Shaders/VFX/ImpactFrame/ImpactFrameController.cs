@@ -115,7 +115,7 @@ public class ImpactFrameController : MonoBehaviour
         sequenceFrame = 0;
         sequenceStartFrame = Time.frameCount;
         sequenceRunning = true;
-        cameraEffects.Shake(0.5f, 1.0f);
+        cameraEffects.Shake(0.5f, shakeDuration);
         ApplyFrame();
     }
 
