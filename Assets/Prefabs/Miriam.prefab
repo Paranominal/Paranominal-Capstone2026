@@ -388,7 +388,6 @@ GameObject:
   - component: {fileID: 5660757829747511445}
   - component: {fileID: 7893351746387300568}
   - component: {fileID: 2707172803116468795}
-  - component: {fileID: 2720132952008851057}
   m_Layer: 6
   m_Name: Miriam
   m_TagString: Player
@@ -930,27 +929,6 @@ MonoBehaviour:
   chargeBarContainer: {fileID: 0}
   secondsToFullCharge: 45
   weakpointRechargeBonus: 0.15
---- !u!114 &2720132952008851057
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2579260593497910125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19cf423bf62343c49ba9ab156d2555cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ImpactFrameController
-  impactFrameVolume: {fileID: 0}
-  playerCamera: {fileID: 6654618607449089807}
-  cameraEffects: {fileID: 8357035724081902887}
-  pauseManager: {fileID: 0}
-  flashFrames: 2
-  holdFrames: 12
-  tailFrames: 4
-  shakeDuration: 0.75
-  stepsPerSecond: 7
 --- !u!1 &3524502881056351253
 GameObject:
   m_ObjectHideFlags: 0
@@ -1071,6 +1049,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras:
+  - {fileID: 7886190874748602538}
   - {fileID: 5940204994785997246}
   - {fileID: 0}
   m_RendererIndex: -1

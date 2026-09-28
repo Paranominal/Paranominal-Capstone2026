@@ -1,30 +1,28 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-// Summary: Drives the Impact Frame post-process when a Special weakpoint is destroyed.
+// Summary: Drives the Impact Frame post-process. Played through Play() by CameraEffectCoordinator (or anything else).
 // Holds the full composite (two-tone scene, lines, jitter) like the reference Shader Graph,
 // re-rolling the pattern at a set rate the same way the graph's stepped time does.
-// Optional flash before the hold and lines-only tail after it. Frames are counted in
-// rendered frames, and everything holds while paused.
+// Optional flash before the hold and lines-only tail after it. Calling Play() mid-sequence restarts it
+// at the new position. Frames are counted in rendered frames, and everything holds while paused.
 public class ImpactFrameController : MonoBehaviour
 {
     [Header("References")]
     [Tooltip("Volume containing the ImpactFrameVolumeComponent. If null, searches the scene.")]
     [SerializeField] private Volume impactFrameVolume = null;
-    [Tooltip("Camera used to project the weakpoint to the screen. If null, Camera.main is used.")]
+    [Tooltip("Camera used to project the hit position to the screen. If null, Camera.main is used.")]
     [SerializeField] private Camera playerCamera = null;
-    [SerializeField] private CameraEffects cameraEffects;
     [Tooltip("Scene PauseManager. If null, searches the scene.")]
     [SerializeField] private PauseManager pauseManager = null;
 
-    [Header("Timing")]
+    [Header("Timing (frames)")]
     [Tooltip("Solid colour fill before the hold. 0 = off.")]
     [SerializeField, Range(0, 3)] private int flashFrames = 0;
     [Tooltip("How long the full effect is held.")]
     [SerializeField, Min(1)] private int holdFrames = 18;
     [Tooltip("Lines and jitter over the normal scene after the hold. 0 = off.")]
     [SerializeField, Min(0)] private int tailFrames = 0;
-    [SerializeField, Range(0, 3)] private float shakeDuration = 1.0f;
 
     [Header("Re-roll")]
     [Tooltip("How many times per second the lines and jitter pattern re-rolls. 7 = same as the reference graph.")]
@@ -41,6 +39,8 @@ public class ImpactFrameController : MonoBehaviour
     private float baseSeed = 0f;
     private float elapsed = 0f;
 
+    public bool IsPlaying => sequenceRunning;
+
     private int TotalFrames => flashFrames + holdFrames + tailFrames;
     private bool IsPaused => pauseManager != null && pauseManager.IsPaused;
 
@@ -48,9 +48,6 @@ public class ImpactFrameController : MonoBehaviour
     {
         if (playerCamera == null)
             playerCamera = Camera.main;
-
-        if (cameraEffects == null)
-            cameraEffects = FindAnyObjectByType<CameraEffects>();
 
         if (pauseManager == null)
             pauseManager = FindAnyObjectByType<PauseManager>();
@@ -61,20 +58,13 @@ public class ImpactFrameController : MonoBehaviour
         SetLayers(false, false, false, false);
     }
 
-    private void OnEnable()
-    {
-        WeakPoint.SpecialDestroyed += OnSpecialDestroyed;
-    }
-
     private void OnDisable()
     {
-        WeakPoint.SpecialDestroyed -= OnSpecialDestroyed;
-
         // don't leave the effect stuck on if disabled mid-sequence
         EndSequence();
     }
 
-    // LateUpdate so the trigger (fired during gameplay Update) always lands before the tick
+    // LateUpdate so a Play() from gameplay code always lands before the tick
     private void LateUpdate()
     {
         if (!sequenceRunning)
@@ -100,7 +90,8 @@ public class ImpactFrameController : MonoBehaviour
             ApplyFrame();
     }
 
-    private void OnSpecialDestroyed(Vector3 worldPosition)
+    // EDIT (shot-feedback): public entry point, replaces the SpecialDestroyed and HitstopComplete subscriptions
+    public void Play(Vector3 worldPosition)
     {
         if (impactFrame == null)
             return;
@@ -115,7 +106,6 @@ public class ImpactFrameController : MonoBehaviour
         sequenceFrame = 0;
         sequenceStartFrame = Time.frameCount;
         sequenceRunning = true;
-        cameraEffects.Shake(0.5f, shakeDuration);
         ApplyFrame();
     }
 
