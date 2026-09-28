@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -16,6 +16,7 @@ public class ParticleEmitter : MonoBehaviour
     [SerializeField] float maxDecalSize = 5;
     [SerializeField] float minDecalSize = 1;
     private List<ParticleCollisionEvent> collisionEvents;
+    public event Action ParticlesFired;
 
     void Reset()
     {
@@ -43,6 +44,7 @@ public class ParticleEmitter : MonoBehaviour
     public void TriggerParticles()
     {
         particle.Play();
+        ParticlesFired?.Invoke();
     }
 
     private void OnParticleCollision(GameObject other)
@@ -56,7 +58,7 @@ public class ParticleEmitter : MonoBehaviour
                 collision.intersection + (collision.normal / 5),
                 Quaternion.LookRotation(collision.velocity)
             );
-            splatter.transform.localScale = Vector3.one * Random.Range(minDecalSize, maxDecalSize);
+            splatter.transform.localScale = Vector3.one * UnityEngine.Random.Range(minDecalSize, maxDecalSize);
         }
     }
 }
