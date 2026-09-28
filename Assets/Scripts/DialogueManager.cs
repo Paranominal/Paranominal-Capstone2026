@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class DialogueManager : MonoBehaviour
@@ -8,6 +9,7 @@ public class DialogueManager : MonoBehaviour
     //[HideInInspector] public Dialogue dialogue;
     private GameObject dialogueObject;
     [SerializeField] private UIPullFocus pullFocus;
+    [SerializeField] private GameObject continueButton;
     [SerializeField] private InputActionReference closeInput;
     [SerializeField] private GameObject dialogueCanvas;
     public PauseManager pause;
@@ -25,6 +27,7 @@ public class DialogueManager : MonoBehaviour
     void Update()
     {
         if (isOpen && closeInput.action.WasPressedThisFrame()) CloseDialogue();
+        if (isOpen) HoldFocusOnContinue();
     }
     public void StartDialogue(GameObject pickupDialogue) // public so CollectibleObject can activate it
     {
@@ -36,6 +39,16 @@ public class DialogueManager : MonoBehaviour
         // SetCursorModeLocked(false); //unlock cursor
         if (pause) pause.PauseGame();
         isOpen = true;
+        //auto lock continue button
+        if (continueButton != null && EventSystem.current != null) EventSystem.current.SetSelectedGameObject(continueButton);
+    }
+
+    private void HoldFocusOnContinue()
+    {
+        if (continueButton == null || EventSystem.current == null) return;
+        GameObject selected = EventSystem.current.currentSelectedGameObject;
+        if (selected != null && selected.transform.IsChildOf(dialogueCanvas.transform)) return;
+        EventSystem.current.SetSelectedGameObject(continueButton);
     }
 
     public void NextPage() // public for menu button presses to activate
@@ -54,7 +67,7 @@ public class DialogueManager : MonoBehaviour
         if (grimoireAnimManager != null && openGrimoire) grimoireAnimManager.OpenFromDialogue(); //open grimoire
         if (pause) pause.ResumeGame();
         isOpen = false;
-        pullFocus.PullFocus(); //pull focus back to the correct button
+        if (pullFocus != null && !openGrimoire) pullFocus.PullFocus();
     }
 
     public void UpdateDialogue(GameObject pickupDialogue)
