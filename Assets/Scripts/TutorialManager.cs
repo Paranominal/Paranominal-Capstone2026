@@ -30,7 +30,7 @@ public class TutorialManager : MonoBehaviour
         foreach (GameObject entry in initialEntries)
         {
             inventory.Add(Instantiate(entry), true);
-            Debug.LogWarning("AHHH");
+            // Debug.LogWarning("AHHH");
         }
     }
 

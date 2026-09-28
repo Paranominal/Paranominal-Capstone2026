@@ -14,6 +14,7 @@ public class GunVisuals : MonoBehaviour
     [SerializeField] private SpriteRenderer specialMuzzleFlash;
     [SerializeField] private WeaponInputReader weaponInputReader;
     [SerializeField] private Animator gunAnimator;
+    [SerializeField] private ParticleEmitter gunParticles;
     [SerializeField] private Renderer[] gunPartRenderers;
 
     // Recoil and flash tuning values
@@ -34,6 +35,9 @@ public class GunVisuals : MonoBehaviour
     [SerializeField] private SpecialShot trueShot;
     [SerializeField] private Image trueShotCharge;
     [SerializeField] private Material trueShotMaterial;
+
+    [Header("Debug")]
+    public bool debugMode;
 
     // Rest pose cache for the gun model
     // Kick animation always returns to these values to prevent drift over repeated shots
@@ -105,6 +109,11 @@ public class GunVisuals : MonoBehaviour
         if (weaponInputReader.TrueShotInProgress() && trueShot.IsReady) AnimateTrueShot(true);
         else if (weaponInputReader.AnyShotReleasedThisFrame()) AnimateTrueShot(false);
     }
+
+    public void DoTrueShotFX()
+    {
+        if (gunParticles) gunParticles.TriggerParticles();
+    }
     
     void AnimateTrueShot(bool animate)
     {
@@ -125,7 +134,7 @@ public class GunVisuals : MonoBehaviour
     private void TrueShotUI(int streak, int streakToCharge)
     {
         float f = (float) streak / streakToCharge;
-        Debug.LogWarning($"Streak: [{streak} / {streakToCharge}] = {f}");
+        if (debugMode) Debug.Log($"Streak: [{streak} / {streakToCharge}] = {f}");
         
         trueShotCharge.fillAmount = f;
     }

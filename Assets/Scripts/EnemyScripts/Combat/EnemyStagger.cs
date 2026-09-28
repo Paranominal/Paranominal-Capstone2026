@@ -34,7 +34,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     [SerializeField] private float timeBeforeBarDrain = 0.4f;
     [SerializeField] private float timeAddedOnHit = 0.5f;
     [Header("Splatter")]
-    [SerializeField] private BloodSplatter bloodSplatter;
+    [SerializeField] private ParticleEmitter bloodSplatter;
 
     [Header("Debug")]
     public bool debugMode;

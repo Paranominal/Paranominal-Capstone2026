@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 // Michael edit (special-shot): needed for the Special Shot's hit list.
 using System.Collections.Generic;
+using System;
 
 public class ShotOrchestrator : MonoBehaviour
 {
@@ -117,6 +118,7 @@ public class ShotOrchestrator : MonoBehaviour
             queuedSpecialShot = false;
             if (specialShot != null && specialShot.IsReady)
                 FireSpecialShot();
+                if (gunVisuals) gunVisuals.DoTrueShotFX();
             return;
         }
 

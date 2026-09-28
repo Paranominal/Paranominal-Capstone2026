@@ -3,18 +3,23 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class BloodSplatter : MonoBehaviour
+public class ParticleEmitter : MonoBehaviour
 {
-    [SerializeField] ParticleSystem collisionParticle;
-    [SerializeField] DecalProjector bloodSplatterPrefab;
-    [Header("Splatter Size")]
-    [SerializeField] float maxSplatterSize = 5;
-    [SerializeField] float minSplatterSize = 2;
+    // Note Limitations: this script only listens to collisions 
+    // called by the primary emitter, and not any sub-emitters.
+
+    [Tooltip("The Primary particle emitter")]
+    [SerializeField] ParticleSystem particle;
+    [Header("Decals")]
+    [SerializeField] DecalProjector decalPrefab;
+    [Header("Decal Size")]
+    [SerializeField] float maxDecalSize = 5;
+    [SerializeField] float minDecalSize = 1;
     private List<ParticleCollisionEvent> collisionEvents;
 
     void Reset()
     {
-        collisionParticle = GetComponent<ParticleSystem>();
+        particle = GetComponent<ParticleSystem>();
     }
 
     void Awake()
@@ -24,7 +29,7 @@ public class BloodSplatter : MonoBehaviour
 
     public void EnemyShot(DamageInfo info)
     {
-        if (collisionParticle == null)
+        if (particle == null)
         {
             Debug.LogWarning($"[{this}] No Blood Splatter set on ({gameObject})!! This is likely a mistake. Fix it by adding a Particle System to the Script.");
             return;
@@ -35,23 +40,23 @@ public class BloodSplatter : MonoBehaviour
         TriggerParticles();
     }
 
-    private void TriggerParticles()
+    public void TriggerParticles()
     {
-        collisionParticle.Play();
+        particle.Play();
     }
 
     private void OnParticleCollision(GameObject other)
     {
-        collisionParticle.GetCollisionEvents(other, collisionEvents);
+        particle.GetCollisionEvents(other, collisionEvents);
 
         foreach (ParticleCollisionEvent collision in collisionEvents)
         {
             DecalProjector splatter = Instantiate(
-                bloodSplatterPrefab,
+                decalPrefab,
                 collision.intersection + (collision.normal / 5),
                 Quaternion.LookRotation(collision.velocity)
             );
-            splatter.transform.localScale = Vector3.one * Random.Range(1, maxSplatterSize);
+            splatter.transform.localScale = Vector3.one * Random.Range(minDecalSize, maxDecalSize);
         }
     }
 }
