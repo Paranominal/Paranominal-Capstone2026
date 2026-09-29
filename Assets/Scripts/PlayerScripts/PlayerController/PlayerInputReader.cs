@@ -4,17 +4,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerInputReader : MonoBehaviour
 {
-    public static PlayerInputReader Instance { get; private set; }
-    public static event Action<bool> OnActiveDeviceChanged;
-    public bool IsGamepadActive { get; private set; }
-
-    [Header("Mouse Movement Threshold")]
-    [SerializeField] private float deviceMouseMoveThreshold = 0.5f;
-
-    //placeholder debug variable to test if the input reader is working properly. Remove this later.
-    [SerializeField] private string interactActionName = "Collect";
-    private InputAction interactAction;
-
     [Header("Input Actions")]
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference sprintAction;
@@ -24,6 +13,16 @@ public class PlayerInputReader : MonoBehaviour
     [SerializeField] private InputActionReference lookActionMouse;
     [SerializeField] private InputActionReference lookActionGamepad;
     [SerializeField] private float gamepadLookSens = 100f;
+
+    //for future glyph icon implementation
+    //need to assign instance in Awake() when continuing this
+    public static PlayerInputReader Instance { get; private set; }
+    public static event Action<bool> OnActiveDeviceChanged;
+    public bool IsGamepadActive { get; private set; }
+    //threshold for detecting mouse movement
+    private const float DeviceMouseMoveThreshold = 0.01f; 
+
+    private InputAction interactAction;
     public InputActionReference MoveAction => moveAction;
     public InputActionReference SprintAction => sprintAction;
     public InputActionReference SlowWalkActon => slowWalkAction;
@@ -70,6 +69,7 @@ public class PlayerInputReader : MonoBehaviour
     public bool IsUsingGamepad => LookInputGamepad.sqrMagnitude > gamepadActiveThreshold * gamepadActiveThreshold;
 
     public float GamepadLookMagnitude => LookInputGamepad.magnitude;
+    public Vector2 GamepadLookVector => LookInputGamepad;
 
     private Vector2 LookInputMouse => lookActionMouse != null && lookActionMouse.action != null && CanLook
         ? lookActionMouse.action.ReadValue<Vector2>()
@@ -82,12 +82,6 @@ public class PlayerInputReader : MonoBehaviour
     public Vector2 LookInput => (Math.Abs(LookInputGamepad.x) > Math.Abs(LookInputMouse.x) || Math.Abs(LookInputGamepad.y) > Math.Abs(LookInputMouse.y)) && CanLook
         ? LookInputGamepad * gamepadLookSens
         : LookInputMouse;
-
-    private void Awake()
-    {
-        Instance = this;
-        interactAction = InputSystem.actions != null ? InputSystem.actions.FindAction(interactActionName) : null;
-    }
 
     private void Start()
     {
@@ -116,6 +110,9 @@ public class PlayerInputReader : MonoBehaviour
         DetectActiveDevice();
     }
 
+    //from here on up till setactivedevice, is for detecting if the player is 
+    //using a gamepad or keyboard/mouse, and firing an event when it changes
+    //this is for icon glyphs if needed in the future
     private void DetectActiveDevice()
     {
         if (Gamepad.current != null && IsGamepadInUseRaw(Gamepad.current)) SetActiveDevice(true);
@@ -147,17 +144,19 @@ public class PlayerInputReader : MonoBehaviour
              Mouse.current.rightButton.wasPressedThisFrame ||
              Mouse.current.middleButton.wasPressedThisFrame);
         bool mouseMoved = Mouse.current != null &&
-            Mouse.current.delta.ReadValue().sqrMagnitude > deviceMouseMoveThreshold * deviceMouseMoveThreshold;
+            Mouse.current.delta.ReadValue().sqrMagnitude > DeviceMouseMoveThreshold * DeviceMouseMoveThreshold;
 
         return keyboard || mouseButton || mouseMoved;
     }
-
+    
+    //changes input device
     private void SetActiveDevice(bool gamepad)
     {
         if (IsGamepadActive == gamepad) return;
         IsGamepadActive = gamepad;
         OnActiveDeviceChanged?.Invoke(gamepad);
     }
+
     public bool AnyInput()
     {
         if (moveAction.action.IsPressed()) return true;
