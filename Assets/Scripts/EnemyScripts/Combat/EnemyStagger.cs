@@ -57,7 +57,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     public float DamageTaken => damageTaken;
     private float currentRecoveryBuffer = 0;
 
-    public event Action<DamageInfo> EnemyShot;
+    public event Action<DamageInfo, bool> EnemyShot;
 
     // per-instance material for the fill shader
     private Material fillMaterial;
@@ -104,9 +104,13 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     {
         if (isStaggered) return;
         if (!canBeHit) return;
-        if (immuneToBullets) return; // this should read the damage info but not worth rn
 
-        EnemyShot?.Invoke(info);
+        if (immuneToBullets) // this should read the damage info but not worth rn
+        {
+            EnemyShot?.Invoke(info, false);
+            return;
+        }
+        else EnemyShot?.Invoke(info, true);
         // if (bloodSplatter) bloodSplatter.EnemyShot(info);
 
         damageTaken++;

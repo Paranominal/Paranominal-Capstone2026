@@ -43,8 +43,12 @@ public class Enemy : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private Animator animator;
 
+    [Header("Sound")]
+    [SerializeField] private SoundPlayer soundPlayer;
+
     [Header("Particle Emissions")]
-    [SerializeField] private ParticleEmitter bloodEmitter;
+    [SerializeField] private ParticleEmitter bloodFxEmitter;
+    [SerializeField] private ParticleEmitter immuneFxEmitter;
 
     [ShowIf("enemyClass", (int)EnemyClass.Champion, Header = "Champion")]
     [SerializeField] private int numberOfPhases = 3;
@@ -117,7 +121,7 @@ public class Enemy : MonoBehaviour
         if (enemyClass == EnemyClass.Champion && stagger && stagger.weakPointManager)
             stagger.weakPointManager.dieOnWeakpointsComplete = false;
 
-        if (stagger && bloodEmitter) stagger.EnemyShot += BloodSplatter;
+        if (stagger && bloodFxEmitter) stagger.EnemyShot += EnemyDamagedFX;
 
         if (skipSpawn) DoSpawn();
         else StartCoroutine(SpawnSequence());
@@ -596,7 +600,7 @@ public class Enemy : MonoBehaviour
         IsDying = true;
         behaviourState = BehaviourState.Dying;
         if (movement != null) movement.Stop();
-        if ( bloodEmitter) bloodEmitter.TriggerParticles();
+        if ( bloodFxEmitter) bloodFxEmitter.TriggerParticles();
         if (stagger != null) stagger.canBeHit = false;
         DisableColliders();
 
@@ -686,11 +690,25 @@ public class Enemy : MonoBehaviour
             animator.speed = 1f;
     }
 
-    private void BloodSplatter(DamageInfo info)
+    private void EnemyDamagedFX(DamageInfo info, bool wasDamaged)
     {
-        bloodEmitter.transform.position = info.hitPoint;
-        bloodEmitter.transform.rotation = Quaternion.LookRotation(info.hitDirection);
-        bloodEmitter.TriggerParticles();
+        if (!wasDamaged) ImmuneFX(info);
+        else BloodSplatterFX(info);
+    }
+
+    private void ImmuneFX(DamageInfo info)
+    {
+        immuneFxEmitter.transform.position = info.hitPoint;
+        immuneFxEmitter.transform.rotation = Quaternion.LookRotation(info.hitDirection);
+        immuneFxEmitter.TriggerParticles();
+        if (soundPlayer) soundPlayer.PlaySound(1);
+    }
+
+    private void BloodSplatterFX(DamageInfo info)
+    {
+        bloodFxEmitter.transform.position = info.hitPoint;
+        bloodFxEmitter.transform.rotation = Quaternion.LookRotation(info.hitDirection);
+        bloodFxEmitter.TriggerParticles();
     }
 
 
