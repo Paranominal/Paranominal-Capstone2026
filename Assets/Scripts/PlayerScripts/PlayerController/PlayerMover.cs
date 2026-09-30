@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMover : MonoBehaviour
@@ -180,6 +181,12 @@ public class PlayerMover : MonoBehaviour
         {
             knockbackForce = damageInfo.amount / 5f;
 
+        }
+
+        // cancel dash immediately if active so knockback isn't applied while dashing
+        if (playerDash != null && playerDash.IsDashing)
+        {
+            playerDash.CancelDashAndStartCooldown();
         }
 
         // player's input is locked when stunned

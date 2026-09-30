@@ -17,7 +17,7 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     // Michael feature (fear-effects): tracks whether the player is in an active encounter. Set by encounter managers externally.
     public bool IsInEncounter { get; set; }
 
-    // Tracks whether the player is currently in a safe period (invulnerable).
+    // Tracks whether the player is currently safe
     private bool isInvincible;
 
     // Michael feature (auto-resolve): fallback for cross-prefab references.

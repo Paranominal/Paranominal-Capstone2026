@@ -110,6 +110,11 @@ public class PlayerDash : MonoBehaviour
     private int enemyLayer = -1;
     private bool ignoringEnemyCollisions = false;
 
+    [Tooltip("Radius used to detect enemies to stagger while dashing (world units). If collisions are ignored, an overlap will be used.")]
+    [SerializeField] private float dashStaggerRadius = 0.6f;
+    // track enemies already staggered during the current dash to avoid repeat triggers
+    private HashSet<Enemy> staggeredEnemiesThisDash = new HashSet<Enemy>();
+
     // reference to weapon events for listening to shot results
     private WeaponEvents weaponEvents = null;
 
@@ -234,6 +239,8 @@ public class PlayerDash : MonoBehaviour
                     dashDirection = transform.forward;
 
                 isDashing = true;
+                // clear per-dash set so each enemy can be staggered once per dash
+                staggeredEnemiesThisDash.Clear();
                 BeginEnemiesLoseCollision();
                 dashTimer = dashDuration;
                 // consume a charge if using the charge-based dash (consume fractional amount)
@@ -255,6 +262,7 @@ public class PlayerDash : MonoBehaviour
             if (dashTimer <= 0f)
             {
                 isDashing = false;
+                staggeredEnemiesThisDash.Clear();
                 EndEnemiesLoseCollision();
                 EndDashFOV();
                 // start cooldown (shorter when using charges)
@@ -268,6 +276,7 @@ public class PlayerDash : MonoBehaviour
         if (isDashing)
         {
             isDashing = false;
+            staggeredEnemiesThisDash.Clear();
             EndEnemiesLoseCollision();
             EndDashFOV();
             dashCooldownTimer = dashUsesCharges ? chargeDashCooldown : dashCooldown;
@@ -397,8 +406,50 @@ public class PlayerDash : MonoBehaviour
 
         // store lastNormalizedCharges for next-frame detection
         lastNormalizedCharges = currentDashCharges;
+
+        // If we're currently dashing and collisions are being ignored, perform a physics overlap
+        // to detect enemies we pass through and trigger their stagger.
+        if (isDashing)
+            DetectDashOverlapStagger();
     }
 
+
+    // If collisions are ignored while dashing, use an overlap sphere to detect enemies we pass through and trigger stagger.
+    private void DetectDashOverlapStagger()
+    {
+        // ensure enemy layer index resolved
+        if (enemyLayer < 0)
+            enemyLayer = LayerMask.NameToLayer(enemyLayerName);
+        if (enemyLayer < 0)
+            return;
+
+        // use a layer mask for the Physics query
+        int mask = 1 << enemyLayer;
+
+        // perform overlap at player position with configured radius
+        Collider[] cols = Physics.OverlapSphere(transform.position, dashStaggerRadius, mask, QueryTriggerInteraction.Ignore);
+        if (cols == null || cols.Length == 0) return;
+
+        foreach (var c in cols)
+        {
+            // try to find an Enemy on the collider or its parents
+            Enemy enemy = c.GetComponentInParent<Enemy>();
+            if (enemy == null) continue;
+
+            // avoid triggering the same enemy multiple times during one dash
+            if (staggeredEnemiesThisDash.Contains(enemy)) continue;
+
+            EnemyStagger stagger = enemy.GetComponent<EnemyStagger>();
+            if (stagger != null && stagger.canBeHit && !stagger.IsStaggered)
+            {
+                stagger.TriggerStagger();
+                staggeredEnemiesThisDash.Add(enemy);
+
+                // trigger camera shake when we stagger an enemy by passing through it
+                CameraEffects.Instance?.Shake();
+            }
+        }
+    }
 
     // Michael edit: drives the volume component intensity based on dash state
     private void UpdateDashEffects()
@@ -556,6 +607,7 @@ public class PlayerDash : MonoBehaviour
         int playerLayer = gameObject.layer;
         Physics.IgnoreLayerCollision(playerLayer, enemyLayer, true);
         ignoringEnemyCollisions = true;
+
     }
 
     private void EndEnemiesLoseCollision()
@@ -618,4 +670,21 @@ public class PlayerDash : MonoBehaviour
         }
     }
 
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Enemy enemy = hit.gameObject.GetComponent<Enemy>();
+        if (enemy != null && isDashing)
+        {
+            // If we hit an enemy while dashing, trigger their stagger component (if present).
+            // Check canBeHit and not already staggered to avoid redundant calls.
+            EnemyStagger stagger = hit.gameObject.GetComponent<EnemyStagger>();
+            if (stagger != null && stagger.canBeHit && !stagger.IsStaggered)
+            {
+                stagger.TriggerStagger();
+                // trigger camera shake when colliding with an enemy during dash
+                CameraEffects.Instance?.Shake();
+            }
+        }
     }
+}   
+
