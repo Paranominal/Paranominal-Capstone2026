@@ -96,12 +96,19 @@ public class PlayerDash : MonoBehaviour
     private float dashCooldownTimer = 0f;
     // normalized 0..1 charge value (1 == full)
     private float currentDashCharges = 0f;
+    private float ChargePerDash => 1f / Mathf.Max(1, maxDashCharges);
 
     // charge flash state
     private float chargeFlashTimer = 0f;
     private Color chargeBarOriginalColor = Color.white;
     private float lastNormalizedCharges = 0f;
     private AnimationCurve chargeFlashCurve = default;
+
+    // Enemy collision exclusion during dash
+    [Tooltip("Layer name of enemies to ignore during dash.")]
+    [SerializeField] private string enemyLayerName = "Enemy";
+    private int enemyLayer = -1;
+    private bool ignoringEnemyCollisions = false;
 
     // reference to weapon events for listening to shot results
     private WeaponEvents weaponEvents = null;
@@ -174,6 +181,9 @@ public class PlayerDash : MonoBehaviour
         if (weaponEvents != null)
             weaponEvents.ShotResolved -= OnShotResolved;
 
+        // Ensure we restore layer in case object is destroyed while dashing
+        EndEnemiesLoseCollision();
+
         // Michael edit: zero out the effect so it doesn't persist after player is destroyed
         if (dashEffectsComponent != null)
             dashEffectsComponent.intensity.Override(0f);
@@ -224,6 +234,7 @@ public class PlayerDash : MonoBehaviour
                     dashDirection = transform.forward;
 
                 isDashing = true;
+                BeginEnemiesLoseCollision();
                 dashTimer = dashDuration;
                 // consume a charge if using the charge-based dash (consume fractional amount)
                 if (dashUsesCharges)
@@ -244,6 +255,7 @@ public class PlayerDash : MonoBehaviour
             if (dashTimer <= 0f)
             {
                 isDashing = false;
+                EndEnemiesLoseCollision();
                 EndDashFOV();
                 // start cooldown (shorter when using charges)
                 dashCooldownTimer = dashUsesCharges ? chargeDashCooldown : dashCooldown;
@@ -256,6 +268,7 @@ public class PlayerDash : MonoBehaviour
         if (isDashing)
         {
             isDashing = false;
+            EndEnemiesLoseCollision();
             EndDashFOV();
             dashCooldownTimer = dashUsesCharges ? chargeDashCooldown : dashCooldown;
         }
@@ -526,6 +539,40 @@ public class PlayerDash : MonoBehaviour
         desiredFov = preDashFov;
         fovActive = true;
     }
+
+    // Exclude enemy collisions during dash
+    private void BeginEnemiesLoseCollision()
+    {
+        if (ignoringEnemyCollisions)
+            return;
+
+        enemyLayer = LayerMask.NameToLayer(enemyLayerName);
+        if (enemyLayer < 0)
+        {
+            Debug.LogWarning($"Enemy layer '{enemyLayerName}' not found.");
+            return;
+        }
+
+        int playerLayer = gameObject.layer;
+        Physics.IgnoreLayerCollision(playerLayer, enemyLayer, true);
+        ignoringEnemyCollisions = true;
+    }
+
+    private void EndEnemiesLoseCollision()
+    {
+        if (!ignoringEnemyCollisions)
+            return;
+
+        int playerLayer = gameObject.layer;
+        if (enemyLayer < 0)
+            enemyLayer = LayerMask.NameToLayer(enemyLayerName);
+        if (enemyLayer < 0)
+            return;
+
+        Physics.IgnoreLayerCollision(playerLayer, enemyLayer, false);
+        ignoringEnemyCollisions = false;
+    }
+
     // Adds dash charges
     public void AddDashCharge(int amount = 1)
     {
@@ -555,8 +602,6 @@ public class PlayerDash : MonoBehaviour
         chargeBar.fillAmount = Mathf.Clamp01(currentDashCharges);
     }
 
-    private float ChargePerDash => 1f / Mathf.Max(1, maxDashCharges);
-
     public void DashVersionEnabled(string version)
     {
         dashEnabled = true;
@@ -572,4 +617,5 @@ public class PlayerDash : MonoBehaviour
             chargeBarContainer.SetActive(false);
         }
     }
-}
+
+    }
