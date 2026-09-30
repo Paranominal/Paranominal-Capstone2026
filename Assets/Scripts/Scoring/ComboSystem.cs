@@ -10,14 +10,18 @@ public class ComboSystem : MonoBehaviour
     [SerializeField] private AudioManager weakpointAudio;
     [SerializeField] private SoundDataSO weakpointShatter;
     [SerializeField] private AudioSource weakpointAudioSource;
+    [SerializeField] private AnimationCurve audioCurve;
+    [SerializeField] private int comboStopPitchIncrease = 5;
 
     [Header("Debug")]
     [SerializeField] private bool debugMode = true; // haven't assembled the ui yet
 
     public float Multiplier { get; private set; }
     public float TimeRemaining { get; private set; }
+    public int Streak { get; private set; }
     public float Duration => comboDuration;
     public bool IsActive => TimeRemaining > 0f;
+    
 
     public event System.Action<float> OnComboChanged;
     public event System.Action OnComboEnded;
@@ -38,13 +42,17 @@ public class ComboSystem : MonoBehaviour
     public void RegisterHit()
     {
         Multiplier += multiplierPerHit;
+        Streak++;
         TimeRemaining = comboDuration;
+        
+        float pitchShift = audioCurve.Evaluate((Multiplier / multiplierPerHit) / comboStopPitchIncrease);
 
         if (debugMode) Debug.Log($"Combo up! Multiplier now {1f + Multiplier:0.0}x, timer reset to {comboDuration}s");
         OnComboChanged?.Invoke(Multiplier);
         if (weakpointAudio)
         {
-            AudioManager.PlaySound(weakpointShatter, weakpointAudioSource, true);
+
+            AudioManager.PlaySoundPitched(weakpointShatter, weakpointAudioSource, true, pitchShift);
         }
     }
 
@@ -56,6 +64,7 @@ public class ComboSystem : MonoBehaviour
 
         Multiplier = 0f;
         TimeRemaining = 0f;
+        Streak = 0;
 
         OnComboChanged?.Invoke(Multiplier);
         OnComboEnded?.Invoke();

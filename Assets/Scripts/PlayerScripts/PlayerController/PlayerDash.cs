@@ -16,7 +16,8 @@ public class PlayerDash : MonoBehaviour
     [SerializeField] private bool allowDashJump = false;
     [Tooltip("Cooldown after a dash before another dash can be started.")]
     [SerializeField] private float dashCooldown = 1f;
-
+    [Header("Dash Audio")]
+    [SerializeField] private SoundPlayer dashSound;
 
     [Header("Cooldown Arrow UI")]
     [Tooltip("Dull arrow image that is shown faded while dash is on cooldown.")]
@@ -250,6 +251,7 @@ public class PlayerDash : MonoBehaviour
                     UpdateChargeUI();
                 }
                 StartDashFOV();
+                dashSound.PlaySound(0);
             }
         }
 
