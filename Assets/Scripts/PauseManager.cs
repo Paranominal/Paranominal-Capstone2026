@@ -4,12 +4,27 @@ using UnityEngine.SceneManagement;
 
 public class PauseManager : MonoBehaviour
 {
+    public static PauseManager Instance { get; private set; }
     private bool isPaused;
     public bool IsPaused => isPaused;
 
     [SerializeField] private string playerActionMapName = "Player";
     [SerializeField] private string grimoireActionMapName = "GrimoireUI";
     [SerializeField] private PlayerInputReader playerInputReader;
+
+    private void Awake()
+    {
+        // Singleton setup
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+    }
+
     public void PauseGame()
     {
         // Set Time.timeScale to 0 to pause gameplay
