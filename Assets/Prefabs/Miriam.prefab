@@ -388,6 +388,8 @@ GameObject:
   - component: {fileID: 5660757829747511445}
   - component: {fileID: 7893351746387300568}
   - component: {fileID: 2707172803116468795}
+  - component: {fileID: 3110525635320036500}
+  - component: {fileID: 4360056827000506036}
   m_Layer: 6
   m_Name: Miriam
   m_TagString: Player
@@ -434,7 +436,7 @@ CharacterController:
   m_Height: 1.6
   m_Radius: 0.3
   m_SlopeLimit: 45
-  m_StepOffset: 0.2
+  m_StepOffset: 0.32
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.8, z: 0}
@@ -461,6 +463,7 @@ MonoBehaviour:
   startLockMode: 1
   startCursorVisible: 0
   debugMode: 0
+  gamepadActiveThreshold: 0.05
 --- !u!114 &388139220132730565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -477,6 +480,10 @@ MonoBehaviour:
   cameraEffects: {fileID: 8357035724081902887}
   playerMover: {fileID: 7893351746387300568}
   knockbackForce: -1
+  hurtManager: {fileID: 0}
+  hurtVocalSound: {fileID: 11400000, guid: aebcd7569638a8b40a41b1609c724d1b, type: 2}
+  hurtImpactSound: {fileID: 11400000, guid: 7b57f5d956dce534f9e29e72b44cbab9, type: 2}
+  hurtSource: {fileID: 795694508415802441}
   invincibleDuration: 0.5
 --- !u!114 &1642531195737763663
 MonoBehaviour:
@@ -866,6 +873,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ComboSystem
   comboDuration: 5
   multiplierPerHit: 0.1
+  weakpointAudio: {fileID: 0}
+  weakpointShatter: {fileID: 11400000, guid: 78a12a84324189741a783843284b0693, type: 2}
+  weakpointAudioSource: {fileID: 795694508415802441}
+  audioCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  comboStopPitchIncrease: 10
   debugMode: 0
 --- !u!114 &7893351746387300568
 MonoBehaviour:
@@ -887,10 +922,10 @@ MonoBehaviour:
   playerDash: {fileID: 2707172803116468795}
   inertiaPower: 0.1
   airInertiaMultiplier: 1.5
-  gravity: 9.81
+  gravity: 13
   groundedStickForce: -2
   audioSource: {fileID: 0}
-  playerFootstep: {fileID: 11400000, guid: 95221a47635bbbf4693a9f1c94b2689b, type: 2}
+  playerFootstep: {fileID: 0}
   footstepInterval: 0.45
 --- !u!114 &2707172803116468795
 MonoBehaviour:
@@ -910,6 +945,7 @@ MonoBehaviour:
   allowAirDash: 1
   allowDashJump: 1
   dashCooldown: 1
+  dashSound: {fileID: 4360056827000506036}
   dullArrow: {fileID: 0}
   fullArrow: {fileID: 0}
   arrowContainer: {fileID: 0}
@@ -928,7 +964,57 @@ MonoBehaviour:
   chargeBar: {fileID: 0}
   chargeBarContainer: {fileID: 0}
   secondsToFullCharge: 45
-  weakpointRechargeBonus: 0.15
+  weakpointRechargeBonus: 0.1
+  chargeFlashColor: {r: 0.2, g: 0.6, b: 1, a: 1}
+  chargeFlashDuration: 0.5
+  enemyLayerName: Enemy
+  dashStaggerRadius: 0.6
+--- !u!114 &3110525635320036500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01b7612e133b73e4da4763c295a5ccd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAimAssist
+  inputReader: {fileID: 8956652460274281639}
+  playerCamera: {fileID: 6654618607449089807}
+  aimAssistRadius: 0.1
+  enemyAssistRadius: 0.15
+  enemyMask:
+    serializedVersion: 2
+    m_Bits: 131072
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 16384
+  enemyRange: 30
+  aimAssistStrength: 10
+  edgeStrength: 0.5
+  overrideStrength: 0.5
+  settleTime: 0.5
+  assistSmoothTime: 0.05
+  stealMargin: 0.85
+  debugLogs: 1
+--- !u!114 &4360056827000506036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed2f517028968bc4eb6dc4af113c91de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundPlayer
+  sounds:
+  - {fileID: 11400000, guid: 56ce18bfb7f6bd742a8165720c7bc0aa, type: 2}
+  - {fileID: 11400000, guid: aebcd7569638a8b40a41b1609c724d1b, type: 2}
+  source: {fileID: 795694508415802441}
 --- !u!1 &3524502881056351253
 GameObject:
   m_ObjectHideFlags: 0
@@ -1112,6 +1198,7 @@ MonoBehaviour:
   inputReader: {fileID: 8956652460274281639}
   playerMover: {fileID: 7893351746387300568}
   cameraRecoil: {fileID: 260499741174559401}
+  aimAssist: {fileID: 3110525635320036500}
   lookSensitivity: 0.05
   lookXLimit: 60
   lookSmoothing: 0.03
@@ -2407,11 +2494,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.00021149473
+      value: 0.0003677046
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.00032627519
+      value: -0.00005055499
       objectReference: {fileID: 0}
     - target: {fileID: 1090110928602918560, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: playerInputReader
