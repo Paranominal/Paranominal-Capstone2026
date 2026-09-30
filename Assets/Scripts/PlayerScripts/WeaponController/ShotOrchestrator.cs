@@ -145,7 +145,7 @@ public class ShotOrchestrator : MonoBehaviour
         if (!weaponFiringLogic.HasAmmo())
             return;
         
-        if (gunVisuals) gunVisuals.DoTrueShotFX(); 
+        if (gunVisuals) gunVisuals.DoGunFX(shotType); 
         ShotResult result = Fire(shotType);
         bool isMisfire = result.Outcome == ShotOutcome.Miss || result.Outcome == ShotOutcome.WrongAmmo || result.Outcome == ShotOutcome.EnemyHitStaggered;
 

@@ -5297,7 +5297,7 @@ MonoBehaviour:
   barResetColor: {r: 1, g: 0, b: 0, a: 1}
   weakPointManager: {fileID: 1351760802009251764}
   hitsToStagger: 4
-  immuneToBullets: 0
+  immuneToBullets: 1
   stunOnWindup: 0
   staggerResistance: 0.5
   staggerTime: 8
@@ -5322,10 +5322,6 @@ MonoBehaviour:
   resetSequenceEveryStagger: 0
   alwaysShowAll: 0
   weakpoints:
-  - {fileID: 264067627651227988}
-  - {fileID: 4916969257325132302}
-  - {fileID: 3333140414733637840}
-  - {fileID: 8691216257662951605}
   - {fileID: 5687485081999721268}
   debugMode: 0
   dieOnWeakpointsComplete: 1
@@ -5870,6 +5866,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WeakPoint (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 203305178815565052, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4434378975981373331, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: weakPointType
       value: 1
@@ -5931,17 +5931,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
---- !u!114 &3333140414733637840 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4434378975981373331, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
-  m_PrefabInstance: {fileID: 1426415826632105795}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e6060fe9bced6b418ce272ee8a1a18f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
 --- !u!4 &8324346780125488764 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
@@ -6032,6 +6021,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WeakPoint
       objectReference: {fileID: 0}
+    - target: {fileID: 203305178815565052, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3847659394300872278, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: shatterDuration
       value: 1
@@ -6097,17 +6090,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
---- !u!114 &264067627651227988 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4434378975981373331, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
-  m_PrefabInstance: {fileID: 4476644226192402119}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e6060fe9bced6b418ce272ee8a1a18f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
 --- !u!4 &6804267086117691384 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
@@ -6187,6 +6169,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WeakPoint (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 203305178815565052, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.95932466
@@ -6249,17 +6235,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
   m_PrefabInstance: {fileID: 4978574409646024486}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8691216257662951605 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4434378975981373331, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
-  m_PrefabInstance: {fileID: 4978574409646024486}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e6060fe9bced6b418ce272ee8a1a18f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
 --- !u!1001 &5239573879792160393
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6432,6 +6407,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WeakPoint (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 203305178815565052, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4434378975981373331, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
       propertyPath: weakPointType
       value: 1
@@ -6498,17 +6477,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6939379527075051839, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
   m_PrefabInstance: {fileID: 8770339514288045469}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4916969257325132302 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4434378975981373331, guid: 4e50def0ed3702b4d90219ab2d6658d6, type: 3}
-  m_PrefabInstance: {fileID: 8770339514288045469}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e6060fe9bced6b418ce272ee8a1a18f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
 --- !u!1001 &8986715585653070011
 PrefabInstance:
   m_ObjectHideFlags: 0

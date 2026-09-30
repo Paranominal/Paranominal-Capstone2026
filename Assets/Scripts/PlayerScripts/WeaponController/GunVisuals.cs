@@ -14,7 +14,9 @@ public class GunVisuals : MonoBehaviour
     [SerializeField] private SpriteRenderer specialMuzzleFlash;
     [SerializeField] private WeaponInputReader weaponInputReader;
     [SerializeField] private Animator gunAnimator;
-    [SerializeField] private ParticleEmitter gunParticles;
+    [SerializeField] private ParticleEmitter ironFxEmitter;
+    [SerializeField] private ParticleEmitter silverFxEmitter;
+    [SerializeField] private ParticleEmitter trueShotFxEmitter;
     [SerializeField] private Renderer[] gunPartRenderers;
 
     // Recoil and flash tuning values
@@ -110,9 +112,15 @@ public class GunVisuals : MonoBehaviour
         else if (weaponInputReader.AnyShotReleasedThisFrame()) AnimateTrueShot(false);
     }
 
+    public void DoGunFX(WeakPointType shotType)
+    {
+        if (shotType == WeakPointType.Iron) ironFxEmitter.TriggerParticles();
+        else if (shotType == WeakPointType.Silver) silverFxEmitter.TriggerParticles();
+    }
+
     public void DoTrueShotFX()
     {
-        if (gunParticles) gunParticles.TriggerParticles();
+        if (trueShotFxEmitter) trueShotFxEmitter.TriggerParticles();
     }
     
     void AnimateTrueShot(bool animate)
