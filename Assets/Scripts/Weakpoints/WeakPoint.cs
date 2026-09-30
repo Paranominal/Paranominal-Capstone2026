@@ -7,9 +7,15 @@ public class WeakPoint : MonoBehaviour
     public string PointId => pointId;
     public bool IsTough => isTough;
     public bool IsWarded => isWarded;
+    // Michael edit (special-shot): Special weakpoints can only be destroyed by the Special Shot.
+    public bool IsSpecial => weakPointType == WeakPointType.Special;
+    // Michael edit (special-shot): lets the manager avoid re-showing visible weakpoints (Show() resets tough hits and fade).
+    public bool IsShown => isShown;
     public int RemainingShotsToDestroy => remainingShots;
 
     public bool IsShown => isShown;
+    // Michael edit (impact-frame): raised when a Special weakpoint is destroyed, passes its world position.
+    public static event System.Action<Vector3> SpecialDestroyed;
 
     [Header("Identity")]
     [SerializeField] private string pointId;
@@ -25,6 +31,8 @@ public class WeakPoint : MonoBehaviour
     // visuals for each weakpoint type
     [SerializeField] private GameObject ironElement;
     [SerializeField] private GameObject silverElement;
+    // Michael edit (special-shot): visual branch for Special weakpoints.
+    [SerializeField] private GameObject specialElement;
 
     // Cached runtime references so we avoid repeatedly looking up components
     private GameObject currentElement;
@@ -61,7 +69,9 @@ public class WeakPoint : MonoBehaviour
         // Decide which visual branch this weakpoint should use based on its type
         if (weakPointType == WeakPointType.Iron) currentElement = ironElement;
         else if (weakPointType == WeakPointType.Silver) currentElement = silverElement;
-        else Debug.Log(gameObject + " is broken!! : weakpoint type is somehow neither iron nor silver!");
+        // Michael edit (special-shot): Special branch, log updated to match.
+        else if (weakPointType == WeakPointType.Special) currentElement = specialElement;
+        else Debug.Log(gameObject + " is broken!! : weakpoint type is somehow not iron, silver or special!");
 
         // cache only the active branch's renderers so alpha updates affect the correct visuals
         if (currentElement != null)
@@ -191,6 +201,10 @@ public class WeakPoint : MonoBehaviour
             // temporary shatter mesh should be destroyed on completion.
             shatter.Play(currentRenderers[0], false);
         }
+
+        // Michael edit (impact-frame): notify listeners (ImpactFrameController) that a Special weakpoint was destroyed.
+        if (IsSpecial)
+            SpecialDestroyed?.Invoke(transform.position);
 
         ResolveHit();
     }

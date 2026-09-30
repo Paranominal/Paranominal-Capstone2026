@@ -19,6 +19,10 @@ public class Enemy : MonoBehaviour
     [ShowIf("skipSpawn", false)]
     [Tooltip("Time in seconds it takes the enemy to spawn.")]
     [SerializeField] private float spawnDelay = 1f;
+    // EDIT (special-shot): immune enemies block the Special Shot, unless it also hits their exposed Special weakpoint.
+    [Tooltip("Blocks the Special Shot. Only its Special weakpoint can be hit by it, and the shot only pierces through when that weakpoint is hit.")]
+    [SerializeField] private bool immuneToSpecialShot;
+    public bool ImmuneToSpecialShot => immuneToSpecialShot;
 
     [Header("Aggro")]
     [SerializeField] private bool alwaysAggro;
@@ -38,6 +42,9 @@ public class Enemy : MonoBehaviour
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
+
+    [Header("Particle Emissions")]
+    [SerializeField] private ParticleEmitter bloodEmitter;
 
     [ShowIf("enemyClass", (int)EnemyClass.Champion, Header = "Champion")]
     [SerializeField] private int numberOfPhases = 3;
@@ -109,6 +116,8 @@ public class Enemy : MonoBehaviour
         if (stagger && stagger.weakPointManager) stagger.weakPointManager.handleOwnDestruction = false;
         if (enemyClass == EnemyClass.Champion && stagger && stagger.weakPointManager)
             stagger.weakPointManager.dieOnWeakpointsComplete = false;
+
+        if (stagger && bloodEmitter) stagger.EnemyShot += BloodSplatter;
 
         if (skipSpawn) DoSpawn();
         else StartCoroutine(SpawnSequence());
@@ -560,12 +569,34 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // Michael edit (special-shot): Special Shot body hit. Standard and Thrall enemies die, Champions are instantly staggered.
+    // Returns true if the hit did something, so the shot knows whether to count it as a SpecialHit.
+    public bool HandleSpecialShotHit()
+    {
+        if (IsDying) return false;
+        if (immuneToSpecialShot) return false;
+        if (stagger != null && !stagger.canBeHit) return false; // still spawning
+
+        if (enemyClass == EnemyClass.Champion)
+        {
+            if (stagger == null || IsStunned()) return false;
+            if (debugMode) Debug.Log($"[{this}] Staggered by Special Shot");
+            stagger.TriggerStagger();
+            return true;
+        }
+
+        if (debugMode) Debug.Log($"[{this}] Killed by Special Shot");
+        Die();
+        return true;
+    }
+
     public void Die()
     {
         if (IsDying) return;
         IsDying = true;
         behaviourState = BehaviourState.Dying;
         if (movement != null) movement.Stop();
+        if ( bloodEmitter) bloodEmitter.TriggerParticles();
         if (stagger != null) stagger.canBeHit = false;
         DisableColliders();
 
@@ -653,6 +684,13 @@ public class Enemy : MonoBehaviour
             animator.speed = 1f / currentAttack.WindupDuration;
         else
             animator.speed = 1f;
+    }
+
+    private void BloodSplatter(DamageInfo info)
+    {
+        bloodEmitter.transform.position = info.hitPoint;
+        bloodEmitter.transform.rotation = Quaternion.LookRotation(info.hitDirection);
+        bloodEmitter.TriggerParticles();
     }
 
 

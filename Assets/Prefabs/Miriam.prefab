@@ -928,7 +928,7 @@ MonoBehaviour:
   chargeBar: {fileID: 0}
   chargeBarContainer: {fileID: 0}
   secondsToFullCharge: 45
-  weakpointRechargeBonus: 0.2
+  weakpointRechargeBonus: 0.15
 --- !u!1 &3524502881056351253
 GameObject:
   m_ObjectHideFlags: 0
@@ -1049,8 +1049,8 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras:
-  - {fileID: 5940204994785997246}
   - {fileID: 7886190874748602538}
+  - {fileID: 5940204994785997246}
   - {fileID: 0}
   m_RendererIndex: -1
   m_VolumeLayerMask:
@@ -2407,7 +2407,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.00011187151
+      value: 0.00021149473
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -2593,6 +2593,10 @@ PrefabInstance:
       propertyPath: gunAnimator
       value: 
       objectReference: {fileID: 7810450073000329780}
+    - target: {fileID: 4143291898430807210, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
+      propertyPath: specialMuzzleFlash
+      value: 
+      objectReference: {fileID: 6951686225406976586}
     - target: {fileID: 5110911200105199445, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
       propertyPath: cameraRecoilController
       value: 
@@ -2600,6 +2604,10 @@ PrefabInstance:
     - target: {fileID: 8302036662431058484, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
       propertyPath: m_Name
       value: The Norwych
+      objectReference: {fileID: 0}
+    - target: {fileID: 8944612012935059866, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
+      propertyPath: specialShotBuffer
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2628,6 +2636,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66722f93cd366054a9aa6a2b0658429e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponEvents
+--- !u!212 &6951686225406976586 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 242260732338762545, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
+  m_PrefabInstance: {fileID: 7144388033751028091}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8878754659479419278 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1734549147116464373, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
