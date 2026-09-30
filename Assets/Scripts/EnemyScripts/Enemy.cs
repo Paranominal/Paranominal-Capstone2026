@@ -5,6 +5,7 @@
 
 using System.Collections;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -40,8 +41,11 @@ public class Enemy : MonoBehaviour
     [Header("Stagger")]
     [SerializeField] private EnemyStagger stagger;
 
-    [Header("Animation")]
+    [Header("Sprites & Animation")]
     [SerializeField] private Animator animator;
+    [SerializeField] private SpriteRenderer[] sprites;
+    private Material[] spriteMaterials;
+    [SerializeField] private Color flashColor = Color.white;
 
     [Header("Sound")]
     [SerializeField] private SoundPlayer soundPlayer;
@@ -120,6 +124,13 @@ public class Enemy : MonoBehaviour
         if (stagger && stagger.weakPointManager) stagger.weakPointManager.handleOwnDestruction = false;
         if (enemyClass == EnemyClass.Champion && stagger && stagger.weakPointManager)
             stagger.weakPointManager.dieOnWeakpointsComplete = false;
+
+        // setup flash materials
+        spriteMaterials = new Material[sprites.Length];
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            spriteMaterials[i] = sprites[i].material;
+        }
 
         if (stagger && bloodFxEmitter) stagger.EnemyShot += EnemyDamagedFX;
 
@@ -689,6 +700,43 @@ public class Enemy : MonoBehaviour
         else
             animator.speed = 1f;
     }
+    
+    public void TriggerSpriteFlash(float duration = 0.15f)
+    {
+        StartCoroutine(SpriteFlash(duration));
+    }
+
+    private IEnumerator SpriteFlash(float duration)
+    {
+        SetFlashColor();
+        float currentFlashAmount = 0f;
+        float timeElapsed = 0f;
+        while (timeElapsed < duration)
+        {
+            timeElapsed += Time.deltaTime;
+
+            currentFlashAmount = Mathf.Lerp(1f, 0f, timeElapsed / duration);
+            SetFlashAmount(currentFlashAmount);
+
+            yield return null;
+        }
+    }
+
+    private void SetFlashColor()
+    {
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            spriteMaterials[i].SetColor("_Color_Add", flashColor);
+        }
+    }
+
+    private void SetFlashAmount(float amount)
+    {
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            spriteMaterials[i].SetFloat("_Color_Add_Blend", amount);
+        }
+    }
 
     private void EnemyDamagedFX(DamageInfo info, bool wasDamaged)
     {
@@ -698,17 +746,27 @@ public class Enemy : MonoBehaviour
 
     private void ImmuneFX(DamageInfo info)
     {
-        immuneFxEmitter.transform.position = info.hitPoint;
-        immuneFxEmitter.transform.rotation = Quaternion.LookRotation(info.hitDirection);
-        immuneFxEmitter.TriggerParticles();
+        if (immuneFxEmitter)
+        {
+            // set emitter rotations
+            immuneFxEmitter.transform.position = info.hitPoint;
+            immuneFxEmitter.transform.rotation = Quaternion.LookRotation(info.hitDirection); 
+            immuneFxEmitter.TriggerParticles();
+        }
+        // if (sprites[0] != null) TriggerSpriteFlash();
         if (soundPlayer) soundPlayer.PlaySound(1);
     }
 
     private void BloodSplatterFX(DamageInfo info)
     {
-        bloodFxEmitter.transform.position = info.hitPoint;
-        bloodFxEmitter.transform.rotation = Quaternion.LookRotation(info.hitDirection);
-        bloodFxEmitter.TriggerParticles();
+        if (bloodFxEmitter)
+        {
+            // set emitter rotations
+            bloodFxEmitter.transform.position = info.hitPoint;
+            bloodFxEmitter.transform.rotation = Quaternion.LookRotation(info.hitDirection); 
+            bloodFxEmitter.TriggerParticles();
+        }
+        if (sprites[0] != null) TriggerSpriteFlash();
     }
 
 
