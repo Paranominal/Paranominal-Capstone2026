@@ -24,6 +24,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     [Header("Stagger Settings")]
     [SerializeField] private int hitsToStagger = 2;
     public int HitsToStagger => hitsToStagger;
+    [SerializeField] private bool immuneToBullets = false;
     [SerializeField] private bool stunOnWindup = true;
     [Range(0, 2)]
     [Tooltip("The rate the stagger bar drains. Higher = harder to stagger.")]
@@ -98,6 +99,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     {
         if (isStaggered) return;
         if (!canBeHit) return;
+        if (immuneToBullets) return; // this should read the damage info but not worth rn
 
         damageTaken++;
         currentRecoveryBuffer = timeBeforeBarDrain;
