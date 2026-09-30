@@ -12,6 +12,9 @@ public class ComboUI : MonoBehaviour
 
     private void Awake()
     {
+        if (comboSystem == null)
+            comboSystem = FindFirstObjectByType<ComboSystem>();
+
         comboSystem.OnComboChanged += HandleComboChanged;
         comboSystem.OnComboEnded += HandleComboEnded;
 

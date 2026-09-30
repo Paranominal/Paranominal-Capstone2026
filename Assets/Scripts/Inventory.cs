@@ -49,7 +49,7 @@ public class Inventory : MonoBehaviour
         if (grimoire != null)
         {
             ALTGrimoireEntry entry = item.GetComponent<CollectibleObject>().grimoireEntry;
-            if (entry.entryName != "") grimoire.AddEntry(entry, true); //makes no entry if it isnt named.
+            if (entry != null && entry.entryName != "") grimoire.AddEntry(entry, true); //makes no entry if it isnt named.
             else Debug.Log($"[{this}] Item Collected [{item}] has no named Entry");
         }
     }
@@ -62,5 +62,19 @@ public class Inventory : MonoBehaviour
     {
         if (!inventory.Contains(item)) return;
         inventory.Remove(item);
+    }
+
+    public bool HasItem(GameObject item)
+    {
+        return item != null && inventory != null && inventory.Contains(item);
+    }
+
+    public bool ConsumeItem(GameObject item)
+    {
+        if (!HasItem(item)) return false;
+
+        inventory.Remove(item);
+        Destroy(item);
+        return true;
     }
 }

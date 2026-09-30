@@ -16,6 +16,9 @@ public class SpiritBarUI : MonoBehaviour
 
     private void Awake()
     {
+        if (scoreManager == null)
+            scoreManager = FindFirstObjectByType<ScoreManager>();
+
         fullWidth = barRect.rect.width;
         scoreManager.OnPointsAdded += HandlePointsAdded;
         scoreManager.OnRankChanged += HandleRankChanged;

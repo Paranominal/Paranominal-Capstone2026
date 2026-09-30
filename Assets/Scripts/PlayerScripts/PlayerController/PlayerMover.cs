@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMover : MonoBehaviour
@@ -15,6 +17,7 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private float jumpHeight = 1.5f;
 
     [Header("Dash")]
+
     [SerializeField] private PlayerDash playerDash;
 
     [Header("Inertia")]
@@ -94,7 +97,7 @@ public class PlayerMover : MonoBehaviour
             }
         }
         // PlayerDash handles dash state and input
-        if (playerDash != null)
+        if (playerDash != null && playerDash.dashEnabled)
             playerDash.HandleDashInput(dashInput, desiredDirection, transform, characterController, Time.deltaTime);
 
         // Handle jump input. If allowDashJump is enabled, jumping while dashing is allowed and will end the dash.
@@ -160,6 +163,67 @@ public class PlayerMover : MonoBehaviour
 
             footstepTimer = footstepInterval;
         }
+    }
+
+    public void stunPlayer(float stunDuration, DamageInfo damageInfo, float knockbackForce)    
+    {
+        StartCoroutine(StunCoroutine(stunDuration, damageInfo, knockbackForce));    
+    }
+
+    private IEnumerator StunCoroutine(float stunDuration, DamageInfo damageInfo, float knockbackForce)
+    {
+
+        if (damageInfo.source?.name == "DamageField_Flames(Clone)") 
+        {
+            knockbackForce = 0f;
+        }
+
+        if (knockbackForce < 0f)
+        {
+            knockbackForce = damageInfo.amount / 5f;
+
+        }
+
+        // player's input is locked when stunned
+        if (inputReader != null)
+            inputReader.InputLock(true);
+
+        // get the variables needed for knockback effect
+        Vector3 startPosition = transform.position;
+        Vector3 knockbackDirection = damageInfo.hitDirection.normalized;
+        Vector3 targetPosition = startPosition + knockbackDirection * knockbackForce;
+
+        float timeTaken = 0f;
+
+        // move the player smoothly towards the knockback final destination instead of teleporting
+        while (timeTaken < stunDuration)
+        {
+
+            timeTaken += Time.deltaTime;
+
+            float t = Mathf.Clamp01(timeTaken / stunDuration);
+
+            // Start fast, gradually slow down toward the destination.
+            t = Mathf.SmoothStep(0f, 1f, t);
+
+            Vector3 desiredPosition =
+                Vector3.Lerp(startPosition, targetPosition, t);
+
+            Vector3 movement =
+                desiredPosition - transform.position;
+
+            characterController.Move(movement);
+
+            yield return null;
+        }
+
+        Vector3 remainingMovement = targetPosition - transform.position;
+        characterController.Move(remainingMovement);
+
+        // apply some slight inertia after player is stunned to align with regular movement
+        currentVelocity = knockbackDirection * (knockbackForce / stunDuration);
+        inputReader.InputLock(false);
+
     }
 
 }

@@ -8,6 +8,7 @@ public class PlayerLook : MonoBehaviour
     [SerializeField] private PlayerInputReader inputReader;
     [SerializeField] private PlayerMover playerMover;
     [SerializeField] private CameraRecoilController cameraRecoil;
+    [SerializeField] private PlayerAimAssist aimAssist;
 
     [Header("Look")]
     [SerializeField] private float lookSensitivity = 0.08f;
@@ -38,7 +39,7 @@ public class PlayerLook : MonoBehaviour
         if (Time.timeScale == 0f)
             return;
 
-        if (playerMover != null && !inputReader.CanMove)
+        if (playerMover != null && !inputReader.CanLook)
             return;
 
         Vector2 rawLookInput = inputReader != null ? inputReader.LookInput : Vector2.zero;
@@ -53,7 +54,10 @@ public class PlayerLook : MonoBehaviour
         float mouseX = smoothedLookDelta.x * lookSensitivity;
         float mouseY = smoothedLookDelta.y * lookSensitivity;
 
+        Vector2 aimAssistDelta = aimAssist != null ? aimAssist.AssistDelta() : Vector2.zero;
+
         cameraPitch -= mouseY;
+        cameraPitch += aimAssistDelta.y;
         cameraPitch = Mathf.Clamp(cameraPitch, -lookXLimit, lookXLimit);
 
         float recoilOffset = cameraRecoil != null ? cameraRecoil.RecoilOffsetX : 0f;
@@ -61,7 +65,7 @@ public class PlayerLook : MonoBehaviour
         if (playerCamera != null)
             playerCamera.transform.localRotation = Quaternion.Euler(cameraPitch + recoilOffset, 0f, 0f);
 
-        player.transform.Rotate(0f, mouseX, 0f);
+        player.transform.Rotate(0f, mouseX + aimAssistDelta.x, 0f);
     }
 
     public void SetLookSensitivity(float newSensitivity)

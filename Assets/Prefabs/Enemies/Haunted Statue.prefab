@@ -126,6 +126,7 @@ GameObject:
   - component: {fileID: 6403643788848522719}
   - component: {fileID: 3580518955538096315}
   - component: {fileID: 1199629963655329915}
+  - component: {fileID: 500260618414329958}
   m_Layer: 17
   m_Name: Enemy
   m_TagString: Untagged
@@ -253,7 +254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d49d50defecf244d9e2d39fcffcdd3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
-  staggerBar: {fileID: 5379846409219135353}
+  staggerBarRoot: {fileID: 5820241246767075552}
   staggerBarFill: {fileID: 877577972013227844}
   barColor: {r: 1, g: 0.9647059, b: 0.8039216, a: 1}
   barResetColor: {r: 1, g: 0, b: 0.6860709, a: 1}
@@ -289,6 +290,23 @@ MonoBehaviour:
   debugMode: 0
   dieOnWeakpointsComplete: 1
   handleOwnDestruction: 1
+--- !u!114 &500260618414329958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 827877862285555472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b768b6bfde5f8bd488d3581699533a07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DissolveEffect
+  dissolveDuration: 1
+  destroyOnComplete: 1
+  dissolveMaterial: {fileID: 2100000, guid: 93188b6e93fe3b747b991f0453519fd3, type: 2}
+  targetRenderers: []
+  targetColliders: []
 --- !u!1 &1049033662998195316
 GameObject:
   m_ObjectHideFlags: 0
@@ -568,8 +586,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
   rotateX: 0
-  slowBillboard: 0
-  slowBillboardTime: 0.1
+  easing: 0
+  easeSpeed: 0.1
 --- !u!1 &2899068827832080456
 GameObject:
   m_ObjectHideFlags: 0
@@ -787,8 +805,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
   rotateX: 1
-  slowBillboard: 0
-  slowBillboardTime: 0.1
+  easing: 0
+  easeSpeed: 0.1
 --- !u!1 &5195267941652961625
 GameObject:
   m_ObjectHideFlags: 0
@@ -1435,17 +1453,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 356628072145771322, guid: f382ba13663871241b58320f76dbadad, type: 3}
   m_PrefabInstance: {fileID: 3413191622358279630}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5379846409219135353 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7347370438813282999, guid: f382ba13663871241b58320f76dbadad, type: 3}
+--- !u!1 &5820241246767075552 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9195137823485850926, guid: f382ba13663871241b58320f76dbadad, type: 3}
   m_PrefabInstance: {fileID: 3413191622358279630}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!1001 &4193758004065879410
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,9 +1,11 @@
+using System;
 using UnityEngine;
 
 public class RoomEntryDetector : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private EnemyEncounterManager encounterManager;
+    public event Action<RoomEntryDetector> PlayerEntry;
 
     // Automatically finds the parent encounter manager when the object is first loaded.
     private void Awake()
@@ -21,6 +23,8 @@ public class RoomEntryDetector : MonoBehaviour
         {
             return;
         }
+
+        PlayerEntry?.Invoke(this);
 
         if (encounterManager != null)
         {

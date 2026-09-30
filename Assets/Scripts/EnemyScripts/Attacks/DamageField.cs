@@ -124,7 +124,7 @@ public class DamageField : MonoBehaviour
         Vector3 direction = attackProgenitor != null ? attackProgenitor.transform.forward : transform.forward;
         GameObject source = attackProgenitor != null ? attackProgenitor.gameObject : gameObject;
 
-        DamageInfo info = new DamageInfo(damageOnHit, other.transform.position, direction, source);
+        DamageInfo info = new DamageInfo(damageOnHit, other.transform.position, direction, gameObject);
         damageable.TakeDamage(info);
     }
 }

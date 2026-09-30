@@ -14,6 +14,25 @@ public class SensitivityAdjuster : MonoBehaviour
 
     void Start()
     {
+        // resolve cross-prefab references
+        if (playerLook == null)
+            playerLook = FindFirstObjectByType<PlayerLook>();
+
+        if (playerLook != null && (weaponSway == null || bookSway == null))
+        {
+            // both WeaponSway components live on the player: weapon under RHand, book under LHand
+            // GetComponentsInChildren traverses depth-first so RHand (weapon) comes before LHand (book)
+            var allSway = playerLook.transform.root.GetComponentsInChildren<WeaponSway>(true);
+            if (allSway.Length >= 2)
+            {
+                if (weaponSway == null) weaponSway = allSway[0];
+                if (bookSway == null) bookSway = allSway[1];
+            }
+            else if (allSway.Length == 1 && weaponSway == null)
+            {
+                weaponSway = allSway[0];
+            }
+        }
 
         if (sensitivitySlider != null)
         {

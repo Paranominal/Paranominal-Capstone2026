@@ -16,6 +16,9 @@ public class FearBarUI : MonoBehaviour
 
     private void Awake()
     {
+        if (fearBar == null)
+            fearBar = FindFirstObjectByType<FearBar>();
+
         fullWidth = barRect.rect.width;
         fearBar.OnFearChanged += HandleFearChanged;
         rankText.text = "Fine";

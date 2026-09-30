@@ -90,6 +90,9 @@ public class Enemy : MonoBehaviour
     private bool isCreatedBySpawner;
     private bool hasReportedDeathToSpawner;
 
+    // animation trigger guard (prevents re-queuing the same trigger every frame)
+    private string lastAnimTrigger;
+
 
     // Lifecycle
     private void Awake()
@@ -563,9 +566,31 @@ public class Enemy : MonoBehaviour
         IsDying = true;
         behaviourState = BehaviourState.Dying;
         if (movement != null) movement.Stop();
+        if (stagger != null) stagger.canBeHit = false;
+        DisableColliders();
 
         ReportDeathToSpawner();
-        Destroy(gameObject);
+
+        // play dissolve if available, otherwise destroy immediately
+        var dissolve = GetComponentInChildren<DissolveEffect>();
+        if (dissolve != null)
+        {
+            dissolve.OnDissolveComplete += () => Destroy(gameObject);
+            dissolve.Play();
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void DisableColliders()
+    {
+        foreach (Collider enemyCollider in GetComponentsInChildren<Collider>(true))
+        {
+            if (enemyCollider != null)
+                enemyCollider.enabled = false;
+        }
     }
 
 
@@ -600,18 +625,27 @@ public class Enemy : MonoBehaviour
         bool windingUp = currentAttack != null && currentAttack.IsWindingUp;
         bool attacking = currentAttack != null && currentAttack.IsAttacking && !windingUp;
 
+        string trigger = null;
+
         if (behaviourState == BehaviourState.Idling || behaviourState == BehaviourState.Waiting)
-            animator.SetTrigger("idle");
+            trigger = "idle";
         else if (windingUp)
-            animator.SetTrigger("windUp");
+            trigger = "windUp";
         else if (attacking)
-            animator.SetTrigger("attack");
+            trigger = "attack";
         else if (behaviourState == BehaviourState.Chasing || behaviourState == BehaviourState.Returning || behaviourState == BehaviourState.Retreating)
-            animator.SetTrigger("chase");
+            trigger = "chase";
         else if (behaviourState == BehaviourState.Spawning)
-            animator.SetTrigger("spawn");
+            trigger = "spawn";
         else if (behaviourState == BehaviourState.Stunned)
-            animator.SetTrigger("stun");
+            trigger = "stun";
+
+        // only set the trigger when the desired animation actually changes
+        if (trigger != null && trigger != lastAnimTrigger)
+        {
+            animator.SetTrigger(trigger);
+            lastAnimTrigger = trigger;
+        }
 
         if (behaviourState == BehaviourState.Spawning)
             animator.speed = 1f / spawnDelay;

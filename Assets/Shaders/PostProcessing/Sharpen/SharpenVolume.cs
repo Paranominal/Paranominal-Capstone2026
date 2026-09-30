@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 // Summary: Volume component for the Sharpen post-processing effect. Add this as an override on a Volume to control sharpness settings.
-[Serializable, VolumeComponentMenu("Post-processing/Sharpen")]
+[Serializable, VolumeComponentMenu("Custom Post-Processing/Sharpen")]
 public class SharpenVolume : VolumeComponent
 {
     [Tooltip("Controls how strongly edges are enhanced.")]

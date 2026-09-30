@@ -4,21 +4,27 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
-    public bool isPaused; // Flag to track pause state
+    [SerializeField] private PauseManager pauseManager;
     [SerializeField] private GameObject pauseScreen;
     [SerializeField] private GameObject debugScreen;
     [SerializeField] private GameObject settingsScreen;
     [SerializeField] private GameObject playerUI;
     [SerializeField] private InputActionReference pauseAction;
-    [SerializeField] private string playerActionMapName = "Player";
-    [SerializeField] private string grimoireActionMapName = "GrimoireUI";
     [SerializeField] private ALTGrimoire grimoire;
     [SerializeField] private int sceneBuildIndex;
 
     private void OnEnable()
     {
+        // resolve cross-prefab references
+        if (grimoire == null)
+            grimoire = FindFirstObjectByType<ALTGrimoire>();
+        if (playerUI == null)
+        {
+            GameObject uiObj = GameObject.Find("UI");
+            if (uiObj != null) playerUI = uiObj;
+        }
 
-        ResumeGame();
+        UIResumeGame();
 
         if (pauseAction != null && pauseAction.action != null)
         {
@@ -28,7 +34,7 @@ public class PauseMenu : MonoBehaviour
 
     private void OnDisable()
     {
-        ResumeGame();
+        UIResumeGame();
 
         if (pauseAction != null && pauseAction.action != null)
         {
@@ -36,6 +42,7 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
+    private bool isPauseMenuOpen;
 
     void Update()
     {
@@ -43,45 +50,35 @@ public class PauseMenu : MonoBehaviour
         if (pauseAction != null && pauseAction.action != null && pauseAction.action.WasPressedThisFrame())
         {
             // Toggle pause state on Escape key press
-            isPaused = !isPaused;
-            if (isPaused)
+            if (!isPauseMenuOpen)
             {
-                PauseGame();
+                UIPauseGame();
             }
             else
             {
-                ResumeGame();
+                UIResumeGame();
             }
         }
     }
 
-    public void PauseGame()
+    public void UIPauseGame()
     {
-        // Set Time.timeScale to 0 to pause gameplay
-        Time.timeScale = 0;
-        InputSystem.actions.FindActionMap(playerActionMapName, true)?.Disable();
-        InputSystem.actions.FindActionMap(grimoireActionMapName, true)?.Disable();
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        pauseManager.PauseGame();
+        isPauseMenuOpen = true;
         // Make PauseMenu panel visible (activate its gameObject)
         playerUI.SetActive(false);
         pauseScreen.SetActive(true);
         
     }
 
-    public void ResumeGame()
+    public void UIResumeGame()
     {
-        // Set Time.timeScale back to 1 to resume gameplay
-        Time.timeScale = 1;
-        InputSystem.actions.FindActionMap(playerActionMapName, true)?.Enable();
-        InputSystem.actions.FindActionMap(grimoireActionMapName, true)?.Enable();
+        pauseManager.ResumeGame();
+        isPauseMenuOpen = false;
         if (grimoire != null)
         {
             grimoire.ForceCloseForPause();
         }
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        isPaused = false;
         // Hide all pause menu panels
         playerUI.SetActive(true);
         pauseScreen.SetActive(false);
@@ -133,7 +130,7 @@ public class PauseMenu : MonoBehaviour
 
     public void QuitGame()
     {
-        ResumeGame();
+        UIResumeGame();
         SceneManager.LoadScene(sceneBuildIndex);
     }
 }

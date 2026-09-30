@@ -11,6 +11,9 @@ public class InteractionObject : MonoBehaviour
     public IInteractable target;
     public bool consumesItem;
     private Raycaster raycaster;
+    public bool deleteOnInteract = false;
+
+    [SerializeField] private GameObject[] objectsToDelete;
 
     void Start()
     {
@@ -31,11 +34,24 @@ public class InteractionObject : MonoBehaviour
             {
                 if (grimoire.GetCurrentEntry().entryName == keyName && grimoire.GetCurrentEntry().collected && collectAction.WasReleasedThisFrame() && target.gameObject.GetComponentInChildren<Collider>() == hit.collider)
                 {
-                    // Michael edit (interaction-rework): unlock door if target is a Door, since InteractionObject acts as the key-check gatekeeper.
-                    Door door = target.gameObject.GetComponent<Door>();
-                    if (door != null) door.Unlock();
-
                     target.Interact(new InteractionContext());
+
+                    if (deleteOnInteract)
+                    {
+                        foreach (GameObject obj in objectsToDelete)
+                        {
+                            var dissolve = obj.GetComponentInChildren<DissolveEffect>();
+                            if (dissolve != null)
+                            {
+                                dissolve.OnDissolveComplete += () => Destroy(obj);
+                                dissolve.Play();
+                            }
+                            else
+                            {
+                                Destroy(obj);
+                            }
+                        }
+                    }
 
                     if (consumesItem)
                     {

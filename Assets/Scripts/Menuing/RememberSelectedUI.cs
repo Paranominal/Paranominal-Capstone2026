@@ -1,3 +1,4 @@
+using System.Diagnostics.Tracing;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -8,15 +9,8 @@ public class RememberSelectedUI : MonoBehaviour
 {
     [SerializeField] private EventSystem eventSystem;
     public GameObject lastSelectedElement;
-    // [SerializeField] private float selectionTimeoutSeconds = 4f;
-    // [SerializeField] private bool doSelectionTimeout = true;
     [SerializeField] private InputActionReference uiNavigateAction;
-    // private bool timedOut;
-    // private void Start()
-    // {
-    //     currentTimeoutTime = selectionTimeoutSeconds;
-    //     // if (eventSystem != null && eventSystem.currentSelectedGameObject != null) lastSelectedElement = eventSystem.currentSelectedGameObject;
-    // }
+    [SerializeField] private InputActionReference uiMouseMoveAction;
 
     private void Reset()
     {
@@ -34,13 +28,10 @@ public class RememberSelectedUI : MonoBehaviour
     private void Update()
     {
         if (!eventSystem) return;
-        // if (!timedOut && doSelectionTimeout) Timeout();
         
         if (eventSystem.currentSelectedGameObject && lastSelectedElement != eventSystem.currentSelectedGameObject)
         {
             lastSelectedElement = eventSystem.currentSelectedGameObject;
-            // currentTimeoutTime = selectionTimeoutSeconds;
-            // timedOut = false;
         }
 
         if (!eventSystem.currentSelectedGameObject &&
@@ -52,26 +43,10 @@ public class RememberSelectedUI : MonoBehaviour
         lastSelectedElement &&
         uiNavigateAction == null)
             eventSystem.SetSelectedGameObject(lastSelectedElement);
+
+        if (uiMouseMoveAction.action.ReadValue<Vector2>().magnitude > 0 && eventSystem.currentSelectedGameObject != null)
+        {
+            eventSystem.currentSelectedGameObject.GetComponent<Button>().OnDeselect(new BaseEventData(eventSystem));
+        } 
     }
-    // private float currentTimeoutTime;
-    // private Button cacheDeselectButton;
-    // private void Timeout()
-    // {
-    //     if (currentTimeoutTime > 0)
-    //     {
-    //         currentTimeoutTime -= Time.deltaTime;
-    //         return;
-    //     }
-    //     cacheDeselectButton = eventSystem.currentSelectedGameObject.GetComponent<Button>();
-    //     eventSystem.SetSelectedGameObject(null);
-    //     cacheDeselectButton.OnDeselect(new PointerEventData(EventSystem.current));
-    //     Button.curr
-    //     // cacheDeselectButton.enabled = false;
-    //     // cacheDeselectButton.enabled = true; //hacky way to reset the selection highlight
-    //     // timedOut = true;
-    // }
-    // // public void OnPointerExit(PointerEventData eventData)
-    // // {
-    //     cacheDeselectButton.OnDeselect(eventData);
-    // }
 }

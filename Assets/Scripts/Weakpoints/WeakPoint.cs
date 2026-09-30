@@ -9,6 +9,8 @@ public class WeakPoint : MonoBehaviour
     public bool IsWarded => isWarded;
     public int RemainingShotsToDestroy => remainingShots;
 
+    public bool IsShown => isShown;
+
     [Header("Identity")]
     [SerializeField] private string pointId;
 
@@ -159,6 +161,7 @@ public class WeakPoint : MonoBehaviour
 
         currentAlpha = 0f;
     }
+    
     public void SetUpWeakpoint(WeakPointManager manager)
     {
         weakpointManager = manager; 
@@ -175,11 +178,31 @@ public class WeakPoint : MonoBehaviour
         remainingShots -= 1;
         if (remainingShots > 0) return;
 
-        // Correct hit: hide this point and advance sequence to the next one
+        if (weakPointCollider != null)
+            weakPointCollider.enabled = false;
+
+        // Launch the visual effect, then resolve gameplay immediately. The
+        // generated shatter mesh continues independently after this weakpoint
+        // is hidden and the manager advances the sequence.
+        ShatterEffect shatter = GetComponent<ShatterEffect>();
+        if (shatter != null && currentRenderers != null && currentRenderers.Length > 0)
+        {
+            // Weakpoints are reused between champion phases, so only the
+            // temporary shatter mesh should be destroyed on completion.
+            shatter.Play(currentRenderers[0], false);
+        }
+
+        ResolveHit();
+    }
+
+    private void ResolveHit()
+    {
+        // Visual removal belongs to the weakpoint itself, not to its position
+        // in the manager's sequence. This is especially important when all
+        // weakpoints are visible and can be destroyed out of order.
         Hide();
-        // set state to hasbeenhit.
         hasBeenHit = true;
-        // weakpointManager.NextInSequence();
+        weakpointManager?.NotifyWeakPointResolved(this);
     }
 
     public float GetAccuracy(Ray ray)
@@ -198,6 +221,12 @@ public class WeakPoint : MonoBehaviour
         float missDistance = Vector3.Distance(ray.origin + ray.direction * along, centre);
 
         return 1f - Mathf.Clamp01(missDistance / radius);
+    }
+
+    public Vector3 GetWorldCenter()
+    {
+        if (weakPointCollider == null) return transform.position;
+        return transform.TransformPoint(weakPointCollider.center);
     }
 
     public void UnlockWeakPoint()

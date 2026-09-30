@@ -103,7 +103,7 @@ public class Projectile : MonoBehaviour, IDamageable
         if (damageable != null)
         {
             GameObject source = owner != null ? owner : gameObject;
-            DamageInfo info = new DamageInfo(damage, other.ClosestPoint(transform.position), travelDirection, source);
+            DamageInfo info = new DamageInfo(damage, other.ClosestPoint(transform.position), travelDirection, gameObject);
             if (debugMode) Debug.Log($"[Projectile] Found IDamageable on '{damageable}' (via '{other.gameObject.name}'). Dealing {damage} damage.");
             damageable.TakeDamage(info);
         }
