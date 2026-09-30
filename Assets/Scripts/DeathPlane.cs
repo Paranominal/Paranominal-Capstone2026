@@ -1,23 +1,17 @@
-using Unity.VectorGraphics;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class DeathPlane : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public event Action DeathPlaneHit;
 
     private void OnTriggerEnter(Collider other)
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (!other.CompareTag("Player")) return;
+
+        // SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Debug.Log($"DeathPlane Hit!");
+        DeathPlaneHit?.Invoke();
     }
 }

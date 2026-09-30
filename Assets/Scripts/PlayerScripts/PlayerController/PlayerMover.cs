@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMover : MonoBehaviour
@@ -7,7 +9,29 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private PlayerInputReader inputReader;
 
     [Header("Movement")]
-    [SerializeField] private float walkSpeed = 6f;
+    [SerializeField] private float walkSpeed = 5f;
+    [SerializeField] private float sprintStrength = 5f;
+    [SerializeField] private float slowWalkPercent = 0.3f;
+
+    [Tooltip("Jump height in meters.")]
+    [SerializeField] private float jumpHeight = 1.5f;
+
+    [Header("Dash")]
+
+    [SerializeField] private PlayerDash playerDash;
+
+    [Header("Inertia")]
+    [Tooltip("Time value (seconds) that controls how quickly velocity changes. Larger = more inertia (slower accel and deccel).")]
+    [SerializeField] private float inertiaPower = 0.1f;
+    [Tooltip("Multiplier applied to inertia when airborne. >1 = more inertia (slower accel/decel) in air.")]
+    [SerializeField] private float airInertiaMultiplier = 1.5f;
+
+
+    [Header("Gravity")]
+    [SerializeField] private float gravity = 9.81f;
+    [SerializeField] private float groundedStickForce = -2f;
+
+    
 
     [Header("Sound")]
     [SerializeField] private AudioSource audioSource;
@@ -15,10 +39,11 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private float footstepInterval = 0.45f;
     private float footstepTimer;
 
-    public bool canMove = true;
-    public bool CanMove => canMove;
-
     private CharacterController characterController;
+
+    // velocity smoothing variables
+    private Vector3 currentVelocity = Vector3.zero;
+    private float verticalVelocity;
 
     private void Awake()
     {
@@ -26,16 +51,95 @@ public class PlayerMover : MonoBehaviour
 
         if (inputReader == null)
             inputReader = GetComponent<PlayerInputReader>();
+        if (playerDash == null)
+            playerDash = GetComponent<PlayerDash>();
     }
 
     private void Update()
     {
-        if (!canMove)
+        // If the input reader is not set or cannot move, skip processing movement
+        if (!inputReader.CanMove)
             return;
 
+        // Read input values
         Vector2 moveInput = inputReader != null ? inputReader.MoveInput : Vector2.zero;
-        Vector3 move = (transform.forward * moveInput.y + transform.right * moveInput.x) * walkSpeed;
+        bool sprintInput = inputReader != null ? inputReader.SprintInput : false;
+        bool slowWalkInput = inputReader != null ? inputReader.SlowWalkInput : false;
+        bool jumpInput = inputReader != null ? inputReader.jumpInput : false;
+        bool dashInput = inputReader != null ? inputReader.dashInput : false;
+
+        // Calculate desired direction and speed
+        Vector3 desiredDirection = transform.forward * moveInput.y + transform.right * moveInput.x;
+        float desiredSpeed = walkSpeed;
+
+        // handle slow and sprint modifiers
+        if (slowWalkInput)
+            desiredSpeed *= slowWalkPercent;
+        else if (sprintInput)
+            desiredSpeed *= sprintStrength;
+
+        // Apply smoothing factor from inertiaPower, a larger inertiaPower means slower acceleration and deceleration.
+        // When airborne, scale the time constant so inertia is stronger (slower accel/decel) in air. This allows the player to use the dash-jump move tech to travel farther
+        float appliedInertia = inertiaPower * (characterController.isGrounded ? 1f : airInertiaMultiplier);
+        float timeConstant = Mathf.Max(0.0001f, appliedInertia);
+        float smoothFactor = 1f - Mathf.Exp(-Time.deltaTime / timeConstant);
+        // Apply smoothing toward desired velocity (same inertia for accel and decel)
+        if (playerDash == null || !playerDash.IsDashing)
+        {
+            if (moveInput.sqrMagnitude > 0.01f)
+            {
+                Vector3 desiredVelocity = desiredDirection.normalized * desiredSpeed;
+                currentVelocity = Vector3.Lerp(currentVelocity, desiredVelocity, smoothFactor);
+            }
+            else
+            {
+                currentVelocity = Vector3.Lerp(currentVelocity, Vector3.zero, smoothFactor);
+            }
+        }
+        // PlayerDash handles dash state and input
+        if (playerDash != null && playerDash.dashEnabled)
+            playerDash.HandleDashInput(dashInput, desiredDirection, transform, characterController, Time.deltaTime);
+
+        // Handle jump input. If allowDashJump is enabled, jumping while dashing is allowed and will end the dash.
+        if (jumpInput && characterController.isGrounded)
+        {
+            bool dashActive = playerDash != null && playerDash.IsDashing;
+            bool allowDashJumpLocal = playerDash != null ? playerDash.AllowDashJump : false;
+
+            if (!dashActive || allowDashJumpLocal)
+            {
+                // v = sqrt(2 * g * h)
+                verticalVelocity = Mathf.Sqrt(2f * gravity * jumpHeight);
+
+                if (dashActive && playerDash != null)
+                {
+                    // end dash early and start cooldown
+                    playerDash.CancelDashAndStartCooldown();
+                }
+            }
+        }
+
+        // Apply gravity/ground stick
+        if (characterController.isGrounded && verticalVelocity < 0f)
+        {
+            verticalVelocity = groundedStickForce;
+        }
+        else
+        {
+            verticalVelocity -= gravity * Time.deltaTime;
+        }
+
+        // When dashing, PlayerDash provides the horizontal dash velocity
+        Vector3 horizontal = (playerDash != null && playerDash.IsDashing) ? playerDash.CurrentDashVelocity : currentVelocity;
+
+        // Combine horizontal and vertical movement
+        Vector3 move = horizontal + Vector3.up * verticalVelocity;
         characterController.Move(move * Time.deltaTime);
+
+        // Footsteps only when not dashing
+        if (playerDash == null || !playerDash.IsDashing)
+            HandleFootsteps(moveInput);
+
     }
 
     // Plays a footstep when the player is actively moving on the ground, on a fixed interval.
@@ -43,22 +147,83 @@ public class PlayerMover : MonoBehaviour
     {
         bool isMoving = moveInput.sqrMagnitude > 0.01f;
         bool isGrounded = characterController.isGrounded;
- 
+
         if (!isMoving || !isGrounded)
         {
             // Reset so the next movement start plays a step immediately
             footstepTimer = 0f;
             return;
         }
- 
+
         footstepTimer -= Time.deltaTime;
         if (footstepTimer <= 0f)
         {
             if (playerFootstep != null && audioSource != null)
                 AudioManager.PlaySound(playerFootstep, audioSource);
- 
+
             footstepTimer = footstepInterval;
         }
+    }
+
+    public void stunPlayer(float stunDuration, DamageInfo damageInfo, float knockbackForce)    
+    {
+        StartCoroutine(StunCoroutine(stunDuration, damageInfo, knockbackForce));    
+    }
+
+    private IEnumerator StunCoroutine(float stunDuration, DamageInfo damageInfo, float knockbackForce)
+    {
+
+        if (damageInfo.source?.name == "DamageField_Flames(Clone)") 
+        {
+            knockbackForce = 0f;
+        }
+
+        if (knockbackForce < 0f)
+        {
+            knockbackForce = damageInfo.amount / 5f;
+
+        }
+
+        // player's input is locked when stunned
+        if (inputReader != null)
+            inputReader.InputLock(true);
+
+        // get the variables needed for knockback effect
+        Vector3 startPosition = transform.position;
+        Vector3 knockbackDirection = damageInfo.hitDirection.normalized;
+        Vector3 targetPosition = startPosition + knockbackDirection * knockbackForce;
+
+        float timeTaken = 0f;
+
+        // move the player smoothly towards the knockback final destination instead of teleporting
+        while (timeTaken < stunDuration)
+        {
+
+            timeTaken += Time.deltaTime;
+
+            float t = Mathf.Clamp01(timeTaken / stunDuration);
+
+            // Start fast, gradually slow down toward the destination.
+            t = Mathf.SmoothStep(0f, 1f, t);
+
+            Vector3 desiredPosition =
+                Vector3.Lerp(startPosition, targetPosition, t);
+
+            Vector3 movement =
+                desiredPosition - transform.position;
+
+            characterController.Move(movement);
+
+            yield return null;
+        }
+
+        Vector3 remainingMovement = targetPosition - transform.position;
+        characterController.Move(remainingMovement);
+
+        // apply some slight inertia after player is stunned to align with regular movement
+        currentVelocity = knockbackDirection * (knockbackForce / stunDuration);
+        inputReader.InputLock(false);
+
     }
 
 }

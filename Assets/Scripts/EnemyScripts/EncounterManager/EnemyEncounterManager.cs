@@ -66,13 +66,6 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     [HideInInspector] public bool isPlayerInRoom = false;
     [SerializeField] private float resetCounter = 5f;
 
-    // --- Door Gating ---
-    [Header("Door Gating")]
-    [SerializeField] private bool useDoorGating = false;
-    [SerializeField] private List<Door> doors = new List<Door>();
-
-    private bool isPlayerPastDoor = false;
-
     private int currentWave;
     private int nextSpawnPointIndex;
     private bool hasEncounterStarted;
@@ -81,7 +74,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     private Coroutine resetCoroutine;
 
     private readonly List<EnemyEntry> enemiesToSpawn = new List<EnemyEntry>();
-    private readonly List<EnemyBehaviourBase> spawnedEnemies = new List<EnemyBehaviourBase>();
+    private readonly List<Enemy> spawnedEnemies = new List<Enemy>();
 
     // Gathers child spawn points and keeps their enemy pools synced to the current maximum number of waves.
     private void OnValidate()
@@ -149,8 +142,6 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         }
         else
         {
-            isPlayerPastDoor = false;
-
             if (hasEncounterStarted && !hasEncounterCompleted)
             {
                 PauseSpawnedEnemies();
@@ -159,22 +150,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         }
     }
 
-    // Called by a DoorRadiusDetector when the player exits any door's radius.
-    // If door gating is enabled, this satisfies the distance condition for starting the encounter.
-    public void NotifyDoorRadiusExited()
-    {
-        if (!useDoorGating || hasEncounterStarted || hasEncounterCompleted)
-        {
-            return;
-        }
-
-        isPlayerPastDoor = true;
-        TryStartEncounter();
-    }
-
-    // Starts the encounter if all entry conditions are satisfied.
-    // Without door gating, only the room flag is required.
-    // With door gating, both the room flag and the door radius flag must be set.
+    // Starts the encounter when the player has entered the room.
     private void TryStartEncounter()
     {
         if (hasEncounterStarted || hasEncounterCompleted)
@@ -187,15 +163,10 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
             return;
         }
 
-        if (useDoorGating && !isPlayerPastDoor)
-        {
-            return;
-        }
-
         StartEncounter();
     }
 
-    // Starts the encounter wave loop and slams/locks all registered doors.
+    // Starts the encounter wave loop.
     private void StartEncounter()
     {
         if (hasEncounterStarted)
@@ -205,44 +176,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
 
         hasEncounterStarted = true;
 
-        if (useDoorGating)
-        {
-            LockDoors();
-        }
-
         waveLoopCoroutine = StartCoroutine(WaveLoopRoutine());
-    }
-
-    // Slams or locks each registered door depending on its current state.
-    private void LockDoors()
-    {
-        for (int i = 0; i < doors.Count; i++)
-        {
-            Door door = doors[i];
-
-            if (door == null)
-            {
-                continue;
-            }
-
-            door.StartArena();
-        }
-    }
-
-    // Unlocks all registered doors once the encounter is complete and clears their encounter lock flag.
-    private void UnlockDoors()
-    {
-        for (int i = 0; i < doors.Count; i++)
-        {
-            Door door = doors[i];
-
-            if (door == null)
-            {
-                continue;
-            }
-
-            door.EndArena();
-        }
     }
 
     // Repeats the full wave cycle of spawning, waiting, and advancing until the maximum number of waves is reached.
@@ -262,10 +196,6 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         hasEncounterCompleted = true;
         waveLoopCoroutine = null;
 
-        if (useDoorGating)
-        {
-            UnlockDoors();
-        }
     }
 
     // Handles one full wave from spawning through to completion.
@@ -372,7 +302,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
                 continue;
             }
 
-            EnemyBehaviourBase spawnedEnemy = spawnPoint.SpawnEnemy(currentWave, this);
+            Enemy spawnedEnemy = spawnPoint.SpawnEnemy(currentWave, this);
 
             if (spawnedEnemy != null)
             {
@@ -498,7 +428,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         }
 
         GameObject spawnedObject = Instantiate(enemyEntry.enemyPrefab, spawnPosition, spawnRotation);
-        EnemyBehaviourBase enemyBehaviour = spawnedObject.GetComponent<EnemyBehaviourBase>();
+        Enemy enemyBehaviour = spawnedObject.GetComponent<Enemy>();
 
         if (enemyBehaviour != null)
         {
@@ -512,7 +442,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         }
         else
         {
-            Debug.LogWarning($"{spawnedObject.name} is missing an EnemyBehaviourBase component.");
+            Debug.LogWarning($"{spawnedObject.name} is missing an Enemy component.");
         }
     }
 
@@ -597,7 +527,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     {
         for (int i = 0; i < spawnedEnemies.Count; i++)
         {
-            EnemyBehaviourBase enemy = spawnedEnemies[i];
+            Enemy enemy = spawnedEnemies[i];
 
             if (enemy == null)
             {
@@ -613,7 +543,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     {
         for (int i = 0; i < spawnedEnemies.Count; i++)
         {
-            EnemyBehaviourBase enemy = spawnedEnemies[i];
+            Enemy enemy = spawnedEnemies[i];
 
             if (enemy == null)
             {
@@ -679,7 +609,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
 
         for (int i = 0; i < spawnedEnemies.Count; i++)
         {
-            EnemyBehaviourBase enemy = spawnedEnemies[i];
+            Enemy enemy = spawnedEnemies[i];
 
             if (enemy == null)
             {
@@ -692,7 +622,6 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         spawnedEnemies.Clear();
         enemiesToSpawn.Clear();
 
-        isPlayerPastDoor = false;
         currentWave = encounterMode == EncounterMode.Arena ? startingWave - 1 : 0;
         hasEncounterStarted = false;
         hasEncounterCompleted = false;
@@ -722,7 +651,7 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     }
 
     // Removes a dead enemy from the active enemy list.
-    public void NotifyEnemyDeath(EnemyBehaviourBase deadEnemy)
+    public void NotifyEnemyDeath(Enemy deadEnemy)
     {
         if (deadEnemy == null)
         {
@@ -751,11 +680,6 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         {
             Debug.LogWarning($"[{this.gameObject}]EnemyEncounterManager could not find any child EnemySpawnPoint components.");
             return false;
-        }
-
-        if (useDoorGating && (doors == null || doors.Count == 0))
-        {
-            Debug.LogWarning("EnemyEncounterManager has door gating enabled but no doors are assigned.");
         }
 
         if (encounterMode == EncounterMode.Standard)
@@ -796,5 +720,4 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
 
     // Exposes fields for the custom editor.
     public EncounterMode CurrentEncounterMode => encounterMode;
-    public bool UseDoorGating => useDoorGating;
 }

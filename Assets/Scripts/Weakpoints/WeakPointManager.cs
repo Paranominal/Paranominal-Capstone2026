@@ -2,83 +2,119 @@ using UnityEngine;
 
 public class WeakPointManager : MonoBehaviour
 {
-    [SerializeField] private GameObject[] weakpoints;
-
+    [SerializeField] private bool resetSequenceEveryStagger = false;
+    [SerializeField] private bool alwaysShowAll;
+    public WeakPoint[] weakpoints;
     private int currentWeakpoint = 0;
-    private EnemyStagger staggerComponent;
-    private EnemyKnockback knockbackComponent;
+    public int CurrentWeakpoint => currentWeakpoint;
+    public bool debugMode;
+    [HideInInspector] public bool dieOnWeakpointsComplete = true;
+    private int cyclesComplete = 0;
+    public int CyclesComplete => cyclesComplete;
+    [HideInInspector] public bool handleOwnDestruction = true;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        //cache stagger components if they exist
-        staggerComponent = GetComponentInParent<EnemyStagger>();
-        knockbackComponent = GetComponentInParent<EnemyKnockback>();
         SetupWeakpoints();
     }
 
-    void SetupWeakpoints()
+    //sanity check so that weakpoints are actually a component that is usable
+    private bool HasWeakpoints()
     {
-        foreach (GameObject weakpoint in weakpoints)
-        {
-            weakpoint.GetComponent<WeakPoint>().Hide(); // deactivate all weakpoints
-            weakpoint.GetComponent<WeakPoint>().manager = this;// names itself manager within weakpoint scripts
-        }
-        weakpoints[0].GetComponent<WeakPoint>().Show(weakpoints[0].GetComponent<WeakPoint>().weakPointType); // activate the first weakpoint in the index
+        return weakpoints != null && weakpoints.Length > 0;
     }
 
-    public void NextWeakPoint()
+    private bool CurrentIndexValid()
     {
-        //extend time when weakpoints are destroyed
-        if (staggerComponent != null)
-        {
-            staggerComponent.ExtendStagger();
-        }
-        // weakpoint destroyed: no longer triggers stagger (scan-only)
-        currentWeakpoint += 1;
-        if (currentWeakpoint < weakpoints.Length)
-        {
-            weakpoints[currentWeakpoint].GetComponent<WeakPoint>().Show(weakpoints[0].GetComponent<WeakPoint>().weakPointType);
-        }
-        else
-        {
-            //checks for miniboss cycles
-            ToMiniBoss miniBoss = GetComponentInParent<ToMiniBoss>();
-            if (miniBoss != null)
-            {
-                miniBoss.OnCycleComplete();
-            }
-            else
-            {
-                Debug.Log("Enemy Killed!");
-                Destroy(gameObject);
-            }
-        }
+        return currentWeakpoint >= 0 && currentWeakpoint < weakpoints.Length;
     }
 
-    //hitting weakpoints will trigger the kb
-    public void OnWeakPointHit()
-    {
-        if (knockbackComponent != null)
-        {
-            knockbackComponent.ApplyKnockback();
-        }
-    }
-
-    //allows miniboss cycles to repeat
-    public void ResetWeakpoints()
+    public void SetupWeakpoints()
     {
         currentWeakpoint = 0;
-        SetupWeakpoints(); 
+
+        if (!HasWeakpoints()) return;
+
+        foreach (WeakPoint weakpoint in weakpoints)
+        {
+            weakpoint.hasBeenHit = false;
+            weakpoint.SetUpWeakpoint(this); //names itself manager within weakpoint, ands sets up the weakpoint.
+        }
+        if (debugMode) Debug.Log($"[{this}] Setup Weakpoints: [{weakpoints}] for {gameObject}");
+        // weakpoints[0].Show(); // activate the first weakpoint in the index
+        if (alwaysShowAll) StartSequence();
+    }
+
+    public void StartSequence()
+    {
+        if (!HasWeakpoints()) return;
+
+        if (resetSequenceEveryStagger) SetupWeakpoints();
+        if (alwaysShowAll)
+        {
+            foreach (WeakPoint weakpoint in weakpoints) weakpoint.Show();
+        }
+        else weakpoints[currentWeakpoint].Show(); // activate the first weakpoint in the index
+        if (debugMode) Debug.Log($"[{this}] Started Weakpoint Sequence for {gameObject}");
+    }
+
+    public void EndSequence()
+    {
+        if (!HasWeakpoints()) return;
+
+        // weakpoints[currentWeakpoint].Hide(); // hide current weakpoint
+        foreach (WeakPoint weakPoint in weakpoints) weakPoint.Hide(); // hide all weakpoints
+        if (debugMode) Debug.Log($"[{this}] Ended Weakpoint Sequence for {gameObject}");
+    }
+
+    private void NextInSequence()
+    {
+        if (debugMode) Debug.Log($"[{this}] Next Weakpoint in sequence on {gameObject} (Weakpoint #{currentWeakpoint + 1})");
+        weakpoints[currentWeakpoint].Hide();
+        currentWeakpoint += 1;
+        if (currentWeakpoint < weakpoints.Length) weakpoints[currentWeakpoint].Show();
+        else SequenceComplete();
+    }
+
+    // Called by a weakpoint after its hit VFX has finished. Completed weakpoints
+    // are consumed in sequence order, including queued hits when all are visible.
+    public void NotifyWeakPointResolved(WeakPoint weakpoint)
+    {
+        if (!HasWeakpoints() || weakpoint == null) return;
+
+        bool belongsToManager = false;
+        foreach (WeakPoint managedWeakpoint in weakpoints)
+        {
+            if (managedWeakpoint == weakpoint)
+            {
+                belongsToManager = true;
+                break;
+            }
+        }
+
+        if (!belongsToManager) return;
+
+        while (CurrentIndexValid() && weakpoints[currentWeakpoint] != null && weakpoints[currentWeakpoint].hasBeenHit)
+            NextInSequence();
+    }
+
+    private void SequenceComplete() //checks for miniboss cycles
+    {
+        cyclesComplete++; 
+        if (!dieOnWeakpointsComplete) SetupWeakpoints();
+        else if (handleOwnDestruction)
+        {
+            Debug.Log($"[{this}] was killed!");
+            Destroy(gameObject);
+        }
     }
 
     //returns total amount of weakpoints for the enemy
     public int GetTotalWeakpoints()
     {
-        return weakpoints.Length;
-
+        return HasWeakpoints() ? weakpoints.Length : 0;
     }
-
+    
     public bool UnlockWeakPointById(string weakPointId)
     {
         return WeakPointRegistry.UnlockWardedWeakPointById(weakPointId);

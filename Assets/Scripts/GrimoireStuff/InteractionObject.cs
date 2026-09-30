@@ -1,28 +1,29 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// Michael feature (interaction-rework): updated target.Interact() to pass InteractionContext.
 public class InteractionObject : MonoBehaviour
 {
     public string keyName;
     public LayerMask interactable;
     private ALTGrimoire grimoire;
-    InputAction collectAction;  // this could be rebound to a different action if you prefer
+    InputAction collectAction;
     public IInteractable target;
     public bool consumesItem;
     private Raycaster raycaster;
+    public bool deleteOnInteract = false;
+
+    [SerializeField] private GameObject[] objectsToDelete;
 
     void Start()
     {
         if (grimoire == null)
-        {
             grimoire = FindAnyObjectByType<ALTGrimoire>();
-        }
         if (raycaster == null)
-        {
             raycaster = FindAnyObjectByType<Raycaster>();
-        }
+
         collectAction = InputSystem.actions.FindAction("Collect");
-        target = GetComponentInChildren<IInteractable>();   // theres some glaring issues with this (namely you can't currently have more than one interaction type on one object) but it should work
+        target = GetComponentInChildren<IInteractable>();
     }
 
     void Update()
@@ -33,16 +34,31 @@ public class InteractionObject : MonoBehaviour
             {
                 if (grimoire.GetCurrentEntry().entryName == keyName && grimoire.GetCurrentEntry().collected && collectAction.WasReleasedThisFrame() && target.gameObject.GetComponentInChildren<Collider>() == hit.collider)
                 {
-                    // can run Interact() on any class that implements the IInteractable interface
-                    target.Interact();
-                    
+                    target.Interact(new InteractionContext());
+
+                    if (deleteOnInteract)
+                    {
+                        foreach (GameObject obj in objectsToDelete)
+                        {
+                            var dissolve = obj.GetComponentInChildren<DissolveEffect>();
+                            if (dissolve != null)
+                            {
+                                dissolve.OnDissolveComplete += () => Destroy(obj);
+                                dissolve.Play();
+                            }
+                            else
+                            {
+                                Destroy(obj);
+                            }
+                        }
+                    }
+
                     if (consumesItem)
                     {
                         grimoire.CollectEntry(grimoire.GetCurrentEntry(), false);
                     }
                 }
             }
-
         }
     }
 }

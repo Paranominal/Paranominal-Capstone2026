@@ -17,7 +17,7 @@ public class AmmoUI : MonoBehaviour
 
     private Image ammoUiTemplate;
     private int strikes;
-    private float shotTemplateSpacing = 30f;
+    [SerializeField] private float shotTemplateSpacing = 30f;
 
     private void Awake()
     {
@@ -63,12 +63,12 @@ public class AmmoUI : MonoBehaviour
             BuildAmmoUiElements(magazineSize);
     }
 
-    private void OnShotResolved(WeakPointType shotType, bool rewardedShot)
+    private void OnShotResolved(ShotResult result)
     {
-        if (rewardedShot)
+        if (result.Outcome.RetainsAmmo())
             return;
 
-        StrikeAmmo(shotType);
+        StrikeAmmo(result.ShotType);
     }
 
     private void StrikeAmmo(WeakPointType shotType)

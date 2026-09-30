@@ -108,10 +108,10 @@ public class ALTGrimoire : MonoBehaviour
             if (!grimoireActive) // GRIMOIRE ACTIVATE!
             {
                 SetGrimoireUnscaledTime(true);
-                if (grimoireAnim != null)
-                {
-                    grimoireAnim.Play("up");
-                }
+                // if (grimoireAnim != null)
+                // {
+                //     grimoireAnim.Play("Grimoire_Menu_Up", 1);
+                // }
                 grimoireActive = true;
                 OnGrimoireToggled?.Invoke(true);
                 Time.timeScale = 0f;
@@ -133,10 +133,10 @@ public class ALTGrimoire : MonoBehaviour
             else // GRIMOIRE AWAY!!
             {
                 SetGrimoireUnscaledTime(false);
-                if (grimoireAnim != null)
-                {
-                    grimoireAnim.Play("down");
-                }
+                // if (grimoireAnim != null)
+                // {
+                //     grimoireAnim.Play("Grimoire_Menu_Down", 1);
+                // }
                 grimoireActive = false;
                 OnGrimoireToggled?.Invoke(false);
                 Time.timeScale = 1f;
@@ -182,10 +182,10 @@ public class ALTGrimoire : MonoBehaviour
         }
 
         SetGrimoireUnscaledTime(false);
-        if (grimoireAnim != null)
-        {
-            grimoireAnim.Play("down");
-        }
+        // if (grimoireAnim != null)
+        // {
+        //     grimoireAnim.Play("Grimoire_Menu_Down", 1);
+        // }
 
         grimoireActive = false;
         OnGrimoireToggled?.Invoke(false);

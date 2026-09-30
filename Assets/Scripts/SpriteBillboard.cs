@@ -1,14 +1,36 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.UIElements.Experimental;
 
 public class SpriteBillboard : MonoBehaviour
 {
     [Header("Billboard Rotations")] 
     [SerializeField] private bool rotateX = false;
-    void Update()
+    [Header("Preferences")] 
+    [SerializeField] bool easing = false;
+    [ShowIf("easing", true), SerializeField] private float easeSpeed = 0.1f;
+
+    private void Update()
     {
-        if (!rotateX) transform.rotation = Quaternion.Euler(0f, Camera.main.transform.rotation.eulerAngles.y, 0f);
-        else transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, 0f);
+        if (easing) DoSlow();
+        else DoImmediate();
+    }
+
+    Vector3 targetRotation;
+
+    private void DoSlow()
+    {
+        targetRotation = Quaternion.LookRotation(Camera.main.transform.position - transform.position).eulerAngles;
+        if (!rotateX) targetRotation = new Vector3(0, targetRotation.y, targetRotation.z);
+        Vector3.Slerp(transform.rotation.eulerAngles, targetRotation, Time.deltaTime * easeSpeed);
+    }
+
+    public void DoImmediate()
+    {
+        targetRotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position).eulerAngles;
+        if (!rotateX) targetRotation = new Vector3(0, targetRotation.y, targetRotation.z);
+        transform.rotation = Quaternion.Euler(targetRotation);
     }
 }

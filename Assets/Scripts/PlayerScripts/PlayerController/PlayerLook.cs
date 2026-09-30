@@ -3,10 +3,12 @@ using UnityEngine;
 public class PlayerLook : MonoBehaviour
 {
     [Header("References")]
+    [SerializeField] private GameObject player;
     [SerializeField] private Camera playerCamera;
     [SerializeField] private PlayerInputReader inputReader;
     [SerializeField] private PlayerMover playerMover;
     [SerializeField] private CameraRecoilController cameraRecoil;
+    [SerializeField] private PlayerAimAssist aimAssist;
 
     [Header("Look")]
     [SerializeField] private float lookSensitivity = 0.08f;
@@ -37,7 +39,7 @@ public class PlayerLook : MonoBehaviour
         if (Time.timeScale == 0f)
             return;
 
-        if (playerMover != null && !playerMover.CanMove)
+        if (playerMover != null && !inputReader.CanLook)
             return;
 
         Vector2 rawLookInput = inputReader != null ? inputReader.LookInput : Vector2.zero;
@@ -52,7 +54,10 @@ public class PlayerLook : MonoBehaviour
         float mouseX = smoothedLookDelta.x * lookSensitivity;
         float mouseY = smoothedLookDelta.y * lookSensitivity;
 
+        Vector2 aimAssistDelta = aimAssist != null ? aimAssist.AssistDelta() : Vector2.zero;
+
         cameraPitch -= mouseY;
+        cameraPitch += aimAssistDelta.y;
         cameraPitch = Mathf.Clamp(cameraPitch, -lookXLimit, lookXLimit);
 
         float recoilOffset = cameraRecoil != null ? cameraRecoil.RecoilOffsetX : 0f;
@@ -60,7 +65,7 @@ public class PlayerLook : MonoBehaviour
         if (playerCamera != null)
             playerCamera.transform.localRotation = Quaternion.Euler(cameraPitch + recoilOffset, 0f, 0f);
 
-        transform.Rotate(0f, mouseX, 0f);
+        player.transform.Rotate(0f, mouseX + aimAssistDelta.x, 0f);
     }
 
     public void SetLookSensitivity(float newSensitivity)
@@ -72,5 +77,20 @@ public class PlayerLook : MonoBehaviour
     {
         return lookSensitivity;
     }
-
+    
+    // Looking at
+    [Header("Looking At")]
+    [SerializeField] private LayerMask interactableMask;
+    [SerializeField] private float lookAtRange = 4;
+    public GameObject LookingAt()
+    {
+        Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, lookAtRange, interactableMask);
+        if (hit.collider != null && !hit.collider.gameObject.isStatic) return hit.collider.gameObject;
+        else return null;
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(0f, 1f, 0f);
+        Gizmos.DrawLine(transform.position, transform.position + transform.forward * lookAtRange);
+    }
 }

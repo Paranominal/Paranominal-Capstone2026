@@ -12,18 +12,18 @@ public class FearBar : MonoBehaviour
     [SerializeField] private float fearLevel = 0; // serialised so we can see it but do not modify directly
     public float FearLevel => fearLevel;
 
-    [SerializeField] private float fearDamage = 10; // flat fallback for calls without a defined amount
+    [SerializeField, Tooltip("Default damage amount when an attack does not have one predefined.")] private float fearDamage = 10;
     [SerializeField] private float fearHealPerShot = 5f; // fear reduced on each rewarded shot
 
     [Header("Tick Rates (fear per second)")]
-    [Tooltip("How fast fear creeps up automatically at each rank. Fine = all chill, High = panic time!!")]
+    [Tooltip("How fast fear creeps up automatically at each rank. Healthy = all chill, Doomed! = panic time!!")]
     [SerializeField] private float tickRateFine = 0f;
     [SerializeField] private float tickRateLow = 0.5f;
     [SerializeField] private float tickRateMedium = 1f;
     [SerializeField] private float tickRateHigh = 2f;
 
-    public enum FearRank { Fine, Low, Medium, High }
-    public FearRank CurrentRank { get; private set; } = FearRank.Fine;
+    public enum FearRank { Healthy, Fine, Critical, Doomed }
+    public FearRank CurrentRank { get; private set; } = FearRank.Healthy;
 
     public event System.Action<FearRank> OnFearChanged;
     public event System.Action OnFearMaxed;
@@ -45,10 +45,10 @@ public class FearBar : MonoBehaviour
 
         float rate = CurrentRank switch
         {
-            FearRank.Fine => tickRateFine,
-            FearRank.Low => tickRateLow,
-            FearRank.Medium => tickRateMedium,
-            FearRank.High => tickRateHigh,
+            FearRank.Healthy => tickRateFine,
+            FearRank.Fine => tickRateLow,
+            FearRank.Critical => tickRateMedium,
+            FearRank.Doomed => tickRateHigh,
             _ => 0f
         };
 
@@ -98,10 +98,10 @@ public class FearBar : MonoBehaviour
     {
         FearRank newRank = fearLevel switch // check this bad boy out
         {
-            <= 0 => FearRank.Fine, // no more overflow! yay!!!
-            <= 33 => FearRank.Low,
-            <= 66 => FearRank.Medium,
-            _ => FearRank.High
+            <= 15 => FearRank.Healthy, // no more overflow! yay!!!
+            <= 40 => FearRank.Fine,
+            <= 80 => FearRank.Critical,
+            _ => FearRank.Doomed!
         };
 
         if (newRank != CurrentRank)
@@ -112,9 +112,9 @@ public class FearBar : MonoBehaviour
         OnFearChanged?.Invoke(CurrentRank); // event for fearbarUI & spiritbar to update, happens every time player takes damage
     }
 
-    private void HandleShotResolved(WeakPointType shotType, bool rewarded)
+    private void HandleShotResolved(ShotResult result)
     {
-        if (rewarded)
+        if (result.Outcome.IsRewarded())
         {
             ModifyFear(-fearHealPerShot);
         }

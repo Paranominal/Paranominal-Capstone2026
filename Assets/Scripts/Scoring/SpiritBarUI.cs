@@ -16,6 +16,9 @@ public class SpiritBarUI : MonoBehaviour
 
     private void Awake()
     {
+        if (scoreManager == null)
+            scoreManager = FindFirstObjectByType<ScoreManager>();
+
         fullWidth = barRect.rect.width;
         scoreManager.OnPointsAdded += HandlePointsAdded;
         scoreManager.OnRankChanged += HandleRankChanged;
@@ -30,14 +33,14 @@ public class SpiritBarUI : MonoBehaviour
             ALTGrimoire.instance.OnGrimoireToggled += gameObject.SetActive;
         }
 
-        scoreText.text = scoreManager.currentScore.ToString();
-        rankText.text = scoreManager.CurrentRank;
+        scoreText.text = scoreManager.currentScore.ToString("N0");
+        rankText.text = scoreManager.currentRank;
         SetBarWidth(scoreManager.GetProgressToNextRank()); // calls new function in scoremanager to get the float
     }
 
     private void HandlePointsAdded(int newTotal)
     {
-        scoreText.text = newTotal.ToString();
+        scoreText.text = newTotal.ToString("N0");
         SetBarWidth(scoreManager.GetProgressToNextRank());
     }
 

@@ -33,19 +33,19 @@ public class GrimoireFearStates : MonoBehaviour
 
         switch (rank) // ek, meet switch statement
         {
-            case FearBar.FearRank.Fine:
+            case FearBar.FearRank.Healthy:
                 grimoireMaterial.SetTexture("_BaseMap", fineTexture);
                 grimoireMaterial.SetTexture("_EmissionMap", fineEmission); // this emission map
                 break;
-            case FearBar.FearRank.Low:
+            case FearBar.FearRank.Fine:
                 grimoireMaterial.SetTexture("_BaseMap", medTexture);
                 grimoireMaterial.SetTexture("_EmissionMap", medEmission);
                 break;
-            case FearBar.FearRank.Medium:
+            case FearBar.FearRank.Critical:
                 grimoireMaterial.SetTexture("_BaseMap", medTexture);
                 grimoireMaterial.SetTexture("_EmissionMap", medEmission);
                 break;
-            case FearBar.FearRank.High:
+            case FearBar.FearRank.Doomed:
                 grimoireMaterial.SetTexture("_BaseMap", highTexture);
                 grimoireMaterial.SetTexture("_EmissionMap", highEmission);
                 break;

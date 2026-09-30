@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 237486021958330166}
   - component: {fileID: 3546938704944666722}
   - component: {fileID: 5456187121983439695}
-  - component: {fileID: -4982171626235864567}
+  - component: {fileID: 2855138158659847254}
   m_Layer: 0
   m_Name: Projectile
   m_TagString: Untagged
@@ -69,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e93f6c4ad93994d4cb9e7fff99d5e293, type: 2}
+  - {fileID: 2100000, guid: 2a964f800aaceb5479594db7b79e3449, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -119,7 +119,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &5456187121983439695
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,15 +132,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d65f9705b2fb954cb78532fd507f2ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
-  playerTransform: {fileID: 0}
-  projectileBody: {fileID: 3546938704944666722}
-  baseDamage: 1
+  damage: 30
   initialVelocity: 0
   maxVelocity: 20
   acceleration: 1
   lifetime: 5
---- !u!64 &-4982171626235864567
-MeshCollider:
+--- !u!135 &2855138158659847254
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -154,10 +152,9 @@ MeshCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}

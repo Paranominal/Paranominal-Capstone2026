@@ -12,7 +12,7 @@ A quick guide for getting an encounter room set up in a scene.
 | `EnemySpawnPoint.cs` | Child component. Marks a spawn location and (in Standard mode) stores the per-wave enemy pool. |
 | `RoomEntryDetector.cs` | Add this to a trigger Collider in the room. Notifies the manager when the player enters or leaves. |
 | `IEnemySpawner.cs` | Interface - no setup needed. Implemented by the manager. |
-| `EnemyBehaviourBase.cs` | Abstract base class - no setup needed. All enemy scripts must inherit from this. |
+| `Enemy.cs` | Abstract base class - no setup needed. All enemy scripts must inherit from this. |
 | `EnemyEncounterManagerEditor.cs` | Custom editor - no setup needed. Place in an `Editor` folder. |
 
 ---
@@ -97,7 +97,7 @@ Use this for dynamic, budget-driven encounters where the enemy mix changes each 
 
 ## Enemy Requirements
 
-All enemy prefabs must have a script inheriting from `EnemyBehaviourBase`. At minimum, override:
+All enemy prefabs must have a script inheriting from `Enemy`. At minimum, override:
 
 ```csharp
 // Called when the enemy is paused or resumed by the manager.

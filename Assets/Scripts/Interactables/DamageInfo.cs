@@ -11,7 +11,7 @@ using UnityEngine;
 public struct DamageInfo
 {
     /// <summary>How much damage to apply.</summary>
-    public int amount;
+    public float amount;
 
     /// <summary>World-space point where the hit occurred. Useful for hit FX, blood, etc.</summary>
     public Vector3 hitPoint;
@@ -22,7 +22,7 @@ public struct DamageInfo
     /// <summary>The GameObject that caused the damage (typically the enemy). Useful for "killed by X" tracking.</summary>
     public GameObject source;
 
-    public DamageInfo(int amount, Vector3 hitPoint, Vector3 hitDirection, GameObject source)
+    public DamageInfo(float amount, Vector3 hitPoint, Vector3 hitDirection, GameObject source)
     {
         this.amount = amount;
         this.hitPoint = hitPoint;
