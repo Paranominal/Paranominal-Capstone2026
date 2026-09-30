@@ -20,17 +20,17 @@ public class PlayerDash : MonoBehaviour
 
     [Header("Cooldown Arrow UI")]
     [Tooltip("Dull arrow image that is shown faded while dash is on cooldown.")]
-    [SerializeField] private Image dullArrow = null;
+    [ShowIf("dashUsesCharges", false)][SerializeField] private Image dullArrow = null;
     [Tooltip("Full arrow image that is filled bottom->top to indicate cooldown progress.")]
-    [SerializeField] private Image fullArrow = null;
-    [SerializeField] private GameObject arrowContainer = null;
+    [ShowIf("dashUsesCharges", false)][SerializeField] private Image fullArrow = null;
+    [ShowIf("dashUsesCharges", false)][SerializeField] private GameObject arrowContainer = null;
     [Tooltip("Alpha for the dull arrow while cooldown is active.")]
     [Range(0f, 1f)]
-    [SerializeField] private float dullFadeAlpha = 0.5f;
+    [ShowIf("dashUsesCharges", false)][SerializeField] private float dullFadeAlpha = 0.5f;
     [Tooltip("How long to keep the full arrow visible once the cooldown completes (seconds).")]
-    [SerializeField] private float showFullAfterCooldownSeconds = 1f;
+    [ShowIf("dashUsesCharges", false)][SerializeField] private float showFullAfterCooldownSeconds = 1f;
     [Tooltip("Duration of the fade-out after the arrow display (seconds).")]
-    [SerializeField] private float fadeOutDuration = 0.5f;
+    [ShowIf("dashUsesCharges", false)][SerializeField] private float fadeOutDuration = 0.5f;
 
     [Header("FOV Changes")]
     [Tooltip("Camera to modify. If null, Camera.main will be used.")]
@@ -49,20 +49,36 @@ public class PlayerDash : MonoBehaviour
     [Tooltip("How quickly the dash effects fade out after a dash ends (seconds).")]
     [SerializeField] private float dashEffectsFadeOut = 0.2f;
 
+    
     [Header("Charge Dash")]
     [Tooltip("When enabled, dash consumes charges instead of using the normal cooldown behaviour.")]
     [SerializeField] private bool dashUsesCharges = false;
     [Tooltip("Maximum number of dash charges the player can hold.")]
+    [ShowIf("dashUsesCharges", true)]
     [SerializeField] private int maxDashCharges = 3;
     [Tooltip("Short cooldown applied when using charges (seconds).")]
+    [ShowIf("dashUsesCharges", true)]
     [SerializeField] private float chargeDashCooldown = 0.5f;
     [Tooltip("UI fill image representing dash charges (fillAmount = charges / maxCharges).")]
+    [ShowIf("dashUsesCharges", true)]
     [SerializeField] private Image chargeBar = null;
+    [ShowIf("dashUsesCharges", true)]
     [SerializeField] private GameObject chargeBarContainer = null;
     [Tooltip("Time in seconds for the bar to go from 0 -> full via passive recharge.")]
+    [ShowIf("dashUsesCharges", true)]
     [SerializeField] private float secondsToFullCharge = 30f;
     [Tooltip("Fraction of the full bar to add on a weakpoint hit (e.g. 0.2 = +20% of full bar).")]
+    [ShowIf("dashUsesCharges", true)]
     [SerializeField][Range(0f, 1f)] private float weakpointRechargeBonus = 0.2f;
+
+    [Header("Charge Flash")]
+    [Tooltip("Color to flash the charge bar when a charge is gained.")]
+    [ShowIf("dashUsesCharges", true)]
+    [SerializeField] private Color chargeFlashColor = new Color(0.2f, 0.6f, 1f, 1f); // bluish
+    [Tooltip("Duration of the flash (seconds).")]
+    [ShowIf("dashUsesCharges", true)]
+    [SerializeField] private float chargeFlashDuration = 0.12f;
+    
 
     // UI state
     private bool cooldownActive = false;
@@ -80,6 +96,12 @@ public class PlayerDash : MonoBehaviour
     private float dashCooldownTimer = 0f;
     // normalized 0..1 charge value (1 == full)
     private float currentDashCharges = 0f;
+
+    // charge flash state
+    private float chargeFlashTimer = 0f;
+    private Color chargeBarOriginalColor = Color.white;
+    private float lastNormalizedCharges = 0f;
+    private AnimationCurve chargeFlashCurve = default;
 
     // reference to weapon events for listening to shot results
     private WeaponEvents weaponEvents = null;
@@ -115,6 +137,17 @@ public class PlayerDash : MonoBehaviour
         // start full (normalized)
         currentDashCharges = 1f;
         UpdateChargeUI();
+
+        // cache the original charge bar color for flashing
+        if (chargeBar != null)
+            chargeBarOriginalColor = chargeBar.color;
+
+        // ensure the flash curve has a default easing if not set in inspector
+        if (chargeFlashCurve == null || chargeFlashCurve.keys.Length == 0)
+            chargeFlashCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
+        // initialize lastNormalizedCharges so first detection is stable
+        lastNormalizedCharges = currentDashCharges;
 
         // Try to find WeaponEvents to subscribe for shot results so we can grant charges on weakpoint hits
         weaponEvents = GetComponent<WeaponEvents>();
@@ -247,6 +280,15 @@ public class PlayerDash : MonoBehaviour
             {
                 currentDashCharges = Mathf.Clamp01(currentDashCharges + (Time.deltaTime / secondsToFullCharge));
             }
+
+            // detect when we've gained one or more whole charges (crossed integer thresholds)
+            int prevCount = Mathf.FloorToInt(lastNormalizedCharges * Mathf.Max(1, maxDashCharges) + 0.0001f);
+            int newCount = Mathf.FloorToInt(currentDashCharges * Mathf.Max(1, maxDashCharges) + 0.0001f);
+            if (newCount > prevCount)
+            {
+                // trigger a brief flash
+                chargeFlashTimer = chargeFlashDuration;
+            }
         }
 
         // Update post-full display timer and detect transition to start fading
@@ -320,7 +362,30 @@ public class PlayerDash : MonoBehaviour
 
         // Update charge UI each frame (reflect normalized value)
         UpdateChargeUI();
+
+        // update charge-bar flash tint if active
+        if (chargeBar != null)
+        {
+            if (chargeFlashTimer > 0f)
+            {
+                chargeFlashTimer -= Time.deltaTime;
+                float alpha = Mathf.Clamp01(1f - (chargeFlashTimer / chargeFlashDuration));
+                float eased = chargeFlashCurve != null && chargeFlashCurve.keys.Length > 0 ? chargeFlashCurve.Evaluate(alpha) : alpha;
+                // start at flash color and ease back to original
+                chargeBar.color = Color.Lerp(chargeFlashColor, chargeBarOriginalColor, eased);
+            }
+            else
+            {
+                // ensure original color restored
+                if (chargeBar.color != chargeBarOriginalColor)
+                    chargeBar.color = chargeBarOriginalColor;
+            }
+        }
+
+        // store lastNormalizedCharges for next-frame detection
+        lastNormalizedCharges = currentDashCharges;
     }
+
 
     // Michael edit: drives the volume component intensity based on dash state
     private void UpdateDashEffects()
@@ -384,13 +449,14 @@ public class PlayerDash : MonoBehaviour
                 float denom = chargeDashCooldown <= 0f ? 1f : chargeDashCooldown;
                 float fill = 1f - Mathf.Clamp01(dashCooldownTimer / denom);
                 fullArrow.fillAmount = fill;
-            } else
+            }
+            else
             {
                 float denom = dashCooldown <= 0f ? 1f : dashCooldown;
                 float fill = 1f - Mathf.Clamp01(dashCooldownTimer / denom);
                 fullArrow.fillAmount = fill;
             }
-            
+
         }
 
 
