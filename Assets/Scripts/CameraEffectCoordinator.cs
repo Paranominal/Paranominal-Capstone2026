@@ -4,8 +4,9 @@ using UnityEngine;
 
 // Summary: Scene singleton (lives in SceneEssentials) that turns Special Shot results into hit feedback:
 // hitstop, impact frame and camera shake. Collects the shot's results from WeaponEvents, then plays either
-// the closest hit only or a chain through every target, closest first. Each hit freezes, then the impact
-// frame and shake land together when the freeze ends. Chained hits overlap and fall off in strength.
+// the closest hit only or a chain through every target, closest first. Each hit freezes, the impact frame
+// plays with the freeze or after it, and the shake lands when the freeze ends. Chained hits overlap and fall
+// off in strength. Only decides when effects fire, each controller owns how its effect looks.
 // The chain is cancelled if the game pauses.
 public class CameraEffectCoordinator : MonoBehaviour
 {
@@ -31,13 +32,11 @@ public class CameraEffectCoordinator : MonoBehaviour
     [Tooltip("Strength multiplier applied per target in the chain (hitstop and shake).")]
     [SerializeField, Range(0.1f, 1f)] private float falloff = 0.7f;
 
-    [Header("Hitstop")]
-    [Tooltip("Freeze length on the first hit, in real seconds. 0 = off.")]
-    [SerializeField, Min(0f)] private float hitstopDuration = 0.1f;
-    [Tooltip("Chained hitstops never drop below this.")]
-    [SerializeField, Min(0f)] private float minHitstopDuration = 0.04f;
+    // EDIT (shot-feedback): hitstop duration settings moved to HitstopController
 
     [Header("Impact Frame")]
+    [Tooltip("On: impact frame starts with the hitstop. Off: it starts when the hitstop ends.")]
+    [SerializeField] private bool impactDuringHitstop = true;
     [Tooltip("Play the impact frame when the Special Shot hits nothing.")]
     [SerializeField] private bool impactOnMiss = false;
 
@@ -165,16 +164,21 @@ public class CameraEffectCoordinator : MonoBehaviour
         {
             float strength = Mathf.Pow(falloff, i);
 
-            // freeze first, effects land when it ends
-            if (hitstop != null && hitstopDuration > 0f)
-            {
-                hitstop.Play(Mathf.Max(hitstopDuration * strength, minHitstopDuration));
+            if (hitstop != null)
+                hitstop.Play(strength);
 
-                while (HitstopController.IsActive)
-                    yield return null;
-            }
+            // EDIT (shot-feedback): impact frame runs on real time, so it can play through the freeze
+            if (impactDuringHitstop)
+                PlayImpact(hits[i]);
 
-            LandHit(hits[i], strength);
+            while (HitstopController.IsActive)
+                yield return null;
+
+            if (!impactDuringHitstop)
+                PlayImpact(hits[i]);
+
+            // shake uses scaled time, so it always lands once the freeze ends
+            PlayShake(shakeIntensity * strength);
 
             // previous impact frame keeps playing through the gap and the next freeze
             if (i < count - 1)
@@ -184,23 +188,26 @@ public class CameraEffectCoordinator : MonoBehaviour
         chain = null;
     }
 
-    private void LandHit(Vector3 worldPosition, float strength)
+    private void PlayImpact(Vector3 worldPosition)
     {
         if (impactFrame != null)
             impactFrame.Play(worldPosition);
+    }
 
+    private void PlayShake(float intensity)
+    {
         if (cameraEffects != null)
-            cameraEffects.Shake(shakeIntensity * strength, shakeDuration);
+            cameraEffects.Shake(intensity, shakeDuration);
     }
 
     // no hitstop on a miss, effects play straight away
     private void PlayMiss(Vector3 missPoint)
     {
-        if (impactOnMiss && impactFrame != null)
-            impactFrame.Play(missPoint);
+        if (impactOnMiss)
+            PlayImpact(missPoint);
 
-        if (shakeOnMiss && cameraEffects != null)
-            cameraEffects.Shake(shakeIntensity * missShakeScale, shakeDuration);
+        if (shakeOnMiss)
+            PlayShake(shakeIntensity * missShakeScale);
     }
 
     private void StopChain()
