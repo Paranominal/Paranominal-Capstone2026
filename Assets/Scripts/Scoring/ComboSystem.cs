@@ -6,6 +6,11 @@ public class ComboSystem : MonoBehaviour
     [SerializeField] private float comboDuration = 5f;
     [SerializeField] private float multiplierPerHit = 0.1f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioManager weakpointAudio;
+    [SerializeField] private SoundDataSO weakpointShatter;
+    [SerializeField] private AudioSource weakpointAudioSource;
+
     [Header("Debug")]
     [SerializeField] private bool debugMode = true; // haven't assembled the ui yet
 
@@ -37,6 +42,10 @@ public class ComboSystem : MonoBehaviour
 
         if (debugMode) Debug.Log($"Combo up! Multiplier now {1f + Multiplier:0.0}x, timer reset to {comboDuration}s");
         OnComboChanged?.Invoke(Multiplier);
+        if (weakpointAudio)
+        {
+            AudioManager.PlaySound(weakpointShatter, weakpointAudioSource, true);
+        }
     }
 
     public void BreakCombo()

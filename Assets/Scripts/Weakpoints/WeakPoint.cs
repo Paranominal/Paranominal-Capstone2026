@@ -51,7 +51,6 @@ public class WeakPoint : MonoBehaviour
     {
         WeakPointRegistry.Unregister(this);
     }
-
     private void Awake()
     {
         // cache expensive lookups once at startup for performance and cleaner updating
