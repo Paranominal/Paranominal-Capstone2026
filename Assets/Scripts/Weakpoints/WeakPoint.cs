@@ -12,8 +12,6 @@ public class WeakPoint : MonoBehaviour
     // Michael edit (special-shot): lets the manager avoid re-showing visible weakpoints (Show() resets tough hits and fade).
     public bool IsShown => isShown;
     public int RemainingShotsToDestroy => remainingShots;
-
-    public bool IsShown => isShown;
     // Michael edit (impact-frame): raised when a Special weakpoint is destroyed, passes its world position.
     public static event System.Action<Vector3> SpecialDestroyed;
 
