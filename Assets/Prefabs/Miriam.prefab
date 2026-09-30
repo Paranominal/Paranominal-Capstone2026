@@ -388,6 +388,7 @@ GameObject:
   - component: {fileID: 5660757829747511445}
   - component: {fileID: 7893351746387300568}
   - component: {fileID: 2707172803116468795}
+  - component: {fileID: 3110525635320036500}
   m_Layer: 6
   m_Name: Miriam
   m_TagString: Player
@@ -434,7 +435,7 @@ CharacterController:
   m_Height: 1.6
   m_Radius: 0.3
   m_SlopeLimit: 45
-  m_StepOffset: 0.2
+  m_StepOffset: 0.32
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.8, z: 0}
@@ -461,6 +462,7 @@ MonoBehaviour:
   startLockMode: 1
   startCursorVisible: 0
   debugMode: 0
+  gamepadActiveThreshold: 0.05
 --- !u!114 &388139220132730565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -887,7 +889,7 @@ MonoBehaviour:
   playerDash: {fileID: 2707172803116468795}
   inertiaPower: 0.1
   airInertiaMultiplier: 1.5
-  gravity: 9.81
+  gravity: 13
   groundedStickForce: -2
   audioSource: {fileID: 0}
   playerFootstep: {fileID: 11400000, guid: 95221a47635bbbf4693a9f1c94b2689b, type: 2}
@@ -928,7 +930,37 @@ MonoBehaviour:
   chargeBar: {fileID: 0}
   chargeBarContainer: {fileID: 0}
   secondsToFullCharge: 45
-  weakpointRechargeBonus: 0.2
+  weakpointRechargeBonus: 0.1
+--- !u!114 &3110525635320036500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2579260593497910125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01b7612e133b73e4da4763c295a5ccd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAimAssist
+  inputReader: {fileID: 8956652460274281639}
+  playerCamera: {fileID: 6654618607449089807}
+  aimAssistRadius: 0.1
+  enemyAssistRadius: 0.15
+  enemyMask:
+    serializedVersion: 2
+    m_Bits: 131072
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 16384
+  enemyRange: 30
+  aimAssistStrength: 10
+  edgeStrength: 0.5
+  overrideStrength: 0.5
+  settleTime: 0.5
+  assistSmoothTime: 0.05
+  stealMargin: 0.85
+  debugLogs: 1
 --- !u!1 &3524502881056351253
 GameObject:
   m_ObjectHideFlags: 0
@@ -1112,6 +1144,7 @@ MonoBehaviour:
   inputReader: {fileID: 8956652460274281639}
   playerMover: {fileID: 7893351746387300568}
   cameraRecoil: {fileID: 260499741174559401}
+  aimAssist: {fileID: 3110525635320036500}
   lookSensitivity: 0.05
   lookXLimit: 60
   lookSmoothing: 0.03
@@ -2407,11 +2440,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.00011187151
+      value: 0.0003677046
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.00032627519
+      value: -0.00005055499
       objectReference: {fileID: 0}
     - target: {fileID: 1090110928602918560, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: playerInputReader
