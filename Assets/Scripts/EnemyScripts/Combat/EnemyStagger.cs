@@ -8,6 +8,7 @@ using System.Collections;
 using System;
 using UnityEngine.UI;
 using UnityEngine.Sprites;
+using UnityEngine.Rendering.Universal;
 
 public class EnemyStagger : MonoBehaviour, IDamageable
 {
@@ -24,14 +25,17 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     [Header("Stagger Settings")]
     [SerializeField] private int hitsToStagger = 2;
     public int HitsToStagger => hitsToStagger;
+    [SerializeField] private bool immuneToBullets = false;
     [SerializeField] private bool stunOnWindup = true;
     [Range(0, 2)]
     [Tooltip("The rate the stagger bar drains. Higher = harder to stagger.")]
     [SerializeField] private float staggerResistance = 0.3f;
-    [Range(0.5f, 5f)]
+    [Range(0.5f, 15f)]
     [SerializeField] private float staggerTime = 2;
     [SerializeField] private float timeBeforeBarDrain = 0.4f;
     [SerializeField] private float timeAddedOnHit = 0.5f;
+    [Header("Splatter")]
+    [SerializeField] private ParticleEmitter bloodSplatter;
 
     [Header("Debug")]
     public bool debugMode;
@@ -52,6 +56,8 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     private float damageTaken = 0;
     public float DamageTaken => damageTaken;
     private float currentRecoveryBuffer = 0;
+
+    public event Action<DamageInfo, bool> EnemyShot;
 
     // per-instance material for the fill shader
     private Material fillMaterial;
@@ -98,6 +104,14 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     {
         if (isStaggered) return;
         if (!canBeHit) return;
+
+        if (immuneToBullets) // this should read the damage info but not worth rn
+        {
+            EnemyShot?.Invoke(info, false);
+            return;
+        }
+        else EnemyShot?.Invoke(info, true);
+        // if (bloodSplatter) bloodSplatter.EnemyShot(info);
 
         damageTaken++;
         currentRecoveryBuffer = timeBeforeBarDrain;

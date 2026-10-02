@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class WeaponHitscan : MonoBehaviour
 {
@@ -124,6 +125,78 @@ public class WeaponHitscan : MonoBehaviour
             return ray.origin + ray.direction * maxMissPopupDistance;
         }
             
+    }
+
+    // Michael edit (special-shot): piercing raycast for the Special Shot.
+    // Returns hits on enemies and weakpoints along the aim ray, closest first. Stops at the first solid world collider,
+    // or at an enemy immune to the Special Shot unless the ray also hits that enemy's exposed Special weakpoint.
+    // Triggers that aren't enemies or weakpoints are passed through. missPoint mirrors LogWorldHitOrMiss for the miss popup.
+    public List<RaycastHit> GetSpecialShotHits(out Vector3 missPoint)
+    {
+        List<RaycastHit> results = new List<RaycastHit>();
+        missPoint = Vector3.zero;
+
+        if (playerCamera == null || raycaster == null)
+            return results;
+
+        Ray ray = BuildAimRay();
+        LayerMask mask = ~ignoreLayer | weakPointLayer;
+        RaycastHit[] hits = Physics.RaycastAll(ray, rayDistance, mask, QueryTriggerInteraction.Collide);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        missPoint = ray.origin + ray.direction * maxMissPopupDistance;
+
+        // gather enemy/weakpoint hits up to the first solid world collider
+        List<RaycastHit> candidates = new List<RaycastHit>();
+        foreach (RaycastHit hit in hits)
+        {
+            Collider col = hit.collider;
+            if (col.CompareTag("Player"))
+                continue;
+
+            bool isTarget = col.GetComponentInParent<WeakPoint>() != null || col.GetComponentInParent<Enemy>() != null;
+            if (isTarget)
+            {
+                candidates.Add(hit);
+                continue;
+            }
+
+            // non-target triggers (detectors, zones etc) don't block the shot
+            if (col.isTrigger)
+                continue;
+
+            // solid world geometry stops the shot
+            missPoint = ray.origin + ray.direction * Mathf.Max(hit.distance, minMissPopupDistance);
+            break;
+        }
+
+        // immune enemies whose Special weakpoint is on the ray, checked up front so hit order doesn't matter
+        HashSet<Enemy> piercedImmune = new HashSet<Enemy>();
+        foreach (RaycastHit hit in candidates)
+        {
+            WeakPoint weakPoint = hit.collider.GetComponentInParent<WeakPoint>();
+            if (weakPoint == null || !weakPoint.IsSpecial || weakPoint.IsWarded)
+                continue;
+
+            Enemy owner = weakPoint.GetComponentInParent<Enemy>();
+            if (owner != null && owner.ImmuneToSpecialShot)
+                piercedImmune.Add(owner);
+        }
+
+        foreach (RaycastHit hit in candidates)
+        {
+            Enemy owner = hit.collider.GetComponentInParent<Enemy>();
+            if (owner != null && owner.ImmuneToSpecialShot && !piercedImmune.Contains(owner))
+            {
+                // immune enemy blocks the shot like world geometry
+                missPoint = ray.origin + ray.direction * Mathf.Max(hit.distance, minMissPopupDistance);
+                break;
+            }
+
+            results.Add(hit);
+        }
+
+        return results;
     }
 
     public Ray AimRay => raycaster != null ? raycaster.Ray : default;

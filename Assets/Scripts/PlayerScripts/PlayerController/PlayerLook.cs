@@ -81,12 +81,19 @@ public class PlayerLook : MonoBehaviour
     // Looking at
     [Header("Looking At")]
     [SerializeField] private LayerMask interactableMask;
+    [SerializeField] private LayerMask environmentMask;
     [SerializeField] private float lookAtRange = 4;
-    public GameObject LookingAt()
+    public RaycastHit LookingAtInRange()
     {
         Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, lookAtRange, interactableMask);
-        if (hit.collider != null && !hit.collider.gameObject.isStatic) return hit.collider.gameObject;
-        else return null;
+        if (hit.collider != null && !hit.collider.gameObject.isStatic) return hit;
+        else return new RaycastHit();
+    }
+    public RaycastHit LookingAtEnvironment()
+    {
+        Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 100, environmentMask);
+        if (hit.collider != null) return hit;
+        else return new RaycastHit();
     }
     private void OnDrawGizmos()
     {

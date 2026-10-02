@@ -11,13 +11,19 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     [Header("Stun")]
     [Tooltip("The amount of force applied to the stun knockback when the player is hit. -1 will use the damage amount.")]
     [SerializeField] private float knockbackForce = 2f;
-    
+
+    [Header("Audio")]
+    [SerializeField] private AudioManager hurtManager;
+    [SerializeField] private SoundDataSO hurtVocalSound;
+    [SerializeField] private SoundDataSO hurtImpactSound;
+    [SerializeField] private AudioSource hurtSource;
+
     [SerializeField] private float invincibleDuration = 1f;
 
     // Michael feature (fear-effects): tracks whether the player is in an active encounter. Set by encounter managers externally.
     public bool IsInEncounter { get; set; }
 
-    // Tracks whether the player is currently in a safe period (invulnerable).
+    // Tracks whether the player is currently safe
     private bool isInvincible;
 
     // Michael feature (auto-resolve): fallback for cross-prefab references.
@@ -30,20 +36,17 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     public void TakeDamage(DamageInfo info)
     {
 
-        Debug.Log("Damage source: " + info.source?.name);
         if (isInvincible)
             return;
-
-        Debug.Log($"[PlayerStatus] Player hit for {info.amount}.");
         fearBar.TakeDamage(info.amount);
-        cameraEffects?.Shake();
+        CameraEffects.Instance?.Shake();
+
+        AudioManager.PlaySound(hurtImpactSound, hurtSource, true);
+        AudioManager.PlaySound(hurtVocalSound, hurtSource, true);
 
         float stunDuration = cameraEffects != null ? cameraEffects.shakeDuration : 0f;
         StartInvinciblePeriod(stunDuration + invincibleDuration);
         playerMover.stunPlayer(stunDuration, info, knockbackForce);
-
-        
-
     }
 
     private Coroutine invincibleCoroutine;
