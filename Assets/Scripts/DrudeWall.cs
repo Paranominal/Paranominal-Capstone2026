@@ -8,9 +8,11 @@ public class DrudeWall : MonoBehaviour
     [SerializeField] private bool3 follow = new bool3(true, false, false);
     private Enemy drude;
     private bool active = false;
+    private Vector3 origin;
 
     void Awake()
     {
+        origin = transform.position;
         drudeSpawner.EnemySpawned += AttachDrude;
     }
 
@@ -36,11 +38,11 @@ public class DrudeWall : MonoBehaviour
     {
         if (drude != null)
         {
-            float targetX = 0; 
+            float targetX = origin.x;
             if (follow.x) targetX = drude.transform.position.x;
-            float targetY = 0; 
+            float targetY = origin.y; 
             if (follow.y) targetY = drude.transform.position.y;
-            float targetZ = 0; 
+            float targetZ = origin.z; 
             if (follow.z) targetZ = drude.transform.position.z;
             Vector3 targetPos = new Vector3(targetX, targetY, targetZ);
             transform.position = targetPos;
