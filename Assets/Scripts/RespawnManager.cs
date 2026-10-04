@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
@@ -11,6 +12,7 @@ public class RespawnManager : MonoBehaviour
     [SerializeField] private Transform miriam;
     [SerializeField] private List<RoomEntryDetector> roomEntryDetectors;
     private RespawnPoint currentRespawnPoint;
+    private bool isRespawning;
 
     void Reset()
     {
@@ -36,11 +38,8 @@ public class RespawnManager : MonoBehaviour
 
     void RespawnMiriam()
     {
-        miriam.GetComponent<CharacterController>().enabled = false;
-        miriam.position = currentRespawnPoint.transform.position;
-        miriam.rotation = currentRespawnPoint.transform.rotation;
-        miriam.GetComponent<CharacterController>().enabled = true;
-        Debug.Log($"[{this}] Miriam Respawned at ( {currentRespawnPoint.transform.position} )!");
+        if (isRespawning) return;   // the death plane can fire repeatedly while she's falling
+        StartCoroutine(RespawnRoutine());
     }
 
     void SetRespawnPoint(RoomEntryDetector roomEntryDetector)
@@ -51,5 +50,26 @@ public class RespawnManager : MonoBehaviour
         {
             Debug.LogWarning($"[{this}] Roombounds ({roomEntryDetector}) is missing a RespawnPoint! this might be a mistake.");
         }
+    }
+
+    // i updated the respawn to use a coroutine so that we can use the transition manager to fade in and out when respawning, since it uses an ienumerator
+    private IEnumerator RespawnRoutine()
+    {
+        isRespawning = true;
+
+        if (TransitionManager.Instance != null)
+            yield return TransitionManager.Instance.TransitionIn();
+
+        var controller = miriam.GetComponent<CharacterController>();
+        controller.enabled = false;
+        miriam.position = currentRespawnPoint.transform.position;
+        miriam.rotation = currentRespawnPoint.transform.rotation;
+        controller.enabled = true;
+        Debug.Log($"[{this}] Miriam Respawned at ( {currentRespawnPoint.transform.position} )!");
+
+        if (TransitionManager.Instance != null)
+            yield return TransitionManager.Instance.TransitionOut();
+
+        isRespawning = false;
     }
 }
