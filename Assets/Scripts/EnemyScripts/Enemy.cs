@@ -2,6 +2,8 @@
 // Core enemy behaviour controller. Owns the state machine, aggro, class/death/summon logic, animation, and spawner lifecycle. 
 // Movement is delegated to a pluggable IEnemyMovement script. If no movement script is assigned, the enemy is stationary (idles and attacks in place).
 // Attacks are modular components in a priority-ordered array.
+// EDIT (attack-priority): the enemy fires the highest-priority attack that's ready and in range, and moves towards the range of the
+// highest-priority attack that's ready. If every attack is on cooldown, it holds its current position.
 
 using System.Collections;
 using System;
@@ -34,7 +36,9 @@ public class Enemy : MonoBehaviour
     [SerializeField] private MonoBehaviour movementScript;
 
     [Header("Attacks")]
-    [Tooltip("All attacks available to this enemy. Priority is determined by array order.")]
+    // EDIT (attack-priority): tooltip updated to spell out how priority works.
+    [Tooltip("Top of the list = highest priority. The enemy uses the highest-priority attack that's ready and in range, " +
+             "and moves towards the range of the highest-priority attack that's ready. If all attacks are on cooldown, it holds position.")]
     [SerializeField] private EnemyAttack_Base[] attacks;
 
     [Header("Stagger")]
@@ -77,6 +81,9 @@ public class Enemy : MonoBehaviour
     [SerializeField] private string _state = "Inactive";
     [ShowIf("debugMode")]
     [SerializeField] private string _activeAttack = "None";
+    // EDIT (attack-priority): shows which attack the enemy is currently moving into range for
+    [ShowIf("debugMode")]
+    [SerializeField] private string _targetAttack = "None";
     [ShowIf("debugMode")]
     [SerializeField] private float _orbitDistance;
     #endif
@@ -90,6 +97,12 @@ public class Enemy : MonoBehaviour
 
     // active attack tracking
     private EnemyAttack_Base currentAttack;
+
+    // EDIT (attack-priority): attack cache, refreshed once per frame so selection isn't run several times
+    private EnemyAttack_Base selectedAttack;    // highest-priority attack that's ready and in range
+    private EnemyAttack_Base readyAttack;       // highest-priority attack that's ready, regardless of range
+    private bool holdingPosition;
+    private const float RangeTolerance = 0.5f;
 
     // champion
     private int currentCycle = 0;
@@ -179,6 +192,9 @@ public class Enemy : MonoBehaviour
     {
         if (IsPaused || IsDying) return;
 
+        // EDIT (attack-priority): refresh the attack cache before the state machine reads it
+        RefreshAttackCache();
+
         StateControl();
         if (animator != null) Animations();
         if (stagger && stagger.weakPointManager) CheckDie();
@@ -186,6 +202,7 @@ public class Enemy : MonoBehaviour
         #if UNITY_EDITOR
         _state = behaviourState.ToString();
         _activeAttack = currentAttack != null ? currentAttack.GetType().Name : "None";
+        _targetAttack = readyAttack != null ? readyAttack.GetType().Name : "None (holding)";
         _orbitDistance = GetEffectiveOrbitDistance();
         #endif
     }
@@ -195,6 +212,9 @@ public class Enemy : MonoBehaviour
     private void StateControl()
     {
         if (debugMode) Debug.Log($"[{this}] State: [{behaviourState}]");
+
+        // EDIT (attack-priority): any state other than Waiting clears the hold flag so the next hold stops movement again
+        if (behaviourState != BehaviourState.Waiting) holdingPosition = false;
 
         switch (behaviourState)
         {
@@ -215,15 +235,20 @@ public class Enemy : MonoBehaviour
     {
         if (IsStunned()) { EnterStun(); return; }
         if (CanAttack()) { EnterAttack(); return; }
-        if (!CanAttack() && PlayerInAnyAttackRange() && AnyAttackEnabled()) { behaviourState = BehaviourState.Waiting; return; }
-        if (PlayerInAggroRange() && CanChase()) { behaviourState = BehaviourState.Chasing; return; }
+
+        // EDIT (attack-priority): shared engagement check replaces the old "any attack in range" logic
+        behaviourState = GetEngagedState();
     }
 
     private void ChaseState()
     {
         if (IsStunned()) { EnterStun(); return; }
         if (CanAttack()) { EnterAttack(); return; }
-        if (!CanAttack() && PlayerInAnyAttackRange() && AnyAttackEnabled()) { behaviourState = BehaviourState.Waiting; return; }
+
+        // EDIT (attack-priority): only keep chasing while the ready attack is out of reach
+        BehaviourState next = GetEngagedState();
+        if (next == BehaviourState.Idling) { ExitChase(); return; }
+        if (next != BehaviourState.Chasing) { behaviourState = next; return; }
 
         if (movement != null && movement.ShouldExitChase(PlayerInAggroRange()))
         {
@@ -250,8 +275,9 @@ public class Enemy : MonoBehaviour
         // continue movement during windup if the attack allows it
         if (currentAttack != null && currentAttack.IsWindingUp && !attackMovementPaused)
         {
+            // EDIT (attack-priority): orbit at the current attack's range during windup so the enemy stays in range of it
             if (movement != null && movement.StrafeEnabled)
-                movement.Strafe(playerTransform.position, GetEffectiveOrbitDistance());
+                movement.Strafe(playerTransform.position, currentAttack.AttackRange);
             else if (movement != null)
                 movement.FaceTarget(playerTransform.position);
         }
@@ -273,9 +299,9 @@ public class Enemy : MonoBehaviour
         attackMovementPaused = false;
 
         if (movement != null && movement.RetreatEnabled) { EnterRetreat(); return; }
-        if (AnyAttackEnabled() && PlayerInAnyAttackRange()) { behaviourState = BehaviourState.Waiting; return; }
-        if (PlayerInAggroRange() && CanChase()) { behaviourState = BehaviourState.Chasing; return; }
-        behaviourState = BehaviourState.Idling;
+
+        // EDIT (attack-priority): next state comes from the shared engagement check
+        behaviourState = GetEngagedState();
     }
 
     private void WaitState()
@@ -283,13 +309,25 @@ public class Enemy : MonoBehaviour
         if (IsStunned()) { EnterStun(); return; }
         if (CanAttack()) { EnterAttack(); return; }
 
-        if (!PlayerInAnyAttackRange() && CanChase())
+        // EDIT (attack-priority): move on to the next ready attack's range instead of waiting for cooldowns
+        BehaviourState next = GetEngagedState();
+        if (next == BehaviourState.Chasing) { behaviourState = BehaviourState.Chasing; return; }
+        if (next == BehaviourState.Idling) { ExitChase(); return; }
+
+        // EDIT (attack-priority): every attack is on cooldown, so stop once and hold position while facing the player
+        if (readyAttack == null)
         {
-            behaviourState = BehaviourState.Chasing;
+            if (!holdingPosition)
+            {
+                if (movement != null) movement.Stop();
+                holdingPosition = true;
+            }
+            FacePlayer();
             return;
         }
-        if (!AnyAttackEnabled()) { behaviourState = BehaviourState.Idling; return; }
+        holdingPosition = false;
 
+        // an attack is ready but can't fire from here (e.g. inside its min range)
         if (movement != null && movement.StrafeEnabled)
         {
             FacePlayer();
@@ -308,7 +346,8 @@ public class Enemy : MonoBehaviour
 
     private void ReturnState()
     {
-        if (PlayerInAggroRange() && CanChase())
+        // EDIT (attack-priority): re-engage if an attack can fire or a ready attack needs chasing
+        if (PlayerInAggroRange() && (CanAttack() || GetEngagedState() == BehaviourState.Chasing))
         {
             behaviourState = BehaviourState.Chasing;
             return;
@@ -322,9 +361,8 @@ public class Enemy : MonoBehaviour
         if (IsStunned()) { EnterStun(); return; }
         if (movement == null || movement.HasReachedTarget)
         {
-            if (AnyAttackEnabled() && PlayerInAnyAttackRange()) { behaviourState = BehaviourState.Waiting; return; }
-            if (PlayerInAggroRange() && CanChase()) { behaviourState = BehaviourState.Chasing; return; }
-            behaviourState = BehaviourState.Idling;
+            // EDIT (attack-priority): next state comes from the shared engagement check
+            behaviourState = GetEngagedState();
         }
     }
 
@@ -334,7 +372,8 @@ public class Enemy : MonoBehaviour
 
     private void EnterAttack()
     {
-        EnemyAttack_Base selected = SelectAttack();
+        // EDIT (attack-priority): uses the cached selection
+        EnemyAttack_Base selected = selectedAttack;
         if (selected == null) return;
 
         currentAttack = selected;
@@ -379,8 +418,35 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // EDIT (attack-priority): single place that decides what the enemy does when it isn't attacking.
+    //   - A ready attack is out of reach and the enemy can chase -> Chasing (towards that attack's range).
+    //   - Player is engaged (in aggro or any attack range) -> Waiting (holds if all attacks are on cooldown).
+    //   - Otherwise -> Idling.
+    private BehaviourState GetEngagedState()
+    {
+        float dist = DistanceToPlayer();
+
+        // already chasing: the movement script's leash decides when to give up, not aggro range
+        bool chaseAllowed = CanChase() && (PlayerInAggroRange() || behaviourState == BehaviourState.Chasing);
+
+        if (readyAttack != null && dist > readyAttack.AttackRange + RangeTolerance && chaseAllowed)
+            return BehaviourState.Chasing;
+
+        if (AnyAttackEnabled() && (PlayerInAggroRange() || PlayerInAnyAttackRange()))
+            return BehaviourState.Waiting;
+
+        return BehaviourState.Idling;
+    }
+
 
     // Attack Selection
+    // EDIT (attack-priority): caches both selections once per frame
+    private void RefreshAttackCache()
+    {
+        selectedAttack = SelectAttack();
+        readyAttack = GetFirstReadyAttack();
+    }
+
     private EnemyAttack_Base SelectAttack()
     {
         if (attacks == null || attacks.Length == 0) return null;
@@ -391,7 +457,8 @@ public class Enemy : MonoBehaviour
         {
             if (attacks[i] == null || !attacks[i].isActiveAndEnabled) continue;
             if (!attacks[i].IsReady) continue;
-            if (dist > attacks[i].AttackRange + 0.5f) continue;
+            // EDIT (attack-priority): range check now respects min range
+            if (!attacks[i].IsInRange(dist, RangeTolerance)) continue;
             if (attacks[i].ShouldUse(playerTransform)) return attacks[i];
         }
 
@@ -400,16 +467,18 @@ public class Enemy : MonoBehaviour
         {
             if (attacks[i] == null || !attacks[i].isActiveAndEnabled) continue;
             if (!attacks[i].IsReady) continue;
-            if (dist > attacks[i].AttackRange + 0.5f) continue;
+            // EDIT (attack-priority): range check now respects min range
+            if (!attacks[i].IsInRange(dist, RangeTolerance)) continue;
             return attacks[i];
         }
 
         return null;
     }
 
+    // EDIT (attack-priority): reads the cached selection instead of re-running it
     private bool CanAttack()
     {
-        return SelectAttack() != null;
+        return selectedAttack != null;
     }
 
     // returns the highest-priority ready attack regardless of distance
@@ -425,31 +494,16 @@ public class Enemy : MonoBehaviour
         return null;
     }
 
-    // determines orbit/chase stop distance based on attack state
+    // EDIT (attack-priority): simplified. The enemy moves to the range of its highest-priority ready attack.
+    // If nothing is ready, it holds its current distance. StrafeRadius is only used by enemies with no attacks.
     private float GetEffectiveOrbitDistance()
     {
         if (attacks == null || attacks.Length == 0)
             return movement != null ? movement.StrafeRadius : 2.5f;
 
-        // single attack: always use its range
-        int activeCount = 0;
-        EnemyAttack_Base singleAttack = null;
-        for (int i = 0; i < attacks.Length; i++)
-        {
-            if (attacks[i] != null && attacks[i].isActiveAndEnabled)
-            {
-                activeCount++;
-                singleAttack = attacks[i];
-            }
-        }
-        if (activeCount == 1) return singleAttack.AttackRange;
-
-        // multiple attacks: use the highest-priority ready attack's range
-        EnemyAttack_Base readyAttack = GetFirstReadyAttack();
         if (readyAttack != null) return readyAttack.AttackRange;
 
-        // nothing ready: fall back to engagement distance
-        return movement != null ? movement.StrafeRadius : 2.5f;
+        return DistanceToPlayer();
     }
 
 
@@ -460,13 +514,14 @@ public class Enemy : MonoBehaviour
         return DistanceToPlayer() < aggroRange;
     }
 
+    // max range only, used to decide if the player is engaged
     private bool PlayerInAnyAttackRange()
     {
         if (attacks == null) return false;
         float dist = DistanceToPlayer();
         for (int i = 0; i < attacks.Length; i++)
         {
-            if (attacks[i] != null && attacks[i].isActiveAndEnabled && dist < attacks[i].AttackRange + 0.5f)
+            if (attacks[i] != null && attacks[i].isActiveAndEnabled && dist < attacks[i].AttackRange + RangeTolerance)
                 return true;
         }
         return false;
@@ -757,20 +812,28 @@ public class Enemy : MonoBehaviour
             Gizmos.DrawWireSphere(transform.position, aggroRange);
         }
 
-        // attack ranges (red, one per attack)
+        // attack ranges (red = max, orange = min, one set per attack)
         if (attacks != null)
         {
-            Gizmos.color = Color.red;
             for (int i = 0; i < attacks.Length; i++)
             {
-                if (attacks[i] != null)
-                    Gizmos.DrawWireSphere(transform.position, attacks[i].AttackRange);
+                if (attacks[i] == null) continue;
+
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(transform.position, attacks[i].AttackRange);
+
+                // EDIT (attack-priority): min range
+                if (attacks[i].MinRange > 0f)
+                {
+                    Gizmos.color = new Color(1f, 0.5f, 0f);
+                    Gizmos.DrawWireSphere(transform.position, attacks[i].MinRange);
+                }
             }
         }
 
-        // strafe radius from movement script (cyan)
+        // EDIT (attack-priority): strafe radius is only used by enemies with no attacks, so only draw it then (cyan)
         IEnemyMovement mov = movementScript as IEnemyMovement;
-        if (mov != null)
+        if (mov != null && (attacks == null || attacks.Length == 0))
         {
             Gizmos.color = Color.cyan;
             Gizmos.DrawWireSphere(transform.position, mov.StrafeRadius);
