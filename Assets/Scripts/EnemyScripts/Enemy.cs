@@ -104,6 +104,9 @@ public class Enemy : MonoBehaviour
     // animation trigger guard (prevents re-queuing the same trigger every frame)
     private string lastAnimTrigger;
 
+    // events
+    public event Action<Enemy> ImmuneHit;
+
 
     // Lifecycle
     private void Awake()
@@ -121,7 +124,7 @@ public class Enemy : MonoBehaviour
         if (enemyClass == EnemyClass.Champion && stagger && stagger.weakPointManager)
             stagger.weakPointManager.dieOnWeakpointsComplete = false;
 
-        if (stagger && bloodFxEmitter) stagger.EnemyShot += EnemyDamagedFX;
+        if (stagger && bloodFxEmitter) stagger.EnemyShot += EnemyShot;
 
         if (skipSpawn) DoSpawn();
         else StartCoroutine(SpawnSequence());
@@ -690,9 +693,13 @@ public class Enemy : MonoBehaviour
             animator.speed = 1f;
     }
 
-    private void EnemyDamagedFX(DamageInfo info, bool wasDamaged)
+    private void EnemyShot(DamageInfo info, bool wasDamaged)
     {
-        if (!wasDamaged) ImmuneFX(info);
+        if (!wasDamaged)
+        {
+            ImmuneHit?.Invoke(this);
+            ImmuneFX(info);
+        }
         else BloodSplatterFX(info);
     }
 

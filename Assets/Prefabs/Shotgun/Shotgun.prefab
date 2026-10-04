@@ -240,6 +240,7 @@ MonoBehaviour:
   shootSilverAction: {fileID: -4469930708225053851, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   reloadAction: {fileID: 9149243809506474783, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   specialShotAction: {fileID: 0}
+  specialShotBuffer: 0
 --- !u!114 &7805263806390814388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -256,9 +257,11 @@ MonoBehaviour:
   ironMuzzleFlash: {fileID: 4763065678442171007}
   silverMuzzleFlash: {fileID: 4795959234687237012}
   specialMuzzleFlash: {fileID: 0}
-  trueShot: {fileID: 0}
-  trueShotCharge: {fileID: 0}
+  weaponInputReader: {fileID: 0}
   gunAnimator: {fileID: 0}
+  ironFxEmitter: {fileID: 0}
+  silverFxEmitter: {fileID: 0}
+  trueShotFxEmitter: {fileID: 0}
   gunPartRenderers:
   - {fileID: 6196493511044335958}
   - {fileID: 8426466813908559468}
@@ -269,6 +272,10 @@ MonoBehaviour:
   muzzleFlashDuration: 0.05
   misfireMaterial: {fileID: 2100000, guid: af7b34866673c4749a715a903c27eaaf, type: 2}
   misfiresTextureChangeDuration: 1
+  trueShot: {fileID: 0}
+  trueShotCharge: {fileID: 0}
+  trueShotMaterial: {fileID: 0}
+  debugMode: 0
 --- !u!114 &8670980604454997217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281,8 +288,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2981b2cfd676e004594b2c18e3880329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponAmmo
+  animator: {fileID: 0}
   magazineSize: 3
-  reloadDuration: 1
+  reloadDuration: 1.4
   shotCooldown: 0.13
   misfireCooldown: 1
 --- !u!114 &5823630955117093588

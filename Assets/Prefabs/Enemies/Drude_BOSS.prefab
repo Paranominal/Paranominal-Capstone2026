@@ -5092,7 +5092,7 @@ GameObject:
   - component: {fileID: 6774845802357550530}
   - component: {fileID: 3242840789396315087}
   m_Layer: 17
-  m_Name: Drude
+  m_Name: Drude_BOSS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5130,7 +5130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1606917a069cd2d45a63fbf757bb38b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  enemyClass: 0
+  enemyClass: 1
   skipSpawn: 0
   spawnDelay: 3
   immuneToSpecialShot: 1
@@ -5145,9 +5145,9 @@ MonoBehaviour:
   bloodFxEmitter: {fileID: 5200245131495364744}
   immuneFxEmitter: {fileID: 17485544250179462}
   numberOfPhases: 3
-  doSummons: 0
-  summonOnCycles: 01000000
-  summonsPrefab: {fileID: 0}
+  doSummons: 1
+  summonOnCycles: 010000000200000003000000
+  summonsPrefab: {fileID: 272941483086651391, guid: 9cf3b7ac1a42f63419102c7ba8fc4461, type: 3}
   numberOfSummons: 3
   summonRadius: 3
   debugMode: 0
@@ -5168,7 +5168,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GroundMovement
   chaseEnabled: 1
   strafeRadius: 5
-  chaseSpeed: 3
+  chaseSpeed: 5
   chaseEasing: 0.5
   onlyChaseIfAttackReady: 1
   neverGiveUpChase: 1
