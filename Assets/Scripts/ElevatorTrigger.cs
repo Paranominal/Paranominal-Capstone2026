@@ -7,8 +7,7 @@ public class ElevatorTrigger : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag != "Player") return;
-         
-        gameOverHandler.HandleFearDepleted();
-        Debug.Log("game over triggered by:" + other);
+
+        LoadingManager.Instance?.LoadScene(2);
     }
 }
