@@ -83,8 +83,8 @@ public class WeaponSway : MonoBehaviour
 
             // Bob is procedural movement: Y uses sine for the primary bounce rhythm and X uses lower-frequency to add less intense side movement
             // Both are multiplied by moveAmount so bob naturally fades to zero when stationary
-            float bobY = Mathf.Sin(Time.time * bobFrequency) * bobAmplitude * moveAmount;
-            float bobX = Mathf.Cos(Time.time * bobFrequency * 0.5f) * (bobAmplitude * 0.5f) * moveAmount;
+            float bobY = Mathf.Sin(Time.unscaledTime * bobFrequency) * bobAmplitude * moveAmount;
+            float bobX = Mathf.Cos(Time.unscaledTime * bobFrequency * 0.5f) * (bobAmplitude * 0.5f) * moveAmount;
 
             // set desired local position from baseline + bob + directional offset
             Vector3 targetLocalPosition = initialLocalPosition + new Vector3(bobX, bobY, 0f) + movementOffset;
@@ -93,8 +93,8 @@ public class WeaponSway : MonoBehaviour
 
             // smoothly interpolate toward target transforms to avoid jitter and abrupt snapping
             // Slerp is used for rotation (better for orientations), Lerp for position
-            transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, smooth * Time.deltaTime);
-            transform.localPosition = Vector3.Lerp(transform.localPosition, targetLocalPosition, bobSmoothing * Time.deltaTime);
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, smooth * Time.unscaledDeltaTime);
+            transform.localPosition = Vector3.Lerp(transform.localPosition, targetLocalPosition, bobSmoothing * Time.unscaledDeltaTime);
         }
     }
 
