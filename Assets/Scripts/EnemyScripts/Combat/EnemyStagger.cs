@@ -108,6 +108,9 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         if (immuneToBullets) // this should read the damage info but not worth rn
         {
             EnemyShot?.Invoke(info, false);
+            ScoreManager scoreManager = FindAnyObjectByType<ScoreManager>();
+            if (scoreManager != null)
+                scoreManager.ReportBlockedShot(info.hitPoint);
             return;
         }
         else EnemyShot?.Invoke(info, true);
