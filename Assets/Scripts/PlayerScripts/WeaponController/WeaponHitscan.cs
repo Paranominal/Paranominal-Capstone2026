@@ -154,7 +154,8 @@ public class WeaponHitscan : MonoBehaviour
             if (col.CompareTag("Player"))
                 continue;
 
-            bool isTarget = col.GetComponentInParent<WeakPoint>() != null || col.GetComponentInParent<Enemy>() != null;
+            // EDIT (projectile-shot-types): projectiles count as targets so ShotOrchestrator can decide whether to destroy them.
+            bool isTarget = col.GetComponentInParent<WeakPoint>() != null || col.GetComponentInParent<Enemy>() != null || col.GetComponentInParent<Projectile>() != null;
             if (isTarget)
             {
                 candidates.Add(hit);
@@ -185,6 +186,13 @@ public class WeaponHitscan : MonoBehaviour
 
         foreach (RaycastHit hit in candidates)
         {
+            // EDIT (projectile-shot-types): projectiles never block the shot, even if parented under an immune enemy.
+            if (hit.collider.GetComponentInParent<Projectile>() != null)
+            {
+                results.Add(hit);
+                continue;
+            }
+
             Enemy owner = hit.collider.GetComponentInParent<Enemy>();
             if (owner != null && owner.ImmuneToSpecialShot && !piercedImmune.Contains(owner))
             {

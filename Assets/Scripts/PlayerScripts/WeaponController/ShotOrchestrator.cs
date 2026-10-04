@@ -240,10 +240,23 @@ public class ShotOrchestrator : MonoBehaviour
 
         if (weaponHitscan.TryGetDamageableHit(out IDamageable damageable, out RaycastHit damageHit))
         {
+            // EDIT (projectile-shot-types): shot type travels with the damage so damageables can filter by it.
+            ShotTypeMask shotMask = shotType.ToShotMask();
+
+            // EDIT (projectile-shot-types): projectiles only break to their allowed shot types, anything else is a misfire.
+            if (damageable is Projectile projectile)
+            {
+                if (!projectile.CanBeDestroyedBy(shotMask))
+                    return BuildResult(shotType, ShotOutcome.WrongAmmo, damageHit.point);
+
+                projectile.TakeDamage(new DamageInfo(0, damageHit.point, transform.forward, gameObject, shotMask));
+                return BuildResult(shotType, ShotOutcome.EnemyHit, damageHit.point);
+            }
+
             bool wasStaggered = damageable is EnemyStagger stagger && stagger.IsStaggered;
 
             //define damage info
-            DamageInfo info = new DamageInfo(0, damageHit.point, transform.forward, gameObject);
+            DamageInfo info = new DamageInfo(0, damageHit.point, transform.forward, gameObject, shotMask); // EDIT (projectile-shot-types)
             damageable.TakeDamage(info);
 
             // damageable.TakeDamage(new DamageInfo());
@@ -300,6 +313,15 @@ public class ShotOrchestrator : MonoBehaviour
 
         foreach (RaycastHit hit in hits)
         {
+            // EDIT (projectile-shot-types): Special projectiles are destroyed, others are passed through untouched. No result is raised either way.
+            Projectile projectile = hit.collider.GetComponentInParent<Projectile>();
+            if (projectile != null)
+            {
+                if (projectile.CanBeDestroyedBy(ShotTypeMask.Special))
+                    projectile.TakeDamage(new DamageInfo(0, hit.point, weaponHitscan.AimRay.direction, gameObject, ShotTypeMask.Special));
+                continue;
+            }
+
             WeakPoint weakPoint = hit.collider.GetComponentInParent<WeakPoint>();
             if (weakPoint != null)
             {
