@@ -175,6 +175,10 @@ public class Enemy : MonoBehaviour
         if (movement != null) movement.Stop();
     }
 
+    private float timer = 11f;
+    private int spawntime=15;
+    private int maxswords=3;
+
     private void Update()
     {
         if (IsPaused || IsDying) return;
@@ -188,6 +192,18 @@ public class Enemy : MonoBehaviour
         _activeAttack = currentAttack != null ? currentAttack.GetType().Name : "None";
         _orbitDistance = GetEffectiveOrbitDistance();
         #endif
+
+        timer += Time.deltaTime;
+        if (timer > spawntime)
+        {
+            GameObject[] swords= GameObject.FindGameObjectsWithTag("Sword");
+            if (swords.Length < maxswords)
+            {
+                TriggerSummons();
+            }
+
+            timer = 0;
+        }
     }
 
 

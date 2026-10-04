@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 2822648997167648662}
   m_Layer: 8
   m_Name: CursedSword
-  m_TagString: Untagged
+  m_TagString: Sword
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -56,7 +56,7 @@ MonoBehaviour:
   skipSpawn: 1
   spawnDelay: 3
   immuneToSpecialShot: 0
-  alwaysAggro: 0
+  alwaysAggro: 1
   aggroRange: 30
   movementScript: {fileID: 5445272703306835462}
   attacks:
@@ -90,7 +90,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FlyingMovement
   chaseEnabled: 1
   strafeRadius: 6
-  chaseSpeed: 6
+  chaseSpeed: 5
   acceleration: 10
   onlyChaseIfAttackReady: 0
   neverGiveUpChase: 1
@@ -104,7 +104,7 @@ MonoBehaviour:
   strafeSpeed: 4
   strafeDirectionInterval: 2
   hoverHeight: 2.5
-  verticalOffset: 1.5
+  verticalOffset: 2
   altitudeCorrectionSpeed: 5
   groundLayers:
     serializedVersion: 2
@@ -203,7 +203,7 @@ MonoBehaviour:
   windupIndicator: {fileID: 8865687178892460569}
   moveWhileWindingUp: 0
   damageFieldPrefab: {fileID: 5792883796589563391, guid: 436770d337914f544b39a71aaa614273, type: 3}
-  damageFieldHeight: 0.5
+  damageFieldHeight: -1
   targetLayers:
     serializedVersion: 2
     m_Bits: 64
