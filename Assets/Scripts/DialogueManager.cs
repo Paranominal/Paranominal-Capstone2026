@@ -58,7 +58,7 @@ public class DialogueManager : MonoBehaviour
         if (playerInputReader != null) playerInputReader.InputLock(false);
         if (weaponInputReader != null) weaponInputReader.InputLock(false);
         dialogueCanvas.gameObject.SetActive(false); //deactivate dialogue
-        if (grimoireAnimManager != null && openGrimoire) grimoireAnimManager.OpenFromDialogue(); //open grimoire
+        // if (grimoireAnimManager != null && openGrimoire) grimoireAnimManager.OpenFromDialogue(); //open grimoire
         if (pause) pause.ResumeGame();
         isOpen = false;
     }
