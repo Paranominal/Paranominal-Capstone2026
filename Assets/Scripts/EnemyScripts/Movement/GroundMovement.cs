@@ -11,7 +11,7 @@ public class GroundMovement : MonoBehaviour, IEnemyMovement
     [Header("Chase")]
     [SerializeField] private bool chaseEnabled = true;
     [ShowIf("chaseEnabled")]
-    [Tooltip("Default orbit/strafe radius. For multi-attack enemies, used as fallback when all attacks are on cooldown. Single-attack enemies use their attack range instead.")]
+    [Tooltip("Orbit/strafe radius used only when the enemy has no attacks assigned.")]
     [SerializeField] private float strafeRadius = 5f;
     [ShowIf("chaseEnabled")]
     [SerializeField] private float chaseSpeed = 5f;
