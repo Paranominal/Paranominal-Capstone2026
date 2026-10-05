@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1777833132711805493}
   - component: {fileID: 8871764274831795934}
   - component: {fileID: 480061418811518783}
+  - component: {fileID: 6545166457417288227}
   - component: {fileID: 6403643788848522719}
   - component: {fileID: 3580518955538096315}
   - component: {fileID: 1199629963655329915}
@@ -81,8 +82,7 @@ MonoBehaviour:
   alwaysAggro: 0
   aggroRange: 100
   movementScript: {fileID: 0}
-  attacks:
-  - {fileID: 6403643788848522719}
+  attacks: []
   stagger: {fileID: 3580518955538096315}
   animator: {fileID: 4294958922522391095}
   soundPlayer: {fileID: 0}
@@ -97,8 +97,9 @@ MonoBehaviour:
   debugMode: 0
   _state: Inactive
   _activeAttack: None
+  _targetAttack: None
   _orbitDistance: 0
---- !u!114 &6403643788848522719
+--- !u!114 &6545166457417288227
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -107,9 +108,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 827877862285555472}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1ef647f0810f5f4f96d9ee7d842cc95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_Ranged
+  minRange: 2
+  attackRange: 25
+  cooldownTime: 6
+  windupIndicator: {fileID: 1018914182935538455}
+  moveWhileWindingUp: 0
+  projectilePrefab: {fileID: 7624500336100165174, guid: 74b7761999a2acd49b5f3cbd5d070197, type: 3}
+  damage: 10
+  initialVelocity: 8
+  maxVelocity: 25
+  acceleration: 2
+  lifetime: 5
+  launchPoint: {fileID: 0}
+  targetHeightOffset: 1
+  windupDuration: 0.4
+  recoveryDuration: 0.3
+  windupTurnSpeed: 180
+  debugMode: 0
+--- !u!114 &6403643788848522719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 827877862285555472}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c85883ac9200dce4784df13b366f62c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_AoE
+  minRange: 0
   attackRange: 50
   cooldownTime: 2
   windupIndicator: {fileID: 1018914182935538455}
