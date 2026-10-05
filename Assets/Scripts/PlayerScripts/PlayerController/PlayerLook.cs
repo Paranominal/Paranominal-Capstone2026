@@ -8,6 +8,7 @@ public class PlayerLook : MonoBehaviour
     [SerializeField] private PlayerInputReader inputReader;
     [SerializeField] private PlayerMover playerMover;
     [SerializeField] private CameraRecoilController cameraRecoil;
+    [SerializeField] private PlayerAimAssist aimAssist;
 
     [Header("Look")]
     [SerializeField] private float lookSensitivity = 0.08f;
@@ -53,7 +54,10 @@ public class PlayerLook : MonoBehaviour
         float mouseX = smoothedLookDelta.x * lookSensitivity;
         float mouseY = smoothedLookDelta.y * lookSensitivity;
 
+        Vector2 aimAssistDelta = aimAssist != null ? aimAssist.AssistDelta() : Vector2.zero;
+
         cameraPitch -= mouseY;
+        cameraPitch += aimAssistDelta.y;
         cameraPitch = Mathf.Clamp(cameraPitch, -lookXLimit, lookXLimit);
 
         float recoilOffset = cameraRecoil != null ? cameraRecoil.RecoilOffsetX : 0f;
@@ -61,7 +65,7 @@ public class PlayerLook : MonoBehaviour
         if (playerCamera != null)
             playerCamera.transform.localRotation = Quaternion.Euler(cameraPitch + recoilOffset, 0f, 0f);
 
-        player.transform.Rotate(0f, mouseX, 0f);
+        player.transform.Rotate(0f, mouseX + aimAssistDelta.x, 0f);
     }
 
     public void SetLookSensitivity(float newSensitivity)
@@ -77,12 +81,19 @@ public class PlayerLook : MonoBehaviour
     // Looking at
     [Header("Looking At")]
     [SerializeField] private LayerMask interactableMask;
+    [SerializeField] private LayerMask environmentMask;
     [SerializeField] private float lookAtRange = 4;
-    public GameObject LookingAt()
+    public RaycastHit LookingAtInRange()
     {
         Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, lookAtRange, interactableMask);
-        if (hit.collider != null && !hit.collider.gameObject.isStatic) return hit.collider.gameObject;
-        else return null;
+        if (hit.collider != null && !hit.collider.gameObject.isStatic) return hit;
+        else return new RaycastHit();
+    }
+    public RaycastHit LookingAtEnvironment()
+    {
+        Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 100, environmentMask);
+        if (hit.collider != null) return hit;
+        else return new RaycastHit();
     }
     private void OnDrawGizmos()
     {

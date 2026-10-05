@@ -7,7 +7,13 @@ public class WeakPoint : MonoBehaviour
     public string PointId => pointId;
     public bool IsTough => isTough;
     public bool IsWarded => isWarded;
+    // Michael edit (special-shot): Special weakpoints can only be destroyed by the Special Shot.
+    public bool IsSpecial => weakPointType == WeakPointType.Special;
+    // Michael edit (special-shot): lets the manager avoid re-showing visible weakpoints (Show() resets tough hits and fade).
+    public bool IsShown => isShown;
     public int RemainingShotsToDestroy => remainingShots;
+    // Michael edit (impact-frame): raised when a Special weakpoint is destroyed, passes its world position.
+    public static event System.Action<Vector3> SpecialDestroyed;
 
     [Header("Identity")]
     [SerializeField] private string pointId;
@@ -23,6 +29,8 @@ public class WeakPoint : MonoBehaviour
     // visuals for each weakpoint type
     [SerializeField] private GameObject ironElement;
     [SerializeField] private GameObject silverElement;
+    // Michael edit (special-shot): visual branch for Special weakpoints.
+    [SerializeField] private GameObject specialElement;
 
     // Cached runtime references so we avoid repeatedly looking up components
     private GameObject currentElement;
@@ -49,7 +57,6 @@ public class WeakPoint : MonoBehaviour
     {
         WeakPointRegistry.Unregister(this);
     }
-
     private void Awake()
     {
         // cache expensive lookups once at startup for performance and cleaner updating
@@ -59,7 +66,9 @@ public class WeakPoint : MonoBehaviour
         // Decide which visual branch this weakpoint should use based on its type
         if (weakPointType == WeakPointType.Iron) currentElement = ironElement;
         else if (weakPointType == WeakPointType.Silver) currentElement = silverElement;
-        else Debug.Log(gameObject + " is broken!! : weakpoint type is somehow neither iron nor silver!");
+        // Michael edit (special-shot): Special branch, log updated to match.
+        else if (weakPointType == WeakPointType.Special) currentElement = specialElement;
+        else Debug.Log(gameObject + " is broken!! : weakpoint type is somehow not iron, silver or special!");
 
         // cache only the active branch's renderers so alpha updates affect the correct visuals
         if (currentElement != null)
@@ -159,6 +168,7 @@ public class WeakPoint : MonoBehaviour
 
         currentAlpha = 0f;
     }
+    
     public void SetUpWeakpoint(WeakPointManager manager)
     {
         weakpointManager = manager; 
@@ -189,6 +199,10 @@ public class WeakPoint : MonoBehaviour
             shatter.Play(currentRenderers[0], false);
         }
 
+        // Michael edit (impact-frame): notify listeners (ImpactFrameController) that a Special weakpoint was destroyed.
+        if (IsSpecial)
+            SpecialDestroyed?.Invoke(transform.position);
+
         ResolveHit();
     }
 
@@ -218,6 +232,12 @@ public class WeakPoint : MonoBehaviour
         float missDistance = Vector3.Distance(ray.origin + ray.direction * along, centre);
 
         return 1f - Mathf.Clamp01(missDistance / radius);
+    }
+
+    public Vector3 GetWorldCenter()
+    {
+        if (weakPointCollider == null) return transform.position;
+        return transform.TransformPoint(weakPointCollider.center);
     }
 
     public void UnlockWeakPoint()

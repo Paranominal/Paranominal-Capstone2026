@@ -19,6 +19,10 @@ public class Enemy : MonoBehaviour
     [ShowIf("skipSpawn", false)]
     [Tooltip("Time in seconds it takes the enemy to spawn.")]
     [SerializeField] private float spawnDelay = 1f;
+    // EDIT (special-shot): immune enemies block the Special Shot, unless it also hits their exposed Special weakpoint.
+    [Tooltip("Blocks the Special Shot. Only its Special weakpoint can be hit by it, and the shot only pierces through when that weakpoint is hit.")]
+    [SerializeField] private bool immuneToSpecialShot;
+    public bool ImmuneToSpecialShot => immuneToSpecialShot;
 
     [Header("Aggro")]
     [SerializeField] private bool alwaysAggro;
@@ -38,6 +42,13 @@ public class Enemy : MonoBehaviour
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
+
+    [Header("Sound")]
+    [SerializeField] private SoundPlayer soundPlayer;
+
+    [Header("Particle Emissions")]
+    [SerializeField] private ParticleEmitter bloodFxEmitter;
+    [SerializeField] private ParticleEmitter immuneFxEmitter;
 
     [ShowIf("enemyClass", (int)EnemyClass.Champion, Header = "Champion")]
     [SerializeField] private int numberOfPhases = 3;
@@ -95,6 +106,9 @@ public class Enemy : MonoBehaviour
     // animation trigger guard (prevents re-queuing the same trigger every frame)
     private string lastAnimTrigger;
 
+    // events
+    public event Action<Enemy> ImmuneHit;
+
 
     // Lifecycle
     private void Awake()
@@ -111,6 +125,8 @@ public class Enemy : MonoBehaviour
         if (stagger && stagger.weakPointManager) stagger.weakPointManager.handleOwnDestruction = false;
         if (enemyClass == EnemyClass.Champion && stagger && stagger.weakPointManager)
             stagger.weakPointManager.dieOnWeakpointsComplete = false;
+
+        if (stagger && bloodFxEmitter) stagger.EnemyShot += EnemyShot;
 
         if (skipSpawn) DoSpawn();
         else StartCoroutine(SpawnSequence());
@@ -562,6 +578,27 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // Michael edit (special-shot): Special Shot body hit. Standard and Thrall enemies die, Champions are instantly staggered.
+    // Returns true if the hit did something, so the shot knows whether to count it as a SpecialHit.
+    public bool HandleSpecialShotHit()
+    {
+        if (IsDying) return false;
+        if (immuneToSpecialShot) return false;
+        if (stagger != null && !stagger.canBeHit) return false; // still spawning
+
+        if (enemyClass == EnemyClass.Champion)
+        {
+            if (stagger == null || IsStunned()) return false;
+            if (debugMode) Debug.Log($"[{this}] Staggered by Special Shot");
+            stagger.TriggerStagger();
+            return true;
+        }
+
+        if (debugMode) Debug.Log($"[{this}] Killed by Special Shot");
+        Die();
+        return true;
+    }
+
     public void Die()
     {
         if (IsDying) return;
@@ -569,6 +606,7 @@ public class Enemy : MonoBehaviour
         OnDied?.Invoke(this); // EDIT (bestiary): notify listeners of the kill.
         behaviourState = BehaviourState.Dying;
         if (movement != null) movement.Stop();
+        if ( bloodFxEmitter) bloodFxEmitter.TriggerParticles();
         if (stagger != null) stagger.canBeHit = false;
         DisableColliders();
 
@@ -656,6 +694,31 @@ public class Enemy : MonoBehaviour
             animator.speed = 1f / currentAttack.WindupDuration;
         else
             animator.speed = 1f;
+    }
+
+    private void EnemyShot(DamageInfo info, bool wasDamaged)
+    {
+        if (!wasDamaged)
+        {
+            ImmuneHit?.Invoke(this);
+            ImmuneFX(info);
+        }
+        else BloodSplatterFX(info);
+    }
+
+    private void ImmuneFX(DamageInfo info)
+    {
+        immuneFxEmitter.transform.position = info.hitPoint;
+        immuneFxEmitter.transform.rotation = Quaternion.LookRotation(info.hitDirection);
+        immuneFxEmitter.TriggerParticles();
+        if (soundPlayer) soundPlayer.PlaySound(1);
+    }
+
+    private void BloodSplatterFX(DamageInfo info)
+    {
+        bloodFxEmitter.transform.position = info.hitPoint;
+        bloodFxEmitter.transform.rotation = Quaternion.LookRotation(info.hitDirection);
+        bloodFxEmitter.TriggerParticles();
     }
 
 

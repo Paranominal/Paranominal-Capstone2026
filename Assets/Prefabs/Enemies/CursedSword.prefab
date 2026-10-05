@@ -55,6 +55,7 @@ MonoBehaviour:
   enemyClass: 0
   skipSpawn: 1
   spawnDelay: 3
+  immuneToSpecialShot: 0
   alwaysAggro: 0
   aggroRange: 30
   movementScript: {fileID: 5445272703306835462}
@@ -62,6 +63,9 @@ MonoBehaviour:
   - {fileID: 996114371388078208}
   stagger: {fileID: 8192007907820673360}
   animator: {fileID: 0}
+  soundPlayer: {fileID: 0}
+  bloodFxEmitter: {fileID: 0}
+  immuneFxEmitter: {fileID: 0}
   numberOfPhases: 3
   doSummons: 1
   summonOnCycles: 
@@ -69,6 +73,9 @@ MonoBehaviour:
   numberOfSummons: 3
   summonRadius: 3
   debugMode: 0
+  _state: Inactive
+  _activeAttack: None
+  _orbitDistance: 0
 --- !u!114 &5445272703306835462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,13 +89,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlyingMovement
   chaseEnabled: 1
-  engagementDistance: 4
+  strafeRadius: 6
   chaseSpeed: 6
   acceleration: 10
   onlyChaseIfAttackReady: 0
-  neverGiveUpChase: 0
+  neverGiveUpChase: 1
   chaseRange: 20
-  returnToOrigin: 1
+  returnToOrigin: 0
   returnSpeed: 3
   retreatEnabled: 0
   retreatDistance: 5
@@ -136,17 +143,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d49d50defecf244d9e2d39fcffcdd3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
-  staggerBar: {fileID: 0}
+  staggerBarRoot: {fileID: 0}
   staggerBarFill: {fileID: 0}
   barColor: {r: 1, g: 1, b: 1, a: 1}
   barResetColor: {r: 1, g: 3, b: 5, a: 1}
   weakPointManager: {fileID: 5425350769874602465}
   hitsToStagger: 1
+  immuneToBullets: 0
   stunOnWindup: 1
   staggerResistance: 0.3
   staggerTime: 2
   timeBeforeBarDrain: 0.4
   timeAddedOnHit: 0.5
+  bloodSplatter: {fileID: 0}
   debugMode: 1
   canBeHit: 1
   windingUp: 0
@@ -279,8 +288,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
   rotateX: 1
-  slowBillboard: 0
-  slowBillboardTime: 0.1
+  easing: 0
+  easeSpeed: 0.1
+  forwardVector: {x: 0, y: 0, z: 1}
 --- !u!212 &405706474175905397
 SpriteRenderer:
   serializedVersion: 2
