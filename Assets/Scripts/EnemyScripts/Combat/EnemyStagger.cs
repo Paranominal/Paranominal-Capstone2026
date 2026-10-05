@@ -2,6 +2,7 @@
 // Handles enemy stagger mechanics: tracks hits, triggers stagger when threshold is reached (or 1-hit during windup),
 // manages stagger duration with weakpoint extensions, and drives the stagger bar UI.
 // Bar fills from center outward (Sekiro-style) via the MiddleOutFill shader's _FillAmount property.
+// EDIT (boss): stagger can be force-ended early, and immunity can be toggled at runtime (used by Enemy_Boss).
 
 using UnityEngine;
 using System.Collections;
@@ -57,6 +58,11 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     public float DamageTaken => damageTaken;
     private float currentRecoveryBuffer = 0;
 
+    // EDIT (boss): runtime immunity toggle, used by the boss Downed state.
+    // Hits play the immune feedback (same as immuneToBullets) without building stagger.
+    private bool runtimeImmune;
+    public bool IsImmune => immuneToBullets || runtimeImmune;
+
     public event Action<DamageInfo, bool> EnemyShot;
 
     // per-instance material for the fill shader
@@ -105,12 +111,10 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         if (isStaggered) return;
         if (!canBeHit) return;
 
-        if (immuneToBullets) // this should read the damage info but not worth rn
+        // EDIT (boss): also checks the runtime immunity toggle
+        if (IsImmune) // this should read the damage info but not worth rn
         {
             EnemyShot?.Invoke(info, false);
-            ScoreManager scoreManager = FindAnyObjectByType<ScoreManager>();
-            if (scoreManager != null)
-                scoreManager.ReportBlockedShot(info.hitPoint);
             return;
         }
         else EnemyShot?.Invoke(info, true);
@@ -166,6 +170,25 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         currentStaggerTimeRemaining += timeAddedOnHit;
         cachedCurrentWeakpoint = weakPointManager.CurrentWeakpoint;
         if (debugMode) Debug.Log($"[EnemyStagger] Stagger extended! Duration: {currentStaggerTimeRemaining:F2}s", gameObject);
+    }
+
+    // EDIT (boss): ends the current stagger immediately. Runs the normal exit (hides weakpoints, resets the bar, fires OnStaggerEnd).
+    public void ForceEndStagger()
+    {
+        if (!isStaggered) return;
+        if (currentStagger != null)
+        {
+            StopCoroutine(currentStagger);
+            currentStagger = null;
+        }
+        currentStaggerTimeRemaining = 0f;
+        ExitStagger();
+    }
+
+    // EDIT (boss): toggles runtime immunity. While on, hits play immune feedback and don't build stagger.
+    public void SetImmune(bool immune)
+    {
+        runtimeImmune = immune;
     }
 
     private void ExitStagger()

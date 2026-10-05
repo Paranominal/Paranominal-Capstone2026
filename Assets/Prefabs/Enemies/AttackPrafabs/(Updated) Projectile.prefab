@@ -57,6 +57,22 @@ MonoBehaviour:
   hitLayers:
     serializedVersion: 2
     m_Bits: 20544
+  spawnDamageField: 0
+  damageFieldPrefab: {fileID: 0}
+  damageFieldDamage: 5
+  damageFieldDuration: 1
+  damageFieldRadius: 1.5
+  damageFieldHeight: 1
+  damageFieldTargetLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  damageFieldPersist: 0
+  damageFieldDamageOverTime: 0
+  damageFieldTickRate: 0.5
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 1
+  maxGroundCheckDistance: 10
   debugMode: 0
 --- !u!33 &9117644884011655463
 MeshFilter:
@@ -155,7 +171,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 131072
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0

@@ -4,6 +4,7 @@
 // Attacks are modular components in a priority-ordered array.
 // EDIT (attack-priority): the enemy fires the highest-priority attack that's ready and in range, and moves towards the range of the
 // highest-priority attack that's ready. If every attack is on cooldown, it holds its current position.
+// EDIT (boss): key methods are virtual and core references protected so Enemy_Boss can extend this class.
 
 using System.Collections;
 using System;
@@ -12,11 +13,14 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class Enemy : MonoBehaviour
 {
-    public enum BehaviourState { Inactive, Spawning, Idling, Chasing, Attacking, Waiting, Stunned, Returning, Retreating, Dying };
-    public enum EnemyClass { Standard, Champion, Thrall };
+    // EDIT (boss): added Downed (state machine does nothing while in it, used by Enemy_Boss).
+    public enum BehaviourState { Inactive, Spawning, Idling, Chasing, Attacking, Waiting, Stunned, Returning, Retreating, Dying, Downed };
+    // EDIT (boss): added Boss. Set automatically by Enemy_Boss, not meant to be picked on a plain Enemy.
+    public enum EnemyClass { Standard, Champion, Thrall, Boss };
 
     [Header("Enemy Options")]
-    [SerializeField] private EnemyClass enemyClass = EnemyClass.Standard;
+    // EDIT (boss): protected so Enemy_Boss can lock it to Boss
+    [SerializeField] protected EnemyClass enemyClass = EnemyClass.Standard;
     [SerializeField] private bool skipSpawn;
     [ShowIf("skipSpawn", false)]
     [Tooltip("Time in seconds it takes the enemy to spawn.")]
@@ -42,7 +46,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] private EnemyAttack_Base[] attacks;
 
     [Header("Stagger")]
-    [SerializeField] private EnemyStagger stagger;
+    // EDIT (boss): protected for Enemy_Boss
+    [SerializeField] protected EnemyStagger stagger;
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
@@ -89,11 +94,12 @@ public class Enemy : MonoBehaviour
     #endif
 
     // state
-    private BehaviourState behaviourState = BehaviourState.Inactive;
+    // EDIT (boss): behaviourState, playerTransform and movement are protected for Enemy_Boss
+    protected BehaviourState behaviourState = BehaviourState.Inactive;
     public BehaviourState CurrentState => behaviourState;
 
-    private Transform playerTransform;
-    private IEnemyMovement movement;
+    protected Transform playerTransform;
+    protected IEnemyMovement movement;
 
     // active attack tracking
     private EnemyAttack_Base currentAttack;
@@ -122,7 +128,8 @@ public class Enemy : MonoBehaviour
 
 
     // Lifecycle
-    private void Awake()
+    // EDIT (boss): virtual so Enemy_Boss can extend it
+    protected virtual void Awake()
     {
         playerTransform = GameObject.FindWithTag("Player").transform;
 
@@ -134,10 +141,12 @@ public class Enemy : MonoBehaviour
 
         // stagger/weakpoint setup
         if (stagger && stagger.weakPointManager) stagger.weakPointManager.handleOwnDestruction = false;
-        if (enemyClass == EnemyClass.Champion && stagger && stagger.weakPointManager)
+        // EDIT (boss): bosses also reuse their weakpoints between phases
+        if ((enemyClass == EnemyClass.Champion || enemyClass == EnemyClass.Boss) && stagger && stagger.weakPointManager)
             stagger.weakPointManager.dieOnWeakpointsComplete = false;
 
-        if (stagger && bloodFxEmitter) stagger.EnemyShot += EnemyShot;
+        // EDIT (boss): always listen for shots so immune feedback still plays without a blood emitter assigned
+        if (stagger) stagger.EnemyShot += EnemyShot;
 
         if (skipSpawn) DoSpawn();
         else StartCoroutine(SpawnSequence());
@@ -228,6 +237,8 @@ public class Enemy : MonoBehaviour
             case BehaviourState.Spawning:   return;
             case BehaviourState.Dying:      return;
             case BehaviourState.Inactive:   return;
+            // EDIT (boss): Downed holds until Enemy_Boss releases it
+            case BehaviourState.Downed:     return;
         }
     }
 
@@ -404,6 +415,16 @@ public class Enemy : MonoBehaviour
         if (movement != null) movement.BeginRetreat(playerTransform.position);
     }
 
+    // EDIT (boss): cancels any attack in progress and stops movement. Used by Enemy_Boss when entering Downed.
+    protected void CancelCurrentAttack()
+    {
+        if (currentAttack != null && currentAttack.IsAttacking) currentAttack.CancelAttack();
+        currentAttack = null;
+        attackMovementPaused = false;
+        if (stagger != null) stagger.windingUp = false;
+        if (movement != null) { movement.SetPaused(false); movement.Stop(); }
+    }
+
     private void ExitChase()
     {
         if (movement != null) movement.Stop();
@@ -455,7 +476,8 @@ public class Enemy : MonoBehaviour
 
         for (int i = 0; i < attacks.Length; i++)
         {
-            if (attacks[i] == null || !attacks[i].isActiveAndEnabled) continue;
+            // EDIT (boss): shared check so Enemy_Boss can gate attacks by phase
+            if (!CanUseAttack(attacks[i])) continue;
             if (!attacks[i].IsReady) continue;
             // EDIT (attack-priority): range check now respects min range
             if (!attacks[i].IsInRange(dist, RangeTolerance)) continue;
@@ -465,7 +487,8 @@ public class Enemy : MonoBehaviour
         // fallback: ignore ShouldUse
         for (int i = 0; i < attacks.Length; i++)
         {
-            if (attacks[i] == null || !attacks[i].isActiveAndEnabled) continue;
+            // EDIT (boss): shared check so Enemy_Boss can gate attacks by phase
+            if (!CanUseAttack(attacks[i])) continue;
             if (!attacks[i].IsReady) continue;
             // EDIT (attack-priority): range check now respects min range
             if (!attacks[i].IsInRange(dist, RangeTolerance)) continue;
@@ -473,6 +496,12 @@ public class Enemy : MonoBehaviour
         }
 
         return null;
+    }
+
+    // EDIT (boss): whether an attack can be considered at all. Enemy_Boss overrides this to gate attacks by phase.
+    protected virtual bool CanUseAttack(EnemyAttack_Base attack)
+    {
+        return attack != null && attack.isActiveAndEnabled;
     }
 
     // EDIT (attack-priority): reads the cached selection instead of re-running it
@@ -487,7 +516,8 @@ public class Enemy : MonoBehaviour
         if (attacks == null) return null;
         for (int i = 0; i < attacks.Length; i++)
         {
-            if (attacks[i] == null || !attacks[i].isActiveAndEnabled) continue;
+            // EDIT (boss): shared check so Enemy_Boss can gate attacks by phase
+            if (!CanUseAttack(attacks[i])) continue;
             if (!attacks[i].IsReady) continue;
             return attacks[i];
         }
@@ -521,7 +551,8 @@ public class Enemy : MonoBehaviour
         float dist = DistanceToPlayer();
         for (int i = 0; i < attacks.Length; i++)
         {
-            if (attacks[i] != null && attacks[i].isActiveAndEnabled && dist < attacks[i].AttackRange + RangeTolerance)
+            // EDIT (boss): shared check
+            if (CanUseAttack(attacks[i]) && dist < attacks[i].AttackRange + RangeTolerance)
                 return true;
         }
         return false;
@@ -544,7 +575,8 @@ public class Enemy : MonoBehaviour
         if (attacks == null) return false;
         for (int i = 0; i < attacks.Length; i++)
         {
-            if (attacks[i] != null && attacks[i].isActiveAndEnabled) return true;
+            // EDIT (boss): shared check
+            if (CanUseAttack(attacks[i])) return true;
         }
         return false;
     }
@@ -554,12 +586,14 @@ public class Enemy : MonoBehaviour
         if (attacks == null) return false;
         for (int i = 0; i < attacks.Length; i++)
         {
-            if (attacks[i] != null && attacks[i].isActiveAndEnabled && attacks[i].IsReady) return true;
+            // EDIT (boss): shared check
+            if (CanUseAttack(attacks[i]) && attacks[i].IsReady) return true;
         }
         return false;
     }
 
-    private bool IsStunned()
+    // EDIT (boss): protected for Enemy_Boss
+    protected bool IsStunned()
     {
         return stagger != null && stagger.IsStaggered;
     }
@@ -603,7 +637,8 @@ public class Enemy : MonoBehaviour
 
 
     // Champion / Death
-    private void CheckDie()
+    // EDIT (boss): virtual so Enemy_Boss can replace it with phase handling
+    protected virtual void CheckDie()
     {
         if (stagger == null || stagger.weakPointManager == null) return;
 
@@ -633,7 +668,8 @@ public class Enemy : MonoBehaviour
 
     // Michael edit (special-shot): Special Shot body hit. Standard and Thrall enemies die, Champions are instantly staggered.
     // Returns true if the hit did something, so the shot knows whether to count it as a SpecialHit.
-    public bool HandleSpecialShotHit()
+    // EDIT (boss): virtual so Enemy_Boss can handle Downed
+    public virtual bool HandleSpecialShotHit()
     {
         if (IsDying) return false;
         if (immuneToSpecialShot) return false;
@@ -652,7 +688,8 @@ public class Enemy : MonoBehaviour
         return true;
     }
 
-    public void Die()
+    // EDIT (boss): virtual so the Main boss can take its Sub-boss and minions with it
+    public virtual void Die()
     {
         if (IsDying) return;
         IsDying = true;
@@ -732,6 +769,9 @@ public class Enemy : MonoBehaviour
             trigger = "spawn";
         else if (behaviourState == BehaviourState.Stunned)
             trigger = "stun";
+        // EDIT (boss): Downed animation (Animator needs a "downed" trigger)
+        else if (behaviourState == BehaviourState.Downed)
+            trigger = "downed";
 
         // only set the trigger when the desired animation actually changes
         if (trigger != null && trigger != lastAnimTrigger)
@@ -760,14 +800,18 @@ public class Enemy : MonoBehaviour
 
     private void ImmuneFX(DamageInfo info)
     {
+        // EDIT (boss): null guard, the immune emitter is optional
+        if (soundPlayer) soundPlayer.PlaySound(1);
+        if (immuneFxEmitter == null) return;
         immuneFxEmitter.transform.position = info.hitPoint;
         immuneFxEmitter.transform.rotation = Quaternion.LookRotation(info.hitDirection);
         immuneFxEmitter.TriggerParticles();
-        if (soundPlayer) soundPlayer.PlaySound(1);
     }
 
     private void BloodSplatterFX(DamageInfo info)
     {
+        // EDIT (boss): null guard, matches the change to the EnemyShot subscription
+        if (bloodFxEmitter == null) return;
         bloodFxEmitter.transform.position = info.hitPoint;
         bloodFxEmitter.transform.rotation = Quaternion.LookRotation(info.hitDirection);
         bloodFxEmitter.TriggerParticles();
@@ -803,7 +847,8 @@ public class Enemy : MonoBehaviour
 
     // Scene Gizmos
     #if UNITY_EDITOR
-    private void OnDrawGizmosSelected()
+    // EDIT (boss): virtual so Enemy_Boss can add its own gizmos
+    protected virtual void OnDrawGizmosSelected()
     {
         // aggro range (yellow)
         if (!alwaysAggro)
@@ -847,4 +892,4 @@ public class Enemy : MonoBehaviour
         }
     }
     #endif
-}
+}
