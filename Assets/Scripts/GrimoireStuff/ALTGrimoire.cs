@@ -111,7 +111,6 @@ public class ALTGrimoire : MonoBehaviour
     // EDIT (grimoire-tab-keys): each action paired with the tab it opens.
     private List<(InputAction action, GrimoireTab tab)> toggles = new List<(InputAction action, GrimoireTab tab)>();
 
-
     private void Awake()
     {
         if (instance != null)
@@ -126,6 +125,12 @@ public class ALTGrimoire : MonoBehaviour
         // EDIT (grimoire-pause): arrays in GrimoireTab order.
         panels = new GameObject[] { inventoryPanel, bestiaryPanel, settingsPanel };
         tabButtons = new Button[] { inventoryTabButton, bestiaryTabButton, settingsTabButton };
+
+        foreach (Button tab in tabButtons)
+        {
+            if (tab != null && tab.TryGetComponent(out Animator tabAnimator))
+                tabAnimator.keepAnimatorStateOnDisable = true;
+        }
     }
 
     void Start()
@@ -195,6 +200,8 @@ public class ALTGrimoire : MonoBehaviour
         {
             SelectCurrentEntryButton(); // grabbing the current entry selection if it drops off
         }
+
+        if (grimoireActive) HandleTabShoulderInput();
     }
 
     // ---- Open / Close ----
@@ -208,7 +215,6 @@ public class ALTGrimoire : MonoBehaviour
             return;
 
         grimoireActive = true;
-        SetGrimoireUnscaledTime(true);
 
         if (pauseManager != null)
             pauseManager.PauseGame();
@@ -218,6 +224,9 @@ public class ALTGrimoire : MonoBehaviour
 
         SetContentMode(full: true);
         SwitchTab(tab); // EDIT (grimoire-tab-keys): was activeTab.
+        //moved here so it runs after SetContentMode to fix switching animator
+        SetGrimoireUnscaledTime(true);
+        // SwitchTab(activeTab);
 
         OnGrimoireToggled?.Invoke(true);
     }
@@ -352,6 +361,8 @@ public class ALTGrimoire : MonoBehaviour
             headingText.SetText(tabNames[activeIndex]);
 
         UpdateTabButtonVisuals(activeIndex);
+
+        if (grimoireActive) SelectTab();
     }
 
     private void DisableAllPanels()
@@ -382,6 +393,32 @@ public class ALTGrimoire : MonoBehaviour
         if (fullContentR != null) fullContentR.SetActive(full);
         if (minimisedContentL != null) minimisedContentL.SetActive(!full);
         if (minimisedContentR != null) minimisedContentR.SetActive(!full);
+    }
+
+    //auto-select tab (for ease of use with controllers)
+    private void SelectTab()
+    {
+        if (EventSystem.current == null) return;
+
+        int i = (int)activeTab;
+        if (i >= tabButtons.Length || tabButtons[i] == null) return;
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(tabButtons[i].gameObject);
+    }
+
+    private void HandleTabShoulderInput()
+    {
+        Gamepad pad = Gamepad.current;
+        if (pad == null) return;
+
+        int tabCount = tabButtons.Length;
+        int index = (int)activeTab;
+
+        if (pad.rightShoulder.wasPressedThisFrame)
+            SwitchTab((GrimoireTab)((index + 1) % tabCount));
+        else if (pad.leftShoulder.wasPressedThisFrame)
+            SwitchTab((GrimoireTab)((index - 1 + tabCount) % tabCount));
     }
 
     // ---- Entries ----
