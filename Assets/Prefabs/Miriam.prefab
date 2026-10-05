@@ -390,7 +390,6 @@ GameObject:
   - component: {fileID: 2707172803116468795}
   - component: {fileID: 3110525635320036500}
   - component: {fileID: 4360056827000506036}
-  - component: {fileID: 4292214437299760046}
   m_Layer: 6
   m_Name: Miriam
   m_TagString: Player
@@ -1016,36 +1015,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 56ce18bfb7f6bd742a8165720c7bc0aa, type: 2}
   - {fileID: 11400000, guid: aebcd7569638a8b40a41b1609c724d1b, type: 2}
   source: {fileID: 795694508415802441}
---- !u!114 &4292214437299760046
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2579260593497910125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01b7612e133b73e4da4763c295a5ccd2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerAimAssist
-  inputReader: {fileID: 8956652460274281639}
-  playerCamera: {fileID: 6654618607449089807}
-  aimAssistRadius: 0.1
-  enemyAssistRadius: 0.15
-  enemyMask:
-    serializedVersion: 2
-    m_Bits: 131072
-  obstructionMask:
-    serializedVersion: 2
-    m_Bits: 16384
-  enemyRange: 30
-  aimAssistStrength: 10
-  edgeStrength: 0.5
-  overrideStrength: 0.5
-  settleTime: 0.5
-  assistSmoothTime: 0.05
-  stealMargin: 0.85
-  debugLogs: 1
 --- !u!1 &3524502881056351253
 GameObject:
   m_ObjectHideFlags: 0
@@ -1229,7 +1198,7 @@ MonoBehaviour:
   inputReader: {fileID: 8956652460274281639}
   playerMover: {fileID: 7893351746387300568}
   cameraRecoil: {fileID: 260499741174559401}
-  aimAssist: {fileID: 4292214437299760046}
+  aimAssist: {fileID: 0}
   lookSensitivity: 0.05
   lookXLimit: 60
   lookSmoothing: 0.03
