@@ -26,7 +26,7 @@ public class WeakPointManager : MonoBehaviour
 
     private bool CurrentIndexValid()
     {
-        return HasWeakpoints() && currentWeakpoint >= 0 && currentWeakpoint < weakpoints.Length;
+        return currentWeakpoint >= 0 && currentWeakpoint < weakpoints.Length;
     }
 
     public void SetupWeakpoints()
@@ -50,24 +50,12 @@ public class WeakPointManager : MonoBehaviour
         if (!HasWeakpoints()) return;
 
         if (resetSequenceEveryStagger) SetupWeakpoints();
-        // EDIT (special-shot): guard against starting a sequence that's already complete.
-        if (!CurrentIndexValid()) return;
-
-        // EDIT (special-shot): alwaysShowAll now only shows unresolved weakpoints.
-        if (alwaysShowAll) ShowAvailable();
+        if (alwaysShowAll)
+        {
+            foreach (WeakPoint weakpoint in weakpoints) weakpoint.Show();
+        }
         else weakpoints[currentWeakpoint].Show(); // activate the first weakpoint in the index
         if (debugMode) Debug.Log($"[{this}] Started Weakpoint Sequence for {gameObject}");
-    }
-
-    // Michael edit (special-shot): alwaysShowAll reveal. Shows every unresolved weakpoint, skipping anything already visible
-    // so tough hit counts and fades aren't reset.
-    private void ShowAvailable()
-    {
-        foreach (WeakPoint weakpoint in weakpoints)
-        {
-            if (weakpoint == null || weakpoint.hasBeenHit || weakpoint.IsShown) continue;
-            weakpoint.Show();
-        }
     }
 
     public void EndSequence()
@@ -84,12 +72,7 @@ public class WeakPointManager : MonoBehaviour
         if (debugMode) Debug.Log($"[{this}] Next Weakpoint in sequence on {gameObject} (Weakpoint #{currentWeakpoint + 1})");
         weakpoints[currentWeakpoint].Hide();
         currentWeakpoint += 1;
-        if (currentWeakpoint < weakpoints.Length)
-        {
-            // EDIT (special-shot): alwaysShowAll no longer re-shows visible weakpoints.
-            if (alwaysShowAll) ShowAvailable();
-            else weakpoints[currentWeakpoint].Show();
-        }
+        if (currentWeakpoint < weakpoints.Length) weakpoints[currentWeakpoint].Show();
         else SequenceComplete();
     }
 

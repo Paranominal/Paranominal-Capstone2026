@@ -1,16 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
     //[SerializeField] private PauseManager
     //[HideInInspector] public Dialogue dialogue;
     private GameObject dialogueObject;
-    //the current scene's "continue" button 
-    [SerializeField] private Button continueButton;
     [SerializeField] private InputActionReference closeInput;
     [SerializeField] private GameObject dialogueCanvas;
     public PauseManager pause;
@@ -27,10 +23,7 @@ public class DialogueManager : MonoBehaviour
     }
     void Update()
     {
-        if (!isOpen) return;
-        if (closeInput.action.WasPressedThisFrame()) CloseDialogue();
-        //fallback to press continue directly
-        else if (continueButton != null && Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame) continueButton.onClick.Invoke();
+        if (isOpen && closeInput.action.WasPressedThisFrame()) CloseDialogue();
     }
     public void StartDialogue(GameObject pickupDialogue) // public so CollectibleObject can activate it
     {
@@ -42,7 +35,6 @@ public class DialogueManager : MonoBehaviour
         // SetCursorModeLocked(false); //unlock cursor
         if (pause) pause.PauseGame();
         isOpen = true;
-        if (continueButton != null && EventSystem.current != null) EventSystem.current.SetSelectedGameObject(continueButton.gameObject);
     }
 
     public void NextPage() // public for menu button presses to activate

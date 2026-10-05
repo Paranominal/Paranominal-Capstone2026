@@ -1,8 +1,6 @@
 // Summary: Volume Component for the dash post-processing effects.
 // Exposes toggleable radial blur, UV warp, and action lines with a shared center mask.
 // Intensity is driven at runtime by PlayerDash during the dash fade in/out.
-// EDIT (ethereal-grade): Adds an Ethereal Grade layer (desaturation, split tone, glow, depth fade)
-// for the ethereal phase-dash look. Runs before the other layers so they distort the graded image.
 
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -12,51 +10,6 @@ public class DashEffectsVolumeComponent : VolumeComponent
 {
     [Tooltip("Overall effect intensity. 0 = no effect, 1 = full strength. Driven by PlayerDash at runtime.")]
     public ClampedFloatParameter intensity = new ClampedFloatParameter(0f, 0f, 1f);
-
-    // EDIT (ethereal-grade): new layer parameters
-    [Header("Ethereal Grade")]
-    [Tooltip("Enable the ethereal colour grade layer.")]
-    public BoolParameter enableEthereal = new BoolParameter(true);
-
-    [Tooltip("How much colour is drained from the scene. 0 = full colour, 1 = greyscale.")]
-    public ClampedFloatParameter desaturation = new ClampedFloatParameter(0.5f, 0f, 1f);
-
-    [Tooltip("Colour pushed into darker areas.")]
-    public ColorParameter shadowColour = new ColorParameter(new Color(0.15f, 0.2f, 0.45f), false, false, true);
-
-    [Tooltip("Colour pushed into brighter areas.")]
-    public ColorParameter highlightColour = new ColorParameter(new Color(0.7f, 0.95f, 1f), false, false, true);
-
-    [Tooltip("Shifts the split between shadow and highlight colours. Negative = more shadow colour, positive = more highlight colour.")]
-    public ClampedFloatParameter splitToneBalance = new ClampedFloatParameter(0f, -1f, 1f);
-
-    [Tooltip("How strongly the split tone colours replace the scene's own hues.")]
-    public ClampedFloatParameter tintStrength = new ClampedFloatParameter(0.6f, 0f, 1f);
-
-    [Tooltip("Brightness above which pixels start to glow. Lower = more of the scene glows.")]
-    public ClampedFloatParameter glowThreshold = new ClampedFloatParameter(0.7f, 0f, 1f);
-
-    [Tooltip("Strength of the glow added over bright areas.")]
-    public ClampedFloatParameter glowIntensity = new ClampedFloatParameter(0.5f, 0f, 3f);
-
-    [Tooltip("How far the glow bleeds out from bright areas (screen space).")]
-    public ClampedFloatParameter glowSpread = new ClampedFloatParameter(0.01f, 0f, 0.05f);
-
-    [Tooltip("Enable distance-based fade into the depth fade colour.")]
-    public BoolParameter enableDepthFade = new BoolParameter(true);
-
-    [Tooltip("Colour distant geometry fades into.")]
-    public ColorParameter depthFadeColour = new ColorParameter(new Color(0.55f, 0.75f, 0.85f), false, false, true);
-
-    [Tooltip("Distance (metres) where the fade begins.")]
-    public MinFloatParameter depthFadeStart = new MinFloatParameter(5f, 0f);
-
-    [Tooltip("Distance (metres) where the fade reaches full strength.")]
-    public MinFloatParameter depthFadeEnd = new MinFloatParameter(40f, 0f);
-
-    // EDIT (ethereal-grade): scaled down in the shader so the full 0 to 1 range is usable
-    [Tooltip("How strongly distant geometry fades into the fade colour. Scaled down internally, so 1 is a strong haze, not a full replacement.")]
-    public ClampedFloatParameter depthFadeStrength = new ClampedFloatParameter(0.4f, 0f, 1f);
 
     [Header("Radial Blur")]
     [Tooltip("Enable the radial zoom blur layer.")]

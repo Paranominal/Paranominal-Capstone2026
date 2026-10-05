@@ -3,8 +3,6 @@ using System.Collections;
 
 public class WeaponFiringLogic : MonoBehaviour
 {
-    [Header("Animator")]
-    [SerializeField] private Animator animator;
     [Header("Ammo")]
     [SerializeField] private int magazineSize = 6;
     [SerializeField] private float reloadDuration = 2f;
@@ -81,7 +79,6 @@ public class WeaponFiringLogic : MonoBehaviour
 
         isReloading = true;
         reloadTimeRemaining = reloadDuration;
-        if (animator) animator.speed = 1/reloadDuration;
 
         while (reloadTimeRemaining > 0f)
         {
@@ -89,7 +86,6 @@ public class WeaponFiringLogic : MonoBehaviour
             yield return null;
         }
 
-        if (animator) animator.speed = 1;
         currentAmmo = magazineSize;
         reloadTimeRemaining = 0f;
         isReloading = false;
@@ -105,9 +101,7 @@ public class WeaponFiringLogic : MonoBehaviour
     private IEnumerator MisfireCooldownRoutine()
     {
         onMisfireCooldown = true;
-        if (animator) animator.speed = 1/misfireCooldown;
         yield return new WaitForSeconds(misfireCooldown);
-        if (animator) animator.speed = 1;
         onMisfireCooldown = false;
     }
 

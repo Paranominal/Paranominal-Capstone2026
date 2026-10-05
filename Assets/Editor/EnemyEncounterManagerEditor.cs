@@ -1,6 +1,6 @@
 // Summary: Custom editor for EnemyEncounterManager.
-// Hides standard or arena-specific fields based on the selected EncounterMode.
-// EDIT (editor-cleanup): Door gating removed, as the door integration no longer exists on the manager.
+// Hides standard or arena-specific fields based on the selected EncounterMode,
+// and shows door gating fields when that option is enabled.
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
@@ -15,8 +15,6 @@ public class EnemyEncounterManagerEditor : Editor
         SerializedProperty encounterModeProp      = serializedObject.FindProperty("encounterMode");
         SerializedProperty maxWavesProp           = serializedObject.FindProperty("maxWaves");
         SerializedProperty timeBetweenWavesProp   = serializedObject.FindProperty("timeBetweenWaves");
-        // EDIT (spawn-delay): Initial spawn delay field.
-        SerializedProperty initialSpawnDelayProp  = serializedObject.FindProperty("initialSpawnDelay");
         SerializedProperty spawnPointsProp        = serializedObject.FindProperty("spawnPoints");
         SerializedProperty enemyPoolProp          = serializedObject.FindProperty("enemyPool");
         SerializedProperty startingWaveProp       = serializedObject.FindProperty("startingWave");
@@ -29,7 +27,8 @@ public class EnemyEncounterManagerEditor : Editor
         SerializedProperty randomSpawnRadiusProp  = serializedObject.FindProperty("randomSpawnRadius");
         SerializedProperty groundLayerProp        = serializedObject.FindProperty("groundLayer");
         SerializedProperty resetCounterProp       = serializedObject.FindProperty("resetCounter");
-        // EDIT (editor-cleanup): Removed useDoorGating and doors lookups (fields no longer exist, caused a NullReferenceException).
+        SerializedProperty useDoorGatingProp      = serializedObject.FindProperty("useDoorGating");
+        SerializedProperty doorsProp              = serializedObject.FindProperty("doors");
 
         EnemyEncounterManager.EncounterMode currentMode =
             (EnemyEncounterManager.EncounterMode)encounterModeProp.enumValueIndex;
@@ -49,8 +48,6 @@ public class EnemyEncounterManagerEditor : Editor
         EditorGUILayout.LabelField("Wave Settings", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(maxWavesProp);
         EditorGUILayout.PropertyField(timeBetweenWavesProp);
-        // EDIT (spawn-delay): Show the initial spawn delay.
-        EditorGUILayout.PropertyField(initialSpawnDelayProp);
         EditorGUILayout.Space();
 
         // Standard mode fields.
@@ -104,8 +101,16 @@ public class EnemyEncounterManagerEditor : Editor
         // Shared encounter state.
         EditorGUILayout.LabelField("Encounter State", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(resetCounterProp);
+        EditorGUILayout.Space();
 
-        // EDIT (editor-cleanup): Door gating block removed.
+        // Door gating.
+        EditorGUILayout.LabelField("Door Gating", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(useDoorGatingProp);
+
+        if (useDoorGatingProp.boolValue)
+        {
+            EditorGUILayout.PropertyField(doorsProp, true);
+        }
 
         serializedObject.ApplyModifiedProperties();
     }

@@ -1,8 +1,6 @@
 // Summary: Full-screen post-process shader for the dash ability. Three toggleable layers:
 // radial zoom blur, UV warp distortion, and animated simplex-noise action lines.
 // All layers scale with _Intensity so they fade in/out together with the dash.
-// EDIT (ethereal-grade): Adds a second pass (index 1) for the Ethereal Grade layer:
-// desaturation, split tone, highlight glow, and depth fade. Runs before pass 0.
 
 Shader "Hidden/PostProcess/DashEffects"
 {
@@ -10,7 +8,6 @@ Shader "Hidden/PostProcess/DashEffects"
     {
         Tags { "RenderPipeline" = "UniversalPipeline" }
 
-        // Pass 0: dash effects (blur, warp, lines)
         Pass
         {
             Name "DashEffects"
@@ -186,114 +183,6 @@ Shader "Hidden/PostProcess/DashEffects"
                     result = lerp(result, maskedLines * lineRGB, maskedLines * lineA);
                 }
 
-                return float4(result, original.a);
-            }
-            ENDHLSL
-        }
-
-        // EDIT (ethereal-grade): Pass 1: ethereal colour grade
-        Pass
-        {
-            Name "DashEtherealGrade"
-            ZWrite Off
-            Cull Off
-            ZTest Always
-
-            HLSLPROGRAM
-            #pragma vertex Vert
-            #pragma fragment FragEthereal
-
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
-
-            // master intensity (driven by PlayerDash)
-            float _Intensity;
-
-            // grade
-            float  _Desaturation;
-            float4 _ShadowColour;
-            float4 _HighlightColour;
-            float  _SplitToneBalance;
-            float  _TintStrength;
-
-            // glow
-            float _GlowThreshold;
-            float _GlowIntensity;
-            float _GlowSpread;
-
-            // depth fade
-            float  _EnableDepthFade;
-            float4 _DepthFadeColour;
-            float  _DepthFadeStart;
-            float  _DepthFadeEnd;
-            float  _DepthFadeStrength;
-
-            TEXTURE2D_X(_EtherealDepthTex);
-
-            static const float3 LumaWeights = float3(0.2126, 0.7152, 0.0722);
-
-            // EDIT (ethereal-grade): slider value 1 maps to 0.05 actual fade
-            static const float DepthFadeScale = 0.05;
-
-            float Luma(float3 c) { return dot(c, LumaWeights); }
-
-            // Summary: bright part of a sample above the glow threshold, 0 to 1.
-            float3 BrightPass(float3 c)
-            {
-                float l = Luma(c);
-                float b = saturate((l - _GlowThreshold) / max(1.0 - _GlowThreshold, 0.001));
-                return c * b;
-            }
-
-            float4 FragEthereal(Varyings input) : SV_Target
-            {
-                float2 uv = input.texcoord;
-
-                float4 original = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv);
-                float3 col      = original.rgb;
-
-                // --- glow: two rings of 8 taps around the pixel ---
-                float3 glow = BrightPass(col);
-                float2 aspect = float2(_ScreenParams.y / _ScreenParams.x, 1.0);
-
-                [unroll]
-                for (int i = 0; i < 8; i++)
-                {
-                    float  angle = i * 0.785398; // 45 degrees
-                    float2 dir   = float2(cos(angle), sin(angle)) * aspect * _GlowSpread;
-
-                    glow += BrightPass(SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv + dir).rgb);
-                    glow += BrightPass(SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv + dir * 2.0).rgb) * 0.5;
-                }
-                glow /= 13.0; // 1 + 8 + (8 * 0.5)
-
-                // --- desaturation ---
-                float lum = Luma(col);
-                col = lerp(col, lum.xxx, _Desaturation);
-
-                // --- split tone (keeps brightness, swaps hue toward shadow/highlight colour) ---
-                float  toneT     = smoothstep(0.0, 1.0, saturate(lum + _SplitToneBalance * 0.5));
-                float3 toneCol   = lerp(_ShadowColour.rgb, _HighlightColour.rgb, toneT);
-                float3 toned     = toneCol * (lum / max(Luma(toneCol), 0.001));
-                col = lerp(col, toned, _TintStrength);
-
-                // --- depth fade ---
-                if (_EnableDepthFade > 0.5)
-                {
-                    float rawDepth = SAMPLE_TEXTURE2D_X(_EtherealDepthTex, sampler_PointClamp, uv).r;
-                    float eyeDepth = LinearEyeDepth(rawDepth, _ZBufferParams);
-                    float fade     = saturate((eyeDepth - _DepthFadeStart)
-                                              / max(_DepthFadeEnd - _DepthFadeStart, 0.001));
-                    // EDIT (ethereal-grade): strength scaled down so the slider's full range is usable
-                    col = lerp(col, _DepthFadeColour.rgb, fade * _DepthFadeStrength * DepthFadeScale);
-                }
-
-                // --- glow tinted toward the highlight colour, added after fade so lights bleed through ---
-                float3 glowTint = lerp(glow, Luma(glow) * _HighlightColour.rgb, _TintStrength);
-                col += glowTint * _GlowIntensity;
-
-                // fade the whole grade with the dash
-                float3 result = lerp(original.rgb, col, _Intensity);
                 return float4(result, original.a);
             }
             ENDHLSL

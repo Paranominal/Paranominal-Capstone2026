@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,7 +11,6 @@ public class EnemySpawnPoint : MonoBehaviour
     [Header("Spawn Visuals")]
     [Tooltip("Seconds to wait before showing the spawned enemy, giving the animator time to set the spawn pose.")]
     [SerializeField] private float spawnVisualDelay = 0.05f;
-    public event Action<Enemy> EnemySpawned; 
 
     // Resizes this spawn point's enemy pool to match the spawner's maximum number of waves.
     public void ResizeEnemyPool(int maxWaves)
@@ -86,7 +84,6 @@ public class EnemySpawnPoint : MonoBehaviour
         if (enemyBehaviour != null)
         {
             enemyBehaviour.SetOwnerSpawner(ownerSpawner);
-            EnemySpawned?.Invoke(enemyBehaviour);
             return enemyBehaviour;
         }
 

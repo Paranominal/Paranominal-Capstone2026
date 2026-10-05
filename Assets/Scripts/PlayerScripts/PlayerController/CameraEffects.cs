@@ -3,8 +3,6 @@ using UnityEngine;
 // Michael feature (camera-shake): integrated Perlin noise based camera shake. Applied after head bob and strafe tilt so all three effects layer cleanly.
 public class CameraEffects : MonoBehaviour
 {
-    public static CameraEffects Instance { get; private set; }
-
     [Header("References")]
     [SerializeField] private Camera playerCamera;
     [SerializeField] private PlayerInputReader inputReader;
@@ -36,14 +34,6 @@ public class CameraEffects : MonoBehaviour
 
     private void Awake()
     {
-        // Singleton setup
-        if (Instance != null && Instance != this)
-        {
-            Destroy(this);
-            return;
-        }
-        Instance = this;
-
         // Try to automatically find references if they are not assigned in the inspector
         if (playerCamera == null) playerCamera = Camera.main;
         if (inputReader == null) inputReader = GetComponentInParent<PlayerInputReader>();

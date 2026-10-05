@@ -18,14 +18,14 @@ public class PlayerCollect : MonoBehaviour
     }
     void Hover()
     {
-        if (look.LookingAtInRange().collider == null)
+        if (look.LookingAt() == null)
         {
             if (currentTarget != null) currentTarget.Deactivate();
             currentTarget = null;
             return;
         }
 
-        CollectibleObject target = look.LookingAtInRange().collider.gameObject.GetComponent<CollectibleObject>();
+        CollectibleObject target = look.LookingAt().GetComponent<CollectibleObject>();
         if (target == null | target == currentTarget) return;
         else
         {
@@ -43,7 +43,7 @@ public class PlayerCollect : MonoBehaviour
 
     void DoDebugLog()
     {
-        Debug.Log($"Looking at: [{look.LookingAtInRange()}]");
+        Debug.Log($"Looking at: [{look.LookingAt()}]");
         Debug.Log($"Currently hovering: [{currentTarget}]");
     }
 }

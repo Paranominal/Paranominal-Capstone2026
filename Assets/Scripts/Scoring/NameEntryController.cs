@@ -10,6 +10,7 @@ public class NameEntryController : MonoBehaviour
 
     [Header("Config")]
     [SerializeField] private int maxNameLength = 12;
+    [SerializeField] private string defaultName = "Player";
 
     //initialise with empty field with max length setup
     private void Awake()

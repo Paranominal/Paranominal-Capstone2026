@@ -33,7 +33,6 @@ public class ScoreManager : MonoBehaviour
 
     public event System.Action<int> OnPointsAdded;
     public event System.Action<Vector3> OnShotMissed;
-    public event System.Action<Vector3> OnShotBlocked;
 
     // points to display = final awarded (after combo), precision = 1-10 base, position = where it landed, ownerCentre = where the enemy is
     public event System.Action<int, int, Vector3, Vector3> OnPointsAwarded;
@@ -121,11 +120,6 @@ public class ScoreManager : MonoBehaviour
         if (debugMode) Debug.Log($"Weakpoint hit: {result.Accuracy:0.00} accuracy = {basePoints} base x {1f + multiplier:0.0} = {points} points");
         AddScore(points);
         OnPointsAwarded?.Invoke(points, basePoints, result.HitPoint, result.OwnerCentre);
-    }
-
-    public void ReportBlockedShot(Vector3 hitPosition)
-    {
-        OnShotBlocked?.Invoke(hitPosition);
     }
 
     private void HandleShotResolved(ShotResult result)

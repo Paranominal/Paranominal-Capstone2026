@@ -21,29 +21,6 @@ public static class WeakPointRegistry
         weakPoints.Remove(weakPoint);
     }
 
-    public static IReadOnlyList<WeakPoint> All
-    {
-        get
-        {
-            List<WeakPoint> result = new List<WeakPoint>(weakPoints.Count);
-            staleWeakPoints.Clear();
- 
-            foreach (WeakPoint candidate in weakPoints)
-            {
-                if (candidate == null)
-                {
-                    staleWeakPoints.Add(candidate);
-                    continue;
-                }
- 
-                result.Add(candidate);
-            }
- 
-            CleanupStaleEntries();
-            return result;
-        }
-    }
-
     public static bool Exists(string weakPointId)
     {
         return TryGetWeakPointById(weakPointId, out _);

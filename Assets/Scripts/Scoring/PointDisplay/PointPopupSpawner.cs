@@ -28,11 +28,6 @@ public class PointPopupSpawner : MonoBehaviour
     [SerializeField]
     private PointPopupStyle missStyle = new PointPopupStyle { label = "Miss", suffix = "", colour = Color.grey, scaleMultiplier = 0.8f };
 
-    [Header("Blocked Popup")]
-    [SerializeField] private string blockedText = "Blocked";
-    [SerializeField]
-    private PointPopupStyle blockedStyle = new PointPopupStyle { label = "Blocked", suffix = "", colour = Color.yellow, scaleMultiplier = 0.8f };
-
     private PointPopup[] pool;
     private int nextIndex;
 
@@ -55,7 +50,6 @@ public class PointPopupSpawner : MonoBehaviour
         {
             scoreManager.OnPointsAwarded += HandlePointsAwarded;
             scoreManager.OnShotMissed += HandleShotMissed;
-            scoreManager.OnShotBlocked += HandleShotBlocked;
         }
     }
 
@@ -65,7 +59,6 @@ public class PointPopupSpawner : MonoBehaviour
         {
             scoreManager.OnPointsAwarded -= HandlePointsAwarded;
             scoreManager.OnShotMissed -= HandleShotMissed;
-            scoreManager.OnShotBlocked -= HandleShotBlocked;
         }
     }
 
@@ -95,11 +88,6 @@ public class PointPopupSpawner : MonoBehaviour
     {
         // aint no side to pop from cuz aint no enemy cuz aint no globe earth
         SpawnPopup(missText, missStyle, worldPos, 0f);
-    }
-
-    private void HandleShotBlocked(Vector3 worldPos)
-    {
-        SpawnPopup(blockedText, blockedStyle, worldPos, 0f);
     }
 
     private PointPopupStyle StyleFor(int precision)

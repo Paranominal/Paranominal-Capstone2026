@@ -36,7 +36,7 @@ public class GameOverHandler : MonoBehaviour
             FinalScore = scoreManager.currentScore;
             FinalRank = scoreManager.currentRank;
         }
-            
-        LoadingManager.Instance?.LoadScene(nameEntrySceneBuildIndex, 5f);
+
+        SceneManager.LoadScene(nameEntrySceneBuildIndex);
     }
 }

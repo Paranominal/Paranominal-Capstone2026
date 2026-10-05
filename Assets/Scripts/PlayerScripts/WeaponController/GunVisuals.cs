@@ -1,7 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.ProBuilder.MeshOperations;
-using UnityEngine.UI;
 
 public class GunVisuals : MonoBehaviour
 {
@@ -10,13 +8,7 @@ public class GunVisuals : MonoBehaviour
     [SerializeField] private Transform gunModel;
     [SerializeField] private SpriteRenderer ironMuzzleFlash;
     [SerializeField] private SpriteRenderer silverMuzzleFlash;
-    // EDIT (special-shot): optional, falls back to the iron flash until Special Shot VFX are made.
-    [SerializeField] private SpriteRenderer specialMuzzleFlash;
-    [SerializeField] private WeaponInputReader weaponInputReader;
     [SerializeField] private Animator gunAnimator;
-    [SerializeField] private ParticleEmitter ironFxEmitter;
-    [SerializeField] private ParticleEmitter silverFxEmitter;
-    [SerializeField] private ParticleEmitter trueShotFxEmitter;
     [SerializeField] private Renderer[] gunPartRenderers;
 
     // Recoil and flash tuning values
@@ -31,15 +23,6 @@ public class GunVisuals : MonoBehaviour
     [Header("Misfire Visuals")]
     [SerializeField] private Material misfireMaterial;
     [SerializeField] private float misfiresTextureChangeDuration = 0.2f;
-
-    // TrueShot texture
-    [Header("TrueShot Visuals")]
-    [SerializeField] private SpecialShot trueShot;
-    [SerializeField] private Image trueShotCharge;
-    [SerializeField] private Material trueShotMaterial;
-
-    [Header("Debug")]
-    public bool debugMode;
 
     // Rest pose cache for the gun model
     // Kick animation always returns to these values to prevent drift over repeated shots
@@ -86,49 +69,11 @@ public class GunVisuals : MonoBehaviour
             }
         }
 
-        if (trueShot == null) GetComponent<SpecialShot>();
-        if (trueShot)
-        {
-            trueShot.OnStreakChanged += TrueShotUI;
-            trueShot.OnStateChanged += TrueShotState;
-            TrueShotUI(0, 0);
-        }
-
         // Find the animator if not explicitly assigned in inspector
         if (gunAnimator == null)
         {
             gunAnimator = GetComponent<Animator>();
         }
-    }
-
-    void Update()
-    {
-        if (trueShot && trueShot.IsUnlocked) DoTrueShotAnims();
-    }
-
-    void DoTrueShotAnims()
-    {
-        if (weaponInputReader.TrueShotInProgress() && trueShot.IsReady) AnimateTrueShot(true);
-        else if (weaponInputReader.AnyShotReleasedThisFrame()) AnimateTrueShot(false);
-    }
-
-    public void DoGunFX(WeakPointType shotType)
-    {
-        if (shotType == WeakPointType.Iron) ironFxEmitter.TriggerParticles();
-        else if (shotType == WeakPointType.Silver) silverFxEmitter.TriggerParticles();
-    }
-
-    public void DoTrueShotFX()
-    {
-        if (trueShotFxEmitter) trueShotFxEmitter.TriggerParticles();
-    }
-    
-    void AnimateTrueShot(bool animate)
-    {
-        // transform.Rotate(Vector3.forward * 100);
-        if (animate) ChangeMaterials(trueShotMaterial);
-        else ResetMaterials();
-        gunAnimator.SetBool("trueshot", animate);
     }
 
     // entry point called by firing logic
@@ -137,41 +82,6 @@ public class GunVisuals : MonoBehaviour
     {
         PlayMuzzleFlash(shotType);
         PlayRecoil();
-    }
-
-    private void TrueShotUI(int streak, int streakToCharge)
-    {
-        float f = (float) streak / streakToCharge;
-        if (debugMode) Debug.Log($"Streak: [{streak} / {streakToCharge}] = {f}");
-        
-        trueShotCharge.fillAmount = f;
-    }
-    private void TrueShotState(SpecialShot.SpecialShotState state)
-    {
-        if (state == SpecialShot.SpecialShotState.Armed) ChangeMaterials(trueShotMaterial);
-        else ResetMaterials();
-    }
-
-    private void ChangeMaterials(Material targetMaterial)
-    {
-        // Swap each gun part to the new material counterpart
-        for (int i = 0; i < gunPartRenderers.Length; i++)
-        {
-            if (gunPartRenderers[i] != null)
-            {
-                gunPartRenderers[i].material = targetMaterial;
-            }
-        }
-    }
-    private void ResetMaterials()
-    {
-        for (int i = 0; i < gunPartRenderers.Length; i++)
-        {
-            if (gunPartRenderers[i] != null && originalMaterials != null && i < originalMaterials.Length && originalMaterials[i] != null)
-            {
-                gunPartRenderers[i].material = originalMaterials[i];
-            }
-        }
     }
 
     // Returns the muzzle flash duration
@@ -226,14 +136,9 @@ public class GunVisuals : MonoBehaviour
         // reset both flashes first, then enable only the selected one
         if (ironMuzzleFlash != null) ironMuzzleFlash.enabled = false;
         if (silverMuzzleFlash != null) silverMuzzleFlash.enabled = false;
-        // EDIT (special-shot): reset the special flash too.
-        if (specialMuzzleFlash != null) specialMuzzleFlash.enabled = false;
 
         // Iron vs Silver weak-point rounds can have distinct muzzle visual assets
-        // EDIT (special-shot): Special gets its own branch instead of falling into Silver.
-        SpriteRenderer target;
-        if (shotType == WeakPointType.Special) target = specialMuzzleFlash != null ? specialMuzzleFlash : ironMuzzleFlash;
-        else target = shotType == WeakPointType.Iron ? ironMuzzleFlash : silverMuzzleFlash;
+        SpriteRenderer target = shotType == WeakPointType.Iron ? ironMuzzleFlash : silverMuzzleFlash;
         if (target == null) return;
 
         muzzleFlashRoutine = StartCoroutine(MuzzleFlashRoutine(target));
@@ -306,13 +211,26 @@ public class GunVisuals : MonoBehaviour
         if (gunPartRenderers == null || gunPartRenderers.Length == 0)
             yield break;
 
-        ChangeMaterials(misfireMaterial);
+        // Swap each gun part to the misfire material counterpart to visually indicate the weapon misfired
+        for (int i = 0; i < gunPartRenderers.Length; i++)
+        {
+            if (gunPartRenderers[i] != null)
+            {
+                gunPartRenderers[i].material = misfireMaterial;
+            }
+        }
 
         // Keep the misfire texture visible for the configured duration
         yield return new WaitForSeconds(misfiresTextureChangeDuration);
 
         // Restore the original materials for each part after the misfire effect concludes
-        ResetMaterials();
+        for (int i = 0; i < gunPartRenderers.Length; i++)
+        {
+            if (gunPartRenderers[i] != null && originalMaterials != null && i < originalMaterials.Length && originalMaterials[i] != null)
+            {
+                gunPartRenderers[i].material = originalMaterials[i];
+            }
+        }
     }
 
     public void SetVisualsVisible(bool visible)
@@ -344,7 +262,13 @@ public class GunVisuals : MonoBehaviour
             // Ensure the original materials are restored when visuals are disabled
             if (gunPartRenderers != null)
             {
-                ResetMaterials();
+                for (int i = 0; i < gunPartRenderers.Length; i++)
+                {
+                    if (gunPartRenderers[i] != null && originalMaterials != null && i < originalMaterials.Length && originalMaterials[i] != null)
+                    {
+                        gunPartRenderers[i].material = originalMaterials[i];
+                    }
+                }
             }
         }
 

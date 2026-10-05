@@ -86,22 +86,6 @@ public class AudioManager : MonoBehaviour
         source.PlayOneShot(clip, sound.GetRandomVolume());
     }
 
-    // a version of the PlaySound method with an input field for pitch, allowing pitch adjustment
-    public static void PlaySoundPitched(SoundDataSO sound, AudioSource source, bool oneShot, float pitch)
-    {
-        if (!oneShot)
-        {
-            PlaySound(sound, source);
-            return;
-        }
-
-        if (!TryPrepare(sound, source, out AudioClip clip)) return;
-
-        source.pitch = sound.GetRandomPitch() + pitch;
-
-        source.PlayOneShot(clip, sound.GetRandomVolume());
-    }
-
     // Applies the SO's full playback settings to the given source.
     private static void ConfigureSource(AudioSource source, SoundDataSO sound, AudioClip clip)
     {

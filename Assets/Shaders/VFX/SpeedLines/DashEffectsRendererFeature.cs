@@ -1,7 +1,5 @@
 // Summary: URP Renderer Feature that applies the dash post-processing effects.
 // Matches the project's established blit pattern (AddBlitPass + AddCopyPass).
-// EDIT (ethereal-grade): Adds an Ethereal Grade raster pass (shader pass 1) that runs before the
-// existing dash pass (shader pass 0). Requests the depth texture when depth fade is enabled.
 
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -32,10 +30,6 @@ public class DashEffectsRendererFeature : ScriptableRendererFeature
 
         var volume = VolumeManager.instance.stack.GetComponent<DashEffectsVolumeComponent>();
         if (volume == null || !volume.IsActive()) return;
-
-        // EDIT (ethereal-grade): only ask URP for the depth texture when depth fade actually needs it
-        bool needsDepth = volume.enableEthereal.value && volume.enableDepthFade.value;
-        pass.ConfigureInput(needsDepth ? ScriptableRenderPassInput.Depth : ScriptableRenderPassInput.None);
 
         renderer.EnqueuePass(pass);
     }
@@ -81,51 +75,20 @@ public class DashEffectsRenderPass : ScriptableRenderPass
     private static readonly int MaskHardnessID = Shader.PropertyToID("_MaskHardness");
     private static readonly int MaskPowerID    = Shader.PropertyToID("_MaskPower");
 
-    // EDIT (ethereal-grade): ethereal grade property IDs
-    private static readonly int DesaturationID      = Shader.PropertyToID("_Desaturation");
-    private static readonly int ShadowColourID      = Shader.PropertyToID("_ShadowColour");
-    private static readonly int HighlightColourID   = Shader.PropertyToID("_HighlightColour");
-    private static readonly int SplitToneBalanceID  = Shader.PropertyToID("_SplitToneBalance");
-    private static readonly int TintStrengthID      = Shader.PropertyToID("_TintStrength");
-    private static readonly int GlowThresholdID     = Shader.PropertyToID("_GlowThreshold");
-    private static readonly int GlowIntensityID     = Shader.PropertyToID("_GlowIntensity");
-    private static readonly int GlowSpreadID        = Shader.PropertyToID("_GlowSpread");
-    private static readonly int EnableDepthFadeID   = Shader.PropertyToID("_EnableDepthFade");
-    private static readonly int DepthFadeColourID   = Shader.PropertyToID("_DepthFadeColour");
-    private static readonly int DepthFadeStartID    = Shader.PropertyToID("_DepthFadeStart");
-    private static readonly int DepthFadeEndID      = Shader.PropertyToID("_DepthFadeEnd");
-    private static readonly int DepthFadeStrengthID = Shader.PropertyToID("_DepthFadeStrength");
-    private static readonly int EtherealDepthTexID  = Shader.PropertyToID("_EtherealDepthTex");
-
-    // EDIT (ethereal-grade): shader pass indices (dash stays at 0 so existing behaviour is unchanged)
-    private const int DashShaderPass     = 0;
-    private const int EtherealShaderPass = 1;
-
     private const string PassName = "DashEffectsRenderPass";
-    private const string EtherealPassName = "DashEtherealGradePass"; // EDIT (ethereal-grade)
     private Material material;
-
-    // EDIT (ethereal-grade): data handed to the ethereal grade raster pass
-    private class EtherealPassData
-    {
-        public TextureHandle source;
-        public TextureHandle depth;
-        public Material material;
-        public bool useDepth;
-    }
 
     public DashEffectsRenderPass(Material material)
     {
         this.material = material;
     }
 
-    // EDIT (ethereal-grade): now returns the volume so RecordRenderGraph can read the layer toggles
-    private DashEffectsVolumeComponent UpdateSettings()
+    private void UpdateSettings()
     {
-        if (material == null) return null;
+        if (material == null) return;
 
         var vol = VolumeManager.instance.stack.GetComponent<DashEffectsVolumeComponent>();
-        if (vol == null) return null;
+        if (vol == null) return;
 
         material.SetFloat(IntensityID, vol.intensity.value);
 
@@ -149,22 +112,6 @@ public class DashEffectsRenderPass : ScriptableRenderPass
         material.SetFloat(MaskScaleID, vol.maskScale.value);
         material.SetFloat(MaskHardnessID, vol.maskHardness.value);
         material.SetFloat(MaskPowerID, vol.maskPower.value);
-
-        // EDIT (ethereal-grade): push ethereal grade settings
-        material.SetFloat(DesaturationID, vol.desaturation.value);
-        material.SetColor(ShadowColourID, vol.shadowColour.value);
-        material.SetColor(HighlightColourID, vol.highlightColour.value);
-        material.SetFloat(SplitToneBalanceID, vol.splitToneBalance.value);
-        material.SetFloat(TintStrengthID, vol.tintStrength.value);
-        material.SetFloat(GlowThresholdID, vol.glowThreshold.value);
-        material.SetFloat(GlowIntensityID, vol.glowIntensity.value);
-        material.SetFloat(GlowSpreadID, vol.glowSpread.value);
-        material.SetColor(DepthFadeColourID, vol.depthFadeColour.value);
-        material.SetFloat(DepthFadeStartID, vol.depthFadeStart.value);
-        material.SetFloat(DepthFadeEndID, vol.depthFadeEnd.value);
-        material.SetFloat(DepthFadeStrengthID, vol.depthFadeStrength.value);
-
-        return vol;
     }
 
     public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
@@ -181,50 +128,13 @@ public class DashEffectsRenderPass : ScriptableRenderPass
         desc.depthBufferBits = 0;
         TextureHandle dst = renderGraph.CreateTexture(desc);
 
-        var vol = UpdateSettings(); // EDIT (ethereal-grade)
-        if (vol == null) return;    // EDIT (ethereal-grade)
+        UpdateSettings();
 
         if (material.GetFloat(IntensityID) < 0.001f) return;
 
         if (!src.IsValid() || !dst.IsValid()) return;
 
-        // EDIT (ethereal-grade): grade first into its own texture, then the dash pass reads from that
-        TextureHandle dashSource = src;
-
-        if (vol.enableEthereal.value)
-        {
-            var gradeDesc = desc;
-            gradeDesc.name = "_DashEtherealGradeTexture";
-            TextureHandle graded = renderGraph.CreateTexture(gradeDesc);
-
-            TextureHandle depth = resourceData.cameraDepthTexture;
-            bool useDepth = vol.enableDepthFade.value && depth.IsValid();
-            material.SetFloat(EnableDepthFadeID, useDepth ? 1f : 0f);
-
-            using (var builder = renderGraph.AddRasterRenderPass<EtherealPassData>(EtherealPassName, out var passData))
-            {
-                passData.source = src;
-                passData.depth = depth;
-                passData.material = material;
-                passData.useDepth = useDepth;
-
-                builder.UseTexture(src, AccessFlags.Read);
-                if (useDepth) builder.UseTexture(depth, AccessFlags.Read);
-                builder.SetRenderAttachment(graded, 0, AccessFlags.Write);
-
-                builder.SetRenderFunc((EtherealPassData data, RasterGraphContext ctx) =>
-                {
-                    if (data.useDepth)
-                        data.material.SetTexture(EtherealDepthTexID, (RTHandle)data.depth);
-
-                    Blitter.BlitTexture(ctx.cmd, data.source, new Vector4(1f, 1f, 0f, 0f), data.material, EtherealShaderPass);
-                });
-            }
-
-            dashSource = graded;
-        }
-
-        RenderGraphUtils.BlitMaterialParameters blitOut = new(dashSource, dst, material, DashShaderPass); // EDIT (ethereal-grade): reads graded texture when enabled
+        RenderGraphUtils.BlitMaterialParameters blitOut = new(src, dst, material, 0);
         renderGraph.AddBlitPass(blitOut, PassName);
 
         renderGraph.AddCopyPass(dst, src);

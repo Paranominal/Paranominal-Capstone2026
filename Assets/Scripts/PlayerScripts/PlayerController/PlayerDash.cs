@@ -16,22 +16,21 @@ public class PlayerDash : MonoBehaviour
     [SerializeField] private bool allowDashJump = false;
     [Tooltip("Cooldown after a dash before another dash can be started.")]
     [SerializeField] private float dashCooldown = 1f;
-    [Header("Dash Audio")]
-    [SerializeField] private SoundPlayer dashSound;
+
 
     [Header("Cooldown Arrow UI")]
     [Tooltip("Dull arrow image that is shown faded while dash is on cooldown.")]
-    [ShowIf("dashUsesCharges", false)][SerializeField] private Image dullArrow = null;
+    [SerializeField] private Image dullArrow = null;
     [Tooltip("Full arrow image that is filled bottom->top to indicate cooldown progress.")]
-    [ShowIf("dashUsesCharges", false)][SerializeField] private Image fullArrow = null;
-    [ShowIf("dashUsesCharges", false)][SerializeField] private GameObject arrowContainer = null;
+    [SerializeField] private Image fullArrow = null;
+    [SerializeField] private GameObject arrowContainer = null;
     [Tooltip("Alpha for the dull arrow while cooldown is active.")]
     [Range(0f, 1f)]
-    [ShowIf("dashUsesCharges", false)][SerializeField] private float dullFadeAlpha = 0.5f;
+    [SerializeField] private float dullFadeAlpha = 0.5f;
     [Tooltip("How long to keep the full arrow visible once the cooldown completes (seconds).")]
-    [ShowIf("dashUsesCharges", false)][SerializeField] private float showFullAfterCooldownSeconds = 1f;
+    [SerializeField] private float showFullAfterCooldownSeconds = 1f;
     [Tooltip("Duration of the fade-out after the arrow display (seconds).")]
-    [ShowIf("dashUsesCharges", false)][SerializeField] private float fadeOutDuration = 0.5f;
+    [SerializeField] private float fadeOutDuration = 0.5f;
 
     [Header("FOV Changes")]
     [Tooltip("Camera to modify. If null, Camera.main will be used.")]
@@ -50,36 +49,20 @@ public class PlayerDash : MonoBehaviour
     [Tooltip("How quickly the dash effects fade out after a dash ends (seconds).")]
     [SerializeField] private float dashEffectsFadeOut = 0.2f;
 
-    
     [Header("Charge Dash")]
     [Tooltip("When enabled, dash consumes charges instead of using the normal cooldown behaviour.")]
     [SerializeField] private bool dashUsesCharges = false;
     [Tooltip("Maximum number of dash charges the player can hold.")]
-    [ShowIf("dashUsesCharges", true)]
     [SerializeField] private int maxDashCharges = 3;
     [Tooltip("Short cooldown applied when using charges (seconds).")]
-    [ShowIf("dashUsesCharges", true)]
     [SerializeField] private float chargeDashCooldown = 0.5f;
     [Tooltip("UI fill image representing dash charges (fillAmount = charges / maxCharges).")]
-    [ShowIf("dashUsesCharges", true)]
     [SerializeField] private Image chargeBar = null;
-    [ShowIf("dashUsesCharges", true)]
     [SerializeField] private GameObject chargeBarContainer = null;
     [Tooltip("Time in seconds for the bar to go from 0 -> full via passive recharge.")]
-    [ShowIf("dashUsesCharges", true)]
     [SerializeField] private float secondsToFullCharge = 30f;
     [Tooltip("Fraction of the full bar to add on a weakpoint hit (e.g. 0.2 = +20% of full bar).")]
-    [ShowIf("dashUsesCharges", true)]
     [SerializeField][Range(0f, 1f)] private float weakpointRechargeBonus = 0.2f;
-
-    [Header("Charge Flash")]
-    [Tooltip("Color to flash the charge bar when a charge is gained.")]
-    [ShowIf("dashUsesCharges", true)]
-    [SerializeField] private Color chargeFlashColor = new Color(0.2f, 0.6f, 1f, 1f); // bluish
-    [Tooltip("Duration of the flash (seconds).")]
-    [ShowIf("dashUsesCharges", true)]
-    [SerializeField] private float chargeFlashDuration = 0.12f;
-    
 
     // UI state
     private bool cooldownActive = false;
@@ -97,24 +80,6 @@ public class PlayerDash : MonoBehaviour
     private float dashCooldownTimer = 0f;
     // normalized 0..1 charge value (1 == full)
     private float currentDashCharges = 0f;
-    private float ChargePerDash => 1f / Mathf.Max(1, maxDashCharges);
-
-    // charge flash state
-    private float chargeFlashTimer = 0f;
-    private Color chargeBarOriginalColor = Color.white;
-    private float lastNormalizedCharges = 0f;
-    private AnimationCurve chargeFlashCurve = default;
-
-    // Enemy collision exclusion during dash
-    [Tooltip("Layer name of enemies to ignore during dash.")]
-    [SerializeField] private string enemyLayerName = "Enemy";
-    private int enemyLayer = -1;
-    private bool ignoringEnemyCollisions = false;
-
-    [Tooltip("Radius used to detect enemies to stagger while dashing (world units). If collisions are ignored, an overlap will be used.")]
-    [SerializeField] private float dashStaggerRadius = 0.6f;
-    // track enemies already staggered during the current dash to avoid repeat triggers
-    private HashSet<Enemy> staggeredEnemiesThisDash = new HashSet<Enemy>();
 
     // reference to weapon events for listening to shot results
     private WeaponEvents weaponEvents = null;
@@ -151,17 +116,6 @@ public class PlayerDash : MonoBehaviour
         currentDashCharges = 1f;
         UpdateChargeUI();
 
-        // cache the original charge bar color for flashing
-        if (chargeBar != null)
-            chargeBarOriginalColor = chargeBar.color;
-
-        // ensure the flash curve has a default easing if not set in inspector
-        if (chargeFlashCurve == null || chargeFlashCurve.keys.Length == 0)
-            chargeFlashCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
-
-        // initialize lastNormalizedCharges so first detection is stable
-        lastNormalizedCharges = currentDashCharges;
-
         // Try to find WeaponEvents to subscribe for shot results so we can grant charges on weakpoint hits
         weaponEvents = GetComponent<WeaponEvents>();
         if (weaponEvents == null)
@@ -186,9 +140,6 @@ public class PlayerDash : MonoBehaviour
     {
         if (weaponEvents != null)
             weaponEvents.ShotResolved -= OnShotResolved;
-
-        // Ensure we restore layer in case object is destroyed while dashing
-        EndEnemiesLoseCollision();
 
         // Michael edit: zero out the effect so it doesn't persist after player is destroyed
         if (dashEffectsComponent != null)
@@ -240,9 +191,6 @@ public class PlayerDash : MonoBehaviour
                     dashDirection = transform.forward;
 
                 isDashing = true;
-                // clear per-dash set so each enemy can be staggered once per dash
-                staggeredEnemiesThisDash.Clear();
-                BeginEnemiesLoseCollision();
                 dashTimer = dashDuration;
                 // consume a charge if using the charge-based dash (consume fractional amount)
                 if (dashUsesCharges)
@@ -251,7 +199,6 @@ public class PlayerDash : MonoBehaviour
                     UpdateChargeUI();
                 }
                 StartDashFOV();
-                dashSound.PlaySound(0);
             }
         }
 
@@ -264,8 +211,6 @@ public class PlayerDash : MonoBehaviour
             if (dashTimer <= 0f)
             {
                 isDashing = false;
-                staggeredEnemiesThisDash.Clear();
-                EndEnemiesLoseCollision();
                 EndDashFOV();
                 // start cooldown (shorter when using charges)
                 dashCooldownTimer = dashUsesCharges ? chargeDashCooldown : dashCooldown;
@@ -278,8 +223,6 @@ public class PlayerDash : MonoBehaviour
         if (isDashing)
         {
             isDashing = false;
-            staggeredEnemiesThisDash.Clear();
-            EndEnemiesLoseCollision();
             EndDashFOV();
             dashCooldownTimer = dashUsesCharges ? chargeDashCooldown : dashCooldown;
         }
@@ -303,15 +246,6 @@ public class PlayerDash : MonoBehaviour
             if (currentDashCharges < 1f && secondsToFullCharge > 0f)
             {
                 currentDashCharges = Mathf.Clamp01(currentDashCharges + (Time.deltaTime / secondsToFullCharge));
-            }
-
-            // detect when we've gained one or more whole charges (crossed integer thresholds)
-            int prevCount = Mathf.FloorToInt(lastNormalizedCharges * Mathf.Max(1, maxDashCharges) + 0.0001f);
-            int newCount = Mathf.FloorToInt(currentDashCharges * Mathf.Max(1, maxDashCharges) + 0.0001f);
-            if (newCount > prevCount)
-            {
-                // trigger a brief flash
-                chargeFlashTimer = chargeFlashDuration;
             }
         }
 
@@ -386,71 +320,6 @@ public class PlayerDash : MonoBehaviour
 
         // Update charge UI each frame (reflect normalized value)
         UpdateChargeUI();
-
-        // update charge-bar flash tint if active
-        if (chargeBar != null)
-        {
-            if (chargeFlashTimer > 0f)
-            {
-                chargeFlashTimer -= Time.deltaTime;
-                float alpha = Mathf.Clamp01(1f - (chargeFlashTimer / chargeFlashDuration));
-                float eased = chargeFlashCurve != null && chargeFlashCurve.keys.Length > 0 ? chargeFlashCurve.Evaluate(alpha) : alpha;
-                // start at flash color and ease back to original
-                chargeBar.color = Color.Lerp(chargeFlashColor, chargeBarOriginalColor, eased);
-            }
-            else
-            {
-                // ensure original color restored
-                if (chargeBar.color != chargeBarOriginalColor)
-                    chargeBar.color = chargeBarOriginalColor;
-            }
-        }
-
-        // store lastNormalizedCharges for next-frame detection
-        lastNormalizedCharges = currentDashCharges;
-
-        // If we're currently dashing and collisions are being ignored, perform a physics overlap
-        // to detect enemies we pass through and trigger their stagger.
-        if (isDashing)
-            DetectDashOverlapStagger();
-    }
-
-
-    // If collisions are ignored while dashing, use an overlap sphere to detect enemies we pass through and trigger stagger.
-    private void DetectDashOverlapStagger()
-    {
-        // ensure enemy layer index resolved
-        if (enemyLayer < 0)
-            enemyLayer = LayerMask.NameToLayer(enemyLayerName);
-        if (enemyLayer < 0)
-            return;
-
-        // use a layer mask for the Physics query
-        int mask = 1 << enemyLayer;
-
-        // perform overlap at player position with configured radius
-        Collider[] cols = Physics.OverlapSphere(transform.position, dashStaggerRadius, mask, QueryTriggerInteraction.Ignore);
-        if (cols == null || cols.Length == 0) return;
-
-        foreach (var c in cols)
-        {
-            // try to find an Enemy on the collider or its parents
-            Enemy enemy = c.GetComponentInParent<Enemy>();
-            if (enemy == null) continue;
-
-            // avoid triggering the same enemy multiple times during one dash
-            if (staggeredEnemiesThisDash.Contains(enemy)) continue;
-
-            EnemyStagger stagger = enemy.GetComponent<EnemyStagger>();
-            if (stagger != null && stagger.canBeHit && !stagger.IsStaggered)
-            {
-                stagger.TriggerStagger();
-                staggeredEnemiesThisDash.Add(enemy);
-
-                // trigger camera shake when we stagger an enemy by passing through it
-                CameraEffects.Instance?.Shake();
-            }
-        }
     }
 
     // Michael edit: drives the volume component intensity based on dash state
@@ -515,14 +384,13 @@ public class PlayerDash : MonoBehaviour
                 float denom = chargeDashCooldown <= 0f ? 1f : chargeDashCooldown;
                 float fill = 1f - Mathf.Clamp01(dashCooldownTimer / denom);
                 fullArrow.fillAmount = fill;
-            }
-            else
+            } else
             {
                 float denom = dashCooldown <= 0f ? 1f : dashCooldown;
                 float fill = 1f - Mathf.Clamp01(dashCooldownTimer / denom);
                 fullArrow.fillAmount = fill;
             }
-
+            
         }
 
 
@@ -592,41 +460,6 @@ public class PlayerDash : MonoBehaviour
         desiredFov = preDashFov;
         fovActive = true;
     }
-
-    // Exclude enemy collisions during dash
-    private void BeginEnemiesLoseCollision()
-    {
-        if (ignoringEnemyCollisions)
-            return;
-
-        enemyLayer = LayerMask.NameToLayer(enemyLayerName);
-        if (enemyLayer < 0)
-        {
-            Debug.LogWarning($"Enemy layer '{enemyLayerName}' not found.");
-            return;
-        }
-
-        int playerLayer = gameObject.layer;
-        Physics.IgnoreLayerCollision(playerLayer, enemyLayer, true);
-        ignoringEnemyCollisions = true;
-
-    }
-
-    private void EndEnemiesLoseCollision()
-    {
-        if (!ignoringEnemyCollisions)
-            return;
-
-        int playerLayer = gameObject.layer;
-        if (enemyLayer < 0)
-            enemyLayer = LayerMask.NameToLayer(enemyLayerName);
-        if (enemyLayer < 0)
-            return;
-
-        Physics.IgnoreLayerCollision(playerLayer, enemyLayer, false);
-        ignoringEnemyCollisions = false;
-    }
-
     // Adds dash charges
     public void AddDashCharge(int amount = 1)
     {
@@ -656,6 +489,8 @@ public class PlayerDash : MonoBehaviour
         chargeBar.fillAmount = Mathf.Clamp01(currentDashCharges);
     }
 
+    private float ChargePerDash => 1f / Mathf.Max(1, maxDashCharges);
+
     public void DashVersionEnabled(string version)
     {
         dashEnabled = true;
@@ -671,22 +506,4 @@ public class PlayerDash : MonoBehaviour
             chargeBarContainer.SetActive(false);
         }
     }
-
-    private void OnControllerColliderHit(ControllerColliderHit hit)
-    {
-        Enemy enemy = hit.gameObject.GetComponent<Enemy>();
-        if (enemy != null && isDashing)
-        {
-            // If we hit an enemy while dashing, trigger their stagger component (if present).
-            // Check canBeHit and not already staggered to avoid redundant calls.
-            EnemyStagger stagger = hit.gameObject.GetComponent<EnemyStagger>();
-            if (stagger != null && stagger.canBeHit && !stagger.IsStaggered)
-            {
-                stagger.TriggerStagger();
-                // trigger camera shake when colliding with an enemy during dash
-                CameraEffects.Instance?.Shake();
-            }
-        }
-    }
-}   
-
+}

@@ -38,9 +38,6 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     [Header("Wave Settings")]
     [SerializeField] private int maxWaves = 1;
     [SerializeField] private float timeBetweenWaves = 3f;
-    // EDIT (spawn-delay): Delay before the first wave spawns after the player enters the room.
-    [Tooltip("Seconds to wait after the player enters the room before the first wave spawns.")]
-    [SerializeField] private float initialSpawnDelay = 0f;
 
     // --- Standard Mode ---
     [Header("Standard Mode - Spawn Points")]
@@ -87,12 +84,6 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         if (encounterMode == EncounterMode.Standard)
         {
             SyncSpawnPointEnemyPools();
-        }
-
-        // EDIT (spawn-delay): Keep the initial spawn delay from going negative.
-        if (initialSpawnDelay < 0f)
-        {
-            initialSpawnDelay = 0f;
         }
     }
 
@@ -191,9 +182,6 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
     // Repeats the full wave cycle of spawning, waiting, and advancing until the maximum number of waves is reached.
     private IEnumerator WaveLoopRoutine()
     {
-        // EDIT (spawn-delay): Wait out the initial delay before the first wave.
-        yield return StartCoroutine(WaitForInitialSpawnDelayRoutine());
-
         while (currentWave < maxWaves)
         {
             yield return StartCoroutine(WaitUntilPlayerIsInRoomRoutine());
@@ -273,22 +261,6 @@ public class EnemyEncounterManager : MonoBehaviour, IEnemySpawner
         while (spawnedEnemies.Count > 0)
         {
             spawnedEnemies.RemoveAll(enemy => enemy == null);
-            yield return null;
-        }
-    }
-
-    // EDIT (spawn-delay): Waits before the first wave, only counting time while the player is in the room.
-    private IEnumerator WaitForInitialSpawnDelayRoutine()
-    {
-        float timer = 0f;
-
-        while (timer < initialSpawnDelay)
-        {
-            if (isPlayerInRoom)
-            {
-                timer += Time.deltaTime;
-            }
-
             yield return null;
         }
     }
