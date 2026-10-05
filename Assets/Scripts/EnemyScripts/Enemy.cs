@@ -89,6 +89,8 @@ public class Enemy : MonoBehaviour
     private IEnemySpawner ownerSpawner;
     private bool isCreatedBySpawner;
     private bool hasReportedDeathToSpawner;
+    // EDIT (bestiary): raised when this enemy starts dying. Used by BestiaryTracker to record kills.
+    public event Action<Enemy> OnDied;
 
     // animation trigger guard (prevents re-queuing the same trigger every frame)
     private string lastAnimTrigger;
@@ -564,6 +566,7 @@ public class Enemy : MonoBehaviour
     {
         if (IsDying) return;
         IsDying = true;
+        OnDied?.Invoke(this); // EDIT (bestiary): notify listeners of the kill.
         behaviourState = BehaviourState.Dying;
         if (movement != null) movement.Stop();
         if (stagger != null) stagger.canBeHit = false;
