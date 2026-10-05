@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ public class TutorialManager : MonoBehaviour
 {
     [Header("Dependancies")]
     [SerializeField] private DialogueManager dialogueManager;
+    [Header("Options")]
+    [SerializeField] float tutDelay = 0.5f;
     [Header("Initial Entries")]
     [SerializeField] private Inventory inventory;
     [SerializeField] private List<GameObject> initialEntries;
@@ -45,24 +48,35 @@ public class TutorialManager : MonoBehaviour
     void TriggerReloadedTutorial()
     {
         weaponEvents.ReloadStarted -= TriggerReloadedTutorial; // unsub
-        dialogueManager.StartDialogue(reloadTut); //trigger tut
+        DoTutorial(reloadTut); //trigger tut
     }
 
     void TriggerShootEnemyTutorial(ShotResult result)
     {
         if (result.Outcome != ShotOutcome.EnemyHit) return; // if anything but EnemyHit
         weaponEvents.ShotResolved -= TriggerShootEnemyTutorial; // unsub
-        dialogueManager.StartDialogue(shootDemonTut); // trigger tut
+        DoTutorial(shootDemonTut); // trigger tut
     }
 
     void ImmuneEnemySpawned(Enemy immuneEnemy)
     {
         immuneEnemy.ImmuneHit += TriggerImmuneTutorial;
     }
-    
+
     void TriggerImmuneTutorial(Enemy immuneEnemy)
     {
         immuneEnemy.ImmuneHit -= TriggerImmuneTutorial;
-        dialogueManager.StartDialogue(immuneTut); // trigger tut
+        DoTutorial(immuneTut); // trigger tut
+    }
+
+    void DoTutorial(GameObject tut)
+    {
+        StartCoroutine(TutorialCoroutine(tut));
+    }
+    
+    IEnumerator TutorialCoroutine(GameObject tut)
+    {
+        yield return new WaitForSeconds(tutDelay);
+        dialogueManager.StartDialogue(tut);
     }
 }
