@@ -59,7 +59,7 @@ public class SceneReset : MonoBehaviour
     void DoReset()
     {
         Debug.Log($"Resetting Scene to [Scene: {sceneBuildIndex}]!");
-        SceneManager.LoadScene(sceneBuildIndex);
+        LoadingManager.Instance?.LoadScene(sceneBuildIndex);
     }
     public void ToggleTimeout(bool toggle)
     {

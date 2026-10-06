@@ -65,7 +65,6 @@ public class LoadingManager : MonoBehaviour
         OnLoadStarted?.Invoke(buildIndex);
         yield return TransitionManager.Instance?.TransitionIn();
         loadingScreen.SetActive(true);
-        PauseManager.Instance?.PauseGame();
         yield return TransitionManager.Instance?.TransitionOut();
 
         AsyncOperation operation = SceneManager.LoadSceneAsync(buildIndex);
@@ -92,7 +91,6 @@ public class LoadingManager : MonoBehaviour
         }
 
         loadingScreen.SetActive(false);
-        PauseManager.Instance?.ResumeGame();
         IsLoading = false;
         OnLoadCompleted?.Invoke(buildIndex);
         yield return TransitionManager.Instance?.TransitionOut();
