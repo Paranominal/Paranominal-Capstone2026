@@ -7,8 +7,15 @@ using UnityEngine.AI;
 // Self-managed enemy spawn point that works without an EnemyEncounterManager.
 // Spawns a single enemy once, either when the player enters the detection radius (if enabled)
 // or when SpawnEnemy() is called externally. Acts as the spawned enemy's owner spawner.
+// EDIT (boss-doors): boss spawners lock their doors on spawn and unlock them when the boss dies.
 public class EnemySpawnPoint_Standalone : MonoBehaviour, IEnemySpawner
 {
+    [Header("Boss Spawner")]
+    [Tooltip("Does this spawn a Boss Enemy? Leave unticked if it spawns a Sub-Boss.")]
+    [SerializeField] private bool isBossSpawner;
+    [ShowIf("isBossSpawner")]
+    [SerializeField] private Door[] bossDoors;
+
     [Header("Enemy")]
     [SerializeField] private GameObject enemyPrefab;
 
@@ -127,15 +134,19 @@ public class EnemySpawnPoint_Standalone : MonoBehaviour, IEnemySpawner
 
         Enemy enemyBehaviour = spawnedObject.GetComponent<Enemy>();
 
-        if (enemyBehaviour != null)
+        if (enemyBehaviour == null)
         {
-            enemyBehaviour.SetOwnerSpawner(this);
-            spawnedEnemy = enemyBehaviour;
-            return enemyBehaviour;
+            Debug.LogWarning($"{spawnedObject.name} is missing an Enemy component.");
+            return null;
         }
 
-        Debug.LogWarning($"{spawnedObject.name} is missing an Enemy component.");
-        return null;
+        enemyBehaviour.SetOwnerSpawner(this);
+        spawnedEnemy = enemyBehaviour;
+
+        // EDIT (boss-doors): moved above the return so it actually runs
+        if (isBossSpawner) LockBossDoors();
+
+        return enemyBehaviour;
     }
 
     // Waits for the configured delay, then re-enables only the renderers that were originally active at instantiation.
@@ -163,6 +174,26 @@ public class EnemySpawnPoint_Standalone : MonoBehaviour, IEnemySpawner
         if (deadEnemy == spawnedEnemy)
         {
             spawnedEnemy = null;
+            if (isBossSpawner) UnlockBossDoors();
+        }
+    }
+
+    // EDIT (boss-doors): door helpers, skip empty slots in the array
+    private void LockBossDoors()
+    {
+        if (bossDoors == null) return;
+        foreach (Door door in bossDoors)
+        {
+            if (door != null) door.BossLock();
+        }
+    }
+
+    private void UnlockBossDoors()
+    {
+        if (bossDoors == null) return;
+        foreach (Door door in bossDoors)
+        {
+            if (door != null) door.BossUnlock();
         }
     }
 
@@ -177,6 +208,16 @@ public class EnemySpawnPoint_Standalone : MonoBehaviour, IEnemySpawner
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, detectionRadius);
+        }
+
+        // EDIT (boss-doors): links to the boss doors (red)
+        if (isBossSpawner && bossDoors != null)
+        {
+            Gizmos.color = Color.red;
+            foreach (Door door in bossDoors)
+            {
+                if (door != null) Gizmos.DrawLine(transform.position, door.transform.position);
+            }
         }
     }
 }

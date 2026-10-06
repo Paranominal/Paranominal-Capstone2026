@@ -280,9 +280,11 @@ public class Enemy_BossMain : Enemy_Boss, IEnemySpawner
         #endif
     }
 
+    
+
 
     // Scene Gizmos
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     protected override void OnDrawGizmosSelected()
     {
         base.OnDrawGizmosSelected();
