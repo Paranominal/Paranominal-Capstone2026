@@ -11,6 +11,7 @@ public class SceneReset : MonoBehaviour
     [Tooltip("the Build Index of the scene you want to load. Typically 0")]
     [SerializeField] private int sceneBuildIndex;
     [SerializeField] private bool doTimeout = true;
+    [SerializeField] private bool enableResetButton = true;
     [SerializeField] private float timeOutSeconds = 30;
     [SerializeField] private WeaponInputReader weaponInput;
     [SerializeField] private PlayerInputReader playerInput;
@@ -34,6 +35,7 @@ public class SceneReset : MonoBehaviour
 
     void PressReset()
     {
+        if (!enableResetButton) return;
         if (resetInput.action.WasReleasedThisFrame()) DoReset();
     }
     void TimeoutTimer()

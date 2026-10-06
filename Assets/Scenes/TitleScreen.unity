@@ -559,17 +559,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a4f6a81420ec5024082d325af3706d5e, type: 3}
---- !u!114 &384120911 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1894943927161575541, guid: a4f6a81420ec5024082d325af3706d5e, type: 3}
-  m_PrefabInstance: {fileID: 384120910}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73dd29e2e02a7bb48892d5e5245e46a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LoadingManager
 --- !u!1 &471920500
 GameObject:
   m_ObjectHideFlags: 0
@@ -1782,6 +1771,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1010109588}
   m_Mesh: {fileID: 4065713428835263799, guid: 0f3499d3bd0d74142ac6540734d0b77d, type: 3}
+--- !u!114 &1078201834 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 133408828328960503, guid: a4f061e9460795247b1617521012d014, type: 3}
+  m_PrefabInstance: {fileID: 8453483189684778568}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d1a9be836a0c594dba7f966c45c90f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &1104441057
 GameObject:
   m_ObjectHideFlags: 0
@@ -3877,10 +3877,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 384120911}
-        m_TargetAssemblyTypeName: LoadingManager, Assembly-CSharp
-        m_MethodName: LoadScene
-        m_Mode: 3
+      - m_Target: {fileID: 1078201834}
+        m_TargetAssemblyTypeName: TitleScreenManager, Assembly-CSharp
+        m_MethodName: Play
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
