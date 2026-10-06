@@ -115,6 +115,11 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         if (IsImmune) // this should read the damage info but not worth rn
         {
             EnemyShot?.Invoke(info, false);
+
+            // needed to output the "blocked" shots popup
+            ScoreManager scoreManager = FindAnyObjectByType<ScoreManager>();
+            if (scoreManager != null)
+                scoreManager.ReportBlockedShot(info.hitPoint);
             return;
         }
         else EnemyShot?.Invoke(info, true);
