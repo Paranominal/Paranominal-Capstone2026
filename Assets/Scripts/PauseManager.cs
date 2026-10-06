@@ -35,7 +35,6 @@ public class PauseManager : MonoBehaviour
         Cursor.visible = true;
         isPaused = true;
     }    
-    
     public void ResumeGame()
     {
         // Set Time.timeScale back to 1 to resume gameplay

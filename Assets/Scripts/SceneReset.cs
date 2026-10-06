@@ -7,11 +7,17 @@ using UnityEngine.SceneManagement;
 
 public class SceneReset : MonoBehaviour
 {
+    public static SceneReset Instance { get; private set; }
     [SerializeField] private InputActionReference resetInput;
     [Tooltip("the Build Index of the scene you want to load. Typically 0")]
     [SerializeField] private int sceneBuildIndex;
     [SerializeField] private bool doTimeout = true;
     [SerializeField] private bool enableResetButton = true;
+    public bool EnableResetButton
+   {
+        get => enableResetButton;
+        set => enableResetButton = value;
+    }
     [SerializeField] private float timeOutSeconds = 30;
     [SerializeField] private WeaponInputReader weaponInput;
     [SerializeField] private PlayerInputReader playerInput;

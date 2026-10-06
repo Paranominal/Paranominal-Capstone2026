@@ -42,6 +42,6 @@ public class NameEntryController : MonoBehaviour
             Debug.LogWarning($"No LeaderboardManager in scene.");
         }
 
-        SceneManager.LoadScene(leaderboardSceneBuildIndex);
+        LoadingManager.Instance?.LoadScene(leaderboardSceneBuildIndex);
     }
 }
