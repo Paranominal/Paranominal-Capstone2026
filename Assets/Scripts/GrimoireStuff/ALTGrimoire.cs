@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.InputSystem;
@@ -76,6 +77,11 @@ public class ALTGrimoire : MonoBehaviour
     [SerializeField] private GameObject minimisedContentL;
     [Tooltip("Parent of the Minimised UI elements on BookR.")]
     [SerializeField] private GameObject minimisedContentR;
+
+    [Header("Shoulder Buttons Focus")]
+    [Tooltip("Switching tabs selects the first interactable element.")]
+    [SerializeField] private Transform[] tabFocusContainers; //ie, the parent that holds the rows
+    private Coroutine focusContentRoutine; 
 
     [Header("External Systems")]
     public PhotoSnapshots snapshotHandler;
@@ -328,7 +334,7 @@ public class ALTGrimoire : MonoBehaviour
 
         UpdateTabButtonVisuals(activeIndex);
 
-        if (grimoireActive) SelectTab();
+        if (grimoireActive) FocusTabContent();
     }
 
     private void DisableAllPanels()
@@ -379,13 +385,49 @@ public class ALTGrimoire : MonoBehaviour
         Gamepad pad = Gamepad.current;
         if (pad == null) return;
 
+        //wrap list
         int tabCount = tabButtons.Length;
         int index = (int)activeTab;
 
         if (pad.rightShoulder.wasPressedThisFrame)
+        {
             SwitchTab((GrimoireTab)((index + 1) % tabCount));
+            FocusTabContent();
+        }
         else if (pad.leftShoulder.wasPressedThisFrame)
+        {
             SwitchTab((GrimoireTab)((index - 1 + tabCount) % tabCount));
+            FocusTabContent();
+        }
+    }
+
+    private void FocusTabContent()
+    {
+        if (focusContentRoutine != null) StopCoroutine(focusContentRoutine); //cancels previous focus routine if existing
+        focusContentRoutine = StartCoroutine(GetTabContent());
+    }
+
+    private IEnumerator GetTabContent()
+    {
+        //wait a frame before selecting
+        yield return null;
+        focusContentRoutine = null;
+
+        //focus if interface is fully open
+        if (!grimoireActive || EventSystem.current == null) yield break;
+
+        //select the first interactable element 
+        int i = (int)activeTab;
+        if (tabFocusContainers == null || i >= tabFocusContainers.Length || tabFocusContainers[i] == null) yield break;
+        foreach (Selectable selectable in tabFocusContainers[i].GetComponentsInChildren<Selectable>())
+        {
+            if (selectable.IsInteractable() && selectable.navigation.mode != Navigation.Mode.None)
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+                EventSystem.current.SetSelectedGameObject(selectable.gameObject);
+                yield break;
+            }
+        }
     }
 
     // ---- Entries ----
@@ -406,7 +448,6 @@ public class ALTGrimoire : MonoBehaviour
         }
         Debug.LogWarning("No entry of that name could be found, returning null.");
         return null;
-   
     }
 
     public int GetEntryID(string name)
