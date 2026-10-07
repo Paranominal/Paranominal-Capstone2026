@@ -5138,7 +5138,7 @@ MonoBehaviour:
   aggroRange: 15
   movementScript: {fileID: 311667976775771018}
   attacks:
-  - {fileID: 312799391672767702}
+  - {fileID: 8872695807947338100}
   stagger: {fileID: 8548854153099920675}
   animator: {fileID: 895717910277464556}
   soundPlayer: {fileID: 626628679151542720}
@@ -5153,6 +5153,7 @@ MonoBehaviour:
   debugMode: 0
   _state: Inactive
   _activeAttack: None
+  _targetAttack: None
   _orbitDistance: 0
 --- !u!114 &311667976775771018
 MonoBehaviour:
@@ -5188,11 +5189,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6451794592179634668}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62e3abad7d85a1c48acc23fe611372ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_Charge
+  minRange: 0
   attackRange: 5
   cooldownTime: 2
   windupIndicator: {fileID: 8589463809482336887}
@@ -5214,7 +5216,7 @@ MonoBehaviour:
   useBackOff: 0
   backOffDistance: 3
   backOffSpeed: 5
-  damage: 10
+  damage: 25
   collisionCastRadius: 0.5
   geometryLayers:
     serializedVersion: 2
@@ -5227,11 +5229,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6451794592179634668}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ae32cdccd217da34db40c47ced2c6507, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_Melee
+  minRange: 0
   attackRange: 3
   cooldownTime: 2
   windupIndicator: {fileID: 8589463809482336887}
@@ -5263,6 +5266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1ef647f0810f5f4f96d9ee7d842cc95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_Ranged
+  minRange: 0
   attackRange: 12
   cooldownTime: 5
   windupIndicator: {fileID: 8589463809482336887}

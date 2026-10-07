@@ -11,6 +11,7 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     [Header("Stun")]
     [Tooltip("The amount of force applied to the stun knockback when the player is hit. -1 will use the damage amount.")]
     [SerializeField] private float knockbackForce = 2f;
+    [SerializeField] private float screenShakeIntensity = 1f;
 
     [Header("Audio")]
     [SerializeField] private AudioManager hurtManager;
@@ -39,7 +40,7 @@ public class PlayerStatus : MonoBehaviour, IDamageable
         if (isInvincible)
             return;
         fearBar.TakeDamage(info.amount);
-        CameraEffects.Instance?.Shake();
+        CameraEffects.Instance?.Shake(info.amount * screenShakeIntensity);
 
         AudioManager.PlaySound(hurtImpactSound, hurtSource, true);
         AudioManager.PlaySound(hurtVocalSound, hurtSource, true);

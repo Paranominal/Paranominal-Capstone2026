@@ -125,6 +125,12 @@ public class CameraEffects : MonoBehaviour
         Shake(defaultShakeIntensity, defaultShakeDuration);
     }
 
+    public void Shake(float intensity)
+    {
+        if (!enableShake) return;
+        Shake(intensity, defaultShakeDuration);
+    }
+
     // Start a shake with custom intensity and duration. Restarts if already shaking.
     public void Shake(float intensity, float duration)
     {
