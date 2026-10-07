@@ -114,6 +114,7 @@ public class ALTGrimoire : MonoBehaviour
         panels = new GameObject[] { inventoryPanel, bestiaryPanel, settingsPanel };
         tabButtons = new Button[] { inventoryTabButton, bestiaryTabButton, settingsTabButton };
 
+        //keep tab animator active
         foreach (Button tab in tabButtons)
         {
             if (tab != null && tab.TryGetComponent(out Animator tabAnimator))
@@ -372,6 +373,7 @@ public class ALTGrimoire : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(tabButtons[i].gameObject);
     }
 
+    //controller shoulder button switching
     private void HandleTabShoulderInput()
     {
         Gamepad pad = Gamepad.current;
