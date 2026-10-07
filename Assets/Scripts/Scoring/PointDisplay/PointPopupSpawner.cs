@@ -88,7 +88,9 @@ public class PointPopupSpawner : MonoBehaviour
         nextIndex = (nextIndex + 1) % poolSize;
 
         popup.gameObject.SetActive(true);
-        popup.Play(text, style, worldPos, side);
+
+        Vector3 randomoffset = new Vector3 (Random.Range(-1f,1f), Random.Range (0.5f,1.5f));
+        popup.Play(text, style, worldPos+ randomoffset, side, Random.Range(-15,15));
     }
 
     private void HandleShotMissed(Vector3 worldPos)
