@@ -4,6 +4,8 @@ using System.Collections;
 
 public class PlayerStatus : MonoBehaviour, IDamageable
 {
+    public static PlayerStatus Instance { get; private set; }
+
     [SerializeField] private FearBar fearBar;
     [SerializeField] private CameraEffects cameraEffects;
     [SerializeField] private PlayerMover playerMover;
@@ -25,13 +27,20 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     public bool IsInEncounter { get; set; }
 
     // Tracks whether the player is currently safe
-    private bool isInvincible;
+    public bool isInvincible;
 
     // Michael feature (auto-resolve): fallback for cross-prefab references.
     private void Awake()
     {
         if (cameraEffects == null)
             cameraEffects = FindAnyObjectByType<CameraEffects>();
+
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
     }
 
     public void TakeDamage(DamageInfo info)
@@ -51,7 +60,7 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     }
 
     private Coroutine invincibleCoroutine;
-    private void StartInvinciblePeriod(float duration)
+    public void StartInvinciblePeriod(float duration)
     {
         // If already invincible, do not restart the timer
         if (isInvincible)
