@@ -1,19 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7153277245907681317
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18b9f2d9f60082f42b0b25967357b122, type: 3}
-  m_Name: ImpactFrameRendererFeature
-  m_EditorClassIdentifier: Assembly-CSharp::ImpactFrameRendererFeature
-  m_Active: 1
-  shader: {fileID: 4800000, guid: 3e757c28eda5d19439cff2f289badebf, type: 3}
 --- !u!114 &-6917648197494371644
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,27 +78,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpeedLinesRendererFeature
   m_Active: 1
   shader: {fileID: 4800000, guid: 28af316500bc58d44a0f8bbacaa25896, type: 3}
---- !u!114 &-3268749019044521871
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1614fc811f8f184697d9bee70ab9fe5, type: 3}
-  m_Name: DecalRendererFeature
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.DecalRendererFeature
-  m_Active: 1
-  m_Settings:
-    technique: 0
-    maxDrawDistance: 1000
-    decalLayers: 0
-    dBufferSettings:
-      surfaceData: 2
-    screenSpaceSettings:
-      normalBlend: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,12 +107,10 @@ MonoBehaviour:
   - {fileID: -4580449277675019056}
   - {fileID: -6632190853482328111}
   - {fileID: 5538159499667830741}
-  - {fileID: -7153277245907681317}
   - {fileID: 187165999634447737}
   - {fileID: -6917648197494371644}
   - {fileID: -3834394518179701780}
-  - {fileID: -3268749019044521871}
-  m_RendererFeatureMap: ad6b866f10d7b46cd0647c74a6f96ec0d14f97bf8eb9f5a3d5f727f7b87edb4cdbbfc9993e74ba9c79fd3d2a7cf29802c40a3a9b9d93ff9fec9b314f807ec9ca71d8f1f31512a3d2
+  m_RendererFeatureMap: ad6b866f10d7b46cd0647c74a6f96ec0d14f97bf8eb9f5a3d5f727f7b87edb4c79fd3d2a7cf29802c40a3a9b9d93ff9fec9b314f807ec9ca
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}

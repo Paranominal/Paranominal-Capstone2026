@@ -125,6 +125,7 @@ public class Enemy : MonoBehaviour
 
     // events
     public event Action<Enemy> ImmuneHit;
+    public event Action<Enemy> OnDied;
 
 
     // Lifecycle
@@ -693,6 +694,7 @@ public class Enemy : MonoBehaviour
     {
         if (IsDying) return;
         IsDying = true;
+        OnDied?.Invoke(this);
         behaviourState = BehaviourState.Dying;
         if (movement != null) movement.Stop();
         if ( bloodFxEmitter) bloodFxEmitter.TriggerParticles();
