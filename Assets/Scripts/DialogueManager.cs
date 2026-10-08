@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -19,6 +20,9 @@ public class DialogueManager : MonoBehaviour
     [Tooltip("Add this here to open grimoire after hitting continue on an pick-up dialogue!")]
     [SerializeField] GrimoireAnimManager grimoireAnimManager;
     private bool isOpen;
+
+    [SerializeField] private GameObject crosshair,dashbar; 
+    [SerializeField] private PlayerDash dashScript;
 
     void Start()
     {
@@ -43,6 +47,16 @@ public class DialogueManager : MonoBehaviour
         if (pause) pause.PauseGame();
         isOpen = true;
         if (continueButton != null && EventSystem.current != null) EventSystem.current.SetSelectedGameObject(continueButton.gameObject);
+
+        StartCoroutine (SetCrosshair(false));
+    }
+
+    IEnumerator SetCrosshair(bool set)
+    {
+        yield return null;
+        if (crosshair)crosshair.SetActive(set);
+        if (dashScript.dashEnabled && dashbar)dashbar.SetActive(set);
+
     }
 
     public void NextPage() // public for menu button presses to activate
@@ -61,6 +75,8 @@ public class DialogueManager : MonoBehaviour
         // if (grimoireAnimManager != null && openGrimoire) grimoireAnimManager.OpenFromDialogue(); //open grimoire
         if (pause) pause.ResumeGame();
         isOpen = false;
+
+        StartCoroutine (SetCrosshair(true));
     }
 
     public void UpdateDialogue(GameObject pickupDialogue)
