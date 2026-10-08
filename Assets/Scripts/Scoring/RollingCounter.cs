@@ -5,6 +5,8 @@ public class RollingCounter : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private RollingColumn[] columns;
+    [Tooltip("comma goes here :)")]
+    [SerializeField] private RollingColumn[] separators;
 
     [Header("Animation")]
     [SerializeField] private float duration = 0.6f;
@@ -108,7 +110,20 @@ public class RollingCounter : MonoBehaviour
             if (below > placeValue - 1f)                      // they're all on 9 and rolling over...
                 position += below - (placeValue - 1f);        // ...so this column rolls with them
 
+            // a column only takes up space once the number reaches it, opening up as its first digit rolls in
+            float presence = k == 0 ? 1f : Mathf.Clamp01(position);
+
             columns[k].SetPosition(position);
+            columns[k].SetPresence(presence);
+
+            // every third column adds a comma with it
+            if (k > 0 && k % 3 == 0 && k / 3 - 1 < separators.Length)
+            {
+                RollingColumn comma = separators[k / 3 - 1];
+                comma.SetPosition(0f);
+                comma.SetPresence(presence);
+            }
+
             placeValue *= 10f;
         }
     }
