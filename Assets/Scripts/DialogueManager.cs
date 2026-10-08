@@ -9,6 +9,7 @@ public class DialogueManager : MonoBehaviour
     //[SerializeField] private PauseManager
     //[HideInInspector] public Dialogue dialogue;
     private GameObject dialogueObject;
+    private GameObject previousButton;
     //the current scene's "continue" button 
     [SerializeField] private Button continueButton;
     [SerializeField] private InputActionReference closeInput;
@@ -29,12 +30,14 @@ public class DialogueManager : MonoBehaviour
     {
         if (!isOpen) return;
         if (closeInput.action.WasPressedThisFrame()) CloseDialogue();
-        //fallback to press continue directly
-        else if (continueButton != null && Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame) continueButton.onClick.Invoke();
+        
+        //removed fallback, using continue button gameobject selection instead
+        // else if (continueButton != null && Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame) continueButton.onClick.Invoke();
     }
     public void StartDialogue(GameObject pickupDialogue) // public so CollectibleObject can activate it
     {
         if (isOpen) CloseDialogue();
+        if (EventSystem.current != null) previousButton = EventSystem.current.currentSelectedGameObject; //selects the button that opened the dialogue
         UpdateDialogue(pickupDialogue);
         dialogueCanvas.SetActive(true); //activate UI
         if (playerInputReader != null) playerInputReader.InputLock(true);
@@ -42,7 +45,11 @@ public class DialogueManager : MonoBehaviour
         // SetCursorModeLocked(false); //unlock cursor
         if (pause) pause.PauseGame();
         isOpen = true;
-        if (continueButton != null && EventSystem.current != null) EventSystem.current.SetSelectedGameObject(continueButton.gameObject);
+        if (continueButton != null && EventSystem.current != null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+            EventSystem.current.SetSelectedGameObject(continueButton.gameObject);
+        }
     }
 
     public void NextPage() // public for menu button presses to activate
@@ -54,6 +61,9 @@ public class DialogueManager : MonoBehaviour
 
     public void CloseDialogue(bool openGrimoire = false) // public for menu button presses to activate
     {
+        bool wasOpen = isOpen; //check to see if a previous button can be returned
+        if (wasOpen) PreviousButtonClicked();
+
         // if (dialogueObject != null) SetCursorModeLocked(dialogueObject.GetComponent<Dialogue>().cursorLockOnClose); //lock cursor again
         if (playerInputReader != null) playerInputReader.InputLock(false);
         if (weaponInputReader != null) weaponInputReader.InputLock(false);
@@ -68,5 +78,20 @@ public class DialogueManager : MonoBehaviour
         GameObject newDialogue = Instantiate(pickupDialogue, dialogueCanvas.transform, false);
         if (dialogueObject != null) Destroy(dialogueObject);
         dialogueObject = newDialogue;
+    }
+
+    private void PreviousButtonClicked()
+    {
+        if (EventSystem.current == null) return;
+        EventSystem.current.SetSelectedGameObject(null);
+
+        //return previous button if it exists
+        if (previousButton != null && previousButton.activeInHierarchy)
+            EventSystem.current.SetSelectedGameObject(previousButton);
+        else if (EventSystem.current.firstSelectedGameObject != null)
+            EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
+
+        //clear previous reference after operation
+        previousButton = null;
     }
 }

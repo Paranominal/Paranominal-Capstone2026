@@ -1,17 +1,18 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem;
-using NUnit.Framework;
-using Unity.VisualScripting;
-using UnityEngine.UIElements;
+// EDIT (grimoire-pause): removed unused NUnit.Framework, Unity.VisualScripting and UnityEngine.UIElements usings. NUnit in a runtime script breaks player builds.
 
+// Summary: Drives the held grimoire's animator (open, close, cast, menu) from player input,
+// and tells GrimoirePositioner where the book should sit.
+// EDIT (grimoire-pause): menu open/close now follows ALTGrimoire.OnGrimoireToggled, so Tab and Escape both animate it.
 public class GrimoireAnimManager : MonoBehaviour
 {
     [SerializeField] private PlayerInputReader playerInputReader;
     [SerializeField] private Animator grimoireAnimator;
     [SerializeField] private ALTGrimoire altGrimoire;
     [SerializeField] private InputActionReference grimoireScroll;
-    [SerializeField] private InputActionReference grimoireMenu;
+    // EDIT (grimoire-pause): grimoireMenu InputActionReference removed, replaced by the OnGrimoireToggled event.
     [SerializeField] private InputActionReference playerMove;
     [SerializeField] private InputActionReference playerShoot;
     [SerializeField] private InputActionReference scanAction;
@@ -30,6 +31,22 @@ public class GrimoireAnimManager : MonoBehaviour
     public bool openOnInteract;
     public bool debugMode;
 
+    // EDIT (grimoire-pause): subscribe to the Grimoire's open/close event.
+    void OnEnable()
+    {
+        if (altGrimoire == null)
+            altGrimoire = ALTGrimoire.instance != null ? ALTGrimoire.instance : FindAnyObjectByType<ALTGrimoire>();
+
+        if (altGrimoire != null)
+            altGrimoire.OnGrimoireToggled += HandleGrimoireToggled;
+    }
+
+    void OnDisable()
+    {
+        if (altGrimoire != null)
+            altGrimoire.OnGrimoireToggled -= HandleGrimoireToggled;
+    }
+
     void Start()
     {
         isOpen = startOpen;
@@ -46,8 +63,7 @@ public class GrimoireAnimManager : MonoBehaviour
         CastOnHold();
         OpenIfMenuing();
         if (openOnInteract) OpenOnCollect();
-        MenuOpen();
-        MenuClose();
+        // EDIT (grimoire-pause): MenuOpen/MenuClose polling removed, see HandleGrimoireToggled.
 
         if (lowerGrimoire != null) DoLowerGrimoire();
         if (debugMode) DoDebugLog();
@@ -130,20 +146,18 @@ public class GrimoireAnimManager : MonoBehaviour
         if (collectAction.action.WasPressedThisFrame()) OpenGrimoire();
         if (collectAction.action.WasPressedThisFrame() && debugMode) Debug.Log($"[{this}] | collect action was pressed");
     }
-    private void MenuOpen()
+    // EDIT (grimoire-pause): Summary: Replaces MenuOpen/MenuClose. Runs on the event, so it isn't blocked by the CanMove check in Update.
+    private void HandleGrimoireToggled(bool menuOpen)
     {
-        if (grimoireMenu.action.WasPressedThisFrame() && !isMenuing)
+        if (menuOpen)
         {
             OpenGrimoire();
             OpenMenu();
-        } 
-    }
-    private void MenuClose()
-    {
-        if (grimoireMenu.action.WasPressedThisFrame() && isMenuing)
+        }
+        else
         {
             CloseMenu();
-        } 
+        }
     }
     // Actions
     void OpenGrimoire()
@@ -225,7 +239,7 @@ public class GrimoireAnimManager : MonoBehaviour
     //         bookRight.transform.localEulerAngles = new Vector3(0, 0, 90);
     //         bookLeft.transform.localEulerAngles = new Vector3(0, 0, -90);
     //         gameObject.transform.localPosition = Vector3.zero; 
-    //         gameObject.transform.localEulerAngles = new Vector3(0, 0, -90);
+    //         gameObject.transform.localEulerAngles = Vector3.zero;
     //     }
     // }
 }

@@ -2871,12 +2871,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15ff51d1ca3ce184a95ca50306d732f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PauseMeny
-  pauseManager: {fileID: 0}
+  isPaused: 0
   pauseScreen: {fileID: 2231024517168218285}
   debugScreen: {fileID: 6701949768413786074}
   settingsScreen: {fileID: 528062043583288845}
   playerUI: {fileID: 0}
   pauseAction: {fileID: 3007018216015364825, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
+  playerActionMapName: Player
+  grimoireActionMapName: GrimoireUI
   grimoire: {fileID: 0}
   sceneBuildIndex: 0
 --- !u!114 &1150212919441374681
@@ -4892,7 +4894,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3500746287320347948
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4901,7 +4903,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6701949768413786074}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2090}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
