@@ -16,6 +16,12 @@ public class InitialsEntry : MonoBehaviour
     [SerializeField] private InputActionReference rightAction;
     [SerializeField] private InputActionReference confirmAction;
 
+    [Header("Hold To Repeat")]
+    [Tooltip("time between steps while up/down is held")]
+    [SerializeField] private float stepInterval = 0.1f;
+
+    private float nextStepTime;
+
     public event System.Action OnConfirmed;
 
     private int selected;
@@ -38,8 +44,8 @@ public class InitialsEntry : MonoBehaviour
 
     private void OnEnable()
     {
-        Bind(upAction, HandleUp);
-        Bind(downAction, HandleDown);
+        upAction.action.Enable();
+        downAction.action.Enable();
         Bind(leftAction, HandleLeft);
         Bind(rightAction, HandleRight);
         Bind(confirmAction, HandleConfirm);
@@ -50,8 +56,8 @@ public class InitialsEntry : MonoBehaviour
 
     private void OnDisable()
     {
-        Unbind(upAction, HandleUp);
-        Unbind(downAction, HandleDown);
+        upAction.action.Disable();
+        downAction.action.Disable();
         Unbind(leftAction, HandleLeft);
         Unbind(rightAction, HandleRight);
         Unbind(confirmAction, HandleConfirm);
@@ -60,8 +66,19 @@ public class InitialsEntry : MonoBehaviour
             Keyboard.current.onTextInput -= HandleTextInput;
     }
 
-    private void HandleUp(InputAction.CallbackContext context) => slots[selected].RollBy(1);
-    private void HandleDown(InputAction.CallbackContext context) => slots[selected].RollBy(-1);
+    private void Update()
+    {
+        int direction = 0;
+        if (upAction.action.IsPressed()) direction = -1;
+        else if (downAction.action.IsPressed()) direction = 1;
+
+        if (direction != 0 && Time.unscaledTime >= nextStepTime) // scaled time is borked in this scene????
+            {
+            slots[selected].RollBy(direction);
+            nextStepTime = Time.unscaledTime + stepInterval;
+        }
+    }
+
     private void HandleLeft(InputAction.CallbackContext context) => Select(selected - 1);
     private void HandleRight(InputAction.CallbackContext context) => Select(selected + 1);
 
