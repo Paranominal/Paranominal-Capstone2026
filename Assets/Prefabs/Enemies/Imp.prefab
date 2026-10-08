@@ -314,6 +314,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9149036478034270715}
   - component: {fileID: 6445863154762580808}
+  - component: {fileID: 5997505944549912980}
   - component: {fileID: 4376042895188897236}
   - component: {fileID: 3311171845288023246}
   - component: {fileID: 7537058298590536078}
@@ -369,6 +370,20 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1.8, z: 1}
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &5997505944549912980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8722295293950930483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b75243a2fe872646b34c4c5e0040e43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BestiaryTracker
+  definition: {fileID: 11400000, guid: 5e875e1dce7d8484f82df4969c7ba391, type: 2}
+  bestiary: {fileID: 0}
 --- !u!114 &4376042895188897236
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -404,6 +419,7 @@ MonoBehaviour:
   debugMode: 0
   _state: Inactive
   _activeAttack: None
+  _targetAttack: None
   _orbitDistance: 0
 --- !u!114 &3311171845288023246
 MonoBehaviour:
@@ -444,6 +460,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae32cdccd217da34db40c47ced2c6507, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_Melee
+  minRange: 0
   attackRange: 2
   cooldownTime: 2
   windupIndicator: {fileID: 2368134177575591389}
