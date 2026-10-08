@@ -10,12 +10,14 @@ public class LoadingManager : MonoBehaviour
     // events that can be subscribed to for easy reference to current loading state (good for disabling input during load if necessary)
     public event Action<int> OnLoadStarted;
     public event Action<float> OnLoadProgress;
-    public event Action<int> OnLoadCompleted;
+    public event Action<int> OnLoadCompleted; 
 
     [Header("Loading Settings")]
     [SerializeField] private GameObject loadingScreenPrefab;
+    [SerializeField] private GameObject deathScreenPrefab;
     [SerializeField] private float defaultMinimumLoadTime = 2f;
     private GameObject loadingScreen;
+    private GameObject deathScreen;
     public bool IsLoading { get; private set; }
 
     private void Awake()
@@ -30,8 +32,9 @@ public class LoadingManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         loadingScreen = Instantiate(loadingScreenPrefab, transform);
+        deathScreen = Instantiate(deathScreenPrefab, transform);
         loadingScreen.SetActive(false);
-
+        deathScreen.SetActive(false);
     }
 
     private void OnDestroy()
@@ -41,10 +44,15 @@ public class LoadingManager : MonoBehaviour
 
     public void LoadScene(int buildIndex)
     {
-        LoadScene(buildIndex, defaultMinimumLoadTime);
+        LoadScene(buildIndex, defaultMinimumLoadTime, loadingScreen);
     }
 
-    public void LoadScene(int buildIndex, float minimumTime)
+    public void LoadSceneFromDeath(int buildIndex, float minimumTime)
+    {
+        LoadScene(buildIndex, minimumTime, deathScreen);
+    }
+
+    public void LoadScene(int buildIndex, float minimumTime, GameObject loadScreen)
     {
         if (IsLoading)
         {
@@ -56,15 +64,15 @@ public class LoadingManager : MonoBehaviour
             Debug.LogError($"LoadingManager: build index {buildIndex} does not exist in Build Settings. Make sure it is set.");
             return;
         }
-        StartCoroutine(LoadSceneRoutine(buildIndex, minimumTime));
+        StartCoroutine(LoadSceneRoutine(buildIndex, minimumTime, loadScreen));
     }
 
-    private IEnumerator LoadSceneRoutine(int buildIndex, float minimumTime)
+    private IEnumerator LoadSceneRoutine(int buildIndex, float minimumTime, GameObject loadScreen)
     {
         IsLoading = true;
         OnLoadStarted?.Invoke(buildIndex);
         yield return TransitionManager.Instance?.TransitionIn();
-        loadingScreen.SetActive(true);
+        loadScreen.SetActive(true);
         PauseManager.Instance?.PauseGame();
         yield return TransitionManager.Instance?.TransitionOut();
 
@@ -94,7 +102,7 @@ public class LoadingManager : MonoBehaviour
         }
 
         
-        loadingScreen.SetActive(false);
+        loadScreen.SetActive(false);
         IsLoading = false;
         OnLoadCompleted?.Invoke(buildIndex);
         yield return TransitionManager.Instance?.TransitionOut();

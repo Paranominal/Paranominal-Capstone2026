@@ -8,7 +8,8 @@ public class GameOverHandler : MonoBehaviour
     [SerializeField] private ScoreManager scoreManager;
 
     //was referencing end screen, now goes to name input field
-    [SerializeField] private int nameEntrySceneBuildIndex;
+    [SerializeField] private int winScreenIndex;
+    [SerializeField] private int deathScreenIndex;
 
     public static int FinalScore { get; private set; }
 
@@ -36,7 +37,20 @@ public class GameOverHandler : MonoBehaviour
             FinalScore = scoreManager.currentScore;
             FinalRank = scoreManager.currentRank;
         }
-            
-        LoadingManager.Instance?.LoadScene(nameEntrySceneBuildIndex, 5f);
+                
+        LoadingManager.Instance?.LoadSceneFromDeath(deathScreenIndex, 5f);
+    }
+
+    public void HandleElevatorReached()
+    {
+        Debug.Log($"PlayerWon!!! Final score: {scoreManager.currentScore}");
+
+        if (scoreManager != null)
+        {
+            FinalScore = scoreManager.currentScore;
+            FinalRank = scoreManager.currentRank;
+        }
+
+        LoadingManager.Instance?.LoadScene(winScreenIndex);
     }
 }
