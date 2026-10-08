@@ -38,7 +38,7 @@ public class GameOverHandler : MonoBehaviour
             FinalRank = scoreManager.currentRank;
         }
                 
-        LoadingManager.Instance?.LoadSceneFromDeath(winScreenIndex, 5f);
+        LoadingManager.Instance?.LoadSceneFromDeath(deathScreenIndex, 5f);
     }
 
     public void HandleElevatorReached()
@@ -51,6 +51,6 @@ public class GameOverHandler : MonoBehaviour
             FinalRank = scoreManager.currentRank;
         }
 
-        LoadingManager.Instance?.LoadScene(deathScreenIndex);
+        LoadingManager.Instance?.LoadScene(winScreenIndex);
     }
 }
