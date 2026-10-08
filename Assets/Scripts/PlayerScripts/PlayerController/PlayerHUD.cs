@@ -19,13 +19,13 @@ public class PlayerHUD : MonoBehaviour
     [Header("Reload UI")]
     [SerializeField] private Slider reloadSlider;
 
-    // dash cooldown bar, shown only while dash is unavailable
-    //[Header("Dash UI")]
-    //[SerializeField] private Slider dashSlider;
+    // dash cooldown bar
+    [Header("Dash UI")]
+    [SerializeField] private GameObject dashBar;
 
     // crosshair for aiming
     [Header("Crosshair UI")]
-    [SerializeField] private Image crosshairImage;
+    [SerializeField] private GameObject crosshairImage;
 
     private void Start()
     {
@@ -147,6 +147,7 @@ public class PlayerHUD : MonoBehaviour
     public void UIVisible(bool state)
     {
         if (crosshairImage != null) crosshairImage.gameObject.SetActive(state);
+        if (dashBar != null) dashBar.gameObject.SetActive(state);
         if (ammoText != null) ammoText.gameObject.SetActive(state);
 
         if (reloadSlider != null)

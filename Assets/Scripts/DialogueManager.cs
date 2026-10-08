@@ -21,8 +21,7 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] GrimoireAnimManager grimoireAnimManager;
     private bool isOpen;
 
-    [SerializeField] private GameObject crosshair,dashbar; 
-    [SerializeField] private PlayerDash dashScript;
+    [SerializeField] private PlayerHUD ui; 
 
     void Start()
     {
@@ -48,15 +47,7 @@ public class DialogueManager : MonoBehaviour
         isOpen = true;
         if (continueButton != null && EventSystem.current != null) EventSystem.current.SetSelectedGameObject(continueButton.gameObject);
 
-        StartCoroutine (SetCrosshair(false));
-    }
-
-    IEnumerator SetCrosshair(bool set)
-    {
-        yield return null;
-        if (crosshair)crosshair.SetActive(set);
-        if (dashScript.dashEnabled && dashbar)dashbar.SetActive(set);
-
+        if (ui) ui.UIVisible(false);
     }
 
     public void NextPage() // public for menu button presses to activate
@@ -76,7 +67,7 @@ public class DialogueManager : MonoBehaviour
         if (pause) pause.ResumeGame();
         isOpen = false;
 
-        StartCoroutine (SetCrosshair(true));
+        if (ui) ui.UIVisible(true);
     }
 
     public void UpdateDialogue(GameObject pickupDialogue)

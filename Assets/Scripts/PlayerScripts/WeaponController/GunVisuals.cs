@@ -35,7 +35,8 @@ public class GunVisuals : MonoBehaviour
     // TrueShot texture
     [Header("TrueShot Visuals")]
     [SerializeField] private SpecialShot trueShot;
-    [SerializeField] private Image trueShotCharge;
+    [SerializeField] private Image trueShotChargeBar;
+    [SerializeField] private Image trueShotChargeIndicator;
     [SerializeField] private Material trueShotMaterial;
 
     [Header("Debug")]
@@ -92,6 +93,7 @@ public class GunVisuals : MonoBehaviour
             trueShot.OnStreakChanged += TrueShotUI;
             trueShot.OnStateChanged += TrueShotState;
             TrueShotUI(0, 0);
+            if (trueShotChargeIndicator) trueShotChargeIndicator.enabled = false;
         }
 
         // Find the animator if not explicitly assigned in inspector
@@ -143,8 +145,10 @@ public class GunVisuals : MonoBehaviour
     {
         float f = (float) streak / streakToCharge;
         if (debugMode) Debug.Log($"Streak: [{streak} / {streakToCharge}] = {f}");
-        
-        trueShotCharge.fillAmount = f;
+
+        trueShotChargeBar.fillAmount = f;
+        if (trueShotChargeIndicator && streak >= streakToCharge) trueShotChargeIndicator.enabled = true;
+        else if (trueShotChargeIndicator) trueShotChargeIndicator.enabled = false;
     }
     private void TrueShotState(SpecialShot.SpecialShotState state)
     {

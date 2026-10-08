@@ -36,7 +36,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -435}
+  m_AnchoredPosition: {x: 0, y: -549}
   m_SizeDelta: {x: 350.5, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2715992702852166945
@@ -90,7 +90,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -125,6 +125,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: DialogueManager, Assembly-CSharp
         m_MethodName: CloseDialogue
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: UIPullFocus, Assembly-CSharp
+        m_MethodName: PullFocus
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -411,13 +423,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf6d38aacf65a2f44931f6a277209af0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  continueButton: {fileID: 0}
+  continueButton: {fileID: 3857157547349359798}
   closeInput: {fileID: 3007018216015364825, guid: 0f55605e20afe7a45923d071a344793e, type: 3}
   dialogueCanvas: {fileID: 6404910134959271696}
   pause: {fileID: 0}
   playerInputReader: {fileID: 0}
   weaponInputReader: {fileID: 0}
   grimoireAnimManager: {fileID: 0}
+  ui: {fileID: 0}
 --- !u!114 &3272500626493495880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -607,7 +620,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0.000014657155, y: 0}
-  m_SizeDelta: {x: 1557, y: 1163.09}
+  m_SizeDelta: {x: 2733, y: 1259}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8790422140928850997
 CanvasRenderer:
@@ -682,8 +695,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1557, y: 1163.09}
+  m_AnchoredPosition: {x: 0, y: -29}
+  m_SizeDelta: {x: 2733, y: 1259}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &198870365448365576
 CanvasRenderer:
