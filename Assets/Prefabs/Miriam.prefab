@@ -486,6 +486,7 @@ MonoBehaviour:
   hurtImpactSound: {fileID: 11400000, guid: 7b57f5d956dce534f9e29e72b44cbab9, type: 2}
   hurtSource: {fileID: 795694508415802441}
   invincibleDuration: 0.5
+  isInvincible: 0
 --- !u!114 &1642531195737763663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -582,35 +583,27 @@ MonoBehaviour:
   maxWeakpointPoints: 200
   ranks:
   - label: D
-    pointThreshold: 50
+    pointThreshold: 2500
   - label: D+
-    pointThreshold: 100
-  - label: C-
-    pointThreshold: 150
+    pointThreshold: 5000
   - label: C
-    pointThreshold: 200
+    pointThreshold: 8000
   - label: C+
-    pointThreshold: 250
-  - label: B-
-    pointThreshold: 300
+    pointThreshold: 10000
   - label: B
-    pointThreshold: 350
+    pointThreshold: 15000
   - label: B+
     pointThreshold: 400
-  - label: A-
-    pointThreshold: 450
   - label: A
-    pointThreshold: 500
+    pointThreshold: 20000
   - label: A+
-    pointThreshold: 550
-  - label: S-
-    pointThreshold: 600
+    pointThreshold: 25000
   - label: S
-    pointThreshold: 650
+    pointThreshold: 30000
   - label: S+
-    pointThreshold: 700
+    pointThreshold: 32000
   - label: S++
-    pointThreshold: 750
+    pointThreshold: 35000
   debugMode: 1
   currentScore: 0
 --- !u!114 &5855240123241697755
@@ -627,8 +620,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameOverHandler
   fearBar: {fileID: 1642531195737763663}
   scoreManager: {fileID: 2395450753178358459}
-  winScreenIndex: 0
-  deathScreenIndex: 0
+  winScreenIndex: 2
+  deathScreenIndex: 3
 --- !u!114 &3000788553867072500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1180,8 +1173,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeakPointCamera
   weakPointCamera: {fileID: 6654618607449089807}
-  maxRenderDistance: 20
-  fullAlphaDistance: 18
+  maxRenderDistance: 100
+  fullAlphaDistance: 25
   fadeSpeed: 5
 --- !u!114 &125830863215445852
 MonoBehaviour:
@@ -2516,7 +2509,7 @@ PrefabInstance:
       objectReference: {fileID: 5940204994785997246}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -0.0014572636
+      value: -0.0030819816
       objectReference: {fileID: 0}
     - target: {fileID: 503937266542489061, guid: 9208d6b767b9ffd41b77826090024f6f, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -2854,6 +2847,10 @@ PrefabInstance:
     - target: {fileID: 8302036662431058484, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
       propertyPath: m_Name
       value: The Norwych
+      objectReference: {fileID: 0}
+    - target: {fileID: 8342327403044592200, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
+      propertyPath: startUnlocked
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8944612012935059866, guid: 95edfb329eab69f4fbac8c287ba2d848, type: 3}
       propertyPath: specialShotBuffer

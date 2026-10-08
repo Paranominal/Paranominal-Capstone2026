@@ -16,11 +16,11 @@ public class ScoreManager : MonoBehaviour
     [SerializeField]
     private RankDefinition[] ranks = new RankDefinition[]
     {
-        new RankDefinition { label = "D", pointThreshold = 50  },
-        new RankDefinition { label = "C", pointThreshold = 100 },
-        new RankDefinition { label = "B", pointThreshold = 200 },
-        new RankDefinition { label = "A", pointThreshold = 400 },
-        new RankDefinition { label = "S", pointThreshold = 800 },
+        new RankDefinition { label = "D", pointThreshold = 2000  },
+        new RankDefinition { label = "C", pointThreshold = 5000 },
+        new RankDefinition { label = "B", pointThreshold = 10000},
+        new RankDefinition { label = "A", pointThreshold = 20000 },
+        new RankDefinition { label = "S", pointThreshold = 30000 },
     };
     
     [Header("Debug")]
