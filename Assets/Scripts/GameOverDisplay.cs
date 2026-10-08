@@ -42,6 +42,7 @@ public class GameOverDisplay : MonoBehaviour
         {
             Debug.Log("no final score, did you open this scene directly? rolling the test score instead");
             finalScore = testScore;
+            finalRank = testRank;
         }
 
         bool isNewHighScore = forceNewHighScore || IsNewHighScore(finalScore);
@@ -55,7 +56,10 @@ public class GameOverDisplay : MonoBehaviour
         ShowRank(finalRank);
 
         if (isNewHighScore)
+        {
+            yield return new WaitForSecondsRealtime(highScoreDelay);
             Celebrate();
+        }
     }
 
     private bool IsNewHighScore(int score)
