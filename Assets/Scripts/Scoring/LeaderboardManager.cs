@@ -98,6 +98,7 @@ public class LeaderboardManager : MonoBehaviour
     }
 
     //sets the data to a new state
+    [ContextMenu("Clear Leaderboard")]
     public void ClearLeaderboard()
     {
         data = new LeaderboardData();
