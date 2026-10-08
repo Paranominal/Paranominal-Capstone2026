@@ -50,7 +50,7 @@ public class PlayerDash : MonoBehaviour
     [Tooltip("How quickly the dash effects fade out after a dash ends (seconds).")]
     [SerializeField] private float dashEffectsFadeOut = 0.2f;
 
-    
+
     [Header("Charge Dash")]
     [Tooltip("When enabled, dash consumes charges instead of using the normal cooldown behaviour.")]
     [SerializeField] private bool dashUsesCharges = false;
@@ -209,6 +209,8 @@ public class PlayerDash : MonoBehaviour
 
     public void HandleDashInput(bool dashInput, Vector3 desiredDirection, Transform transform, CharacterController characterController, float deltaTime)
     {
+        PlayerStatus.Instance?.StartInvinciblePeriod(dashTimer);
+
         // Tick cooldown timer
         if (dashCooldownTimer > 0f)
             dashCooldownTimer -= deltaTime;
