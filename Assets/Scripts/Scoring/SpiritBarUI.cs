@@ -6,7 +6,7 @@ public class SpiritBarUI : MonoBehaviour
     [Header("References")]
     [SerializeField] private ScoreManager scoreManager;
     [SerializeField] private RectTransform barRect;
-    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private RollingCounter scoreCounter;
     [SerializeField] private TextMeshProUGUI rankText;
 
     [Header("Display")]
@@ -33,14 +33,15 @@ public class SpiritBarUI : MonoBehaviour
             ALTGrimoire.instance.OnGrimoireToggled += gameObject.SetActive;
         }
 
-        scoreText.text = scoreManager.currentScore.ToString("N0");
+        scoreCounter.SetValue(scoreManager.currentScore, false);
+
         rankText.text = scoreManager.currentRank;
         SetBarWidth(scoreManager.GetProgressToNextRank()); // calls new function in scoremanager to get the float
     }
 
     private void HandlePointsAdded(int newTotal)
     {
-        scoreText.text = newTotal.ToString("N0");
+        scoreCounter.SetValue(newTotal);
         SetBarWidth(scoreManager.GetProgressToNextRank());
     }
 
