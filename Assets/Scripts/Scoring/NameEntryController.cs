@@ -5,11 +5,10 @@ using UnityEngine.SceneManagement;
 public class NameEntryController : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private TMP_InputField nameInputField;
+    [SerializeField] private InitialsEntry initialsEntry;
     [SerializeField] private int leaderboardSceneBuildIndex;
 
-    [Header("Config")]
-    [SerializeField] private int maxNameLength = 12;
+    private bool hasSubmitted;
 
     //initialise with empty field with max length setup
     private void Awake()
@@ -17,21 +16,28 @@ public class NameEntryController : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        if (nameInputField != null)
-        {
-            nameInputField.characterLimit = maxNameLength;
-        }
+        initialsEntry.OnConfirmed += SubmitName;
+    }
+
+    private void OnDestroy()
+    {
+        if (initialsEntry != null)
+            initialsEntry.OnConfirmed -= SubmitName;
     }
 
     //hooks with the submit button on inspector
     public void SubmitName()
     {
-        string enteredName = nameInputField != null ? nameInputField.text : string.Empty;
+        if (hasSubmitted) return; // a second press during the loading screen would add a duplicate entry
+
+        string enteredName = initialsEntry.CurrentName;
         if (string.IsNullOrWhiteSpace(enteredName))
         {
             // enteredName = defaultName;
             return;
         }
+
+        hasSubmitted = true;
 
         if (LeaderboardManager.Instance != null)
         {
