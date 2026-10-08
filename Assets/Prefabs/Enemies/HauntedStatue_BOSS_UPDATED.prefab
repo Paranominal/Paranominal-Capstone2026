@@ -1523,6 +1523,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 3.36
       objectReference: {fileID: 0}
+    - target: {fileID: 4823826984620500452, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
+      propertyPath: launchPoint
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4940717367297730836, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.6
@@ -1669,6 +1673,7 @@ PrefabInstance:
     - {fileID: 7548019778482943023, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
     - {fileID: 2749522687723803370, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
     - {fileID: 4098680645419583886, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
+    - {fileID: 165219777218500387, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 9002036258510447634, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
       insertIndex: 0
@@ -1752,7 +1757,7 @@ MonoBehaviour:
   stagger: {fileID: 3892716439961545088}
   animator: {fileID: 4336959419600009996}
   soundPlayer: {fileID: 0}
-  bloodFxEmitter: {fileID: 0}
+  bloodFxEmitter: {fileID: 2422608268628792729}
   immuneFxEmitter: {fileID: 0}
   numberOfPhases: 3
   doSummons: 0
@@ -1773,6 +1778,7 @@ MonoBehaviour:
   - allowedAttacks:
     - {fileID: 3382739015607604628}
     - {fileID: 2205235318563546956}
+  downedDuration: 12
 --- !u!114 &3382739015607604628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1832,6 +1838,17 @@ MonoBehaviour:
   recoveryDuration: 0.5
   trackingTurnSpeed: 270
   debugMode: 0
+--- !u!114 &2422608268628792729 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2750554358987267234, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
+  m_PrefabInstance: {fileID: 555416096784353595}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a027d29e19fa014b86a367990c784cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BloodSplatter
 --- !u!114 &3892716439961545088 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3580518955538096315, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
