@@ -27,6 +27,8 @@ public class RollingCounter : MonoBehaviour
     private Coroutine rollRoutine;
 
     public bool IsRolling => rollRoutine != null;
+    public string Symbols => columns[0].Symbols;                         // initials use a single column
+    public char TargetSymbol => Symbols[targetValue % Symbols.Length];   // the symbol the reel is landing on
 
     private void Start()
     {
@@ -62,9 +64,38 @@ public class RollingCounter : MonoBehaviour
         rollRoutine = StartCoroutine(Roll(displayedValue, value));
     }
 
+    public void RollBy(int amount)
+    {
+        int newTarget = targetValue + amount;
+
+        // reels can't show negative positions, so lift everything up a whole lap first. it looks identical on a
+        // single-column reel (0 and 26 both show A), but would change the higher digits on a multi-column one
+        while (newTarget < 0)
+        {
+            displayedValue += Symbols.Length;
+            newTarget += Symbols.Length;
+        }
+
+        SetValue(newTarget);
+    }
+
+    public void RollToSymbol(char symbol)
+    {
+        int index = Symbols.IndexOf(symbol);
+        if (index < 0) return;
+
+        int amount = index - targetValue % Symbols.Length;
+
+        // go whichever way round is shorter, so typing Z from A rolls back one rather than forward 25
+        if (amount > Symbols.Length / 2) amount -= Symbols.Length;
+        if (amount < -Symbols.Length / 2) amount += Symbols.Length;
+
+        RollBy(amount);
+    }
+
     private IEnumerator Roll(float start, float target)
     {
-        float overshoot = target + nudgeAmount;
+        float overshoot = target + nudgeAmount * Mathf.Sign(target - start);
         float travelTime = duration * (1f - settleFraction);
         float settleTime = duration * settleFraction;
 
@@ -131,6 +162,6 @@ public class RollingCounter : MonoBehaviour
     [ContextMenu("Test Add")]
     private void TestAdd()
     {
-        SetValue(targetValue + testAmount); // adds to the target, so spamming it stacks like real scoring
+        RollBy(testAmount); // adds to the target, so spamming it stacks like real scoring
     }
 }

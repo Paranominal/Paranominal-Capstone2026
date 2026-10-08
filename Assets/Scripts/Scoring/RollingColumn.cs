@@ -17,6 +17,8 @@ public class RollingColumn : MonoBehaviour
 
     private int shownIndex = -1;
 
+    public string Symbols => symbols;
+
     public void SetPosition(float position) // position in symbols, 2.5 = halfway between the third and fourth
     {
         int index = Mathf.FloorToInt(position);
