@@ -78,7 +78,7 @@ public class ALTGrimoire : MonoBehaviour
     [SerializeField] private GameObject minimisedContentR;
 
     [Header("External Systems")]
-    public PhotoSnapshots snapshotHandler;
+    // EDIT (bestiary-pages): PhotoSnapshots reference removed. Item images are set on the entry now.
     public PlayerHUD screenUI;
     // EDIT (grimoire-pause): replaces the old PlayerInputReader reference. Cursor state is handled by PauseManager now.
     [SerializeField] private PauseManager pauseManager;
@@ -427,7 +427,7 @@ public class ALTGrimoire : MonoBehaviour
         }
         flavourTextDisplay.SetText(GetCurrentEntry().flavourText);
         hintCompletedTextDisplay.SetText(GetCurrentEntry().hintText);
-        displayImage.texture = GetCurrentEntry().snapshotImage;
+        displayImage.texture = GetCurrentEntry().image; // EDIT (bestiary-pages): was snapshotImage.
 
         // random polaroid position/rotation
         Random.InitState(currentEntry);
@@ -453,7 +453,7 @@ public class ALTGrimoire : MonoBehaviour
             newEntryButton.GetComponent<Button>().onClick.AddListener(() => SelectEntry(entryIndex)); // i don't know what a lambda expression does and at this point im too afraid to ask
             entryButtons.Add(newEntryButton);
 
-            e.snapshotImage = snapshotHandler.TakeSnapshot();
+            // EDIT (bestiary-pages): snapshot removed, the image comes from the entry via Clone.
 
             SelectEntry(currentEntry);
 
@@ -531,7 +531,7 @@ public class ALTGrimoire : MonoBehaviour
         e.hintText = entry.hintText;
         e.completeText = entry.completeText;
         e.collected = entry.collected;
-        e.snapshotImage = entry.snapshotImage;
+        e.image = entry.image; // EDIT (bestiary-pages): was snapshotImage.
         return e;
     }
 }
