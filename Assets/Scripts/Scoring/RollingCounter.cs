@@ -159,6 +159,14 @@ public class RollingCounter : MonoBehaviour
         }
     }
 
+    public void SetColour(Color colour)
+    {
+        foreach (RollingColumn column in columns)
+            column.SetColour(colour);
+        foreach (RollingColumn comma in separators)
+            comma.SetColour(colour);
+    }
+
     [ContextMenu("Test Add")]
     private void TestAdd()
     {

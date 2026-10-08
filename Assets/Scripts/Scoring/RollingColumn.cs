@@ -43,4 +43,10 @@ public class RollingColumn : MonoBehaviour
         layoutElement.preferredWidth = width * presence;
         currentText.enabled = presence >= 1f; // hides the leading 0 while the first real digit rolls in
     }
+
+    public void SetColour(Color colour)
+    {
+        currentText.color = colour;
+        nextText.color = colour;
+    }
 }

@@ -20,6 +20,17 @@ public class LeaderboardManager : MonoBehaviour
     //used by addEntry to highlight the latest run
     public LeaderboardEntry LastAddedEntry { get; private set; }
 
+    public int HighestScore
+    {
+        get
+        {
+            int highest = 0;
+            foreach (LeaderboardEntry entry in data.entries)
+                highest = Mathf.Max(highest, entry.score);
+            return highest;
+        }
+    }
+
     private void Awake()
     {
         //destroy duped instances
