@@ -64,7 +64,7 @@ public class SceneReset : MonoBehaviour
         else cachedResetTextColor.a = 0;
         resettingText.color = cachedResetTextColor;
     }
-    void DoReset()
+    public void DoReset()
     {
         Debug.Log($"Resetting Scene to [Scene: {sceneBuildIndex}]!");
         LoadingManager.Instance?.LoadScene(sceneBuildIndex);
