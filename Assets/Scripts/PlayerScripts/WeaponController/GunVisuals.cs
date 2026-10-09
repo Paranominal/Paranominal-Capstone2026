@@ -16,7 +16,6 @@ public class GunVisuals : MonoBehaviour
     [SerializeField] private Animator gunAnimator;
     [SerializeField] private ParticleEmitter ironFxEmitter;
     [SerializeField] private ParticleEmitter silverFxEmitter;
-    [SerializeField] private ParticleEmitter trueShotFxEmitter;
     [SerializeField] private Renderer[] gunPartRenderers;
 
     // Recoil and flash tuning values
@@ -29,6 +28,8 @@ public class GunVisuals : MonoBehaviour
 
     // Misfire animation and texture tuning values
     [Header("Misfire Visuals")]
+    [SerializeField] private ParticleEmitter trueShotFxEmitter;
+    [SerializeField] private ParticleEmitter trueShotChargeFxEmitter;
     [SerializeField] private Material misfireMaterial;
     [SerializeField] private float misfiresTextureChangeDuration = 0.2f;
 
@@ -110,7 +111,12 @@ public class GunVisuals : MonoBehaviour
 
     void DoTrueShotAnims()
     {
-        if (weaponInputReader.TrueShotInProgress() && trueShot.IsReady) AnimateTrueShot(true);
+        if (weaponInputReader.TrueShotInProgress() && trueShot.IsReady)
+        {
+            AnimateTrueShot(true);
+            DoTrueShotChargeFX();
+        }
+        
         else if (weaponInputReader.AnyShotReleasedThisFrame()) AnimateTrueShot(false);
     }
 
@@ -123,6 +129,11 @@ public class GunVisuals : MonoBehaviour
     public void DoTrueShotFX()
     {
         if (trueShotFxEmitter) trueShotFxEmitter.TriggerParticles();
+    }
+
+    public void DoTrueShotChargeFX()
+    {
+        if (trueShotChargeFxEmitter) trueShotChargeFxEmitter.TriggerParticles();
     }
     
     void AnimateTrueShot(bool animate)

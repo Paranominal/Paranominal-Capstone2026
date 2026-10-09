@@ -47,6 +47,12 @@ public class ParticleEmitter : MonoBehaviour
         ParticlesFired?.Invoke();
     }
 
+    public void LoopParticles(bool set)
+    {
+        if (set) particle.Play();
+        else particle.Stop();
+    }
+
     private void OnParticleCollision(GameObject other)
     {
         particle.GetCollisionEvents(other, collisionEvents);
