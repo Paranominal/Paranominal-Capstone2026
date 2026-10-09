@@ -28,6 +28,7 @@ public class TutorialManager : MonoBehaviour
 
         if (reloadTut) weaponEvents.ReloadStarted += TriggerReloadedTutorial;
         else Debug.LogWarning($"[{this}] No 'Reload' Tutorial Set! this might be a mistake");
+        if (shootDemonTut) weaponEvents.ShotResolved += ShootEnemy;
         if (shootDemonTut)
         {
             // weaponEvents.ShotResolved += ShootEnemy;
@@ -57,10 +58,12 @@ public class TutorialManager : MonoBehaviour
         DoTutorial(reloadTut); //trigger tut
     }
 
-    void ShootEnemy(ShotResult result)
+    void ShootEnemy(ShotResult result) //if the player shoots the enemy it skips tutorial
     {
         if (result.Outcome != ShotOutcome.EnemyHit) return; // if anything but EnemyHit
-        TriggerShootEnemyTutorial();
+        
+        weaponEvents.ShotResolved -= ShootEnemy; // unsub
+        shootDemonsTrigger.TutorialTriggered -= TriggerShootEnemyTutorial; // unsub
     }
 
     void TriggerShootEnemyTutorial()
@@ -70,8 +73,6 @@ public class TutorialManager : MonoBehaviour
 
         DoTutorialImmediate(shootDemonTut); // trigger tut
     }
-
-
 
     void ImmuneEnemySpawned(Enemy immuneEnemy)
     {
