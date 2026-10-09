@@ -15,7 +15,9 @@ public class TutorialManager : MonoBehaviour
     [Header("Weapon Tutorial")]
     [SerializeField] private WeaponEvents weaponEvents;
     [SerializeField] private GameObject reloadTut;
+    [Header("Shoot Demonds Tutorial")]
     [SerializeField] private GameObject shootDemonTut;
+    [SerializeField] private TutorialTrigger shootDemonsTrigger;
     [Header("Immunity Tutorial")]
     [SerializeField] private EnemySpawnPoint enemySpawner;
     [SerializeField] private GameObject immuneTut;
@@ -26,7 +28,11 @@ public class TutorialManager : MonoBehaviour
 
         if (reloadTut) weaponEvents.ReloadStarted += TriggerReloadedTutorial;
         else Debug.LogWarning($"[{this}] No 'Reload' Tutorial Set! this might be a mistake");
-        if (shootDemonTut) weaponEvents.ShotResolved += TriggerShootEnemyTutorial;
+        if (shootDemonTut)
+        {
+            // weaponEvents.ShotResolved += ShootEnemy;
+            shootDemonsTrigger.TutorialTriggered += TriggerShootEnemyTutorial;
+        } 
         else Debug.LogWarning($"[{this}] No 'Shoot Demon' Tutorial Set! this might be a mistake");
         if (immuneTut) enemySpawner.EnemySpawned += ImmuneEnemySpawned;
         else Debug.LogWarning($"[{this}] No 'Immunity' Tutorial Set! this might be a mistake");
@@ -51,12 +57,21 @@ public class TutorialManager : MonoBehaviour
         DoTutorial(reloadTut); //trigger tut
     }
 
-    void TriggerShootEnemyTutorial(ShotResult result)
+    void ShootEnemy(ShotResult result)
     {
         if (result.Outcome != ShotOutcome.EnemyHit) return; // if anything but EnemyHit
-        weaponEvents.ShotResolved -= TriggerShootEnemyTutorial; // unsub
-        DoTutorial(shootDemonTut); // trigger tut
+        TriggerShootEnemyTutorial();
     }
+
+    void TriggerShootEnemyTutorial()
+    {
+        weaponEvents.ShotResolved -= ShootEnemy; // unsub
+        shootDemonsTrigger.TutorialTriggered -= TriggerShootEnemyTutorial; // unsub
+
+        DoTutorialImmediate(shootDemonTut); // trigger tut
+    }
+
+
 
     void ImmuneEnemySpawned(Enemy immuneEnemy)
     {
@@ -73,6 +88,12 @@ public class TutorialManager : MonoBehaviour
     {
         StartCoroutine(TutorialCoroutine(tut));
     }
+
+    void DoTutorialImmediate(GameObject tut)
+    {
+        dialogueManager.StartDialogue(tut);
+    }
+    
     
     IEnumerator TutorialCoroutine(GameObject tut)
     {
