@@ -24,6 +24,21 @@ public class CameraEffectCoordinator : MonoBehaviour
     [Tooltip("Scene PauseManager. If null, searches the scene.")]
     [SerializeField] private PauseManager pauseManager = null;
 
+    // Michael feature (special-shot): charge feedback references, found on the selected weapon.
+    [SerializeField] private WeaponInputReader weaponInputReader;
+    [SerializeField] private SpecialShot specialShot;
+    [SerializeField] private WeaponFiringLogic weaponFiringLogic;
+    [SerializeField] private WeaponStateController weaponStateController;
+
+    [Header("Special Shot Hold Shake")]
+    [SerializeField] private bool enableHoldShake = true;
+    [SerializeField, Min(0f)] private float holdShakeStartIntensity = 0.08f;
+    [SerializeField, Min(0f)] private float holdShakeMaxIntensity = 0.45f;
+    [Tooltip("Seconds to build from starting strength to maximum. Maximum strength stays constant while held.")]
+    [SerializeField, Min(0f)] private float holdShakeBuildTime = 1f;
+    private float holdShakeElapsed;
+    private bool wasHoldingSpecial;
+
     [Header("Mode")]
     [Tooltip("On: effects play for every target hit, in order. Off: effects play once, on the closest hit.")]
     [SerializeField] private bool perTarget = true;
@@ -71,6 +86,13 @@ public class CameraEffectCoordinator : MonoBehaviour
         Instance = this;
 
         if (weaponEvents == null) weaponEvents = FindAnyObjectByType<WeaponEvents>();
+        if (weaponEvents != null)
+        {
+            if (weaponInputReader == null) weaponInputReader = weaponEvents.GetComponent<WeaponInputReader>();
+            if (specialShot == null) specialShot = weaponEvents.GetComponent<SpecialShot>();
+            if (weaponFiringLogic == null) weaponFiringLogic = weaponEvents.GetComponent<WeaponFiringLogic>();
+            if (weaponStateController == null) weaponStateController = weaponEvents.GetComponent<WeaponStateController>();
+        }
         if (hitstop == null) hitstop = GetComponent<HitstopController>();
         if (hitstop == null) hitstop = FindAnyObjectByType<HitstopController>();
         if (impactFrame == null) impactFrame = FindAnyObjectByType<ImpactFrameController>();
@@ -102,6 +124,7 @@ public class CameraEffectCoordinator : MonoBehaviour
         }
 
         collecting = false;
+        StopHoldShake();
         StopChain();
     }
 
@@ -115,6 +138,7 @@ public class CameraEffectCoordinator : MonoBehaviour
     // LateUpdate so every ShotResolved from this frame's shot is in before the chain starts
     private void LateUpdate()
     {
+        UpdateHoldShake();
         if (!collecting)
             return;
 
@@ -127,6 +151,39 @@ public class CameraEffectCoordinator : MonoBehaviour
             chain = StartCoroutine(PlayChain(new List<Vector3>(pendingHits)));
         else if (pendingMiss)
             PlayMiss(pendingMissPoint);
+    }
+
+    // Michael feature (special-shot): check after weapon Update so ready/reload/input state is current.
+    private void UpdateHoldShake()
+    {
+        bool holding = enableHoldShake && !IsPaused && Time.timeScale > 0f &&
+            weaponInputReader != null && weaponInputReader.isActiveAndEnabled && weaponInputReader.CanShoot &&
+            weaponInputReader.IsChargingSpecial && weaponInputReader.TrueShotInProgress() &&
+            specialShot != null && specialShot.isActiveAndEnabled && specialShot.IsReady &&
+            (weaponFiringLogic == null || !weaponFiringLogic.IsReloading) &&
+            (weaponStateController == null || weaponStateController.IsWeaponEnabled);
+
+        if (!holding || cameraEffects == null)
+        {
+            StopHoldShake();
+            return;
+        }
+
+        if (!wasHoldingSpecial) holdShakeElapsed = 0f;
+        else holdShakeElapsed += Time.deltaTime;
+        wasHoldingSpecial = true;
+
+        float blend = holdShakeBuildTime <= 0f ? 1f : Mathf.Clamp01(holdShakeElapsed / holdShakeBuildTime);
+        float startIntensity = Mathf.Max(0f, holdShakeStartIntensity);
+        float maxIntensity = Mathf.Max(startIntensity, holdShakeMaxIntensity);
+        cameraEffects.SetSustainedShake(Mathf.Lerp(startIntensity, maxIntensity, blend));
+    }
+
+    private void StopHoldShake()
+    {
+        holdShakeElapsed = 0f;
+        wasHoldingSpecial = false;
+        if (cameraEffects != null) cameraEffects.StopSustainedShake();
     }
 
     private void OnShotFired(WeakPointType shotType)
