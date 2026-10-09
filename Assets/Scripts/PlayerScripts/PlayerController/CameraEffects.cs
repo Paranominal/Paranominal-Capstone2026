@@ -1,6 +1,7 @@
 using UnityEngine;
 
 // Michael feature (camera-shake): integrated Perlin noise based camera shake. Applied after head bob and strafe tilt so all three effects layer cleanly.
+[DefaultExecutionOrder(100)]
 public class CameraEffects : MonoBehaviour
 {
     public static CameraEffects Instance { get; private set; }
@@ -34,6 +35,13 @@ public class CameraEffects : MonoBehaviour
     private float seedR;
     private bool isShaking;
 
+    // Michael feature (special-shot): held shake is separate from timed impact shake.
+    private float sustainedShakeIntensity;
+    private float noiseTime;
+    private Quaternion lastShakeRotation;
+    private Quaternion lastBaseRotation;
+    private bool appliedShakeRotation;
+
     private void Awake()
     {
         // Singleton setup
@@ -43,6 +51,9 @@ public class CameraEffects : MonoBehaviour
             return;
         }
         Instance = this;
+        seedX = Random.Range(0f, 1000f);
+        seedY = Random.Range(0f, 1000f);
+        seedR = Random.Range(0f, 1000f);
 
         // Try to automatically find references if they are not assigned in the inspector
         if (playerCamera == null) playerCamera = Camera.main;
@@ -62,60 +73,86 @@ public class CameraEffects : MonoBehaviour
     {
         if (playerCamera == null) return;
 
-        
-        UpdateShake(initialCameraPosition, playerCamera.transform.localRotation);
+        UpdateShake(initialCameraPosition, GetBaseRotation());
     }
 
-    // Summary: Applies Perlin noise shake additively on top of head bob and strafe tilt.
+    // Remove our previous roll only if another camera controller has not replaced the rotation.
+    private Quaternion GetBaseRotation()
+    {
+        Quaternion rotation = playerCamera.transform.localRotation;
+        if (appliedShakeRotation && Quaternion.Angle(rotation, lastShakeRotation) < 0.001f)
+            rotation = lastBaseRotation;
+        appliedShakeRotation = false;
+        return rotation;
+    }
+
+    // Summary: Layers sustained charge shake and fading impact shake without accumulating roll.
     private void UpdateShake(Vector3 basePosition, Quaternion baseRotation)
     {
-        if (!enableShake)
+        float scale = 0f;
+        if (enableShake)
         {
-            // If shake was disabled while active, stop applying effects and reset state
-            isShaking = false;
-            // returns camera to base position and rotation (needed for stun effect)
-            playerCamera.transform.localPosition = basePosition;
-            playerCamera.transform.localRotation = baseRotation;
-            return;
+            scale = sustainedShakeIntensity;
+            if (isShaking)
+            {
+                shakeElapsed += Time.deltaTime;
+                if (shakeDuration <= 0f || shakeElapsed >= shakeDuration)
+                    isShaking = false;
+                else
+                {
+                    float t = shakeElapsed / shakeDuration;
+                    scale += shakeIntensity * (1f - t * t);
+                }
+            }
         }
-
-        if (!isShaking)
-        {
-            // If not shaking, ensure camera is at base position and rotation
-            playerCamera.transform.localPosition = basePosition;
-            playerCamera.transform.localRotation = baseRotation;
-            return;
-        }
-
-        shakeElapsed += Time.deltaTime;
-
-        if (shakeElapsed >= shakeDuration)
+        else
         {
             isShaking = false;
-            playerCamera.transform.localPosition = basePosition;
-            playerCamera.transform.localRotation = baseRotation;
-            return;
+            sustainedShakeIntensity = 0f;
         }
 
-        float t = shakeElapsed / shakeDuration;
-        float decay = 1f - t * t;
-        float scale = shakeIntensity * decay;
-        float time = shakeElapsed * shakeFrequency;
+        playerCamera.transform.localPosition = basePosition;
+        playerCamera.transform.localRotation = baseRotation;
+        if (scale <= 0f) return;
 
-        float offsetX = (Mathf.PerlinNoise(seedX + time, 0f) - 0.5f) * 2f;
-        float offsetY = (Mathf.PerlinNoise(seedY + time, 0f) - 0.5f) * 2f;
-        float roll    = (Mathf.PerlinNoise(seedR + time, 0f) - 0.5f) * 2f;
+        noiseTime += Time.deltaTime * shakeFrequency;
+        float offsetX = (Mathf.PerlinNoise(seedX + noiseTime, 0f) - 0.5f) * 2f;
+        float offsetY = (Mathf.PerlinNoise(seedY + noiseTime, 0f) - 0.5f) * 2f;
+        float roll = (Mathf.PerlinNoise(seedR + noiseTime, 0f) - 0.5f) * 2f;
 
-        Vector3 shakeOffset = new Vector3(offsetX * shakePositionScale * scale, offsetY * shakePositionScale * scale, 0f);
-        float rollDegrees = roll * shakeRollScale * scale;
+        playerCamera.transform.localPosition = basePosition +
+            new Vector3(offsetX, offsetY, 0f) * shakePositionScale * scale;
+        lastBaseRotation = baseRotation;
+        lastShakeRotation = baseRotation * Quaternion.Euler(0f, 0f, roll * shakeRollScale * scale);
+        playerCamera.transform.localRotation = lastShakeRotation;
+        appliedShakeRotation = true;
+    }
 
-        // applies the shake transform explicitly relative to the base position
-        playerCamera.transform.localPosition = basePosition + shakeOffset;
+    // Michael feature (special-shot): update intensity without restarting the noise each frame.
+    public void SetSustainedShake(float intensity)
+    {
+        sustainedShakeIntensity = enableShake ? Mathf.Max(0f, intensity) : 0f;
+    }
 
-        // applies roll on top of the base rotation to preserve players pitch/yaw
-        Vector3 baseEuler = baseRotation.eulerAngles;
-        baseEuler.z += rollDegrees;
-        playerCamera.transform.localRotation = Quaternion.Euler(baseEuler);
+    public void StopSustainedShake()
+    {
+        sustainedShakeIntensity = 0f;
+    }
+
+    private void OnDisable()
+    {
+        isShaking = false;
+        sustainedShakeIntensity = 0f;
+        if (playerCamera != null)
+        {
+            playerCamera.transform.localRotation = GetBaseRotation();
+            playerCamera.transform.localPosition = initialCameraPosition;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 
     // Start a shake with default intensity and duration. Restarts if already shaking.
@@ -135,7 +172,7 @@ public class CameraEffects : MonoBehaviour
     public void Shake(float intensity, float duration)
     {
         if (!enableShake) return;
-        shakeIntensity = intensity;
+        shakeIntensity = Mathf.Max(0f, intensity);
         shakeDuration = duration;
         shakeElapsed = 0f;
         isShaking = true;
@@ -158,6 +195,7 @@ public class CameraEffects : MonoBehaviour
         {
             // stop any active shake immediately
             isShaking = false;
+            sustainedShakeIntensity = 0f;
         }
     }
     

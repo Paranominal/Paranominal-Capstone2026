@@ -4,6 +4,7 @@
 
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class GroundMovement : MonoBehaviour, IEnemyMovement
@@ -14,7 +15,18 @@ public class GroundMovement : MonoBehaviour, IEnemyMovement
     [Tooltip("Orbit/strafe radius used only when the enemy has no attacks assigned.")]
     [SerializeField] private float strafeRadius = 5f;
     [ShowIf("chaseEnabled")]
-    [SerializeField] private float chaseSpeed = 5f;
+    [Min(0f)]
+    [Tooltip("Chase speed when the enemy is at its stopping distance.")]
+    [SerializeField] private float minChaseSpeed = 2f;
+    [ShowIf("chaseEnabled")]
+    [Min(0f)]
+    [FormerlySerializedAs("chaseSpeed")]
+    [Tooltip("Maximum chase speed. Existing Chase Speed values are preserved here.")]
+    [SerializeField] private float maxChaseSpeed = 5f;
+    [ShowIf("chaseEnabled")]
+    [Min(0.01f)]
+    [Tooltip("Distance beyond the stopping distance where chase speed reaches its maximum.")]
+    [SerializeField] private float chaseSpeedRampDistance = 10f;
     [ShowIf("chaseEnabled")]
     [Range(0, 1)]
     [Tooltip("Controls how quickly the agent accelerates. 0 = sluggish, 1 = snappy.")]
@@ -85,7 +97,18 @@ public class GroundMovement : MonoBehaviour, IEnemyMovement
     // Movement Commands
     public void Chase(Vector3 target, float stopDistance)
     {
-        Move(target, chaseSpeed, stopDistance);
+        // Use ground-plane distance so height differences do not increase chase speed.
+        Vector3 toTarget = target - transform.position;
+        toTarget.y = 0f;
+
+        float stoppingDistance = Mathf.Max(0f, stopDistance);
+        float distanceBeyondStop = Mathf.Max(0f, toTarget.magnitude - stoppingDistance);
+        float speedBlend = Mathf.Clamp01(distanceBeyondStop / Mathf.Max(0.01f, chaseSpeedRampDistance));
+        float minimumSpeed = Mathf.Max(0f, minChaseSpeed);
+        float maximumSpeed = Mathf.Max(minimumSpeed, maxChaseSpeed);
+        float speed = Mathf.Lerp(minimumSpeed, maximumSpeed, speedBlend);
+
+        Move(target, speed, stoppingDistance);
     }
 
     public void Strafe(Vector3 orbitCenter, float orbitRadius)
