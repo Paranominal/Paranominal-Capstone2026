@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: chaseSpeed
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 311667976775771018, guid: f3cbe991208ee324e936889e8572d872, type: 3}
+      propertyPath: neverGiveUpChase
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 312799391672767702, guid: f3cbe991208ee324e936889e8572d872, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -172,7 +176,7 @@ MonoBehaviour:
   enemyClass: 3
   skipSpawn: 0
   spawnDelay: 1
-  immuneToSpecialShot: 1
+  immuneToSpecialShot: 0
   alwaysAggro: 1
   aggroRange: 10
   movementScript: {fileID: 9211194694348538977}
@@ -221,6 +225,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1200192
   minionClearance: 0.5
+  maxActiveMinions: 4
   _phase: 0
   _livingMinions: 0
 --- !u!114 &3723636861691920227 stripped

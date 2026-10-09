@@ -4,6 +4,7 @@
 // Natural stagger recovery also summons minions and releases the Subs.
 // When the Main dies, its Sub-bosses and any living minions die with it.
 // Minions spawn at random points within a radius around the boss and persist between phases.
+// EDIT (minion-cap): optional cap on living minions across the whole fight. Summons fill whatever room is left.
 // EDIT (boss-autolink): if Sub Bosses is left empty, the Main links any Sub-bosses automatically, whichever order they spawn in.
 
 using System;
@@ -42,6 +43,10 @@ public class Enemy_BossMain : Enemy_Boss, IEnemySpawner
     [SerializeField] private LayerMask minionBlockingLayers = ~0;
     [Tooltip("Radius of the overlap check used to keep minions out of walls.")]
     [SerializeField] private float minionClearance = 0.5f;
+    // EDIT (minion-cap)
+    [Tooltip("Most minions that can be alive at once. Summons only fill the remaining room. 0 = no cap.")]
+    [Min(0)]
+    [SerializeField] private int maxActiveMinions = 0;
 
     #if UNITY_EDITOR
     [ShowIf("debugMode", Header = "Boss Runtime State (Play Mode)")]
@@ -215,6 +220,15 @@ public class Enemy_BossMain : Enemy_Boss, IEnemySpawner
     // Minions
     private void SummonMinions(int count)
     {
+        // EDIT (minion-cap): clamp to the room left under the cap
+        if (maxActiveMinions > 0)
+        {
+            minions.RemoveAll(m => m == null);
+            int room = Mathf.Max(0, maxActiveMinions - minions.Count);
+            if (debugMode && count > room) Debug.Log($"[{this}] Minion cap reached, summoning {room} of {count}.");
+            count = Mathf.Min(count, room);
+        }
+
         if (count <= 0) return;
         if (minionPrefab == null)
         {
@@ -280,11 +294,9 @@ public class Enemy_BossMain : Enemy_Boss, IEnemySpawner
         #endif
     }
 
-    
-
 
     // Scene Gizmos
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
     protected override void OnDrawGizmosSelected()
     {
         base.OnDrawGizmosSelected();

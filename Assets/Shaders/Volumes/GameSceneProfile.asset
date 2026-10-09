@@ -15,7 +15,7 @@ MonoBehaviour:
   active: 1
   pixelSize:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 4
 --- !u!114 &-7954653342275197760
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -193,10 +193,10 @@ MonoBehaviour:
     m_Value: 0
   focalPoint:
     m_OverrideState: 1
-    m_Value: {x: 0.50057536, y: 0.49184215}
+    m_Value: {x: 0.500001, y: 0.49161518}
   seed:
     m_OverrideState: 1
-    m_Value: 986
+    m_Value: 524
   darkColour:
     m_OverrideState: 1
     m_Value: {r: 0, g: 0, b: 0, a: 1}
@@ -301,6 +301,40 @@ MonoBehaviour:
   highlightsEnd:
     m_OverrideState: 1
     m_Value: 0.33
+--- !u!114 &-2168103321754857477
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ebf92f2fbb650d48a668f08ba6015f6, type: 3}
+  m_Name: CRTVolume
+  m_EditorClassIdentifier: Assembly-CSharp::CRTVolume
+  active: 1
+  curvature:
+    m_OverrideState: 1
+    m_Value: 7
+  vignetteWidth:
+    m_OverrideState: 1
+    m_Value: 51.3
+  scanlineIntensity:
+    m_OverrideState: 1
+    m_Value: 0.585
+  scanlineCount:
+    m_OverrideState: 1
+    m_Value: 294
+  cornerRadius:
+    m_OverrideState: 1
+    m_Value: 0.084
+  cornerSharpness:
+    m_OverrideState: 1
+    m_Value: 53
+  phosphorIntensity:
+    m_OverrideState: 1
+    m_Value: 0.15
 --- !u!114 &-2048086351416764788
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -328,10 +362,10 @@ MonoBehaviour:
     m_Value: 0
   noiseScale:
     m_OverrideState: 1
-    m_Value: -1.13
+    m_Value: 1
   noiseSpeed:
     m_OverrideState: 1
-    m_Value: -4.21
+    m_Value: -3.6672
   cycleDuration:
     m_OverrideState: 1
     m_Value: 2
@@ -402,17 +436,15 @@ MonoBehaviour:
   - {fileID: -445072511358724795}
   - {fileID: 3572142203986694889}
   - {fileID: -7954653342275197760}
-  - {fileID: 2405007435555921013}
   - {fileID: -8989162280575926094}
   - {fileID: 1317798265248090415}
   - {fileID: 5312064039933448571}
   - {fileID: -2048086351416764788}
-  - {fileID: 2062061486308834597}
   - {fileID: -6898977460747097792}
+  - {fileID: -2168103321754857477}
   - {fileID: -6610787976968747644}
   - {fileID: -1841643297785110551}
   - {fileID: 8343280942440788295}
-  - {fileID: 9140998113213102055}
 --- !u!114 &1317798265248090415
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -428,90 +460,31 @@ MonoBehaviour:
   active: 1
   redSteps:
     m_OverrideState: 1
-    m_Value: 8
+    m_Value: 16
   greenSteps:
     m_OverrideState: 1
-    m_Value: 8
+    m_Value: 16
   blueSteps:
     m_OverrideState: 1
-    m_Value: 8
+    m_Value: 16
   effectStrength:
     m_OverrideState: 1
     m_Value: 0.43
   ditherStrength:
     m_OverrideState: 1
-    m_Value: 0.43
+    m_Value: 0.67
   bayerSize:
     m_OverrideState: 1
     m_Value: 2
   usePS1Matrix:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   usePerceivedBrightness:
     m_OverrideState: 1
     m_Value: 1
   perceptualGamma:
     m_OverrideState: 1
     m_Value: 0.657
---- !u!114 &2062061486308834597
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e4136331b92bf04580dc6abad2aedba, type: 3}
-  m_Name: CRTVolume
-  m_EditorClassIdentifier: Assembly-CSharp::CRTVolume
-  active: 1
-  blurOffset:
-    m_OverrideState: 1
-    m_Value: 1
-  scanlineIntensity:
-    m_OverrideState: 1
-    m_Value: 0.067
-  scanlineCount:
-    m_OverrideState: 1
-    m_Value: 199
-  scanlineSpeed:
-    m_OverrideState: 1
-    m_Value: 3
-  vignetteIntensity:
-    m_OverrideState: 1
-    m_Value: 0.43
-  vignetteSmoothness:
-    m_OverrideState: 1
-    m_Value: 0.4
-  usePhosphor:
-    m_OverrideState: 1
-    m_Value: 0
-  phosphorIntensity:
-    m_OverrideState: 1
-    m_Value: 0.169
-  phosphorScale:
-    m_OverrideState: 1
-    m_Value: 2.09
---- !u!114 &2405007435555921013
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb60a22f311433c4c962b888d1393f88, type: 3}
-  m_Name: PaniniProjection
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.PaniniProjection
-  active: 1
-  distance:
-    m_OverrideState: 1
-    m_Value: 0.144
-  cropToFit:
-    m_OverrideState: 1
-    m_Value: 1
 --- !u!114 &3557374383702206417
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -901,28 +874,3 @@ MonoBehaviour:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
---- !u!114 &9140998113213102055
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29fa0085f50d5e54f8144f766051a691, type: 3}
-  m_Name: FilmGrain
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FilmGrain
-  active: 1
-  type:
-    m_OverrideState: 1
-    m_Value: 0
-  intensity:
-    m_OverrideState: 1
-    m_Value: 0.227
-  response:
-    m_OverrideState: 1
-    m_Value: 0.147
-  texture:
-    m_OverrideState: 0
-    m_Value: {fileID: 0}
