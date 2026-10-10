@@ -5,7 +5,8 @@ using UnityEngine.Rendering;
 
 public class PlayerDash : MonoBehaviour
 {
-    public bool dashEnabled = true;
+    // Michael edit (dash-ui): defaults to false so the dash and its UI stay locked until the pickup.
+    public bool dashEnabled = false;
     [Tooltip("Horizontal dash speed applied while dashing.")]
     [SerializeField] private float dashSpeed = 15f;
     [Tooltip("Duration of the dash in seconds.")]
@@ -88,6 +89,8 @@ public class PlayerDash : MonoBehaviour
     private float fadeTimer = 0f;
     private float startAlphaDull = 0f;
     private float startAlphaFull = 0f;
+    // Michael edit (dash-ui): true while the HUD is hidden (paused), so unlocking the dash mid-dialogue doesn't show the UI early.
+    private bool uiHidden = false;
 
     // Dash state control variables
     private bool isDashing = false;
@@ -138,11 +141,8 @@ public class PlayerDash : MonoBehaviour
         // resolve UI references if not assigned (UI lives on SceneEssentialsBundle)
         ResolveUIReferences();
 
-        if (!dashEnabled)
-        {
-            arrowContainer.SetActive(false);
-            chargeBarContainer.SetActive(false);
-        }
+        // Michael edit (dash-ui): container visibility now handled in one place.
+        RefreshUIContainers();
 
         // initialize charges
         if (maxDashCharges < 1)
@@ -661,17 +661,28 @@ public class PlayerDash : MonoBehaviour
     public void DashVersionEnabled(string version)
     {
         dashEnabled = true;
-        if (version == "charges")
-        {
-            dashUsesCharges = true;
-            chargeBarContainer.SetActive(true);
-            arrowContainer.SetActive(false);
-        }
-        else
-        {
-            arrowContainer.SetActive(true);
-            chargeBarContainer.SetActive(false);
-        }
+        // Michael edit (dash-ui): set explicitly so "cooldown" also clears charge mode if it was ticked in the Inspector.
+        dashUsesCharges = version == "charges";
+        RefreshUIContainers();
+    }
+
+    // Michael edit (dash-ui): called by PlayerHUD.UIVisible when pausing/resuming.
+    public void SetUIVisible(bool visible)
+    {
+        uiHidden = !visible;
+        RefreshUIContainers();
+    }
+
+    // Michael edit (dash-ui): shows only the container for the current dash mode, and only once the dash is unlocked and the HUD isn't hidden.
+    private void RefreshUIContainers()
+    {
+        bool show = dashEnabled && !uiHidden;
+
+        if (arrowContainer != null)
+            arrowContainer.SetActive(show && !dashUsesCharges);
+
+        if (chargeBarContainer != null)
+            chargeBarContainer.SetActive(show && dashUsesCharges);
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
@@ -690,5 +701,4 @@ public class PlayerDash : MonoBehaviour
             }
         }
     }
-}   
-
+}

@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 // the Minimised UI (current entry display + scrollable entry list) during gameplay, and the Full Interface, which is the pause menu.
 // Pausing goes through PauseManager. Full Interface tab content is delegated to the panel scripts (GrimoireInventoryPanel, etc.).
 // EDIT (grimoire-pause): Full Interface ported from the mid-year prototype. Pause, cursor and action map handling moved to PauseManager.
+// EDIT (grimoire-tab-keys): each toggle action opens the Full Interface to its own tab. Pressing another tab's key while open jumps there, pressing the current tab's key closes.
 public class ALTGrimoire : MonoBehaviour
 {
     public static ALTGrimoire instance;
@@ -42,9 +43,19 @@ public class ALTGrimoire : MonoBehaviour
     [SerializeField] private Animator grimoireAnim;
 
     // EDIT (grimoire-pause): Full Interface references.
+    // EDIT (grimoire-tab-keys): replaces toggleActions. Each action now opens to its own tab.
+    [System.Serializable]
+    public struct ToggleBinding
+    {
+        public InputActionReference action;
+        [Tooltip("Tab the Full Interface opens to (or jumps to, if already open) when this action is pressed.")]
+        public GrimoireTab openTab;
+    }
+
     [Header("Full Interface: Toggle")]
-    [Tooltip("Any of these actions opens and closes the Full Interface (e.g. GrimoireUI on Tab, Pause on Escape). Falls back to GrimoireUI if empty.")]
-    [SerializeField] private InputActionReference[] toggleActions;
+    [Tooltip("Actions that open the Full Interface to a tab (e.g. GrimoireUI to Inventory, Pause to Settings). " +
+             "Pressing one while open jumps to its tab, or closes the Grimoire if already on it. Falls back to GrimoireUI and Pause if empty.")]
+    [SerializeField] private ToggleBinding[] toggleBindings;
     [Tooltip("The X button that closes the Full Interface.")]
     [SerializeField] private Button closeButton;
 
@@ -97,7 +108,8 @@ public class ALTGrimoire : MonoBehaviour
     // Input Actions
     private InputAction scrollGrimoireAction;
     // EDIT (grimoire-pause): replaces grimoireUIAction.
-    private List<InputAction> toggles = new List<InputAction>();
+    // EDIT (grimoire-tab-keys): each action paired with the tab it opens.
+    private List<(InputAction action, GrimoireTab tab)> toggles = new List<(InputAction action, GrimoireTab tab)>();
 
 
     private void Awake()
@@ -170,9 +182,11 @@ public class ALTGrimoire : MonoBehaviour
         }
 
         // EDIT (grimoire-pause): open/close logic moved into OpenGrimoire and CloseGrimoire.
-        if (TogglePressedThisFrame())
+        // EDIT (grimoire-tab-keys): opens to the pressed key's tab. While open, jumps to that tab, or closes if already on it.
+        if (TryGetPressedToggle(out GrimoireTab pressedTab))
         {
-            if (!grimoireActive) OpenGrimoire(); // GRIMOIRE ACTIVATE!
+            if (!grimoireActive) OpenGrimoire(pressedTab); // GRIMOIRE ACTIVATE!
+            else if (activeTab != pressedTab) SwitchTab(pressedTab);
             else CloseGrimoire(); // GRIMOIRE AWAY!!
         }
 
@@ -187,7 +201,8 @@ public class ALTGrimoire : MonoBehaviour
 
     // EDIT (grimoire-pause): Summary: Opens the Full Interface and pauses the game through PauseManager.
     // Ignored if something else (e.g. dialogue) currently owns the pause, or released it this frame.
-    private void OpenGrimoire()
+    // EDIT (grimoire-tab-keys): takes the tab to open to, instead of reopening the last one.
+    private void OpenGrimoire(GrimoireTab tab)
     {
         if (pauseManager != null && (pauseManager.IsPaused || pauseManager.ResumedThisFrame))
             return;
@@ -202,7 +217,7 @@ public class ALTGrimoire : MonoBehaviour
             screenUI.UIVisible(false);
 
         SetContentMode(full: true);
-        SwitchTab(activeTab);
+        SwitchTab(tab); // EDIT (grimoire-tab-keys): was activeTab.
 
         OnGrimoireToggled?.Invoke(true);
     }
@@ -244,38 +259,57 @@ public class ALTGrimoire : MonoBehaviour
     // ---- Full Interface ----
 
     // EDIT (grimoire-pause): Summary: Collects the toggle actions and registers them with PauseManager so they keep working while paused.
+    // EDIT (grimoire-tab-keys): reads toggleBindings, keeping each action's tab.
     private void SetupToggleActions()
     {
-        if (toggleActions != null)
+        if (toggleBindings != null)
         {
-            foreach (InputActionReference reference in toggleActions)
+            foreach (ToggleBinding binding in toggleBindings)
             {
-                if (reference != null && reference.action != null && !toggles.Contains(reference.action))
-                    toggles.Add(reference.action);
+                if (binding.action != null && binding.action.action != null)
+                    AddToggle(binding.action.action, binding.openTab);
             }
         }
 
-        // Fallback to the original GrimoireUI action if nothing is assigned.
+        // Fallback to the default actions if nothing is assigned.
         if (toggles.Count == 0)
         {
-            InputAction fallback = InputSystem.actions.FindAction("GrimoireUI");
-            if (fallback != null) toggles.Add(fallback);
+            AddToggle(InputSystem.actions.FindAction("GrimoireUI"), GrimoireTab.Inventory);
+            AddToggle(InputSystem.actions.FindAction("Pause"), GrimoireTab.Settings);
         }
 
         if (pauseManager != null)
         {
-            foreach (InputAction action in toggles)
-                pauseManager.RegisterPersistentAction(action);
+            foreach ((InputAction action, GrimoireTab tab) toggle in toggles)
+                pauseManager.RegisterPersistentAction(toggle.action);
         }
     }
 
-    // EDIT (grimoire-pause): single toggle per frame, even if more than one toggle key is pressed.
-    private bool TogglePressedThisFrame()
+    // EDIT (grimoire-tab-keys): skips missing and duplicate actions. The first binding for an action wins.
+    private void AddToggle(InputAction action, GrimoireTab tab)
     {
-        foreach (InputAction action in toggles)
+        if (action == null) return;
+
+        foreach ((InputAction action, GrimoireTab tab) toggle in toggles)
         {
-            if (action.WasPressedThisFrame()) return true;
+            if (toggle.action == action) return;
         }
+        toggles.Add((action, tab));
+    }
+
+    // EDIT (grimoire-pause): single toggle per frame, even if more than one toggle key is pressed.
+    // EDIT (grimoire-tab-keys): was TogglePressedThisFrame. Also returns the pressed action's tab. The first one in the list wins.
+    private bool TryGetPressedToggle(out GrimoireTab tab)
+    {
+        foreach ((InputAction action, GrimoireTab tab) toggle in toggles)
+        {
+            if (toggle.action.WasPressedThisFrame())
+            {
+                tab = toggle.tab;
+                return true;
+            }
+        }
+        tab = activeTab;
         return false;
     }
 
