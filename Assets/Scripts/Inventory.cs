@@ -22,6 +22,10 @@ public class Inventory : MonoBehaviour
         inventory.Add(item);
         AddToGrimoire(item);
 
+        // Trigger pickup spawns before hiding or destroying the collected item.
+        CollectibleObject collectible = item.GetComponent<CollectibleObject>();
+        if (collectible != null) collectible.OnPickedUp();
+
         if (cache)
         {
             item.gameObject.SetActive(false);
@@ -34,6 +38,10 @@ public class Inventory : MonoBehaviour
         if (inventory.Contains(item) && !doDuplicates) return;
         inventory.Add(item);
         AddToGrimoire(item);
+
+        // Trigger pickup spawns before hiding or destroying the collected item.
+        CollectibleObject collectible = item.GetComponent<CollectibleObject>();
+        if (collectible != null) collectible.OnPickedUp();
 
         if (cache)
         {

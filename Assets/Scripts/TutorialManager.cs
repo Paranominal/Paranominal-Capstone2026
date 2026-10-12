@@ -1,15 +1,26 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class TutorialManager : MonoBehaviour
 {
+    [Header("Dependancies")]
     [SerializeField] private DialogueManager dialogueManager;
+    [Header("Options")]
+    [SerializeField] float tutDelay = 0.5f;
+    [Header("Initial Entries")]
     [SerializeField] private Inventory inventory;
+    [SerializeField] private List<GameObject> initialEntries;
+    [Header("Weapon Tutorial")]
     [SerializeField] private WeaponEvents weaponEvents;
     [SerializeField] private GameObject reloadTut;
+    [Header("Shoot Demonds Tutorial")]
     [SerializeField] private GameObject shootDemonTut;
-    [SerializeField] private List<GameObject> initialEntries;
+    [SerializeField] private TutorialTrigger shootDemonsTrigger;
+    [Header("Immunity Tutorial")]
+    [SerializeField] private EnemySpawnPoint enemySpawner;
+    [SerializeField] private GameObject immuneTut;
 
     void Awake()
     {
@@ -17,8 +28,15 @@ public class TutorialManager : MonoBehaviour
 
         if (reloadTut) weaponEvents.ReloadStarted += TriggerReloadedTutorial;
         else Debug.LogWarning($"[{this}] No 'Reload' Tutorial Set! this might be a mistake");
-        if (shootDemonTut) weaponEvents.ShotResolved += TriggerShootEnemyTutorial;
+        if (shootDemonTut) weaponEvents.ShotResolved += ShootEnemy;
+        if (shootDemonTut)
+        {
+            // weaponEvents.ShotResolved += ShootEnemy;
+            shootDemonsTrigger.TutorialTriggered += TriggerShootEnemyTutorial;
+        } 
         else Debug.LogWarning($"[{this}] No 'Shoot Demon' Tutorial Set! this might be a mistake");
+        if (immuneTut) enemySpawner.EnemySpawned += ImmuneEnemySpawned;
+        else Debug.LogWarning($"[{this}] No 'Immunity' Tutorial Set! this might be a mistake");
     }
     void Start()
     {
@@ -30,20 +48,57 @@ public class TutorialManager : MonoBehaviour
         foreach (GameObject entry in initialEntries)
         {
             inventory.Add(Instantiate(entry), true);
-            Debug.LogWarning("AHHH");
+            // Debug.LogWarning("AHHH");
         }
     }
 
     void TriggerReloadedTutorial()
     {
         weaponEvents.ReloadStarted -= TriggerReloadedTutorial; // unsub
-        dialogueManager.StartDialogue(reloadTut); //trigger tut
+        DoTutorial(reloadTut); //trigger tut
     }
-    
-    void TriggerShootEnemyTutorial(ShotResult result)
+
+    void ShootEnemy(ShotResult result) //if the player shoots the enemy it skips tutorial
     {
         if (result.Outcome != ShotOutcome.EnemyHit) return; // if anything but EnemyHit
-        weaponEvents.ShotResolved -= TriggerShootEnemyTutorial; // unsub
-        dialogueManager.StartDialogue(shootDemonTut); // trigger tut
+        
+        weaponEvents.ShotResolved -= ShootEnemy; // unsub
+        shootDemonsTrigger.TutorialTriggered -= TriggerShootEnemyTutorial; // unsub
+    }
+
+    void TriggerShootEnemyTutorial()
+    {
+        weaponEvents.ShotResolved -= ShootEnemy; // unsub
+        shootDemonsTrigger.TutorialTriggered -= TriggerShootEnemyTutorial; // unsub
+
+        DoTutorialImmediate(shootDemonTut); // trigger tut
+    }
+
+    void ImmuneEnemySpawned(Enemy immuneEnemy)
+    {
+        immuneEnemy.ImmuneHit += TriggerImmuneTutorial;
+    }
+
+    void TriggerImmuneTutorial(Enemy immuneEnemy)
+    {
+        immuneEnemy.ImmuneHit -= TriggerImmuneTutorial;
+        DoTutorial(immuneTut); // trigger tut
+    }
+
+    void DoTutorial(GameObject tut)
+    {
+        StartCoroutine(TutorialCoroutine(tut));
+    }
+
+    void DoTutorialImmediate(GameObject tut)
+    {
+        dialogueManager.StartDialogue(tut);
+    }
+    
+    
+    IEnumerator TutorialCoroutine(GameObject tut)
+    {
+        yield return new WaitForSeconds(tutDelay);
+        dialogueManager.StartDialogue(tut);
     }
 }

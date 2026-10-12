@@ -32,8 +32,8 @@ public class FloatAndRotate : MonoBehaviour
 
     void Rotate()
     {
-        transform.Rotate(rotateLocalXSpeed * Time.deltaTime, rotateLocalYSpeed * Time.deltaTime, rotateLocalZSpeed * Time.deltaTime, Space.Self);
-        transform.Rotate(rotateWorldXSpeed * Time.deltaTime, rotateWorldYSpeed * Time.deltaTime, rotateWorldZSpeed * Time.deltaTime, Space.World);
+        transform.Rotate(rotateLocalXSpeed * Time.unscaledDeltaTime, rotateLocalYSpeed * Time.unscaledDeltaTime, rotateLocalZSpeed * Time.unscaledDeltaTime, Space.Self);
+        transform.Rotate(rotateWorldXSpeed * Time.unscaledDeltaTime, rotateWorldYSpeed * Time.unscaledDeltaTime, rotateWorldZSpeed * Time.unscaledDeltaTime, Space.World);
     }
     float xLocalTime;
     float yLocalTime;

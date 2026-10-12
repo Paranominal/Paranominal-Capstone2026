@@ -27,7 +27,7 @@ public class PointPopup : MonoBehaviour
     private float yaw;
     private float roll;
 
-    public void Play(string text, PointPopupStyle style, Vector3 position, float side)
+    public void Play(string text, PointPopupStyle style, Vector3 position, float side, float rotation)
     {
         startPos = position;
         transform.position = position;
@@ -42,7 +42,7 @@ public class PointPopup : MonoBehaviour
 
         // sits left of the enemy -> turns inward to the right, and vice versa
         yaw = -side * yawAngle * (-1f);
-        roll = side * rollAngle * (-1f);
+        roll = side * rollAngle * (-1f) + rotation;
 
         elapsed = 0f;
     }

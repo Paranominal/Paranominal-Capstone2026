@@ -4,6 +4,8 @@ using System.Collections;
 
 public class PlayerStatus : MonoBehaviour, IDamageable
 {
+    public static PlayerStatus Instance { get; private set; }
+
     [SerializeField] private FearBar fearBar;
     [SerializeField] private CameraEffects cameraEffects;
     [SerializeField] private PlayerMover playerMover;
@@ -11,43 +13,54 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     [Header("Stun")]
     [Tooltip("The amount of force applied to the stun knockback when the player is hit. -1 will use the damage amount.")]
     [SerializeField] private float knockbackForce = 2f;
-    
+    [SerializeField] private float screenShakeIntensity = 1f;
+
+    [Header("Audio")]
+    [SerializeField] private AudioManager hurtManager;
+    [SerializeField] private SoundDataSO hurtVocalSound;
+    [SerializeField] private SoundDataSO hurtImpactSound;
+    [SerializeField] private AudioSource hurtSource;
+
     [SerializeField] private float invincibleDuration = 1f;
 
     // Michael feature (fear-effects): tracks whether the player is in an active encounter. Set by encounter managers externally.
     public bool IsInEncounter { get; set; }
 
-    // Tracks whether the player is currently in a safe period (invulnerable).
-    private bool isInvincible;
+    // Tracks whether the player is currently safe
+    public bool isInvincible;
 
     // Michael feature (auto-resolve): fallback for cross-prefab references.
     private void Awake()
     {
         if (cameraEffects == null)
             cameraEffects = FindAnyObjectByType<CameraEffects>();
+
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
     }
 
     public void TakeDamage(DamageInfo info)
     {
 
-        Debug.Log("Damage source: " + info.source?.name);
         if (isInvincible)
             return;
-
-        Debug.Log($"[PlayerStatus] Player hit for {info.amount}.");
         fearBar.TakeDamage(info.amount);
-        cameraEffects?.Shake();
+        CameraEffects.Instance?.Shake(info.amount * screenShakeIntensity);
+
+        AudioManager.PlaySound(hurtImpactSound, hurtSource, true);
+        AudioManager.PlaySound(hurtVocalSound, hurtSource, true);
 
         float stunDuration = cameraEffects != null ? cameraEffects.shakeDuration : 0f;
         StartInvinciblePeriod(stunDuration + invincibleDuration);
         playerMover.stunPlayer(stunDuration, info, knockbackForce);
-
-        
-
     }
 
     private Coroutine invincibleCoroutine;
-    private void StartInvinciblePeriod(float duration)
+    public void StartInvinciblePeriod(float duration)
     {
         // If already invincible, do not restart the timer
         if (isInvincible)
