@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7046755906681582305}
   - component: {fileID: 2408025193810281622}
+  - component: {fileID: 1682837068060908057}
   m_Layer: 0
   m_Name: Halo
   m_TagString: Untagged
@@ -46,21 +47,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.LensFlareComponentSRP
   m_LensFlareData: {fileID: 11400000, guid: 34d1a019417161f43813c3f8d69e62f6, type: 2}
   version: 0
-  intensity: 1
-  maxAttenuationDistance: 11
-  maxAttenuationScale: 11
+  intensity: 0.2
+  maxAttenuationDistance: 15
+  maxAttenuationScale: 15
   distanceAttenuationCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
+      value: 0
+      inSlope: 8.465544
+      outSlope: 8.465544
       tangentMode: 0
-      weightedMode: 0
+      weightedMode: 2
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.25941578
     - serializedVersion: 3
       time: 1
       value: 0
@@ -126,10 +127,10 @@ MonoBehaviour:
   useBackgroundCloudOcclusion: 0
   environmentOcclusion: 0
   useWaterOcclusion: 0
-  occlusionRadius: 0.21
-  sampleCount: 3
-  occlusionOffset: 0.05
-  scale: 1
+  occlusionRadius: 0.1
+  sampleCount: 2
+  occlusionOffset: 0
+  scale: 1.5
   allowOffScreen: 0
   volumetricCloudOcclusion: 0
   occlusionRemapCurve:
@@ -162,3 +163,21 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   lightOverride: {fileID: 0}
+--- !u!114 &1682837068060908057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2458389154222439327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59e9c822ac8fa8a46a2bc7dd10207540, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlareNoise
+  lensFlare: {fileID: 2408025193810281622}
+  flickerSpeed: 7
+  intensityFlicker: 1
+  intensityRange: {x: 0.1, y: 0.4}
+  scaleFlicker: 1
+  scaleRange: {x: 1, y: 1.1}

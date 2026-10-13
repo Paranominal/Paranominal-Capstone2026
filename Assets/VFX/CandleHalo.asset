@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 877e1507ae8d81c40bf1b94c1a86036f, type: 3}
-  m_Name: CandleBlue
+  m_Name: CandleHalo
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.LensFlareDataSRP
   elements:
   - lensFlareDataSRP: {fileID: 0}
@@ -26,7 +26,7 @@ MonoBehaviour:
     noiseSpeed: 1
     shapeCutOffSpeed: 0
     shapeCutOffRadius: 5.5
-    m_LocalIntensity: 0.06
+    m_LocalIntensity: 0.22
     lensFlareTexture: {fileID: 0}
     uniformScale: 1
     sizeXY: {x: 1, y: 1}
@@ -35,7 +35,7 @@ MonoBehaviour:
     preserveAspectRatio: 0
     rotation: 0
     tintColorType: 0
-    tint: {r: 0, g: 0.8126538, b: 1, a: 1}
+    tint: {r: 1, g: 1, b: 1, a: 1}
     tintGradient:
       <textureSize>k__BackingField: 4
       m_Gradient:
@@ -73,7 +73,7 @@ MonoBehaviour:
     blendMode: 0
     autoRotate: 0
     flareType: 1
-    modulateByLightColor: 0
+    modulateByLightColor: 1
     isFoldOpened: 1
     distribution: 2
     lengthSpread: 1
@@ -227,10 +227,10 @@ MonoBehaviour:
     hoopFactor: 1
     noiseAmplitude: 3.95
     noiseFrequency: 1
-    noiseSpeed: 0.47
+    noiseSpeed: 0.35
     shapeCutOffSpeed: 0
     shapeCutOffRadius: 10
-    m_LocalIntensity: 1
+    m_LocalIntensity: 3.74
     lensFlareTexture: {fileID: 0}
     uniformScale: 1
     sizeXY: {x: 1.05, y: 1.05}
@@ -239,7 +239,7 @@ MonoBehaviour:
     preserveAspectRatio: 0
     rotation: 0
     tintColorType: 0
-    tint: {r: 0, g: 0.75398135, b: 1, a: 0.5}
+    tint: {r: 1, g: 1, b: 1, a: 0.5}
     tintGradient:
       <textureSize>k__BackingField: 4
       m_Gradient:
@@ -277,7 +277,7 @@ MonoBehaviour:
     blendMode: 0
     autoRotate: 0
     flareType: 3
-    modulateByLightColor: 0
+    modulateByLightColor: 1
     isFoldOpened: 1
     distribution: 0
     lengthSpread: 1
