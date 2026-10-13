@@ -46,9 +46,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.LensFlareComponentSRP
   m_LensFlareData: {fileID: 11400000, guid: 34d1a019417161f43813c3f8d69e62f6, type: 2}
   version: 0
-  intensity: 0.81
-  maxAttenuationDistance: 18
-  maxAttenuationScale: 20.18
+  intensity: 1
+  maxAttenuationDistance: 11
+  maxAttenuationScale: 11
   distanceAttenuationCurve:
     serializedVersion: 2
     m_Curve:
@@ -79,20 +79,20 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: 0.003398103
+      outSlope: 0.003398103
       tangentMode: 0
-      weightedMode: 0
+      weightedMode: 2
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.56000006
     - serializedVersion: 3
       time: 1
       value: 0
-      inSlope: 0
+      inSlope: -2.2478614
       outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
+      tangentMode: 1
+      weightedMode: 1
+      inWeight: 0.07999992
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -126,10 +126,10 @@ MonoBehaviour:
   useBackgroundCloudOcclusion: 0
   environmentOcclusion: 0
   useWaterOcclusion: 0
-  occlusionRadius: 0.3
+  occlusionRadius: 0.21
   sampleCount: 3
   occlusionOffset: 0.05
-  scale: 1.52
+  scale: 1
   allowOffScreen: 0
   volumetricCloudOcclusion: 0
   occlusionRemapCurve:
