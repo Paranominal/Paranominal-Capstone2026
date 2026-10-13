@@ -302,9 +302,11 @@ MonoBehaviour:
     flavourText: A key to the Staffroom.
     hintText: 
     completeText: 
-    snapshotImage: {fileID: 0}
+    image: {fileID: 0}
   pickupDialogue: {fileID: 1390969595278299323, guid: 2d2be56983b409f4a9495f642be1f88a, type: 3}
   outline: {fileID: 6196358295975178780}
+  triggerEnemySpawns: 0
+  spawnPoints: []
 --- !u!1 &8603326914630054811
 GameObject:
   m_ObjectHideFlags: 0
@@ -351,24 +353,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8283e6e80b2870149bed84f51959e99e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RotateEffect
-  rotateLocalXSpeed: 0
-  rotateLocalYSpeed: 30
-  rotateLocalZSpeed: 0
-  rotateWorldXSpeed: 0
-  rotateWorldYSpeed: 0
-  rotateWorldZSpeed: 0
-  floatLocalXAmplitude: 0
-  floatLocalXFrequency: 0
-  floatLocalYAmplitude: 0
-  floatLocalYFrequency: 0
-  floatLocalZAmplitude: 0
-  floatLocalZFrequency: 0
-  floatWorldXAmplitude: 0
-  floatWorldXFrequency: 0
-  floatWorldYAmplitude: 0
-  floatWorldYFrequency: 0
-  floatWorldZAmplitude: 0
-  floatWorldZFrequency: 0
+  doRotate: 1
+  rotationSpeedLocal: {x: 0, y: 45, z: 0}
+  rotationSpeedWorld: {x: 0, y: 0, z: 0}
+  doFloat: 1
+  randomStart: 1
+  floatSpeed: 1
+  floatDirection: {x: 0, y: 0.2, z: 0}
 --- !u!114 &6196358295975178780
 MonoBehaviour:
   m_ObjectHideFlags: 0
