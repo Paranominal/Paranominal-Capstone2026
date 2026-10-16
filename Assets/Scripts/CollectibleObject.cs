@@ -5,7 +5,7 @@ public class CollectibleObject : MonoBehaviour
 {
     [SerializeField] private GameObject textDisplay;
     public ALTGrimoireEntry grimoireEntry;
-    public GameObject pickupDialogue;
+    public Dialogue pickupDialogue;
     [SerializeField] private Outline outline;
     [Header("Enemy Spawns")]
     [Tooltip("Trigger the assigned standalone spawn points when this item is picked up.")]

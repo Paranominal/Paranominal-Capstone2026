@@ -37,8 +37,8 @@ public class PlayerCollect : MonoBehaviour
     void Collect(CollectibleObject collectible)
     {
         if (collectible == null) return;
-        if (collectible.pickupDialogue != null) inventory.Add(collectible.gameObject, true, collectible.pickupDialogue);
-        else inventory.Add(collectible.gameObject, true);
+        if (collectible.pickupDialogue != null) inventory.Add(collectible, true, collectible.pickupDialogue);
+        else inventory.Add(collectible, true);
     }
 
     void DoDebugLog()
