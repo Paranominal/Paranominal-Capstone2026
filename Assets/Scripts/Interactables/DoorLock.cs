@@ -5,7 +5,7 @@ public class DoorLock : MonoBehaviour
 {
     [Header("Lock Settings")]
     [SerializeField] private bool startsLocked = true;
-    [SerializeField] private GameObject requiredItem;
+    [SerializeField] private CollectibleObject requiredItem;
     [SerializeField] private bool consumeItemOnUnlock;
 
     [Header("Visuals")]

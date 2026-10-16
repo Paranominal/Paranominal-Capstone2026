@@ -9,12 +9,11 @@ public class DialogueManager : MonoBehaviour
 {
     //[SerializeField] private PauseManager
     //[HideInInspector] public Dialogue dialogue;
-    private GameObject dialogueObject;
-    private GameObject previousButton;
+    private Dialogue dialogueObject;
     //the current scene's "continue" button 
     [SerializeField] private Button continueButton;
     [SerializeField] private InputActionReference closeInput;
-    [SerializeField] private GameObject dialogueCanvas;
+    [SerializeField] private Canvas dialogueCanvas;
     public PauseManager pause;
     public PlayerInputReader playerInputReader;
     public WeaponInputReader weaponInputReader;
@@ -37,12 +36,12 @@ public class DialogueManager : MonoBehaviour
         //removed fallback, using continue button gameobject selection instead
         // else if (continueButton != null && Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame) continueButton.onClick.Invoke();
     }
-    public void StartDialogue(GameObject pickupDialogue) // public so CollectibleObject can activate it
+    public void StartDialogue(Dialogue pickupDialogue) // public so CollectibleObject can activate it
     {
         if (isOpen) CloseDialogue();
         if (EventSystem.current != null) previousButton = EventSystem.current.currentSelectedGameObject; //selects the button that opened the dialogue
         UpdateDialogue(pickupDialogue);
-        dialogueCanvas.SetActive(true); //activate UI
+        dialogueCanvas.gameObject.SetActive(true); //activate UI
         if (playerInputReader != null) playerInputReader.InputLock(true);
         if (weaponInputReader != null) weaponInputReader.InputLock(true);
         // SetCursorModeLocked(false); //unlock cursor
@@ -79,9 +78,9 @@ public class DialogueManager : MonoBehaviour
         if (ui) ui.UIVisible(true);
     }
 
-    public void UpdateDialogue(GameObject pickupDialogue)
+    public void UpdateDialogue(Dialogue pickupDialogue)
     {
-        GameObject newDialogue = Instantiate(pickupDialogue, dialogueCanvas.transform, false);
+        Dialogue newDialogue = Instantiate(pickupDialogue, dialogueCanvas.transform, false);
         if (dialogueObject != null) Destroy(dialogueObject);
         dialogueObject = newDialogue;
     }
