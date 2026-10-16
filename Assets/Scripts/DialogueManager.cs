@@ -9,7 +9,7 @@ public class DialogueManager : MonoBehaviour
 {
     //[SerializeField] private PauseManager
     //[HideInInspector] public Dialogue dialogue;
-    private Dialogue dialogueObject;
+    private Dialogue currentDialogue;
     //the current scene's "continue" button 
     [SerializeField] private Button continueButton;
     [SerializeField] private InputActionReference closeInput;
@@ -32,71 +32,65 @@ public class DialogueManager : MonoBehaviour
     {
         if (!isOpen) return;
         if (closeInput.action.WasPressedThisFrame()) CloseDialogue();
-        
-        //removed fallback, using continue button gameobject selection instead
-        // else if (continueButton != null && Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame) continueButton.onClick.Invoke();
+        //fallback to press continue directly
+        else if (continueButton != null && Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame) continueButton.onClick.Invoke();
     }
-    public void StartDialogue(Dialogue pickupDialogue) // public so CollectibleObject can activate it
+    public void StartDialogue(Dialogue pickupDialogue)
     {
+        // if a dialogue is already open, close the previous one, then set the next one and activate canvas
         if (isOpen) CloseDialogue();
-        if (EventSystem.current != null) previousButton = EventSystem.current.currentSelectedGameObject; //selects the button that opened the dialogue
-        UpdateDialogue(pickupDialogue);
+        SetDialogue(pickupDialogue);
+        isOpen = true;
         dialogueCanvas.gameObject.SetActive(true); //activate UI
+
+        // handle player input, pause, and hide player hud
+        if (pause) pause.PauseGame();
         if (playerInputReader != null) playerInputReader.InputLock(true);
         if (weaponInputReader != null) weaponInputReader.InputLock(true);
-        // SetCursorModeLocked(false); //unlock cursor
-        if (pause) pause.PauseGame();
-        isOpen = true;
-        if (continueButton != null && EventSystem.current != null)
-        {
-            EventSystem.current.SetSelectedGameObject(null);
-            EventSystem.current.SetSelectedGameObject(continueButton.gameObject);
-        }
+        if (continueButton != null && EventSystem.current != null) EventSystem.current.SetSelectedGameObject(continueButton.gameObject);
         if (ui) ui.UIVisible(false);
+        // SetCursorModeLocked(false); //unlock cursor
     }
 
-    public void NextPage() // public for menu button presses to activate
+    public void NextPage()
     {
-        //close prev page
-        //open next page
-        //++page number
+        currentDialogue.NextPage();
     }
 
-    public void CloseDialogue(bool openGrimoire = false) // public for menu button presses to activate
+    public void NextPageOrClose()
     {
-        bool wasOpen = isOpen; //check to see if a previous button can be returned
-        if (wasOpen) PreviousButtonClicked();
+        if (currentDialogue.CurrentPage < currentDialogue.PageCount)
+        {
+            NextPage();
+        }
+        else CloseDialogue();
+    }
 
-        // if (dialogueObject != null) SetCursorModeLocked(dialogueObject.GetComponent<Dialogue>().cursorLockOnClose); //lock cursor again
+    public void CloseDialogue(bool openGrimoire = false)
+    {
+        // if (currentDialogue != null) SetCursorModeLocked(currentDialogue.GetComponent<Dialogue>().cursorLockOnClose); //lock cursor again
         if (playerInputReader != null) playerInputReader.InputLock(false);
         if (weaponInputReader != null) weaponInputReader.InputLock(false);
         dialogueCanvas.gameObject.SetActive(false); //deactivate dialogue
-        // if (grimoireAnimManager != null && openGrimoire) grimoireAnimManager.OpenFromDialogue(); //open grimoire
+        if (grimoireAnimManager != null && openGrimoire) grimoireAnimManager.OpenFromDialogue(); //open grimoire
         if (pause) pause.ResumeGame();
         isOpen = false;
 
         if (ui) ui.UIVisible(true);
     }
 
-    public void UpdateDialogue(Dialogue pickupDialogue)
+    public void SetDialogue(Dialogue pickupDialogue)
     {
+        // instantiate fresh dialogue
         Dialogue newDialogue = Instantiate(pickupDialogue, dialogueCanvas.transform, false);
-        if (dialogueObject != null) Destroy(dialogueObject);
-        dialogueObject = newDialogue;
-    }
 
-    private void PreviousButtonClicked()
-    {
-        if (EventSystem.current == null) return;
-        EventSystem.current.SetSelectedGameObject(null);
+        // remove old dialogue
+        if (currentDialogue != null) Destroy(currentDialogue);
+        if (currentDialogue != null) Destroy(currentDialogue.gameObject);
 
-        //return previous button if it exists
-        if (previousButton != null && previousButton.activeInHierarchy)
-            EventSystem.current.SetSelectedGameObject(previousButton);
-        else if (EventSystem.current.firstSelectedGameObject != null)
-            EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
-
-        //clear previous reference after operation
-        previousButton = null;
+        //  first page opens automatically
+        
+        // replace old dialogue
+        currentDialogue = newDialogue;
     }
 }
