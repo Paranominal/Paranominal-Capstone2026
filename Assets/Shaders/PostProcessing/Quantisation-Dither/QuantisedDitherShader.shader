@@ -54,6 +54,9 @@ Shader "Custom/URP/QuantisedDitherShader"
                 float _PerceptualGamma;
             CBUFFER_END
 
+            float _ResolutionScale; // EDIT (RenderResolutionManager): Global resolution scale (set by RenderResolutionManager).
+            float _DownsamplePixelSize; // EDIT (Downsample-Dither): Block size published by DownsampleRendererFeature.
+
             float Bayer2x2(int x, int y)
             {
                 static const float bayer[4] =
@@ -169,23 +172,6 @@ Shader "Custom/URP/QuantisedDitherShader"
                 return threshold - 0.5;
             }
 
-            float GetLinearLuminance(float3 color)
-            {
-                return dot(color, float3(0.2126, 0.7152, 0.0722));
-            }
-
-            float GetBrightnessForMode(float3 color)
-            {
-                float luminance = GetLinearLuminance(color);
-
-                if (_UsePerceivedBrightness > 0.5)
-                {
-                    return pow(saturate(luminance), _PerceptualGamma);
-                }
-
-                return luminance;
-            }
-
             float QuantiseChannel(float value, float steps, float thresholdOffset)
             {
                 steps = max(steps, 2.0);
@@ -200,13 +186,20 @@ Shader "Custom/URP/QuantisedDitherShader"
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
-                float2 uv = input.texcoord;
-                half4 col = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
-
                 // SV_Position is already expressed in pixels for the active render target.
                 // Using it avoids mismatches between _ScreenParams, render scale and
                 // RenderGraph intermediate texture dimensions.
-                int2 pixelPos = int2(input.positionCS.xy);
+                int2 screenPixel = int2(input.positionCS.xy);
+
+                half4 col = LOAD_TEXTURE2D_X(_BlitTexture, screenPixel); // EDIT (Downsample-Dither): Direct pixel load, matching Downsample.
+
+                // EDIT (Downsample-Dither): Index the Bayer matrix per Downsample block so each block gets one threshold.
+                // Falls back to the whole-number resolution scale if Downsample hasn't published a size.
+                int cellSize = (int)_DownsamplePixelSize;
+                if (cellSize < 1)
+                    cellSize = max(1, (int)floor(_ResolutionScale + 0.001));
+
+                int2 pixelPos = screenPixel / cellSize;
                 float thresholdOffset = GetDitherThreshold(pixelPos.x, pixelPos.y);
 
                 float3 sourceColor = col.rgb;

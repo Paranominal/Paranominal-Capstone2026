@@ -8,6 +8,7 @@ using UnityEngine.Rendering.Universal;
 // Summary: Renderer Feature that applies a downsample (pixelate) post-processing effect.
 // Uses a custom raster render pass instead of AddBlitPass so the depth-stencil buffer
 // is available for stencil-based UI exclusion.
+// Also publishes the final block size as _DownsamplePixelSize so QuantisedDither can match its dither cells to it.
 public class DownsampleRendererFeature : ScriptableRendererFeature
 {
     [SerializeField] private Shader shader;
@@ -27,13 +28,14 @@ public class DownsampleRendererFeature : ScriptableRendererFeature
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
-        if (pass == null) return;
-        if (renderingData.cameraData.cameraType != CameraType.Game) return;
+        // EDIT (Downsample-Dither): Publish the fallback size on every skipped path so dither never uses a stale block size.
+        if (pass == null) { DownsampleRenderPass.SetFallbackPixelSize(); return; }
+        if (renderingData.cameraData.cameraType != CameraType.Game) { DownsampleRenderPass.SetFallbackPixelSize(); return; }
 
         // bypasses the UI, Dialogue, and POC Cameras for the Downsampling pass, making the stenciling scripts unnecessary :)
-        if (renderingData.cameraData.camera.name == "UICam") return;
+        if (renderingData.cameraData.camera.name == "UICam") { DownsampleRenderPass.SetFallbackPixelSize(); return; }
         //if (renderingData.cameraData.camera.name == "DialogueCam") return;
-        //if (renderingData.cameraData.camera.name == "POVCam") return; 
+        //if (renderingData.cameraData.camera.name == "POVCam") return;
 
         renderer.EnqueuePass(pass);
     }
@@ -58,6 +60,8 @@ public class DownsampleSettings
 public class DownsampleRenderPass : ScriptableRenderPass
 {
     private static readonly int PixelSizeID = Shader.PropertyToID("_PixelSize");
+    private static readonly int GlobalPixelSizeID = Shader.PropertyToID("_DownsamplePixelSize"); // EDIT (Downsample-Dither): Read by QuantisedDither.
+    private static readonly int ResolutionScaleID = Shader.PropertyToID("_ResolutionScale"); // EDIT (Downsample-Dither): Set by RenderResolutionManager.
     private const string PassName = "DownsampleRenderPass";
 
     private DownsampleSettings defaultSettings;
@@ -76,6 +80,20 @@ public class DownsampleRenderPass : ScriptableRenderPass
         this.defaultSettings = defaultSettings;
     }
 
+    // EDIT (Downsample-Dither): Global resolution scale, treating an unset value as 1.
+    private static float GetResolutionScale()
+    {
+        float scale = Shader.GetGlobalFloat(ResolutionScaleID);
+        return scale > 0f ? scale : 1f;
+    }
+
+    // EDIT (Downsample-Dither): Used when Downsample doesn't run. Whole-number scale keeps dither cells even (1x at 1080p/1440p, 2x at 4K).
+    public static void SetFallbackPixelSize()
+    {
+        int fallback = Mathf.Max(1, Mathf.FloorToInt(GetResolutionScale() + 0.001f));
+        Shader.SetGlobalFloat(GlobalPixelSizeID, fallback);
+    }
+
     private void UpdateSettings()
     {
         if (material == null) return;
@@ -83,15 +101,21 @@ public class DownsampleRenderPass : ScriptableRenderPass
         var vol = VolumeManager.instance.stack.GetComponent<DownsampleVolume>();
 
         float pixelSize = vol.pixelSize.overrideState ? vol.pixelSize.value : defaultSettings.pixelSize;
-        material.SetFloat(PixelSizeID, pixelSize);
+
+        // EDIT (Downsample-Dither): Resolution scaling and rounding done here (moved from the shader) so both shaders get the exact same whole-pixel size.
+        int finalPixelSize = Mathf.Max(1, Mathf.RoundToInt(Mathf.Max(pixelSize, 1f) * GetResolutionScale()));
+
+        material.SetFloat(PixelSizeID, finalPixelSize);
+        Shader.SetGlobalFloat(GlobalPixelSizeID, finalPixelSize);
     }
 
     public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
     {
         UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
 
-        if (material == null) return;
-        if (resourceData.isActiveTargetBackBuffer) return;
+        // EDIT (Downsample-Dither): Fallback on early-outs too.
+        if (material == null) { SetFallbackPixelSize(); return; }
+        if (resourceData.isActiveTargetBackBuffer) { SetFallbackPixelSize(); return; }
 
         TextureHandle src = resourceData.activeColorTexture;
 
@@ -100,9 +124,9 @@ public class DownsampleRenderPass : ScriptableRenderPass
         desc.depthBufferBits = 0;
         TextureHandle tmp = renderGraph.CreateTexture(desc);
 
-        UpdateSettings();
+        if (!src.IsValid() || !tmp.IsValid()) { SetFallbackPixelSize(); return; } // EDIT (Downsample-Dither): Moved above UpdateSettings so the fallback isn't overwritten.
 
-        if (!src.IsValid() || !tmp.IsValid()) return;
+        UpdateSettings();
 
         // Copy source to temp so it can be sampled as _BlitTexture.
         renderGraph.AddCopyPass(src, tmp);

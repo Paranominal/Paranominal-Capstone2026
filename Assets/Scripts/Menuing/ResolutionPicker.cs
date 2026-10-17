@@ -1,8 +1,9 @@
 // Summary: Resolution picker for the settings screen. Populates a TMP_Dropdown with
-// target display resolutions from RenderResolutionManager, marks unsupported ones with
-// an asterisk, and applies the player's selection. Internal rendering stays at 1080p.
+// target render resolutions from RenderResolutionManager, marks unsupported ones with
+// an asterisk, and applies the player's selection as the internal render resolution.
 // EDIT (grimoire-pause): listener now added in OnEnable. It was removed in OnDisable but only added once in Start,
 // so the dropdown stopped working after the settings page was hidden once.
+// EDIT (RenderResolutionManager): selection now sets internal render resolution instead of display resolution.
 
 using UnityEngine;
 using TMPro;
@@ -75,7 +76,7 @@ public class ResolutionPicker : MonoBehaviour
         if (resolutions == null || index < 0 || index >= resolutions.Length) return;
 
         Vector2Int selected = resolutions[index];
-        RenderResolutionManager.Instance.SetResolution(selected.x, selected.y, Screen.fullScreen);
+        RenderResolutionManager.Instance.SetResolution(selected.x, selected.y); // EDIT (RenderResolutionManager): fullscreen parameter removed.
     }
 
     private void OnDisable()

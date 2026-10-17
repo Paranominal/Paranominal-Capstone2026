@@ -320,6 +320,79 @@ MonoBehaviour:
   SunScatteringIntensity:
     m_OverrideState: 1
     m_Value: 2
+--- !u!114 &-4639750425762919526
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 592cf746a27fe2643b008fc74af97a11, type: 3}
+  m_Name: ImpactFrameVolumeComponent
+  m_EditorClassIdentifier: Assembly-CSharp::ImpactFrameVolumeComponent
+  active: 1
+  flashActive:
+    m_OverrideState: 1
+    m_Value: 0
+  sceneActive:
+    m_OverrideState: 1
+    m_Value: 0
+  linesActive:
+    m_OverrideState: 1
+    m_Value: 0
+  jitterActive:
+    m_OverrideState: 1
+    m_Value: 0
+  focalPoint:
+    m_OverrideState: 1
+    m_Value: {x: 0.5, y: 0.5}
+  seed:
+    m_OverrideState: 1
+    m_Value: 0
+  darkColour:
+    m_OverrideState: 1
+    m_Value: {r: 0, g: 0, b: 0, a: 1}
+  lightColour:
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  flashColour:
+    m_OverrideState: 1
+    m_Value: 0
+  sceneThreshold:
+    m_OverrideState: 1
+    m_Value: 0.5
+  normalsWeight:
+    m_OverrideState: 1
+    m_Value: 1
+  linesTiling:
+    m_OverrideState: 1
+    m_Value: 149
+  linesNoiseScale:
+    m_OverrideState: 1
+    m_Value: 6
+  linesThreshold:
+    m_OverrideState: 1
+    m_Value: 0.23
+  linesClearMin:
+    m_OverrideState: 1
+    m_Value: 0.05
+  linesClearMax:
+    m_OverrideState: 1
+    m_Value: 0.4
+  linesClearPower:
+    m_OverrideState: 1
+    m_Value: 2.5
+  jitterScale:
+    m_OverrideState: 1
+    m_Value: 20
+  jitterThreshold:
+    m_OverrideState: 1
+    m_Value: 0.5
+  jitterStrength:
+    m_OverrideState: 1
+    m_Value: 0.05
 --- !u!114 &-4463884970436517307
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -355,6 +428,48 @@ MonoBehaviour:
   intensity:
     m_OverrideState: 1
     m_Value: 0
+  enableEthereal:
+    m_OverrideState: 1
+    m_Value: 1
+  desaturation:
+    m_OverrideState: 1
+    m_Value: 0.5
+  shadowColour:
+    m_OverrideState: 1
+    m_Value: {r: 0.15, g: 0.2, b: 0.45, a: 1}
+  highlightColour:
+    m_OverrideState: 1
+    m_Value: {r: 0.7, g: 0.95, b: 1, a: 1}
+  splitToneBalance:
+    m_OverrideState: 1
+    m_Value: 0
+  tintStrength:
+    m_OverrideState: 1
+    m_Value: 0.6
+  glowThreshold:
+    m_OverrideState: 1
+    m_Value: 0.7
+  glowIntensity:
+    m_OverrideState: 1
+    m_Value: 0.5
+  glowSpread:
+    m_OverrideState: 1
+    m_Value: 0.01
+  enableDepthFade:
+    m_OverrideState: 1
+    m_Value: 1
+  depthFadeColour:
+    m_OverrideState: 1
+    m_Value: {r: 0.55, g: 0.75, b: 0.85, a: 1}
+  depthFadeStart:
+    m_OverrideState: 1
+    m_Value: 5
+  depthFadeEnd:
+    m_OverrideState: 1
+    m_Value: 40
+  depthFadeStrength:
+    m_OverrideState: 1
+    m_Value: 0.4
   enableBlur:
     m_OverrideState: 1
     m_Value: 1
@@ -615,6 +730,7 @@ MonoBehaviour:
   - {fileID: -1594957042513838499}
   - {fileID: 8269225185714537850}
   - {fileID: -1663095977352337940}
+  - {fileID: -4639750425762919526}
 --- !u!114 &853819529557874667
 MonoBehaviour:
   m_ObjectHideFlags: 3
