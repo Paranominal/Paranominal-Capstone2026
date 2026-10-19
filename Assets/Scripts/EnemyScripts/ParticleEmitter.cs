@@ -47,6 +47,14 @@ public class ParticleEmitter : MonoBehaviour
     {
         particle.GetCollisionEvents(other, collisionEvents);
 
+        // check for decal
+        if (!decalPrefab)
+        {
+            Debug.LogWarning($"[{gameObject}, {this}] No Decal Set! You can probably turn Collision Messages off on [{particle}]");
+            return;
+        }
+
+        Debug.Log($"Created {collisionEvents.Count} splats");
         foreach (ParticleCollisionEvent collision in collisionEvents)
         {
             DecalProjector splatter = Instantiate(
@@ -55,6 +63,7 @@ public class ParticleEmitter : MonoBehaviour
                 Quaternion.LookRotation(collision.velocity)
             );
             splatter.transform.localScale = Vector3.one * UnityEngine.Random.Range(minDecalSize, maxDecalSize);
+            DecalPool.RegisterDecal(splatter);
         }
     }
 }
