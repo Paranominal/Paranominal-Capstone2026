@@ -13,8 +13,12 @@ public class RollingCounter : MonoBehaviour
     [Tooltip("how hard the roll decelerates")]
     [Range(1.5f, 4f)]
     [SerializeField] private float easePower = 2f;
-    [Tooltip("overshoot distance as a fraction of one symbol on the ones column")]
-    [SerializeField] private float nudgeAmount = 0.15f;
+    [Tooltip("overshoot distance as a fraction of one symbol, before adding momentum")]
+    [SerializeField] private float nudgeAmount = 0.1f;
+    [Tooltip("extra overshoot per symbol-per-second of the roll's top speed, so faster rolls swing further")]
+    [SerializeField] private float momentumNudge = 0.002f;
+    [Tooltip("cap on overshoot distance as a fraction of a symbol")]
+    [SerializeField] private float maxNudge = 0.5f;
     [Tooltip("fraction of the time spent easing back from the overshoot")]
     [Range(0f, 0.5f)]
     [SerializeField] private float settleFraction = 0.2f;
@@ -95,9 +99,15 @@ public class RollingCounter : MonoBehaviour
 
     private IEnumerator Roll(float start, float target)
     {
-        float overshoot = target + nudgeAmount * Mathf.Sign(target - start);
         float travelTime = duration * (1f - settleFraction);
         float settleTime = duration * settleFraction;
+
+        // ease-out is fastest at the very start, at easePower times the average speed
+        float topSpeed = easePower * Mathf.Abs(target - start) / travelTime;
+        float nudge = Mathf.Min(nudgeAmount + topSpeed * momentumNudge, maxNudge);
+        float overshoot = target + nudge * Mathf.Sign(target - start);
+        // also btw thank god for mathf docs because i wouldn't have been able to do any of this shit
+        // surely i'm close to using them all at this point
 
         // travel: quick off the mark, slowing to a stop just past the target
         float elapsed = 0f;
