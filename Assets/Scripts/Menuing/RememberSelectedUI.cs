@@ -12,6 +12,11 @@ public class RememberSelectedUI : MonoBehaviour
     [SerializeField] private InputActionReference uiNavigateAction;
     [SerializeField] private InputActionReference uiMouseMoveAction;
 
+    private void Awake()
+    {
+        if (eventSystem.firstSelectedGameObject == null) Debug.LogWarning($"[{gameObject}] EventSystem has no First Selected GameObject! this may stop UI navigation from working.");
+    }
+
     private void Reset()
     {
         eventSystem = FindAnyObjectByType<EventSystem>();
