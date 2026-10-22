@@ -116,8 +116,11 @@ public class GunVisuals : MonoBehaviour
             AnimateTrueShot(true);
             DoTrueShotChargeFX();
         }
-        
-        else if (weaponInputReader.AnyShotReleasedThisFrame()) AnimateTrueShot(false);
+        else if (weaponInputReader.AnyShotReleasedThisFrame())
+        {
+            AnimateTrueShot(false);
+            if (trueShotChargeFxEmitter) trueShotChargeFxEmitter.LoopParticles(false);
+        }
     }
 
     public void DoGunFX(WeakPointType shotType)
