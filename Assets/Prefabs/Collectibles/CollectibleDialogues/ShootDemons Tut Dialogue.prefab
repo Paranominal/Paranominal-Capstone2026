@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2.4, y: -36.700016}
+  m_AnchoredPosition: {x: 0, y: -36.700016}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1033926936084303307
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1228094943, guid: 03c9ee52e0fb95f4ebb4e3d57187a389, type: 3}
+  m_Sprite: {fileID: -864130936, guid: 03c9ee52e0fb95f4ebb4e3d57187a389, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -327,14 +327,14 @@ RectTransform:
   m_GameObject: {fileID: 7561943431425912732}
   m_LocalRotation: {x: -0, y: -0, z: -0.06696771, w: 0.9977551}
   m_LocalPosition: {x: 0, y: 0, z: -33}
-  m_LocalScale: {x: 72.014366, y: 72.014366, z: 72.014366}
+  m_LocalScale: {x: 58.774525, y: 58.774525, z: 58.774525}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1416663487666324356}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -7.68}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 11.4, y: -12.7}
+  m_AnchoredPosition: {x: 7.9, y: -17.9}
   m_SizeDelta: {x: 4.32, y: 4.32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6384823891620828091
@@ -358,7 +358,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.6654024, b: 1, a: 1}
+  m_Color: {r: 0.8, g: 0.0039215568, b: 0.22453395, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -400,7 +400,7 @@ RectTransform:
   m_GameObject: {fileID: 7848652031802256959}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.2192, y: 1.2192, z: 1.2192}
+  m_LocalScale: {x: 1.4779143, y: 1.4779143, z: 1.4779143}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6782157575262059237}
@@ -412,7 +412,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -93}
+  m_AnchoredPosition: {x: 0, y: -122}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &5170702433138212669
@@ -425,7 +425,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 255827665077169576, guid: ce65fb946393fe843817d23f55194376, type: 3}
       propertyPath: m_text
-      value: 'Shoot Demons:'
+      value: 'TUTORIAL:'
       objectReference: {fileID: 0}
     - target: {fileID: 2271271945137899092, guid: ce65fb946393fe843817d23f55194376, type: 3}
       propertyPath: m_IsActive
@@ -519,13 +519,18 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 809.85
       objectReference: {fileID: 0}
+    - target: {fileID: 3825398921657186461, guid: ce65fb946393fe843817d23f55194376, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 280
+      objectReference: {fileID: 0}
     - target: {fileID: 4667336579119019197, guid: ce65fb946393fe843817d23f55194376, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5907143231128102568, guid: ce65fb946393fe843817d23f55194376, type: 3}
       propertyPath: m_text
-      value: Shoot Demons to <color=#00ff77ff>Reveal Weakpoints</color>.
+      value: Shoot Demons with the Norwych to <color=#ff0077ff><i>Reveal Demonic
+        Seals</i></color>.
       objectReference: {fileID: 0}
     - target: {fileID: 7964463876219755860, guid: ce65fb946393fe843817d23f55194376, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -536,8 +541,12 @@ PrefabInstance:
       value: ShootDemons Tut Dialogue
       objectReference: {fileID: 0}
     - target: {fileID: 8774196851641375325, guid: ce65fb946393fe843817d23f55194376, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 534.88
+      objectReference: {fileID: 0}
+    - target: {fileID: 8774196851641375325, guid: ce65fb946393fe843817d23f55194376, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 178.5
+      value: 188
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -11,16 +11,16 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] float tutDelay = 0.5f;
     [Header("Initial Entries")]
     [SerializeField] private Inventory inventory;
-    [SerializeField] private List<GameObject> initialEntries;
+    [SerializeField] private List<CollectibleObject> initialEntries;
     [Header("Weapon Tutorial")]
     [SerializeField] private WeaponEvents weaponEvents;
-    [SerializeField] private GameObject reloadTut;
+    [SerializeField] private Dialogue reloadTut;
     [Header("Shoot Demonds Tutorial")]
-    [SerializeField] private GameObject shootDemonTut;
+    [SerializeField] private Dialogue shootDemonTut;
     [SerializeField] private TutorialTrigger shootDemonsTrigger;
     [Header("Immunity Tutorial")]
     [SerializeField] private EnemySpawnPoint enemySpawner;
-    [SerializeField] private GameObject immuneTut;
+    [SerializeField] private Dialogue immuneTut;
 
     void Awake()
     {
@@ -45,7 +45,7 @@ public class TutorialManager : MonoBehaviour
 
     void AddInitialEntries()
     {
-        foreach (GameObject entry in initialEntries)
+        foreach (CollectibleObject entry in initialEntries)
         {
             inventory.Add(Instantiate(entry), true);
             // Debug.LogWarning("AHHH");
@@ -85,18 +85,18 @@ public class TutorialManager : MonoBehaviour
         DoTutorial(immuneTut); // trigger tut
     }
 
-    void DoTutorial(GameObject tut)
+    void DoTutorial(Dialogue tut)
     {
         StartCoroutine(TutorialCoroutine(tut));
     }
 
-    void DoTutorialImmediate(GameObject tut)
+    void DoTutorialImmediate(Dialogue tut)
     {
         dialogueManager.StartDialogue(tut);
     }
     
     
-    IEnumerator TutorialCoroutine(GameObject tut)
+    IEnumerator TutorialCoroutine(Dialogue tut)
     {
         yield return new WaitForSeconds(tutDelay);
         dialogueManager.StartDialogue(tut);
