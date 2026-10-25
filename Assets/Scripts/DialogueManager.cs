@@ -10,6 +10,7 @@ public class DialogueManager : MonoBehaviour
     //[SerializeField] private PauseManager
     //[HideInInspector] public Dialogue dialogue;
     private Dialogue currentDialogue;
+    private GameObject rememberedElement;
     //the current scene's "continue" button 
     [SerializeField] private Button continueButton;
     [SerializeField] private float buttonWaitTime = 1;
@@ -36,30 +37,42 @@ public class DialogueManager : MonoBehaviour
         if (!isOpen) return;
         if (closeInput.action.WasPressedThisFrame() && canEscape) CloseDialogue();
 
-        //fallback to press continue directly
-        else if (continueButton != null &&
-            Gamepad.current != null &&
-            Gamepad.current.buttonSouth.wasPressedThisFrame &&
-            canEscape)
-        {
-            continueButton.onClick.Invoke();
-        }
+        // //fallback to press continue directly
+        // else if (continueButton != null &&
+        //     Gamepad.current != null &&
+        //     Gamepad.current.buttonSouth.wasPressedThisFrame &&
+        //     canEscape)
+        // {
+        //     continueButton.onClick.Invoke();
+        // }
+        if (closeInput.action.WasPressedThisFrame()) CloseDialogue();
+        
+        //removed fallback, using continue button gameobject selection instead
+        // else if (continueButton != null && Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame) continueButton.onClick.Invoke();
     }
 
     public void StartDialogue(Dialogue pickupDialogue)
     {
-        // if a dialogue is already open, close the previous one, then set the next one and activate canvas
+        // if a dialogue is already open close it
         if (isOpen) CloseDialogue();
+        // remember the previous selected element to return to later
+        if (EventSystem.current != null) rememberedElement = EventSystem.current.currentSelectedGameObject;
+        // set the new dialogue
         SetDialogue(pickupDialogue);
-        isOpen = true;
-        dialogueCanvas.gameObject.SetActive(true); //activate UI
-
-        // handle player input, pause, and hide player hud
-        if (pause) pause.PauseGame();
+        // activates the dialogue UI
+        dialogueCanvas.gameObject.SetActive(true); 
+        // handle state, player input, pause, and hud
         if (playerInputReader != null) playerInputReader.InputLock(true);
         if (weaponInputReader != null) weaponInputReader.InputLock(true);
-        if (continueButton != null && EventSystem.current != null) EventSystem.current.SetSelectedGameObject(continueButton.gameObject);
+        if (pause) pause.PauseGame();
         if (ui) ui.UIVisible(false);
+        isOpen = true;
+        // clear and reset the continue button
+        if (continueButton != null && EventSystem.current != null) // clear and reset continue button
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+            EventSystem.current.SetSelectedGameObject(continueButton.gameObject);
+        }
         // SetCursorModeLocked(false); //unlock cursor
 
         // temp disable continue button
@@ -84,6 +97,10 @@ public class DialogueManager : MonoBehaviour
     public void CloseDialogue(bool openGrimoire = false)
     {
         // if (currentDialogue != null) SetCursorModeLocked(currentDialogue.GetComponent<Dialogue>().cursorLockOnClose); //lock cursor again
+        bool wasOpen = isOpen; //check to see if a previous button can be returned
+        if (wasOpen) PreviousButtonClicked();
+
+        // if (dialogueObject != null) SetCursorModeLocked(dialogueObject.GetComponent<Dialogue>().cursorLockOnClose); //lock cursor again
         if (playerInputReader != null) playerInputReader.InputLock(false);
         if (weaponInputReader != null) weaponInputReader.InputLock(false);
         dialogueCanvas.gameObject.SetActive(false); //deactivate dialogue
@@ -115,5 +132,20 @@ public class DialogueManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(buttonWaitTime);
         canEscape = true;
         continueButton.gameObject.SetActive(true);
+    }
+
+    private void PreviousButtonClicked()
+    {
+        if (EventSystem.current == null) return;
+        EventSystem.current.SetSelectedGameObject(null);
+
+        //return previous button if it exists
+        if (rememberedElement != null && rememberedElement.activeInHierarchy)
+            EventSystem.current.SetSelectedGameObject(rememberedElement);
+        else if (EventSystem.current.firstSelectedGameObject != null)
+            EventSystem.current.SetSelectedGameObject(EventSystem.current.firstSelectedGameObject);
+
+        //clear previous reference after operation
+        rememberedElement = null;
     }
 }
