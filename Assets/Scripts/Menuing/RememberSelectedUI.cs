@@ -57,7 +57,7 @@ public class RememberSelectedUI : MonoBehaviour
 
         if (uiMouseMoveAction.action.ReadValue<Vector2>().magnitude > 0 && eventSystem.currentSelectedGameObject != null)
         {
-            eventSystem.currentSelectedGameObject.GetComponent<Button>().OnDeselect(new BaseEventData(eventSystem));
+            eventSystem.currentSelectedGameObject.GetComponent<Selectable>().OnDeselect(new BaseEventData(eventSystem));
         } 
     }
 }
