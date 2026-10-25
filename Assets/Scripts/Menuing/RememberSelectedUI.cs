@@ -14,7 +14,13 @@ public class RememberSelectedUI : MonoBehaviour
 
     private void Awake()
     {
-        if (eventSystem.firstSelectedGameObject == null) Debug.LogWarning($"[{gameObject}] EventSystem has no First Selected GameObject! this may stop UI navigation from working.");
+        if (eventSystem.firstSelectedGameObject == null)
+        {
+            Debug.LogWarning($"[{gameObject}] EventSystem has no First Selected GameObject! this may stop UI navigation from working.");
+            // GameObject fallback = FindFirstObjectByType<Selectable>().gameObject;
+            // if (eventSystem.firstSelectedGameObject == null) eventSystem.SetSelectedGameObject(fallback);
+            // Debug.LogWarning($"[{gameObject}] EventSystem sett to ({fallback}) as a fallback.");
+        }
     }
 
     private void Reset()
