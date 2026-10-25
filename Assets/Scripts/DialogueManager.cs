@@ -13,7 +13,7 @@ public class DialogueManager : MonoBehaviour
     private GameObject rememberedElement;
     //the current scene's "continue" button 
     [SerializeField] private Button continueButton;
-    [SerializeField] private float buttonWaitTime = 1;
+    // [SerializeField] private float buttonWaitTime = 1;
     [SerializeField] private InputActionReference closeInput;
     [SerializeField] private Canvas dialogueCanvas;
     public PauseManager pause;
@@ -76,13 +76,13 @@ public class DialogueManager : MonoBehaviour
         // SetCursorModeLocked(false); //unlock cursor
 
         // temp disable continue button
-        StartCoroutine(DoContinueButtonWait());
+        StartCoroutine(DoContinueButtonWait(pickupDialogue.WaitTime));
     }
 
     public void NextPage()
     {
         currentDialogue.NextPage();
-        StartCoroutine(DoContinueButtonWait());
+        StartCoroutine(DoContinueButtonWait(currentDialogue.WaitTime));
     }
 
     public void NextPageOrClose()
@@ -125,11 +125,11 @@ public class DialogueManager : MonoBehaviour
         currentDialogue = newDialogue;
     }
     
-    private IEnumerator DoContinueButtonWait()
+    private IEnumerator DoContinueButtonWait(float wait = 1f)
     {
         continueButton.gameObject.SetActive(false);
         canEscape = false;
-        yield return new WaitForSecondsRealtime(buttonWaitTime);
+        if (wait > 0) yield return new WaitForSecondsRealtime(wait);
         canEscape = true;
         continueButton.gameObject.SetActive(true);
     }

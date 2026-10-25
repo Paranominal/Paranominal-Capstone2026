@@ -11,11 +11,13 @@ public class Dialogue : MonoBehaviour
     // public TextMeshProUGUI description;
     // public GameObject itemDisplay;
 
+    [SerializeField] private float exitWaitTime = 1f;
     [SerializeField] private List<GameObject> pages;
     [SerializeField] private bool cursorLockOnClose;
     private int currentPage = 1;
     public int PageCount => pages.Count;
     public int CurrentPage => currentPage;
+    public float WaitTime => exitWaitTime;
 
     private void Awake()
     {
