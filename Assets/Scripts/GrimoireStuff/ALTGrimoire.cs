@@ -600,6 +600,7 @@ public class ALTGrimoire : MonoBehaviour
     private void SelectCurrentEntryButton()
     {
         if (EventSystem.current == null) return;
+        if (EventSystem.current.alreadySelecting) return;
 
         if (entryButtons.Count > 0 && currentEntry < entryButtons.Count)
         {
