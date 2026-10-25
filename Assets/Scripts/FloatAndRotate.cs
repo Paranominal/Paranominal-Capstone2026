@@ -9,7 +9,7 @@ public class FloatAndRotate : MonoBehaviour
     [Header("Float")]
     [SerializeField] private bool doFloat;
     [SerializeField, ShowIf("doFloat", true)] private bool randomStart = true;
-    [SerializeField, ShowIf("doFloat", true), Range(1,10)] private float floatSpeed = 1;
+    [SerializeField, ShowIf("doFloat", true), Range(0.01f,10)] private float floatSpeed = 1;
     [SerializeField, ShowIf("doFloat", true)] private Vector3 floatDirection;
 
     private Vector3 originPos;
@@ -40,7 +40,7 @@ public class FloatAndRotate : MonoBehaviour
 
     void Float()
     {
-        if (floatTime >= 100f) floatTime = 0f;
+        if (floatTime >= 100f) floatTime -= 100f;
         else floatTime += Time.unscaledDeltaTime * floatSpeed;
 
         transform.position = originPos + (floatDirection * Mathf.Sin(floatTime));
