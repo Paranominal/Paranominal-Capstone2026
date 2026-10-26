@@ -237,7 +237,7 @@ public class MusicManager : MonoBehaviour
         if (ClipReadyToLoad(clip))
         {
             clip.LoadAudioData();
-            // loadedMusic.Add(clip);
+            // loadedMusic.Add(clip); //     <---- the problem
         }
         return clip;
     }
