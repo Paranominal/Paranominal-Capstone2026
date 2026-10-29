@@ -21,7 +21,7 @@ public class DecalPool : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("There can only be one");
+            Debug.LogWarning($"[{this}] There can only be one DecalPool");
             Destroy(this);
         }
     }
