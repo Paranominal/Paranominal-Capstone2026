@@ -10,17 +10,17 @@ public class MusicManager : MonoBehaviour
 {
     public static MusicManager Instance;
 
-    [SerializeField] private AudioMixerGroup musicMix;
+    [SerializeField] private AudioMixerGroup mix;
     [SerializeField] private bool playOnAwake;
-    [SerializeField] private List<MusicDataSO> musicClips;
-    [SerializeField] private List<AudioSource> trackLayers;
+    [SerializeField] private List<MusicDataSO> music;
+    [SerializeField] private List<AudioSource> tracks;
 
     // pool of all audio loaded to memory, for cleanup later
-    private List<AudioClip> loadedMusic;
+    // private List<AudioClip> loadedMusic;
 
     void Reset()
     {
-        if (trackLayers.Count == 0) trackLayers = GetComponents<AudioSource>().ToList();
+        if (tracks.Count == 0) tracks = GetComponents<AudioSource>().ToList();
     }
 
     void Awake()
@@ -40,22 +40,22 @@ public class MusicManager : MonoBehaviour
     }
     
     // public method for Events to trigger. 
-    public static void PlayMusic(MusicDataSO music, int layer, bool loop, bool skipBuild = false)
+    public static void PlayMusic(MusicDataSO music, int track, bool loop, bool skipBuild = false)
     {
-        Instance.StartCoroutine(Instance.PlayMusicCoroutine(music, Instance.trackLayers[layer], loop, skipBuild)); // int reference limits references to sources not on the Music Manager.
+        Instance.StartCoroutine(Instance.PlayMusicCoroutine(music, Instance.tracks[track], loop, skipBuild)); // int reference limits references to sources not on the Music Manager.
     }
 
     // public method for Events to trigger.
-    public static void ChangeMusic(MusicDataSO music, int layer, bool loop, float transitionDuration = 1f, bool skipBuild = false)
+    public static void ChangeMusic(MusicDataSO music, int track, bool loop, float transitionDuration = 1f, bool skipBuild = false)
     {
-        Instance.StartCoroutine(Instance.ChangeMusicCoroutine(music, Instance.trackLayers[layer], loop, transitionDuration, skipBuild)); // int reference limits references to sources not on the Music Manager.
+        Instance.StartCoroutine(Instance.ChangeMusicCoroutine(music, Instance.tracks[track], loop, transitionDuration, skipBuild)); // int reference limits references to sources not on the Music Manager.
     }
 
-    // public method for Events to trigger.
-    private static void  CrossFadeTracks(AudioSource prev, AudioSource next, float duration, bool doReplace = false)
-    {
-        Instance.StartCoroutine(CrossFadeTracksCoroutine(prev, next, duration, doReplace));
-    }
+    // // public method for Events to trigger.
+    // public static void CrossFade(AudioSource prev, AudioSource next, float duration, bool doReplace = false)
+    // {
+    //     Instance.StartCoroutine(CrossFadeTracksCoroutine(prev, next, duration, doReplace));
+    // }
 
     // set and play music from one of the layered tracks
     private IEnumerator PlayMusicCoroutine(MusicDataSO music, AudioSource track, bool loop, bool skipBuild = false)
@@ -63,13 +63,13 @@ public class MusicManager : MonoBehaviour
         //check for valid music clips
         if (!IsMusicValid(music)) yield break;
 
-        // load main clip
-        LoadClip(music.MainClip);
+        // // load main clip
+        // LoadClip(music.MainClip);
         // (if) load build clip
         if (music.HasBuildClip && !skipBuild)
         {
-            LoadClip(music.BuildClip);
-            // wait for both clips to load to memory
+            // LoadClip(music.BuildClip);
+            // // wait for both clips to load to memory
             yield return new WaitUntil(() =>
                 ClipIsLoaded(music.MainClip) &&
                 ClipIsLoaded(music.BuildClip));
@@ -102,7 +102,7 @@ public class MusicManager : MonoBehaviour
         AudioSource newTrack = NewAudioTrack();
 
         // start a coroutine that handles the audio transition and track replacement on its own
-        Instance.StartCoroutine(CrossFadeTracksCoroutine(track, newTrack, transitionDuration, true));
+        Instance.StartCoroutine(CrossFadeCoroutine(track, newTrack, transitionDuration, true));
 
         // load main clip
         Instance.StartCoroutine(Instance.PlayMusicCoroutine(music, newTrack, loop));
@@ -110,29 +110,28 @@ public class MusicManager : MonoBehaviour
 
     // crossfades between two audio tracks. 
     // doReplace replaces the fade-out track's layer with the fade-in track
-    private static IEnumerator CrossFadeTracksCoroutine(AudioSource prev, AudioSource next, float duration, bool doReplace = false)
+    private static IEnumerator CrossFadeCoroutine(AudioSource prev, AudioSource next, float duration, bool doReplace = false)
     {
         float elapsedTime = 0f;
-        while (prev.isPlaying)
+        // cache existing volume level
+        float cachedVolume = prev.volume;
+        // during crossfade duration do crossfade
+        while (elapsedTime < duration && duration != 0)
         {
             elapsedTime += Time.deltaTime;
-            float t = elapsedTime / duration;
-            // cache existing volume level
-            float cachedVolume = prev.volume;
+            float t = Mathf.Clamp01(elapsedTime / duration);
             // lerrrrrrp
             prev.volume = Mathf.Lerp(cachedVolume, 0, t);
             next.volume = Mathf.Lerp(0, cachedVolume, t);
             yield return null;
         }
-
-        // set to avoid rounding errors (is this even necessary??)
         prev.volume = 0;
-        next.volume = 1;
+        next.volume = cachedVolume;
 
         // replace the now empty layer with the new one
-        int i = Instance.trackLayers.IndexOf(prev);
-        if (Instance.trackLayers.Contains(next)) Instance.trackLayers.RemoveAt(Instance.trackLayers.IndexOf(next));
-        Instance.trackLayers[i] = next;
+        int i = Instance.tracks.IndexOf(prev);
+        if (Instance.tracks.Contains(next)) Instance.tracks.RemoveAt(Instance.tracks.IndexOf(next));
+        Instance.tracks[i] = next;
         Destroy(prev);
     }
 
@@ -147,19 +146,35 @@ public class MusicManager : MonoBehaviour
     public static AudioSource NewAudioTrack(bool layerNewTrack = true)
     {
         AudioSource newTrack = Instance.gameObject.AddComponent<AudioSource>();
-        newTrack.outputAudioMixerGroup = Instance.musicMix;
+        newTrack.outputAudioMixerGroup = Instance.mix;
         if (layerNewTrack)
         {
             Debug.Log($"[{Instance.gameObject}.{Instance}] Created new Layered Audio Track ({newTrack})");
-            Instance.trackLayers.Add(newTrack);
+            Instance.tracks.Add(newTrack);
         }
         else Debug.Log($"[{Instance.gameObject}.{Instance}] Created new unpooled Audio Track ({newTrack})");
         return newTrack;
     }
 
+    private float mutedVolumeCache = 1;
+    private bool muted = false;
+    public static void ToggleMuteMusic()
+    {
+        if (!Instance.muted)
+        {
+            Instance.mix.audioMixer.SetFloat("Music", 0);
+            Instance.muted = true;
+        }
+        else
+        {
+            Instance.mix.audioMixer.SetFloat("Music", Instance.mutedVolumeCache);
+            Instance.muted = true;
+        }
+    }
+
     public static void PauseMusic()
     {
-        foreach (AudioSource track in Instance.trackLayers)
+        foreach (AudioSource track in Instance.tracks)
         {
             track.Pause();
         }
@@ -167,15 +182,15 @@ public class MusicManager : MonoBehaviour
 
     public static void PlayOrResumeMusic()
     {
-        foreach (AudioSource track in Instance.trackLayers)
+        foreach (AudioSource track in Instance.tracks)
         {
-            track.Play();
+            track.Play(); //   <-- this restarts music i think
         }
     }
 
     public static void StopMusic()
     {
-        foreach (AudioSource track in Instance.trackLayers)
+        foreach (AudioSource track in Instance.tracks)
         {
             track.Stop();
         }
@@ -188,7 +203,7 @@ public class MusicManager : MonoBehaviour
 
     public static void PlayOrResumeTrack(AudioSource track)
     {
-        track.Play();
+        track.Play(); //   <-- this restarts music i think
     }
 
     public static void StopTrack(AudioSource track)
@@ -242,28 +257,28 @@ public class MusicManager : MonoBehaviour
         return clip;
     }
 
-    private static AudioClip UnloadClip(AudioClip clip)
-    {
-        if (ClipIsLoaded(clip))
-        {
-            clip.UnloadAudioData();
-            Instance.loadedMusic.Remove(clip);
-        }
-        return clip;
-    }
+    // private static AudioClip UnloadClip(AudioClip clip)
+    // {
+    //     if (ClipIsLoaded(clip))
+    //     {
+    //         clip.UnloadAudioData();
+    //         Instance.loadedMusic.Remove(clip);
+    //     }
+    //     return clip;
+    // }
     
     private static void PlayOnAwake()
     {
-        if (Instance.musicClips[0] == null)
+        if (Instance.music[0] == null)
         {
             Debug.LogWarning($"[{Instance.gameObject}] Attempted PlayOnAwake with no Music Clip set. Process cancelled.");
             return;
         }
-        if (Instance.trackLayers[0] == null)
+        if (Instance.tracks[0] == null)
         {
             Debug.LogWarning($"[{Instance.gameObject}] Attempted PlayOnAwake with no Track Layers set. Process cancelled.");
             return;
         }
-       Instance. StartCoroutine(Instance.PlayMusicCoroutine(Instance.musicClips[0], Instance.trackLayers[0], Instance.musicClips[0].LoopMainClip));
+       Instance. StartCoroutine(Instance.PlayMusicCoroutine(Instance.music[0], Instance.tracks[0], Instance.music[0].LoopMainClip));
     }
 }

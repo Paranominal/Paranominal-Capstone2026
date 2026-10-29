@@ -18,10 +18,10 @@ public class MusicDataSO : ScriptableObject
     public bool HasBuildClip => hasBuildClip && buildClip != null;
     public AudioClip BuildClip => buildClip;
 
-    // Spatial
-    [Header("Spacial Blend")]
-    [Range(0f, 1f)] public float spatialBlend = 0f;
-    [Min(0f)] public float minDistance = 1f;
-    [Min(0f)] public float maxDistance = 500f;
-    public AudioRolloffMode rolloffMode = AudioRolloffMode.Logarithmic;
+    // // Spatial
+    // [Header("Spacial Blend")]
+    // [Range(0f, 1f)] public float spatialBlend = 0f;
+    // [Min(0f)] public float minDistance = 1f;
+    // [Min(0f)] public float maxDistance = 500f;
+    // public AudioRolloffMode rolloffMode = AudioRolloffMode.Logarithmic;
 }
