@@ -5184,7 +5184,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GroundMovement
   chaseEnabled: 1
   strafeRadius: 5
-  chaseSpeed: 3
+  minChaseSpeed: 2
+  maxChaseSpeed: 3.5
+  chaseSpeedRampDistance: 7
   chaseEasing: 0.5
   onlyChaseIfAttackReady: 1
   neverGiveUpChase: 1
@@ -5294,6 +5296,11 @@ MonoBehaviour:
   lifetime: 2
   launchPoint: {fileID: 405425814696291350}
   targetHeightOffset: 1
+  requireLineOfSight: 1
+  obstructionLayers:
+    serializedVersion: 2
+    m_Bits: 1
+  lineOfSightRadius: 0.2
   windupDuration: 0.4
   recoveryDuration: 0.5
   windupTurnSpeed: 180
