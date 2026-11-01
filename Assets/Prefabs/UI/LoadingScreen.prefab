@@ -233,7 +233,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Photosensitivity Notice: Rapidly flashing lights and imagery'
+  m_text: 'Photosensitivity Notice: Some Rapidly flashing lights'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 85ce19ecaacbcb44dabc059bffc60276, type: 2}
   m_sharedMaterial: {fileID: 7453815776663714412, guid: 85ce19ecaacbcb44dabc059bffc60276, type: 2}
@@ -317,24 +317,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8283e6e80b2870149bed84f51959e99e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloatAndRotate
-  rotateLocalXSpeed: 0
-  rotateLocalYSpeed: 0
-  rotateLocalZSpeed: 0
-  rotateWorldXSpeed: 0
-  rotateWorldYSpeed: 0
-  rotateWorldZSpeed: 0
-  floatLocalXAmplitude: 20
-  floatLocalXFrequency: 0.5
-  floatLocalYAmplitude: 70
-  floatLocalYFrequency: 1
-  floatLocalZAmplitude: 100
-  floatLocalZFrequency: 0.3
-  floatWorldXAmplitude: 0
-  floatWorldXFrequency: 0
-  floatWorldYAmplitude: 0
-  floatWorldYFrequency: 0
-  floatWorldZAmplitude: 0
-  floatWorldZFrequency: 0
+  doRotate: 1
+  rotationSpeedLocal: {x: 0, y: 0, z: 0}
+  rotationSpeedWorld: {x: 0, y: 0, z: 0}
+  doFloat: 0
+  randomStart: 1
+  floatSpeed: 1
+  floatDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &7510032949854938395
 GameObject:
   m_ObjectHideFlags: 0
@@ -361,16 +350,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7510032949854938395}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: 0.12690903, w: 0.99191433}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.4389205, y: 3.4389205, z: 3.4389205}
+  m_LocalScale: {x: 1.7194602, y: 1.7194602, z: 1.7194602}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8079659249213499934}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 290, y: 154}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 14.582}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -150, y: 125}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8683854814075183111
@@ -401,7 +390,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1433697002, guid: e5b519f5f53cb604aae2de506a817cdd, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 14cff1c492b043842836abe6fc9ae284, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
