@@ -14,7 +14,8 @@ public class GunVisuals : MonoBehaviour
     [SerializeField] private SpriteRenderer specialMuzzleFlash;
     [SerializeField] private WeaponInputReader weaponInputReader;
     [SerializeField] private Animator gunAnimator;
-    [SerializeField] private ParticleEmitter gunParticles;
+    [SerializeField] private ParticleEmitter ironFxEmitter;
+    [SerializeField] private ParticleEmitter silverFxEmitter;
     [SerializeField] private Renderer[] gunPartRenderers;
 
     // Recoil and flash tuning values
@@ -27,13 +28,16 @@ public class GunVisuals : MonoBehaviour
 
     // Misfire animation and texture tuning values
     [Header("Misfire Visuals")]
+    [SerializeField] private ParticleEmitter trueShotFxEmitter;
+    [SerializeField] private ParticleEmitter trueShotChargeFxEmitter;
     [SerializeField] private Material misfireMaterial;
     [SerializeField] private float misfiresTextureChangeDuration = 0.2f;
 
     // TrueShot texture
     [Header("TrueShot Visuals")]
     [SerializeField] private SpecialShot trueShot;
-    [SerializeField] private Image trueShotCharge;
+    [SerializeField] private Image trueShotChargeBar;
+    [SerializeField] private Image trueShotChargeIndicator;
     [SerializeField] private Material trueShotMaterial;
 
     [Header("Debug")]
@@ -90,6 +94,7 @@ public class GunVisuals : MonoBehaviour
             trueShot.OnStreakChanged += TrueShotUI;
             trueShot.OnStateChanged += TrueShotState;
             TrueShotUI(0, 0);
+            if (trueShotChargeIndicator) trueShotChargeIndicator.enabled = false;
         }
 
         // Find the animator if not explicitly assigned in inspector
@@ -106,13 +111,29 @@ public class GunVisuals : MonoBehaviour
 
     void DoTrueShotAnims()
     {
-        if (weaponInputReader.TrueShotInProgress() && trueShot.IsReady) AnimateTrueShot(true);
+        if (weaponInputReader.TrueShotInProgress() && trueShot.IsReady)
+        {
+            AnimateTrueShot(true);
+            DoTrueShotChargeFX();
+        }
+        
         else if (weaponInputReader.AnyShotReleasedThisFrame()) AnimateTrueShot(false);
+    }
+
+    public void DoGunFX(WeakPointType shotType)
+    {
+        if (shotType == WeakPointType.Iron) ironFxEmitter.TriggerParticles();
+        else if (shotType == WeakPointType.Silver) silverFxEmitter.TriggerParticles();
     }
 
     public void DoTrueShotFX()
     {
-        if (gunParticles) gunParticles.TriggerParticles();
+        if (trueShotFxEmitter) trueShotFxEmitter.TriggerParticles();
+    }
+
+    public void DoTrueShotChargeFX()
+    {
+        if (trueShotChargeFxEmitter) trueShotChargeFxEmitter.TriggerParticles();
     }
     
     void AnimateTrueShot(bool animate)
@@ -135,8 +156,10 @@ public class GunVisuals : MonoBehaviour
     {
         float f = (float) streak / streakToCharge;
         if (debugMode) Debug.Log($"Streak: [{streak} / {streakToCharge}] = {f}");
-        
-        trueShotCharge.fillAmount = f;
+
+        trueShotChargeBar.fillAmount = f;
+        if (trueShotChargeIndicator && streak >= streakToCharge) trueShotChargeIndicator.enabled = true;
+        else if (trueShotChargeIndicator) trueShotChargeIndicator.enabled = false;
     }
     private void TrueShotState(SpecialShot.SpecialShotState state)
     {

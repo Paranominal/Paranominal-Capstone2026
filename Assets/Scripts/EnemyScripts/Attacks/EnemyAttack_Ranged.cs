@@ -1,6 +1,7 @@
 // Summary:
 // Ranged attack with a telegraphed windup. Tracks the target during windup, fires a Projectile
 // prefab from a launch point, then recovers. The projectile is self-managing after launch.
+// Optionally requires line of sight to the target before the attack can be picked.
 
 using System.Collections;
 using UnityEngine;
@@ -23,6 +24,17 @@ public class EnemyAttack_Ranged : EnemyAttack_Base
     [Tooltip("Height offset on the target to aim at (e.g. 1.0 for chest height).")]
     [SerializeField] private float targetHeightOffset = 1f;
 
+    // EDIT (ranged-los): line of sight check, used when the behaviour script picks an attack. Once committed, the attack fires regardless.
+    [Header("Line Of Sight")]
+    [Tooltip("Only use this attack when nothing on the obstruction layers is between the launch point and the target.")]
+    [SerializeField] private bool requireLineOfSight = true;
+    [Tooltip("Layers that block line of sight (environment, doors etc). Keep the Player and Enemy layers out of this.")]
+    [ShowIf("requireLineOfSight")]
+    [SerializeField] private LayerMask obstructionLayers = 1;
+    [Tooltip("Radius of the sight check, roughly the projectile's size. Keep it below the target height offset or the floor can block it.")]
+    [ShowIf("requireLineOfSight")]
+    [SerializeField] private float lineOfSightRadius = 0.2f;
+
     [Header("Timing")]
     [Tooltip("How long the enemy telegraphs before firing. 0 = fires immediately.")]
     [SerializeField] private float windupDuration = 0.4f;
@@ -43,6 +55,33 @@ public class EnemyAttack_Ranged : EnemyAttack_Base
     public override bool IsAttacking => isAttacking;
     public override bool IsWindingUp => isWindingUp;
     public override float WindupDuration => windupDuration;
+
+    // EDIT (ranged-los): blocks the attack from being picked without line of sight.
+    public override bool ShouldUse(Transform target)
+    {
+        if (!requireLineOfSight || target == null) return true;
+        return HasLineOfSight(target);
+    }
+
+    // EDIT (ranged-los): spherecast from the launch point to the aim point. Any obstruction hit in between blocks it.
+    private bool HasLineOfSight(Transform target)
+    {
+        Vector3 origin = launchPoint != null ? launchPoint.position : transform.position;
+        Vector3 aimPoint = target.position + Vector3.up * targetHeightOffset;
+        Vector3 toTarget = aimPoint - origin;
+        float distance = toTarget.magnitude;
+        if (distance < 0.0001f) return true;
+
+        bool blocked = Physics.SphereCast(origin, lineOfSightRadius, toTarget / distance, out RaycastHit hit, distance, obstructionLayers, QueryTriggerInteraction.Ignore);
+
+        if (debugMode)
+        {
+            Debug.DrawLine(origin, blocked ? hit.point : aimPoint, blocked ? Color.red : Color.green, 0.1f);
+            if (blocked) Debug.Log($"[EnemyAttack_Ranged] Line of sight blocked by '{hit.collider.name}' on {gameObject.name}.", this);
+        }
+
+        return !blocked;
+    }
 
     public override void PerformAttack(Transform target)
     {

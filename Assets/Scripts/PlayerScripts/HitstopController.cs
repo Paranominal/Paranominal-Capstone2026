@@ -1,18 +1,25 @@
 using UnityEngine;
 
-// Summary: Freezes gameplay via Time.timeScale for a set duration. Lives in SceneEssentials and is driven
-// through Play() by CameraEffectCoordinator (or anything else that needs a freeze). Calling Play() mid-freeze
-// restarts the timer with the new duration. Dropped if the game pauses mid-freeze.
+// Summary: Freezes gameplay via Time.timeScale. Lives in SceneEssentials and is driven by CameraEffectCoordinator
+// (or anything else that needs a freeze). Play() scales the default duration by a strength multiplier,
+// PlayFor() takes an exact length. Calling either mid-freeze restarts the timer. Dropped if the game pauses mid-freeze.
 public class HitstopController : MonoBehaviour
 {
     [Header("References")]
     [Tooltip("Scene PauseManager. If null, searches the scene.")]
     [SerializeField] private PauseManager pauseManager = null;
 
+    // duration settings moved here from the coordinator
+    [Header("Settings")]
+    [Tooltip("Freeze length at full strength, in real seconds. 0 = off.")]
+    [SerializeField, Min(0f)] private float duration = 0.1f;
+    [Tooltip("Scaled freezes never drop below this.")]
+    [SerializeField, Min(0f)] private float minDuration = 0.04f;
+
     // other systems check this to know whether gameplay is frozen
     public static bool IsActive { get; private set; }
 
-    private float duration;
+    private float currentDuration;
     private float elapsed;
     private float timeScaleBefore = 1f;
 
@@ -36,7 +43,7 @@ public class HitstopController : MonoBehaviour
         if (!IsActive)
             return;
 
-        // EDIT (shot-feedback): pause owns timeScale now, so drop the freeze without restoring it
+        // pause owns timeScale now, so drop the freeze without restoring it
         if (IsPaused)
         {
             IsActive = false;
@@ -45,21 +52,30 @@ public class HitstopController : MonoBehaviour
 
         elapsed += Time.unscaledDeltaTime;
 
-        if (elapsed >= duration)
+        if (elapsed >= currentDuration)
             End();
     }
 
-    // EDIT (shot-feedback): public entry point, replaces the SpecialDestroyed subscription
-    public void Play(float freezeDuration)
+    // default duration scaled by strength (1 = full), clamped to the min
+    public void Play(float strength = 1f)
     {
-        if (freezeDuration <= 0f || IsPaused)
+        if (duration <= 0f)
+            return;
+
+        PlayFor(Mathf.Max(duration * strength, minDuration));
+    }
+
+    // exact freeze length in real seconds, ignores the settings above
+    public void PlayFor(float seconds)
+    {
+        if (seconds <= 0f || IsPaused)
             return;
 
         // only store the time scale on a fresh freeze, mid-freeze it's already 0
         if (!IsActive)
             timeScaleBefore = Time.timeScale;
 
-        duration = freezeDuration;
+        currentDuration = seconds;
         elapsed = 0f;
 
         Time.timeScale = 0f;
