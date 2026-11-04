@@ -171,10 +171,12 @@ public class PlayerDash : MonoBehaviour
             weaponEvents.ShotResolved += OnShotResolved;
 
         // Michael edit: resolve volume reference and cache the component
+        // EDIT (graphics-settings): was FindAnyObjectByType<Volume>(), which could pick up the graphics settings override volume
+        // (or any other volume). Now finds the one whose profile holds the dash effects, skipping the override volume.
         if (dashEffectsVolume == null)
-            dashEffectsVolume = Object.FindAnyObjectByType<Volume>();
+            dashEffectsVolume = FindDashEffectsVolume();
 
-        if (dashEffectsVolume != null)
+        if (dashEffectsVolume != null && dashEffectsVolume.sharedProfile != null)
             dashEffectsVolume.sharedProfile.TryGet(out dashEffectsComponent);
 
         // ensure effect starts off
@@ -466,7 +468,26 @@ public class PlayerDash : MonoBehaviour
         float step = fadeDuration > 0f ? Time.deltaTime / fadeDuration : 1f;
 
         dashEffectsCurrent = Mathf.MoveTowards(dashEffectsCurrent, target, step);
-        dashEffectsComponent.intensity.Override(dashEffectsCurrent);
+
+        // EDIT (graphics-settings): scaled by the Dash Effects slider in GraphicsSettingsManager (0 = off).
+        float playerMultiplier = GraphicsSettingsManager.Instance != null ? GraphicsSettingsManager.Instance.DashIntensityMultiplier : 1f;
+        dashEffectsComponent.intensity.Override(dashEffectsCurrent * playerMultiplier);
+    }
+
+    // EDIT (graphics-settings): Summary: Finds the scene Volume holding the dash effects, ignoring the graphics settings override volume.
+    private Volume FindDashEffectsVolume()
+    {
+        Volume overrideVolume = GraphicsSettingsManager.Instance != null ? GraphicsSettingsManager.Instance.OverrideVolume : null;
+
+        foreach (Volume volume in FindObjectsByType<Volume>(FindObjectsSortMode.None))
+        {
+            if (volume == overrideVolume) continue;
+            if (volume.sharedProfile != null && volume.sharedProfile.Has<DashEffectsVolumeComponent>())
+                return volume;
+        }
+
+        Debug.LogWarning("PlayerDash: no Volume with a DashEffectsVolumeComponent found.");
+        return null;
     }
 
     private void ResolveUIReferences()
