@@ -31,6 +31,7 @@ public class DownsampleRendererFeature : ScriptableRendererFeature
         // EDIT (Downsample-Dither): Publish the fallback size on every skipped path so dither never uses a stale block size.
         if (pass == null) { DownsampleRenderPass.SetFallbackPixelSize(); return; }
         if (renderingData.cameraData.cameraType != CameraType.Game) { DownsampleRenderPass.SetFallbackPixelSize(); return; }
+        if (!renderingData.cameraData.postProcessEnabled) return; // EDIT (graphics-settings): only run on cameras with Post Processing ticked.
 
         // bypasses the UI, Dialogue, and POC Cameras for the Downsampling pass, making the stenciling scripts unnecessary :)
         if (renderingData.cameraData.camera.name == "UICam") { DownsampleRenderPass.SetFallbackPixelSize(); return; }

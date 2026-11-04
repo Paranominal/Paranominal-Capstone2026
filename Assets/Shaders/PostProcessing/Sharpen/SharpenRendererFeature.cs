@@ -30,6 +30,7 @@ public class SharpenRendererFeature : ScriptableRendererFeature
 
         // Skip Scene View and Preview cameras.
         if (renderingData.cameraData.cameraType != CameraType.Game) return;
+        if (!renderingData.cameraData.postProcessEnabled) return; // EDIT (graphics-settings): only run on cameras with Post Processing ticked.
 
         renderer.EnqueuePass(pass);
     }
