@@ -3,10 +3,11 @@
 // Overrides start off, so untouched settings pass the designer's profile values straight through.
 // Settings driven by other scripts (Fear Vignette, Dash intensity, Impact Frames, camera effects) are exposed as
 // properties those scripts read. Settings reset to the designer's values on each launch.
+// EDIT (ui-render-target): designer values are now read from a private volume stack evaluated against the world volumes only,
+// so they always come from the Global Volume's profile, whichever camera rendered last.
 // Lives on GameSystems (persistent).
 
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -59,10 +60,17 @@ public class GraphicsSettingsManager : MonoBehaviour
     public static GraphicsSettingsManager Instance { get; private set; }
 
     [Header("Override Volume")]
-    [Tooltip("Layer for the override volume. Must be in PlayerCam's Volume Mask (use the same layer as the Global Volume).")]
+    // EDIT (ui-render-target): should now be a dedicated layer, so the settings reach the UI camera without the Global Volume coming with them.
+    [Tooltip("Dedicated layer for the override volume. Must be in the Volume Mask of every camera the settings should affect (PlayerCam and UICam), " +
+             "and NOT in Designer Volume Mask.")]
     [SerializeField] private string volumeLayerName = "Default";
     [Tooltip("Must be higher than every scene volume so the player's settings win.")]
     [SerializeField] private float volumePriority = 100f;
+
+    // EDIT (ui-render-target)
+    [Header("Designer Values")]
+    [Tooltip("Volume layers the menu reads its default values from, usually just the Global Volume's layer. Don't include the override volume's layer.")]
+    [SerializeField] private LayerMask designerVolumeMask = 1;
 
     [Header("Slider Ranges")]
     [Tooltip("Highest Downsample pixel size the slider allows.")]
@@ -142,16 +150,10 @@ public class GraphicsSettingsManager : MonoBehaviour
     private CRTVolume crt;
     private DashEffectsVolumeComponent dash;
 
-    // Frame each parameter's override state last changed. The stack only re-evaluates once per frame,
-    // so a parameter released this frame still holds our old value in the stack until next frame.
-    // Keyed by reference, since VolumeParameter's own hash changes with its value.
-    private readonly Dictionary<VolumeParameter, int> overrideChangedFrame = new Dictionary<VolumeParameter, int>(new ReferenceComparer());
-
-    private class ReferenceComparer : IEqualityComparer<VolumeParameter>
-    {
-        public bool Equals(VolumeParameter a, VolumeParameter b) => ReferenceEquals(a, b);
-        public int GetHashCode(VolumeParameter parameter) => System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(parameter);
-    }
+    // EDIT (ui-render-target): replaces the per-frame override tracking. Evaluated only against designerVolumeMask,
+    // so it never contains our overrides or the UI volume.
+    private VolumeStack designerStack;
+    private int designerRefreshFrame = -1;
 
     private void Awake()
     {
@@ -172,6 +174,10 @@ public class GraphicsSettingsManager : MonoBehaviour
         // Runtime profile isn't an asset, so it has to be cleaned up by hand.
         if (overrideProfile != null)
             Destroy(overrideProfile);
+
+        // EDIT (ui-render-target)
+        if (designerStack != null && VolumeManager.instance != null)
+            VolumeManager.instance.DestroyStack(designerStack);
 
         Instance = null;
     }
@@ -491,72 +497,71 @@ public class GraphicsSettingsManager : MonoBehaviour
 
     private void SetOverrideState(VolumeParameter parameter, bool overrideOn)
     {
-        if (parameter.overrideState != overrideOn)
-            overrideChangedFrame[parameter] = Time.frameCount;
         parameter.overrideState = overrideOn;
-    }
-
-    // Summary: True if the stack's value for this parameter is the designer's (our override off, and not just released this frame).
-    private bool CanReadDesigner(VolumeParameter parameter)
-    {
-        if (parameter.overrideState) return false;
-        return !overrideChangedFrame.TryGetValue(parameter, out int frame) || frame < Time.frameCount;
     }
 
     // ---- Designer values ----
 
-    // Summary: Reads the resolved stack for every parameter our volume isn't overriding.
-    // Overridden parameters keep their last cached value, so turning a setting back on still shows the designer's value.
+    // EDIT (ui-render-target): Summary: Evaluates the world volumes into a private stack and reads the designer's values from it.
+    // Global volumes only (no trigger), and the override layer is excluded, so our own overrides never show up here.
     private void RefreshDesignerValues()
     {
-        if (overrideProfile == null || VolumeManager.instance == null || VolumeManager.instance.stack == null) return;
+        if (overrideProfile == null || VolumeManager.instance == null || !VolumeManager.instance.isInitialized) return;
 
-        VolumeStack stack = VolumeManager.instance.stack;
+        // Once per frame is enough, rows all refresh together.
+        if (designerRefreshFrame == Time.frameCount) return;
+        designerRefreshFrame = Time.frameCount;
+
+        if (designerStack == null)
+            designerStack = VolumeManager.instance.CreateStack();
+
+        VolumeManager.instance.Update(designerStack, null, designerVolumeMask);
+        VolumeStack stack = designerStack;
 
         Bloom stackBloom = stack.GetComponent<Bloom>();
-        if (stackBloom != null && CanReadDesigner(bloom.intensity))
+        if (stackBloom != null)
             designBloomIntensity = stackBloom.intensity.value;
 
         ChromaticAberration stackChromatic = stack.GetComponent<ChromaticAberration>();
-        if (stackChromatic != null && CanReadDesigner(chromatic.intensity))
+        if (stackChromatic != null)
             designChromaticIntensity = stackChromatic.intensity.value;
 
         DownsampleVolume stackDownsample = stack.GetComponent<DownsampleVolume>();
-        if (stackDownsample != null && CanReadDesigner(downsample.pixelSize))
+        if (stackDownsample != null)
             designPixelSize = stackDownsample.pixelSize.value;
 
         QuantisedDitherVolume stackQuantise = stack.GetComponent<QuantisedDitherVolume>();
         if (stackQuantise != null)
         {
-            if (CanReadDesigner(quantise.redSteps)) designColourSteps = stackQuantise.redSteps.value;
-            if (CanReadDesigner(quantise.ditherStrength)) designDitherStrength = stackQuantise.ditherStrength.value;
-            if (CanReadDesigner(quantise.bayerSize)) designBayerSize = stackQuantise.bayerSize.value;
-            if (CanReadDesigner(quantise.usePS1Matrix)) designUsePS1 = stackQuantise.usePS1Matrix.value;
+            designColourSteps = stackQuantise.redSteps.value;
+            designDitherStrength = stackQuantise.ditherStrength.value;
+            designBayerSize = stackQuantise.bayerSize.value;
+            designUsePS1 = stackQuantise.usePS1Matrix.value;
         }
 
         SharpenVolume stackSharpen = stack.GetComponent<SharpenVolume>();
         if (stackSharpen != null)
         {
-            if (CanReadDesigner(sharpen.sharpness)) designSharpness = stackSharpen.sharpness.value;
-            if (CanReadDesigner(sharpen.sampleDistance)) designSampleDistance = stackSharpen.sampleDistance.value;
+            designSharpness = stackSharpen.sharpness.value;
+            designSampleDistance = stackSharpen.sampleDistance.value;
         }
 
         CRTVolume stackCrt = stack.GetComponent<CRTVolume>();
         if (stackCrt != null)
         {
-            if (CanReadDesigner(crt.blurOffset)) designBlurOffset = stackCrt.blurOffset.value;
-            if (CanReadDesigner(crt.scanlineIntensity)) designScanlineIntensity = stackCrt.scanlineIntensity.value;
-            if (CanReadDesigner(crt.vignetteIntensity)) designCrtVignetteIntensity = stackCrt.vignetteIntensity.value;
-            if (CanReadDesigner(crt.usePhosphor)) designUsePhosphor = stackCrt.usePhosphor.value;
+            designBlurOffset = stackCrt.blurOffset.value;
+            designScanlineIntensity = stackCrt.scanlineIntensity.value;
+            designCrtVignetteIntensity = stackCrt.vignetteIntensity.value;
+            designUsePhosphor = stackCrt.usePhosphor.value;
         }
 
         DashEffectsVolumeComponent stackDash = stack.GetComponent<DashEffectsVolumeComponent>();
         if (stackDash != null)
         {
-            if (CanReadDesigner(dash.enableEthereal)) designDashEthereal = stackDash.enableEthereal.value;
-            if (CanReadDesigner(dash.enableBlur)) designDashBlur = stackDash.enableBlur.value;
-            if (CanReadDesigner(dash.enableWarp)) designDashWarp = stackDash.enableWarp.value;
-            if (CanReadDesigner(dash.enableLines)) designDashLines = stackDash.enableLines.value;
+            designDashEthereal = stackDash.enableEthereal.value;
+            designDashBlur = stackDash.enableBlur.value;
+            designDashWarp = stackDash.enableWarp.value;
+            designDashLines = stackDash.enableLines.value;
         }
     }
 
