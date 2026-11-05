@@ -24,7 +24,7 @@ public class Dialogue : MonoBehaviour
         //hide all pages
         foreach (GameObject page in pages) page.SetActive(false);
         Debug.Log($"[{this}, {gameObject}]{currentPage} | {PageCount}");
-        pages[currentPage - 1].SetActive(true);
+        if (pages.Count > 0) pages[currentPage - 1].SetActive(true);
     }
 
     public void GoToPage(int pageNumber)
