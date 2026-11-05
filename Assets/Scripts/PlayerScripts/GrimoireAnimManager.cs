@@ -53,7 +53,7 @@ public class GrimoireAnimManager : MonoBehaviour
     }
     void Update()
     {
-        if (!playerInputReader.CanMove) return;
+        if (!playerInputReader.CanMove || playerInputReader == null) return;
         
         ControlBools();
 
