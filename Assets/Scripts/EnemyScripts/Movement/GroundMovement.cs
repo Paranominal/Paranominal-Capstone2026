@@ -191,7 +191,13 @@ public class GroundMovement : MonoBehaviour, IEnemyMovement
     {
         if (navAgent == null || !navAgent.isOnNavMesh) return;
         if (navAgent.isStopped) navAgent.isStopped = false;
-        navAgent.stoppingDistance = stopDistance;
+
+        if (navAgent.pathStatus == NavMeshPathStatus.PathPartial)
+        {
+            navAgent.stoppingDistance = 1.5f;
+        }
+        else navAgent.stoppingDistance = stopDistance;
+
         navAgent.speed = speed;
         navAgent.SetDestination(target);
     }
