@@ -19,13 +19,13 @@ public class PlayerHUD : MonoBehaviour
     [Header("Reload UI")]
     [SerializeField] private Slider reloadSlider;
 
-    // dash cooldown bar, shown only while dash is unavailable
-    //[Header("Dash UI")]
-    //[SerializeField] private Slider dashSlider;
+    // Michael edit (dash-ui): dash UI visibility is now owned by PlayerDash, replaces the old dashBar reference.
+    [Header("Dash UI")]
+    [SerializeField] private PlayerDash playerDash;
 
     // crosshair for aiming
     [Header("Crosshair UI")]
-    [SerializeField] private Image crosshairImage;
+    [SerializeField] private GameObject crosshairImage;
 
     private void Start()
     {
@@ -34,6 +34,10 @@ public class PlayerHUD : MonoBehaviour
 
         if (weaponEvents == null)
             weaponEvents = GetComponent<WeaponEvents>();
+
+        // Michael edit (dash-ui): fallback, PlayerDash lives on a different prefab.
+        if (playerDash == null)
+            playerDash = FindAnyObjectByType<PlayerDash>();
 
         // hide conditional UI at startup so HUD begins mostly blank
         // these sliders are enabled only when their corresponding action is in progress/cooldown
@@ -147,6 +151,8 @@ public class PlayerHUD : MonoBehaviour
     public void UIVisible(bool state)
     {
         if (crosshairImage != null) crosshairImage.gameObject.SetActive(state);
+        // Michael edit (dash-ui): PlayerDash decides which container (if any) to show.
+        if (playerDash != null) playerDash.SetUIVisible(state);
         if (ammoText != null) ammoText.gameObject.SetActive(state);
 
         if (reloadSlider != null)

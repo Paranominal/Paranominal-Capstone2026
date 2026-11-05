@@ -77,7 +77,7 @@ public class GrimoireInventoryPanel : MonoBehaviour
                 "",
                 entry.flavourText,
                 entry.hintText,
-                entry.snapshotImage,
+                entry.image, // EDIT (bestiary-pages): was snapshotImage.
                 index
             );
         }

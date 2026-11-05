@@ -16,11 +16,11 @@ public class ScoreManager : MonoBehaviour
     [SerializeField]
     private RankDefinition[] ranks = new RankDefinition[]
     {
-        new RankDefinition { label = "D", pointThreshold = 50  },
-        new RankDefinition { label = "C", pointThreshold = 100 },
-        new RankDefinition { label = "B", pointThreshold = 200 },
-        new RankDefinition { label = "A", pointThreshold = 400 },
-        new RankDefinition { label = "S", pointThreshold = 800 },
+        new RankDefinition { label = "D", pointThreshold = 2000  },
+        new RankDefinition { label = "C", pointThreshold = 5000 },
+        new RankDefinition { label = "B", pointThreshold = 10000},
+        new RankDefinition { label = "A", pointThreshold = 20000 },
+        new RankDefinition { label = "S", pointThreshold = 30000 },
     };
     
     [Header("Debug")]
@@ -33,6 +33,7 @@ public class ScoreManager : MonoBehaviour
 
     public event System.Action<int> OnPointsAdded;
     public event System.Action<Vector3> OnShotMissed;
+    public event System.Action<Vector3> OnShotBlocked;
 
     // points to display = final awarded (after combo), precision = 1-10 base, position = where it landed, ownerCentre = where the enemy is
     public event System.Action<int, int, Vector3, Vector3> OnPointsAwarded;
@@ -120,6 +121,11 @@ public class ScoreManager : MonoBehaviour
         if (debugMode) Debug.Log($"Weakpoint hit: {result.Accuracy:0.00} accuracy = {basePoints} base x {1f + multiplier:0.0} = {points} points");
         AddScore(points);
         OnPointsAwarded?.Invoke(points, basePoints, result.HitPoint, result.OwnerCentre);
+    }
+
+    public void ReportBlockedShot(Vector3 hitPosition)
+    {
+        OnShotBlocked?.Invoke(hitPosition);
     }
 
     private void HandleShotResolved(ShotResult result)

@@ -9,7 +9,11 @@ using UnityEngine;
 public abstract class EnemyAttack_Base : MonoBehaviour
 {
     [Header("Attack Range")]
-    [Tooltip("Distance within which the behaviour script will consider using this attack.")]
+    // EDIT (attack-priority): min range lets attacks have a dead zone (e.g. a ranged attack that won't fire up close).
+    [Tooltip("The attack won't be used if the target is closer than this. 0 = no minimum.")]
+    [SerializeField] private float minRange = 0f;
+    // EDIT (attack-priority): tooltip updated to describe how range drives movement.
+    [Tooltip("Max distance at which this attack can be used. When this is the enemy's highest-priority ready attack, the enemy moves to this distance.")]
     [SerializeField] private float attackRange = 5f;
 
     [Header("Cooldown")]
@@ -21,6 +25,8 @@ public abstract class EnemyAttack_Base : MonoBehaviour
     [SerializeField] private SpriteRenderer windupIndicator;
 
     public float AttackRange => attackRange;
+    // EDIT (attack-priority)
+    public float MinRange => minRange;
     public float CooldownTime => cooldownTime;
 
     [Header("Windup Movement")]
@@ -52,12 +58,25 @@ public abstract class EnemyAttack_Base : MonoBehaviour
     // returns true by default. the behaviour script checks this during attack selection.
     public virtual bool ShouldUse(Transform target) => true;
 
+    // EDIT (attack-priority): shared range check so attack selection always respects min and max range.
+    // tolerance is a small buffer on the max range only.
+    public bool IsInRange(float distance, float tolerance)
+    {
+        return distance >= minRange && distance <= attackRange + tolerance;
+    }
+
 
     // Lifecycle
     // hide indicator on spawn so it's never visible before the first attack
     protected virtual void Awake()
     {
         SetWindupIndicator(false);
+    }
+
+    // EDIT (attack-priority): keep min range from exceeding max range
+    protected virtual void OnValidate()
+    {
+        minRange = Mathf.Clamp(minRange, 0f, attackRange);
     }
 
 
