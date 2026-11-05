@@ -1,5 +1,6 @@
 using System;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.UIElements.Experimental;
@@ -11,6 +12,7 @@ public class SpriteBillboard : MonoBehaviour
     [Header("Preferences")] 
     [SerializeField] bool easing = false;
     [ShowIf("easing", true), SerializeField] private float easeSpeed = 0.1f;
+    [SerializeField] Vector3 forwardVector = new Vector3(0,0,1);
 
     private void Update()
     {

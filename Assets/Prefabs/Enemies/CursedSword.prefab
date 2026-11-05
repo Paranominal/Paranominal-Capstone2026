@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 8622962237435936167}
   - component: {fileID: 996114371388078208}
   - component: {fileID: 2822648997167648662}
-  m_Layer: 8
+  m_Layer: 17
   m_Name: CursedSword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,6 +55,7 @@ MonoBehaviour:
   enemyClass: 0
   skipSpawn: 1
   spawnDelay: 3
+  immuneToSpecialShot: 0
   alwaysAggro: 0
   aggroRange: 30
   movementScript: {fileID: 5445272703306835462}
@@ -62,6 +63,9 @@ MonoBehaviour:
   - {fileID: 996114371388078208}
   stagger: {fileID: 8192007907820673360}
   animator: {fileID: 0}
+  soundPlayer: {fileID: 0}
+  bloodFxEmitter: {fileID: 1033433240784427569}
+  immuneFxEmitter: {fileID: 0}
   numberOfPhases: 3
   doSummons: 1
   summonOnCycles: 
@@ -69,6 +73,10 @@ MonoBehaviour:
   numberOfSummons: 3
   summonRadius: 3
   debugMode: 0
+  _state: Inactive
+  _activeAttack: None
+  _targetAttack: None
+  _orbitDistance: 0
 --- !u!114 &5445272703306835462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,13 +90,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlyingMovement
   chaseEnabled: 1
-  engagementDistance: 4
+  strafeRadius: 6
   chaseSpeed: 6
   acceleration: 10
   onlyChaseIfAttackReady: 0
-  neverGiveUpChase: 0
+  neverGiveUpChase: 1
   chaseRange: 20
-  returnToOrigin: 1
+  returnToOrigin: 0
   returnSpeed: 3
   retreatEnabled: 0
   retreatDistance: 5
@@ -136,17 +144,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d49d50defecf244d9e2d39fcffcdd3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStagger
-  staggerBar: {fileID: 0}
+  staggerBarRoot: {fileID: 0}
   staggerBarFill: {fileID: 0}
   barColor: {r: 1, g: 1, b: 1, a: 1}
   barResetColor: {r: 1, g: 3, b: 5, a: 1}
   weakPointManager: {fileID: 5425350769874602465}
   hitsToStagger: 1
+  immuneToBullets: 0
   stunOnWindup: 1
   staggerResistance: 0.3
   staggerTime: 2
   timeBeforeBarDrain: 0.4
   timeAddedOnHit: 0.5
+  bloodSplatter: {fileID: 1033433240784427569}
   debugMode: 1
   canBeHit: 1
   windingUp: 0
@@ -189,7 +199,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae32cdccd217da34db40c47ced2c6507, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_Melee
-  attackRange: 5
+  minRange: 0
+  attackRange: 2
   cooldownTime: 2
   windupIndicator: {fileID: 8865687178892460569}
   moveWhileWindingUp: 0
@@ -227,7 +238,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.25
+  m_Radius: 0.35
   m_Height: 3
   m_Direction: 1
   m_Center: {x: 0, y: -0.3, z: 0}
@@ -264,6 +275,7 @@ Transform:
   m_Children:
   - {fileID: 8807018606182058875}
   - {fileID: 6959259694330694764}
+  - {fileID: 2292473787345258279}
   m_Father: {fileID: 4798954612814379618}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6343600408639871498
@@ -279,8 +291,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteBillboard
   rotateX: 1
-  slowBillboard: 0
-  slowBillboardTime: 0.1
+  easing: 0
+  easeSpeed: 0.1
+  forwardVector: {x: 0, y: 0, z: 1}
 --- !u!212 &405706474175905397
 SpriteRenderer:
   serializedVersion: 2
@@ -561,4 +574,77 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 5652419394934148961, guid: 1692bf60e5acda14a8514f087ddc03a8, type: 3}
   m_PrefabInstance: {fileID: 5019260053121476036}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8277153469851532556
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2016468724972947523}
+    m_Modifications:
+    - target: {fileID: 2999233974441774136, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_Name
+      value: BloodSplatEmitter
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.5578134
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+--- !u!114 &1033433240784427569 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8973744640497624893, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+  m_PrefabInstance: {fileID: 8277153469851532556}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a027d29e19fa014b86a367990c784cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BloodSplatter
+--- !u!4 &2292473787345258279 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7858460264289516075, guid: abd305e68d24b2843857b8173a86fe71, type: 3}
+  m_PrefabInstance: {fileID: 8277153469851532556}
   m_PrefabAsset: {fileID: 0}

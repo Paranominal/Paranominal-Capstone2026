@@ -12,6 +12,17 @@ public class RememberSelectedUI : MonoBehaviour
     [SerializeField] private InputActionReference uiNavigateAction;
     [SerializeField] private InputActionReference uiMouseMoveAction;
 
+    private void Awake()
+    {
+        if (eventSystem.firstSelectedGameObject == null)
+        {
+            Debug.LogWarning($"[{gameObject}] EventSystem has no First Selected GameObject! this may stop UI navigation from working.");
+            // GameObject fallback = FindFirstObjectByType<Selectable>().gameObject;
+            // if (eventSystem.firstSelectedGameObject == null) eventSystem.SetSelectedGameObject(fallback);
+            // Debug.LogWarning($"[{gameObject}] EventSystem sett to ({fallback}) as a fallback.");
+        }
+    }
+
     private void Reset()
     {
         eventSystem = FindAnyObjectByType<EventSystem>();
@@ -46,7 +57,7 @@ public class RememberSelectedUI : MonoBehaviour
 
         if (uiMouseMoveAction.action.ReadValue<Vector2>().magnitude > 0 && eventSystem.currentSelectedGameObject != null)
         {
-            eventSystem.currentSelectedGameObject.GetComponent<Button>().OnDeselect(new BaseEventData(eventSystem));
+            eventSystem.currentSelectedGameObject.GetComponent<Selectable>().OnDeselect(new BaseEventData(eventSystem));
         } 
     }
 }

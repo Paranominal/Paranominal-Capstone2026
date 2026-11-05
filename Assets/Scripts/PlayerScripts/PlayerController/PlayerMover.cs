@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMover : MonoBehaviour
@@ -95,6 +96,9 @@ public class PlayerMover : MonoBehaviour
             {
                 currentVelocity = Vector3.Lerp(currentVelocity, Vector3.zero, smoothFactor);
             }
+
+            // Footsteps only when not dashing
+            HandleFootsteps(moveInput);
         }
         // PlayerDash handles dash state and input
         if (playerDash != null && playerDash.dashEnabled)
@@ -135,11 +139,6 @@ public class PlayerMover : MonoBehaviour
         // Combine horizontal and vertical movement
         Vector3 move = horizontal + Vector3.up * verticalVelocity;
         characterController.Move(move * Time.deltaTime);
-
-        // Footsteps only when not dashing
-        if (playerDash == null || !playerDash.IsDashing)
-            HandleFootsteps(moveInput);
-
     }
 
     // Plays a footstep when the player is actively moving on the ground, on a fixed interval.
@@ -182,6 +181,12 @@ public class PlayerMover : MonoBehaviour
         {
             knockbackForce = damageInfo.amount / 5f;
 
+        }
+
+        // cancel dash immediately if active so knockback isn't applied while dashing
+        if (playerDash != null && playerDash.IsDashing)
+        {
+            playerDash.CancelDashAndStartCooldown();
         }
 
         // player's input is locked when stunned
