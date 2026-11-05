@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2243131787214766685}
-  - component: {fileID: 1646154906805119363}
+  - component: {fileID: 3176023609945992880}
   - component: {fileID: 6486482152121865416}
   m_Layer: 13
   m_Name: Spawner_STATUE_BOSS
@@ -34,7 +34,7 @@ Transform:
   - {fileID: 6365053150600230810}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1646154906805119363
+--- !u!114 &3176023609945992880
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43,11 +43,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 3300983171920748527}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
+  m_Script: {fileID: 11500000, guid: 0c7ffbb800da1d2419cf059710558c2a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
-  enemyPool:
-  - {fileID: 665355656302339407, guid: a5fb2183885770e4081a8a2bca6fc3f8, type: 3}
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint_Standalone
+  isBossSpawner: 0
+  bossDoors: []
+  enemyPrefab: {fileID: 665355656302339407, guid: a5fb2183885770e4081a8a2bca6fc3f8, type: 3}
+  useRadiusDetection: 0
+  detectionRadius: 10
   spawnVisualDelay: 0.05
 --- !u!212 &6486482152121865416
 SpriteRenderer:

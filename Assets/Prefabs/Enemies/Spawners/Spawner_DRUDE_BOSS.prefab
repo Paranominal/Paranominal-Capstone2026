@@ -100,8 +100,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2243131787214766685}
-  - component: {fileID: 1646154906805119363}
+  - component: {fileID: 3054498511507494325}
   - component: {fileID: 6486482152121865416}
+  - component: {fileID: 7079483211627577372}
   m_Layer: 13
   m_Name: Spawner_DRUDE_BOSS
   m_TagString: Untagged
@@ -125,7 +126,7 @@ Transform:
   - {fileID: 2573969411889858382}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1646154906805119363
+--- !u!114 &3054498511507494325
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -134,11 +135,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 3300983171920748527}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da9f25c19b336994f84b974f58962e75, type: 3}
+  m_Script: {fileID: 11500000, guid: 0c7ffbb800da1d2419cf059710558c2a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
-  enemyPool:
-  - {fileID: 2454066409687836167, guid: f18bf34ed18e66343b0659cfd9190d38, type: 3}
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint_Standalone
+  isBossSpawner: 1
+  bossDoors:
+  - {fileID: 0}
+  enemyPrefab: {fileID: 2454066409687836167, guid: f18bf34ed18e66343b0659cfd9190d38, type: 3}
+  useRadiusDetection: 0
+  detectionRadius: 10
   spawnVisualDelay: 0.05
 --- !u!212 &6486482152121865416
 SpriteRenderer:
@@ -199,3 +204,26 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &7079483211627577372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3300983171920748527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41f13d7f1049d37408ab12c19d833f0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MusicTrigger
+  mode: 2
+  music: {fileID: 11400000, guid: 6084c2628ee863340830889191ce3fd5, type: 2}
+  crossfade: 0
+  spawner: {fileID: 0}
+  standaloneSpawner: {fileID: 3054498511507494325}
+  useTrigger: 0
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  fixedDurationTime: 30
+  onlyTriggerOnce: 0
