@@ -138,7 +138,7 @@ public class EnemyAttack_Melee : EnemyAttack_Base
         if (debugMode) Debug.Log($"[EnemyAttack_Melee] Strike on {gameObject.name}.", this);
         Vector3 spawnPos = transform.position + (transform.forward * AttackRange / 2f) + (Vector3.up * damageFieldHeight * 0.5001f);
         activeDamageField = Instantiate(damageFieldPrefab, spawnPos, transform.rotation).GetComponent<DamageField>();
-        activeDamageField.DoDamageField(damage, strikeDuration, AttackRange / 2f, damageFieldHeight, targetLayers, this, persistAfterHit, damageOverTime, damageTickRate);
+        activeDamageField.DoDamageField(damage, strikeDuration, (AttackRange / 2f) + 0.5f, damageFieldHeight, targetLayers, this, persistAfterHit, damageOverTime, damageTickRate);
         InvokeStrikeStart();
 
         // wait for the damage field to finish (hit or timed out)
