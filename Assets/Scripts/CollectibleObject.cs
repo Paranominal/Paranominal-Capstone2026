@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,9 +17,13 @@ public class CollectibleObject : MonoBehaviour
 
     private bool pickupSpawnsTriggered;
 
+    public event Action ObjectCollected;
+
     // Called by Inventory only after an actual pickup has been accepted.
     public void OnPickedUp()
     {
+        ObjectCollected?.Invoke();
+        
         if (!triggerEnemySpawns || pickupSpawnsTriggered) return;
         pickupSpawnsTriggered = true;
 
