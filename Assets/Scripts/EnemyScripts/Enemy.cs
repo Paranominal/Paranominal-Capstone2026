@@ -52,9 +52,7 @@ public class Enemy : MonoBehaviour
 
     [Header("Sprites & Animation")]
     [SerializeField] private Animator animator;
-    [SerializeField] private SpriteRenderer[] sprites;
-    private Material[] spriteMaterials;
-    [SerializeField] private Color flashColor = Color.white;
+    [SerializeField] private SpriteFX spriteFX;
 
     [Header("Sound")]
     [SerializeField] private SoundPlayer soundPlayer;
@@ -150,12 +148,6 @@ public class Enemy : MonoBehaviour
         if ((enemyClass == EnemyClass.Champion || enemyClass == EnemyClass.Boss) && stagger && stagger.weakPointManager)
             stagger.weakPointManager.dieOnWeakpointsComplete = false;
 
-        // setup flash materials
-        spriteMaterials = new Material[sprites.Length];
-        for (int i = 0; i < sprites.Length; i++)
-        {
-            spriteMaterials[i] = sprites[i].material;
-        }
 
         // EDIT (boss): always listen for shots so immune feedback still plays without a blood emitter assigned
         if (stagger) stagger.EnemyShot += HitFX;
@@ -800,43 +792,6 @@ public class Enemy : MonoBehaviour
         else
             animator.speed = 1f;
     }
-    
-    public void TriggerSpriteFlash(float duration = 0.15f)
-    {
-        StartCoroutine(SpriteFlash(duration));
-    }
-
-    private IEnumerator SpriteFlash(float duration)
-    {
-        SetFlashColor();
-        float currentFlashAmount = 0f;
-        float timeElapsed = 0f;
-        while (timeElapsed < duration)
-        {
-            timeElapsed += Time.deltaTime;
-
-            currentFlashAmount = Mathf.Lerp(1f, 0f, timeElapsed / duration);
-            SetFlashAmount(currentFlashAmount);
-
-            yield return null;
-        }
-    }
-
-    private void SetFlashColor()
-    {
-        for (int i = 0; i < sprites.Length; i++)
-        {
-            spriteMaterials[i].SetColor("_Color_Add", flashColor);
-        }
-    }
-
-    private void SetFlashAmount(float amount)
-    {
-        for (int i = 0; i < sprites.Length; i++)
-        {
-            spriteMaterials[i].SetFloat("_Color_Add_Blend", amount);
-        }
-    }
 
     private void HitFX(DamageInfo info, bool immune)
     {
@@ -849,7 +804,7 @@ public class Enemy : MonoBehaviour
         else
         {
             if (bloodFxEmitter) BloodSplatterFX(info);
-            if (sprites[0] != null) TriggerSpriteFlash();
+            if (spriteFX) spriteFX.TriggerSpriteFlash();
             // if (soundPlayer) soundPlayer.PlaySound(1);
         } 
     }
