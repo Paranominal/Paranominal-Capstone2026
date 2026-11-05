@@ -8,6 +8,7 @@
 
 using System.Collections;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -49,8 +50,9 @@ public class Enemy : MonoBehaviour
     // EDIT (boss): protected for Enemy_Boss
     [SerializeField] protected EnemyStagger stagger;
 
-    [Header("Animation")]
+    [Header("Sprites & Animation")]
     [SerializeField] private Animator animator;
+    [SerializeField] private SpriteFX spriteFX;
 
     [Header("Sound")]
     [SerializeField] private SoundPlayer soundPlayer;
@@ -146,8 +148,9 @@ public class Enemy : MonoBehaviour
         if ((enemyClass == EnemyClass.Champion || enemyClass == EnemyClass.Boss) && stagger && stagger.weakPointManager)
             stagger.weakPointManager.dieOnWeakpointsComplete = false;
 
+
         // EDIT (boss): always listen for shots so immune feedback still plays without a blood emitter assigned
-        if (stagger) stagger.EnemyShot += EnemyShot;
+        if (stagger) stagger.EnemyShot += HitFX;
 
         if (skipSpawn) DoSpawn();
         else StartCoroutine(SpawnSequence());
@@ -790,20 +793,24 @@ public class Enemy : MonoBehaviour
             animator.speed = 1f;
     }
 
-    private void EnemyShot(DamageInfo info, bool wasDamaged)
+    private void HitFX(DamageInfo info, bool immune)
     {
-        if (!wasDamaged)
+        if (immune)
         {
             ImmuneHit?.Invoke(this);
-            ImmuneFX(info);
+            if (immuneFxEmitter) ImmuneFX(info);
+            if (soundPlayer) soundPlayer.PlaySound(1);
         }
-        else BloodSplatterFX(info);
+        else
+        {
+            if (bloodFxEmitter) BloodSplatterFX(info);
+            if (spriteFX) spriteFX.TriggerSpriteFlash();
+            // if (soundPlayer) soundPlayer.PlaySound(1);
+        } 
     }
 
     private void ImmuneFX(DamageInfo info)
     {
-        // EDIT (boss): null guard, the immune emitter is optional
-        if (soundPlayer) soundPlayer.PlaySound(1);
         if (immuneFxEmitter == null) return;
         immuneFxEmitter.transform.position = info.hitPoint;
         immuneFxEmitter.transform.rotation = Quaternion.LookRotation(info.hitDirection);
@@ -812,13 +819,11 @@ public class Enemy : MonoBehaviour
 
     private void BloodSplatterFX(DamageInfo info)
     {
-        // EDIT (boss): null guard, matches the change to the EnemyShot subscription
         if (bloodFxEmitter == null) return;
         bloodFxEmitter.transform.position = info.hitPoint;
         bloodFxEmitter.transform.rotation = Quaternion.LookRotation(info.hitDirection);
         bloodFxEmitter.TriggerParticles();
     }
-
 
     // Spawner Integration
     public void SetOwnerSpawner(IEnemySpawner spawner)
