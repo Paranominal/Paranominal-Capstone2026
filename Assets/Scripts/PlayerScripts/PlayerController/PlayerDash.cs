@@ -446,7 +446,9 @@ public class PlayerDash : MonoBehaviour
             EnemyStagger stagger = enemy.GetComponent<EnemyStagger>();
             if (stagger != null && stagger.canBeHit && !stagger.IsStaggered)
             {
-                stagger.TriggerStagger();
+                if (stagger.HasShield) stagger.SetShield(false);
+                else stagger.TriggerStagger();
+                
                 staggeredEnemiesThisDash.Add(enemy);
 
                 // trigger camera shake when we stagger an enemy by passing through it
@@ -695,7 +697,8 @@ public class PlayerDash : MonoBehaviour
             EnemyStagger stagger = hit.gameObject.GetComponent<EnemyStagger>();
             if (stagger != null && stagger.canBeHit && !stagger.IsStaggered)
             {
-                stagger.TriggerStagger();
+                if (stagger.HasShield) stagger.SetShield(false);
+                else stagger.TriggerStagger();
                 // trigger camera shake when colliding with an enemy during dash
                 CameraEffects.Instance?.Shake();
             }

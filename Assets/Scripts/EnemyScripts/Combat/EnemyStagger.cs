@@ -10,6 +10,7 @@ using System;
 using UnityEngine.UI;
 using UnityEngine.Sprites;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.U2D;
 
 public class EnemyStagger : MonoBehaviour, IDamageable
 {
@@ -27,6 +28,11 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     [SerializeField] private int hitsToStagger = 2;
     public int HitsToStagger => hitsToStagger;
     [SerializeField] private bool immuneToBullets = false;
+    [SerializeField] private bool hasShield;
+    [SerializeField, ShowIf("hasShield", true)] private bool doShieldBreak;
+    private bool shieldLowered = true;
+    public bool HasShield => hasShield;
+    [SerializeField] private SpriteRenderer shieldRenderer;
     [SerializeField] private bool stunOnWindup = true;
     [Range(0, 2)]
     [Tooltip("The rate the stagger bar drains. Higher = harder to stagger.")]
@@ -61,7 +67,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     // EDIT (boss): runtime immunity toggle, used by the boss Downed state.
     // Hits play the immune feedback (same as immuneToBullets) without building stagger.
     private bool runtimeImmune;
-    public bool IsImmune => immuneToBullets || runtimeImmune;
+    public bool IsImmune => immuneToBullets || runtimeImmune || !shieldLowered;
 
     public event Action<DamageInfo, bool> EnemyShot;
 
@@ -83,6 +89,8 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         }
         if (staggerBarRoot == null && staggerBarFill != null)
             staggerBarRoot = staggerBarFill.transform.parent.gameObject;
+
+        if (hasShield) SetShield(true);
 
         if (staggerBarFill != null)
         {
@@ -164,6 +172,10 @@ public class EnemyStagger : MonoBehaviour, IDamageable
     {
         if (debugMode) Debug.Log($"[EnemyStagger] {gameObject.name} was staggered!", gameObject);
         isStaggered = true;
+
+        // Handle Shield immunity
+        if (hasShield) SetShield(false);
+        
         cachedCurrentWeakpoint = 0;
         if (weakPointManager != null) weakPointManager.StartSequence();
         OnStaggerStart?.Invoke();
@@ -196,10 +208,22 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         runtimeImmune = immune;
     }
 
+    public void SetShield(bool set = true)
+    {
+        // if something gives an enemy a shield, but dont make it permanent
+        if (set && !hasShield) { hasShield = true; doShieldBreak = true; }
+        // fully lose the shield if break is true
+        if (!set && doShieldBreak) hasShield = false;
+        
+        if (shieldRenderer) shieldRenderer.enabled = set; // enable/disable sprite
+        shieldLowered = !set; //set shielded state
+    }
+
     private void ExitStagger()
     {
         if (debugMode) Debug.Log($"[EnemyStagger] {gameObject.name} recovered from stagger", gameObject);
         isStaggered = false;
+        if (hasShield && !doShieldBreak) SetShield(true);
         if (weakPointManager != null) weakPointManager.EndSequence();
         damageTaken = 0;
         OnStaggerEnd?.Invoke();
