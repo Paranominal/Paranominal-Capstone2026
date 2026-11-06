@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(AudioSource))]
 public class MusicManager : MonoBehaviour
@@ -14,6 +16,8 @@ public class MusicManager : MonoBehaviour
     [SerializeField] private bool playOnAwake;
     [SerializeField] private List<MusicDataSO> music;
     [SerializeField] private List<AudioSource> tracks;
+    [SerializeField] private Toggle muteToggle;
+    [SerializeField] private bool muted;
 
     // pool of all audio loaded to memory, for cleanup later
     // private List<AudioClip> loadedMusic;
@@ -36,6 +40,12 @@ public class MusicManager : MonoBehaviour
             Destroy(this);
         }
 
+        if (Instance.mix) Instance.mix.audioMixer.GetFloat("Music_Volume", out Instance.mutedVolumeCache);
+
+        if (Instance.muteToggle && Instance.muteToggle.isOn)
+        {
+            SetMute(true); // <------------      this doesnt seem to work. someone else can fix
+        }
         if (playOnAwake) PlayOnAwake();
     }
     
@@ -156,20 +166,38 @@ public class MusicManager : MonoBehaviour
         return newTrack;
     }
 
-    private float mutedVolumeCache = 1;
-    private bool muted = false;
-    public static void ToggleMuteMusic()
+    private float mutedVolumeCache;
+    public static void SetMute(bool mute = true)
     {
-        if (!Instance.muted)
+        if (mute)
         {
-            Instance.mix.audioMixer.SetFloat("Music", 0);
+            // cache the current volume
+            Instance.mix.audioMixer.GetFloat("Music_Volume", out Instance.mutedVolumeCache);
+            // set to mute
+            Instance.mix.audioMixer.SetFloat("Music_Volume", -80);
             Instance.muted = true;
         }
         else
         {
-            Instance.mix.audioMixer.SetFloat("Music", Instance.mutedVolumeCache);
+            // set back to cached vol
+            Instance.mix.audioMixer.SetFloat("Music_Volume", Instance.mutedVolumeCache);
             Instance.muted = true;
         }
+    }
+
+    public static void ToggleMute()
+    {
+        if (Instance.muteToggle == null)
+        {
+            Debug.LogWarning($"[this] Attempting to ToggleMute without a referenced Toggle!");
+            return;
+        }
+
+        if (Instance.muteToggle.isOn)
+        {
+            SetMute(true);
+        }
+        else SetMute(false);
     }
 
     public static void PauseMusic()
