@@ -15,6 +15,7 @@ public class MusicTrigger : MonoBehaviour
     [SerializeField] private EnemySpawnPoint spawner;
     [SerializeField] private EnemySpawnPoint_Standalone standaloneSpawner;
     [SerializeField] private bool useTrigger;
+    [SerializeField] private bool skipBuild;
     [SerializeField, ShowIf("useTrigger", true)] private LayerMask playerLayer;
     [SerializeField] private float fixedDurationTime = 30f;
     [SerializeField] private bool onlyTriggerOnce;
@@ -25,18 +26,18 @@ public class MusicTrigger : MonoBehaviour
         if (spawner)
         {
             spawner.EnemySpawned += BossMusic;
-            spawner.EnemyDied += BossMusic; 
+            spawner.EnemyDied += EnemyDiesMusic; 
         }
         else if (standaloneSpawner)
         {
             standaloneSpawner.EnemySpawned += BossMusic;
-            standaloneSpawner.EnemyDied += BossMusic;
+            standaloneSpawner.EnemyDied += EnemyDiesMusic;
         }
     }
 
     // method designed to change music to a new track
     // by default, starts the previous track up when the changed music ends.
-    private void ChangeMusic(MusicDataSO track)
+    private void ChangeMusic(MusicDataSO track, bool skipBuild = false)
     {
         bool loop;
         // if using audio duration, dont loop.
@@ -52,7 +53,7 @@ public class MusicTrigger : MonoBehaviour
         }
         else loop = false;
 
-        MusicManager.ChangeMusic(track, 0, loop, crossfade, false);
+        MusicManager.ChangeMusic(track, 0, loop, crossfade, skipBuild);
 
         if (onlyTriggerOnce) dontTriggerAgain = true;
     }
@@ -92,7 +93,7 @@ public class MusicTrigger : MonoBehaviour
 
         if (playerLayer.Contains(other.gameObject.layer))
         {
-            ChangeMusic(music[0]);
+            ChangeMusic(music[0], skipBuild);
         }
     }
 }
