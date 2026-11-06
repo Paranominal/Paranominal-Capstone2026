@@ -315,7 +315,7 @@ public class GraphicsSettingsManager : MonoBehaviour
                 min = 0f; max = colourStepOptions.Length - 1; wholeNumbers = true; return;
             case GraphicsSlider.SharpenSampleDistance:
                 // Matches SharpenVolume's sampleDistance range.
-                min = 0.25f; max = 3f; wholeNumbers = false; return;
+                min = 0f; max = 3f; wholeNumbers = true; return;
             default:
                 min = 0f; max = 1f; wholeNumbers = false; return;
         }
@@ -333,7 +333,7 @@ public class GraphicsSettingsManager : MonoBehaviour
                 int index = Mathf.Clamp(Mathf.RoundToInt(value), 0, colourStepOptions.Length - 1);
                 return colourStepOptions[index].ToString();
             case GraphicsSlider.SharpenSampleDistance:
-                return value.ToString("0.00");
+                return Mathf.RoundToInt(value).ToString();
             default:
                 return $"{Mathf.RoundToInt(value * 100f)}%";
         }
