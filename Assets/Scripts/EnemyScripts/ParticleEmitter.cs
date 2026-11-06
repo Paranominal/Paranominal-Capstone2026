@@ -8,11 +8,13 @@ public class ParticleEmitter : MonoBehaviour
     // Note Limitations: this script only listens to collisions 
     // called by the primary emitter, and not any sub-emitters.
 
+    [Header("References")]
     [Tooltip("The Primary particle emitter")]
-    [SerializeField] ParticleSystem particle;
+    [SerializeField] private ParticleSystem particle;
+    [Header("Options")]
+    [SerializeField] private bool loopOnAwake;
     [Header("Decals")]
-    [SerializeField] DecalProjector decalPrefab;
-    [Header("Decal Size")]
+    [SerializeField] private DecalProjector decalPrefab;
     [SerializeField] float maxDecalSize = 5;
     [SerializeField] float minDecalSize = 1;
     private List<ParticleCollisionEvent> collisionEvents;
@@ -26,20 +28,8 @@ public class ParticleEmitter : MonoBehaviour
     void Awake()
     {
         collisionEvents = new List<ParticleCollisionEvent>();
+        if (loopOnAwake) LoopParticles(true);
     }
-
-    // public void EnemyShot(DamageInfo info)
-    // {
-    //     if (particle == null)
-    //     {
-    //         Debug.LogWarning($"[{this}] No Blood Splatter set on ({gameObject})!! This is likely a mistake. Fix it by adding a Particle System to the Script.");
-    //         return;
-    //     }
-
-    //     transform.position = info.hitPoint;
-    //     transform.rotation = Quaternion.LookRotation(info.hitDirection);
-    //     TriggerParticles();
-    // }
 
     public void TriggerParticles()
     {

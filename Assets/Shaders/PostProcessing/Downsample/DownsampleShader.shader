@@ -2,7 +2,7 @@ Shader "Custom/URP/DownsampleShader"
 {
     Properties
     {
-        _PixelSize ("Pixel Size", Range(1, 512)) = 4 // Controls the size of each pixel block in screen pixels.
+        _PixelSize ("Pixel Size", Range(1, 512)) = 4 // Size of each pixel block in screen pixels. EDIT (Downsample-Dither): Already resolution-scaled and rounded by DownsampleRendererFeature.
     }
 
     SubShader
@@ -17,13 +17,6 @@ Shader "Custom/URP/DownsampleShader"
         ZWrite Off
         ZTest Always
         Cull Off
-
-        // Skip pixels marked with stencil value 1 (UI text/images).
-        Stencil
-        {
-            Ref 1
-            Comp NotEqual
-        }
 
         Pass
         {
@@ -41,23 +34,18 @@ Shader "Custom/URP/DownsampleShader"
                 float _PixelSize; // Size of each pixel block.
             CBUFFER_END
 
-            float _ResolutionScale; // EDIT (RenderResolutionManager): Global resolution scale (set by RenderResolutionManager).
-
             half4 Frag(Varyings input) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
-                float2 uv = input.texcoord; // Use fullscreen pass UV coords to sample the current rendered screen image.
+                // EDIT (Downsample-Dither): Resolution scaling and rounding moved to the renderer feature so this matches the dither cell size exactly.
+                int pixelSize = max(1, (int)_PixelSize);
 
-                float pixelSize = max(_PixelSize, 1.0) * _ResolutionScale; // EDIT (RenderResolutionManager): Scale pixel blocks with resolution so they stay visually consistent.
+                int2 pixelPos = int2(input.positionCS.xy);
+                int2 blockOrigin = (pixelPos / pixelSize) * pixelSize; // Snap to the block grid.
+                int2 samplePos = blockOrigin + pixelSize / 2; // Pick one whole pixel inside the block.
 
-                float2 screenPos = uv * _ScreenParams.xy; // Convert from UV space to screen pixel space.
-
-                screenPos = floor(screenPos / pixelSize) * pixelSize; // Snap to a larger pixel grid.
-
-                float2 pixelatedUV = (screenPos + pixelSize * 0.5) / _ScreenParams.xy; // Sample from the centre of the pixel block.
-
-                half4 col = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, pixelatedUV); // Read one colour from the whole pixel block.
+                half4 col = LOAD_TEXTURE2D_X(_BlitTexture, samplePos);
 
                 return col;
             }

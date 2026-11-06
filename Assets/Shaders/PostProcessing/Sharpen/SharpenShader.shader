@@ -38,6 +38,8 @@ Shader "Custom/URP/Sharpen"
                 float _SampleDistance; // Distance to neighbouring pixels.
             CBUFFER_END
 
+            float _ResolutionScale; // EDIT (RenderResolutionManager): Global resolution scale (set by RenderResolutionManager).
+
             half4 Frag(Varyings input) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
@@ -46,8 +48,9 @@ Shader "Custom/URP/Sharpen"
 
                 // Convert a pixel into UV space, then scale by sample distance.
                 float2 texelSize = 1.0 / _ScreenParams.xy;
-                float2 offsetX = float2(texelSize.x * _SampleDistance, 0.0);
-                float2 offsetY = float2(0.0, texelSize.y * _SampleDistance);
+                float sampleDistance = _SampleDistance * _ResolutionScale; // EDIT (RenderResolutionManager): Scale sample distance with resolution.
+                float2 offsetX = float2(texelSize.x * sampleDistance, 0.0);
+                float2 offsetY = float2(0.0, texelSize.y * sampleDistance);
 
                 // Sample the current pixel and its four direct neighbours (up, down, left, right).
                 half4 center = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);

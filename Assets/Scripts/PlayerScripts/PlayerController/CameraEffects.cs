@@ -1,6 +1,7 @@
 using UnityEngine;
 
 // Michael feature (camera-shake): integrated Perlin noise based camera shake. Applied after head bob and strafe tilt so all three effects layer cleanly.
+// EDIT (graphics-settings): Camera Shake setting in GraphicsSettingsManager can turn shake off. Turning it off mid-shake stops it straight away.
 [DefaultExecutionOrder(100)]
 public class CameraEffects : MonoBehaviour
 {
@@ -41,6 +42,10 @@ public class CameraEffects : MonoBehaviour
     private Quaternion lastShakeRotation;
     private Quaternion lastBaseRotation;
     private bool appliedShakeRotation;
+
+    // EDIT (graphics-settings): shake runs only if both this script's toggle and the player's setting allow it.
+    private bool ShakeOn => enableShake &&
+        (GraphicsSettingsManager.Instance == null || GraphicsSettingsManager.Instance.CameraShakeEnabled);
 
     private void Awake()
     {
@@ -90,7 +95,7 @@ public class CameraEffects : MonoBehaviour
     private void UpdateShake(Vector3 basePosition, Quaternion baseRotation)
     {
         float scale = 0f;
-        if (enableShake)
+        if (ShakeOn) // EDIT (graphics-settings): was enableShake.
         {
             scale = sustainedShakeIntensity;
             if (isShaking)
@@ -131,7 +136,7 @@ public class CameraEffects : MonoBehaviour
     // Michael feature (special-shot): update intensity without restarting the noise each frame.
     public void SetSustainedShake(float intensity)
     {
-        sustainedShakeIntensity = enableShake ? Mathf.Max(0f, intensity) : 0f;
+        sustainedShakeIntensity = ShakeOn ? Mathf.Max(0f, intensity) : 0f; // EDIT (graphics-settings): was enableShake.
     }
 
     public void StopSustainedShake()
@@ -158,20 +163,20 @@ public class CameraEffects : MonoBehaviour
     // Start a shake with default intensity and duration. Restarts if already shaking.
     public void Shake()
     {
-        if (!enableShake) return;
+        if (!ShakeOn) return; // EDIT (graphics-settings): was enableShake.
         Shake(defaultShakeIntensity, defaultShakeDuration);
     }
 
     public void Shake(float intensity)
     {
-        if (!enableShake) return;
+        if (!ShakeOn) return; // EDIT (graphics-settings): was enableShake.
         Shake(intensity, defaultShakeDuration);
     }
 
     // Start a shake with custom intensity and duration. Restarts if already shaking.
     public void Shake(float intensity, float duration)
     {
-        if (!enableShake) return;
+        if (!ShakeOn) return; // EDIT (graphics-settings): was enableShake.
         shakeIntensity = Mathf.Max(0f, intensity);
         shakeDuration = duration;
         shakeElapsed = 0f;

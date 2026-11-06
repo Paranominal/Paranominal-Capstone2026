@@ -27,6 +27,7 @@ public class FearVignetteRendererFeature : ScriptableRendererFeature
     {
         if (pass == null) return;
         if (renderingData.cameraData.cameraType != CameraType.Game) return;
+        if (!renderingData.cameraData.postProcessEnabled) return; // EDIT (graphics-settings): only run on cameras with Post Processing ticked.
 
         renderer.EnqueuePass(pass);
     }

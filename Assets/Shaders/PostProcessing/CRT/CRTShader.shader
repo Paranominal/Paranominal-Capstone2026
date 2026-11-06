@@ -61,8 +61,9 @@ Shader "Custom/URP/CRTShader"
                 float2 texelSize = 1.0 / _ScreenParams.xy;
 
                 // Soft blur: average centre with four directional samples.
-                float2 offsetX = float2(texelSize.x * _BlurOffset, 0.0);
-                float2 offsetY = float2(0.0, texelSize.y * _BlurOffset);
+                float blurOffset = _BlurOffset * _ResolutionScale; // EDIT (RenderResolutionManager): Scale blur offset with resolution.
+                float2 offsetX = float2(texelSize.x * blurOffset, 0.0);
+                float2 offsetY = float2(0.0, texelSize.y * blurOffset);
 
                 half4 col = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
                 col += SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv + offsetX);
@@ -81,7 +82,9 @@ Shader "Custom/URP/CRTShader"
                 if (_UsePhosphor > 0.5 && _PhosphorIntensity > 0.001)
                 {
                     float2 screenPos = uv * _ScreenParams.xy;
-                    int pixel = (int)(screenPos.x / (_PhosphorScale * _ResolutionScale)) % 3; // EDIT (RenderResolutionManager): Scale phosphor columns with resolution.
+                    // EDIT (RenderResolutionManager): Scale phosphor columns with resolution, rounded to whole pixels so columns stay uniform.
+                    float phosphorWidth = max(1.0, round(_PhosphorScale * _ResolutionScale));
+                    int pixel = (int)(screenPos.x / phosphorWidth) % 3;
 
                     float dim = 1.0 - _PhosphorIntensity;
                     float3 mask = float3(1, 1, 1);

@@ -93,6 +93,8 @@ public class ImpactFrameController : MonoBehaviour
     // EDIT (shot-feedback): public entry point, replaces the SpecialDestroyed and HitstopComplete subscriptions
     public void Play(Vector3 worldPosition)
     {
+        if (GraphicsSettingsManager.Instance != null && !GraphicsSettingsManager.Instance.ImpactFramesEnabled) return; // EDIT (graphics-settings)
+        
         if (impactFrame == null)
             return;
 

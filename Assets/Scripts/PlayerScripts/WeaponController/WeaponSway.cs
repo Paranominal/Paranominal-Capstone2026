@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// EDIT (graphics-settings): Weapon Sway (look sway and movement tilt/offset) and View Bobbing (walk bob) settings in
+// GraphicsSettingsManager turn their parts off separately. Turned-off parts ease back to rest instead of freezing.
 public class WeaponSway : MonoBehaviour
 {
     [Header("Input Actions")]
@@ -35,6 +37,12 @@ public class WeaponSway : MonoBehaviour
     // cached starting local position so all procedural motion is applied as an offset from a stable baseline, preventing drifting
     private Vector3 initialLocalPosition;
 
+    // EDIT (graphics-settings): each part runs only if both this script's toggle and the player's setting allow it.
+    private bool SwayOn => enableSway &&
+        (GraphicsSettingsManager.Instance == null || GraphicsSettingsManager.Instance.WeaponSwayEnabled);
+    private bool BobOn => enableSway &&
+        (GraphicsSettingsManager.Instance == null || GraphicsSettingsManager.Instance.ViewBobbingEnabled);
+
 
     void Awake()
     {
@@ -46,14 +54,16 @@ public class WeaponSway : MonoBehaviour
     // These are blended smoothly to keep first-person weapon motion readable
     void Update()
     {
-        if (enableSway && playerInputReader.CanMove)
+        if ((SwayOn || BobOn) && playerInputReader.CanMove) // EDIT (graphics-settings): was enableSway.
         {
 
             // read look input from the Input System action and scale to serialized input
             Vector2 lookInput = playerInputReader.LookInput;
 
-            float mouseX = lookInput.x * swayMultiplier;
-            float mouseY = lookInput.y * swayMultiplier;
+            // EDIT (graphics-settings): look sway zeroed while Weapon Sway is off.
+            float swayScale = SwayOn ? swayMultiplier : 0f;
+            float mouseX = lookInput.x * swayScale;
+            float mouseY = lookInput.y * swayScale;
 
             // convert mouse movement into pitch/yaw rotation
             // vertical mouse input is inverted so looking up and down makes weapon tilt in intuitive direction
@@ -70,8 +80,10 @@ public class WeaponSway : MonoBehaviour
 
             // positional shift based on movement direction (strafe and forward/back motion)
             // rotational tilt goes in the same direction for a stronger sensation of momentum
-            Vector3 movementOffset = new Vector3(horizontal * movementPositionX, 0f, vertical * movementPositionZ);
-            Quaternion movementRotation = Quaternion.Euler(-vertical * movementTiltX, 0f, -horizontal * movementTiltZ);
+            // EDIT (graphics-settings): part of Weapon Sway, so zeroed while it's off.
+            float movementScale = SwayOn ? 1f : 0f;
+            Vector3 movementOffset = new Vector3(horizontal * movementPositionX, 0f, vertical * movementPositionZ) * movementScale;
+            Quaternion movementRotation = Quaternion.Euler(-vertical * movementTiltX * movementScale, 0f, -horizontal * movementTiltZ * movementScale);
 
             // Final rotation combines look sway and movement tilt
             Quaternion targetRotation = rotationX * rotationY * movementRotation;
@@ -83,8 +95,10 @@ public class WeaponSway : MonoBehaviour
 
             // Bob is procedural movement: Y uses sine for the primary bounce rhythm and X uses lower-frequency to add less intense side movement
             // Both are multiplied by moveAmount so bob naturally fades to zero when stationary
-            float bobY = Mathf.Sin(Time.time * bobFrequency) * bobAmplitude * moveAmount;
-            float bobX = Mathf.Cos(Time.time * bobFrequency * 0.5f) * (bobAmplitude * 0.5f) * moveAmount;
+            // EDIT (graphics-settings): zeroed while View Bobbing is off.
+            float bobScale = BobOn ? moveAmount : 0f;
+            float bobY = Mathf.Sin(Time.time * bobFrequency) * bobAmplitude * bobScale;
+            float bobX = Mathf.Cos(Time.time * bobFrequency * 0.5f) * (bobAmplitude * 0.5f) * bobScale;
 
             // set desired local position from baseline + bob + directional offset
             Vector3 targetLocalPosition = initialLocalPosition + new Vector3(bobX, bobY, 0f) + movementOffset;
@@ -95,6 +109,12 @@ public class WeaponSway : MonoBehaviour
             // Slerp is used for rotation (better for orientations), Lerp for position
             transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, smooth * Time.deltaTime);
             transform.localPosition = Vector3.Lerp(transform.localPosition, targetLocalPosition, bobSmoothing * Time.deltaTime);
+        }
+        // EDIT (graphics-settings): ease back to rest when both parts are turned off.
+        else if (!SwayOn && !BobOn)
+        {
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.identity, smooth * Time.deltaTime);
+            transform.localPosition = Vector3.Lerp(transform.localPosition, initialLocalPosition, bobSmoothing * Time.deltaTime);
         }
     }
 

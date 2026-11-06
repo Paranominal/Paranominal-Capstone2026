@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 // Summary: Handles fear-driven post-processing effects by writing to the FearVignetteVolume on a Volume Profile.
+// EDIT (graphics-settings): strength is scaled by the Fear Vignette slider in GraphicsSettingsManager (0 = off).
+// Re-applies the last fear value when settings change, so the slider takes effect right away.
 public class FearPostProcessEffects : MonoBehaviour
 {
     public enum VignetteBlendMode { Multiply, Screen, Overlay, HardLight }
@@ -35,9 +37,28 @@ public class FearPostProcessEffects : MonoBehaviour
 
     private FearVignetteVolume vignetteVolume;
 
+    // EDIT (graphics-settings): last values passed in, re-applied when the player changes the slider.
+    private float lastNormalizedFear;
+    private bool lastIsInEncounter;
+    private GraphicsSettingsManager graphicsSettings;
+
     private void Start()
     {
         TryGetVolumeComponent();
+    }
+
+    // EDIT (graphics-settings)
+    private void OnEnable()
+    {
+        graphicsSettings = GraphicsSettingsManager.Instance != null ? GraphicsSettingsManager.Instance : FindAnyObjectByType<GraphicsSettingsManager>();
+        if (graphicsSettings != null)
+            graphicsSettings.OnSettingsChanged += ReapplyIntensity;
+    }
+
+    // EDIT (graphics-settings)
+    private void ReapplyIntensity()
+    {
+        UpdateIntensity(lastNormalizedFear, lastIsInEncounter);
     }
 
     private void TryGetVolumeComponent()
@@ -57,13 +78,18 @@ public class FearPostProcessEffects : MonoBehaviour
 
     public void UpdateIntensity(float normalizedFear, bool isInEncounter)
     {
+        // EDIT (graphics-settings): cached for ReapplyIntensity.
+        lastNormalizedFear = normalizedFear;
+        lastIsInEncounter = isInEncounter;
+
         if (vignetteVolume == null)
         {
             TryGetVolumeComponent();
             if (vignetteVolume == null) return;
         }
 
-        float strength = normalizedFear * effectStrength;
+        float playerMultiplier = graphicsSettings != null ? graphicsSettings.FearVignetteMultiplier : 1f; // EDIT (graphics-settings)
+        float strength = normalizedFear * effectStrength * playerMultiplier;
 
         vignetteVolume.vignetteIntensity.Override(vignetteIntensityMax * strength);
         vignetteVolume.noiseIntensity.Override(noiseIntensityMax * strength);
@@ -82,6 +108,10 @@ public class FearPostProcessEffects : MonoBehaviour
 
     private void OnDisable()
     {
+        // EDIT (graphics-settings)
+        if (graphicsSettings != null)
+            graphicsSettings.OnSettingsChanged -= ReapplyIntensity;
+
         if (vignetteVolume == null) return;
         vignetteVolume.vignetteIntensity.Override(0f);
         vignetteVolume.noiseIntensity.Override(0f);
