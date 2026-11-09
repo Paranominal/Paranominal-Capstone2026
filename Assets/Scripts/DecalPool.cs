@@ -31,7 +31,7 @@ public class DecalPool : MonoBehaviour
         Instance.decalPool.Add(decal);
         decal.transform.SetParent(Instance.transform);
 
-        if (Instance.decalPool.Count > Instance.maxPoolSize)
+        if (Instance.decalPool.Count > Instance.maxPoolSize && Instance.doCulling)
         {
             DecalProjector removalTarget = Instance.decalPool[0];
             Instance.decalPool.Remove(removalTarget);
