@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2243131787214766685}
   - component: {fileID: 1646154906805119363}
   - component: {fileID: 6486482152121865416}
+  - component: {fileID: 7089278246846589571}
   m_Layer: 13
   m_Name: Spawner_DRUDE
   m_TagString: Untagged
@@ -107,3 +108,26 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &7089278246846589571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3300983171920748527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41f13d7f1049d37408ab12c19d833f0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MusicTrigger
+  mode: 2
+  music: {fileID: 11400000, guid: 6084c2628ee863340830889191ce3fd5, type: 2}
+  crossfade: 0
+  spawner: {fileID: 1646154906805119363}
+  standaloneSpawner: {fileID: 0}
+  useTrigger: 0
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  fixedDurationTime: 30
+  onlyTriggerOnce: 0

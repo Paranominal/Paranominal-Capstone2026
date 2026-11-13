@@ -1756,6 +1756,7 @@ MonoBehaviour:
   - {fileID: 3382739015607604628}
   stagger: {fileID: 3892716439961545088}
   animator: {fileID: 4336959419600009996}
+  spriteFX: {fileID: 6824831762902973804}
   soundPlayer: {fileID: 0}
   bloodFxEmitter: {fileID: 2422608268628792729}
   immuneFxEmitter: {fileID: 0}
@@ -1804,6 +1805,11 @@ MonoBehaviour:
   lifetime: 5
   launchPoint: {fileID: 4124329454145804936}
   targetHeightOffset: 0.1
+  requireLineOfSight: 1
+  obstructionLayers:
+    serializedVersion: 2
+    m_Bits: 1
+  lineOfSightRadius: 0.2
   windupDuration: 0.4
   recoveryDuration: 0.3
   windupTurnSpeed: 180
@@ -1870,6 +1876,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5820241246767075552, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
   m_PrefabInstance: {fileID: 555416096784353595}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6824831762902973804 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6414137056628307031, guid: 02ee8921b48e27447bd6206223d71359, type: 3}
+  m_PrefabInstance: {fileID: 555416096784353595}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e81404dee739164cbe6678afb009512, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!4 &8888016279020907817 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9002036258510447634, guid: 02ee8921b48e27447bd6206223d71359, type: 3}

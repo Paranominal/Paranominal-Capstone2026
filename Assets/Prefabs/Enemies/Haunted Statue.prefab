@@ -68,6 +68,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9002036258510447634}
+  - {fileID: 7728348447070510958}
   - {fileID: 4011599304287584692}
   - {fileID: 6758385988210323759}
   m_Father: {fileID: 1531489780953413832}
@@ -132,6 +133,7 @@ MonoBehaviour:
   - {fileID: 4823826984620500452}
   stagger: {fileID: 3580518955538096315}
   animator: {fileID: 4294958922522391095}
+  spriteFX: {fileID: 6414137056628307031}
   soundPlayer: {fileID: 0}
   bloodFxEmitter: {fileID: 2750554358987267234}
   immuneFxEmitter: {fileID: 0}
@@ -159,21 +161,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack_RangedMulti
   minRange: 0
-  attackRange: 20
-  cooldownTime: 2
-  windupIndicator: {fileID: 0}
+  attackRange: 30
+  cooldownTime: 3
+  windupIndicator: {fileID: 1018914182935538455}
   moveWhileWindingUp: 0
   projectilePrefabs:
-  - {fileID: 5456187121983439695, guid: 149546affb6a6e94ab12ce1b5afe0c2f, type: 3}
-  - {fileID: 5456187121983439695, guid: fe5693905aa37ea469a828f41d5b32d5, type: 3}
-  - {fileID: 5456187121983439695, guid: fe5693905aa37ea469a828f41d5b32d5, type: 3}
-  - {fileID: 5456187121983439695, guid: 149546affb6a6e94ab12ce1b5afe0c2f, type: 3}
+  - {fileID: 5456187121983439695, guid: 74b7761999a2acd49b5f3cbd5d070197, type: 3}
   selectionMode: 0
   launchPoint: {fileID: 6758385988210323759}
-  targetHeightOffset: 1
-  windupDuration: 0.4
-  timeBetweenShots: 0.2
-  recoveryDuration: 0.3
+  targetHeightOffset: 0
+  windupDuration: 1.5
+  timeBetweenShots: 0.5
+  recoveryDuration: 0.5
   trackingTurnSpeed: 180
   debugMode: 0
 --- !u!114 &3580518955538096315
@@ -558,6 +557,7 @@ GameObject:
   - component: {fileID: 5993365708936089734}
   - component: {fileID: 4294958922522391095}
   - component: {fileID: 6052713346708378849}
+  - component: {fileID: 6414137056628307031}
   m_Layer: 17
   m_Name: Sprite
   m_TagString: Untagged
@@ -612,7 +612,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 2100000, guid: 81c675b204df6f34c92e6c2aba8752ce, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -683,6 +683,45 @@ MonoBehaviour:
   easing: 0
   easeSpeed: 0.1
   forwardVector: {x: 0, y: 0, z: 1}
+--- !u!114 &6414137056628307031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2460730295484081653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e81404dee739164cbe6678afb009512, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -6.6666665
+      outSlope: -6.6666665
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.15
+      value: 0
+      inSlope: -6.6666665
+      outSlope: -6.6666665
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spriteRenderers:
+  - {fileID: 5993365708936089734}
 --- !u!1 &3473899205186899472
 GameObject:
   m_ObjectHideFlags: 0
@@ -881,6 +920,66 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &5646370526122226043
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7728348447070510958}
+  - component: {fileID: 4746484046563069118}
+  m_Layer: 0
+  m_Name: Shadow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7728348447070510958
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5646370526122226043}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.314, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1777833132711805493}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &4746484046563069118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5646370526122226043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.DecalProjector
+  m_Material: {fileID: 2100000, guid: d5cff7bf2ec906f4f89c2fd338085255, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_RenderingLayerMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ScaleMode: 0
+  m_Offset: {x: 0, y: 0, z: 0.5}
+  m_Size: {x: 1.6, y: 1.6, z: 1}
+  m_FadeFactor: 0.458
+  version: 1
+  m_DecalLayerMask: 1
 --- !u!1 &7399242697947726049
 GameObject:
   m_ObjectHideFlags: 0

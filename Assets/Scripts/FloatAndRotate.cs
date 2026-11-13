@@ -34,8 +34,10 @@ public class FloatAndRotate : MonoBehaviour
 
     void Rotate()
     {
-        transform.Rotate(rotationSpeedLocal * Time.unscaledDeltaTime, Space.Self);
-        transform.Rotate(rotationSpeedWorld * Time.unscaledDeltaTime, Space.World);
+        transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles + rotationSpeedLocal * Time.unscaledDeltaTime);
+        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles + rotationSpeedWorld * Time.unscaledDeltaTime);
+        // transform.Rotate(rotationSpeedLocal * Time.unscaledDeltaTime, Space.Self);
+        // transform.Rotate(rotationSpeedWorld * Time.unscaledDeltaTime, Space.World);
     }
 
     void Float()

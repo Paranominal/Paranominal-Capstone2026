@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,6 +35,8 @@ public class EnemySpawnPoint_Standalone : MonoBehaviour, IEnemySpawner
 
     public bool HasSpawned => hasSpawned;
     public Enemy SpawnedEnemy => spawnedEnemy;
+    public event Action<Enemy> EnemySpawned; 
+    public event Action<Enemy> EnemyDied; 
 
     // Keeps the detection radius from going negative.
     private void OnValidate()
@@ -133,6 +136,11 @@ public class EnemySpawnPoint_Standalone : MonoBehaviour, IEnemySpawner
         }
 
         Enemy enemyBehaviour = spawnedObject.GetComponent<Enemy>();
+        if (enemyBehaviour != null)
+        {
+            EnemySpawned?.Invoke(enemyBehaviour);
+            enemyBehaviour.OnDied += SpawnedEnemyDied;
+        }
 
         if (enemyBehaviour == null)
         {
@@ -195,6 +203,11 @@ public class EnemySpawnPoint_Standalone : MonoBehaviour, IEnemySpawner
         {
             if (door != null) door.BossUnlock();
         }
+    }
+    
+    private void SpawnedEnemyDied(Enemy enemy)
+    {
+        EnemyDied?.Invoke(enemy);
     }
 
     // Draws the spawn point and, if enabled, the detection radius in the Scene view.

@@ -114,7 +114,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
         // EDIT (boss): also checks the runtime immunity toggle
         if (IsImmune) // this should read the damage info but not worth rn
         {
-            EnemyShot?.Invoke(info, false);
+            EnemyShot?.Invoke(info, true);
 
             // needed to output the "blocked" shots popup
             ScoreManager scoreManager = FindAnyObjectByType<ScoreManager>();
@@ -122,7 +122,7 @@ public class EnemyStagger : MonoBehaviour, IDamageable
                 scoreManager.ReportBlockedShot(info.hitPoint);
             return;
         }
-        else EnemyShot?.Invoke(info, true);
+        else EnemyShot?.Invoke(info, false);
         // if (bloodSplatter) bloodSplatter.EnemyShot(info);
 
         damageTaken++;

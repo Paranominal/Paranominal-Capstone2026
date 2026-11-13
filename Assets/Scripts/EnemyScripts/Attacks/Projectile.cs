@@ -21,6 +21,9 @@ public class Projectile : MonoBehaviour, IDamageable
     [Tooltip("Layers the projectile can interact with. Leave at Everything to hit all layers.")]
     [SerializeField] private LayerMask hitLayers = ~0;
 
+    [Header("Appearance")]
+    [SerializeField] private Projectile_FX projectileFX;
+
     // EDIT (projectile-aoe): optional damage field spawned on the ground at the impact point.
     // Only spawns on an actual hit, not on expiry or when shot down.
     [Header("Damage Field On Impact")]
@@ -123,6 +126,8 @@ public class Projectile : MonoBehaviour, IDamageable
                 rb.angularVelocity = Vector3.zero;
             }
         }
+
+        if (projectileFX) projectileFX.StartFX();
     }
 
     private void FixedUpdate()
@@ -203,7 +208,7 @@ public class Projectile : MonoBehaviour, IDamageable
         }
 
         // same placement as EnemyAttack_AoE so the field sits on the ground rather than half inside it
-        Vector3 spawnPos = groundHit.point + (Vector3.up * damageFieldHeight * 0.5001f);
+        Vector3 spawnPos = groundHit.point + (Vector3.up * 0.01f) ; // + (Vector3.up * damageFieldHeight * 0.5001f);
         DamageField field = Instantiate(damageFieldPrefab, spawnPos, Quaternion.identity);
         field.DoDamageField(damageFieldDamage, damageFieldDuration, damageFieldRadius, damageFieldHeight, damageFieldTargetLayers, null, damageFieldPersist, damageFieldDamageOverTime, damageFieldTickRate);
 
