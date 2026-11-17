@@ -23,7 +23,7 @@ public class EnemySpawnPoint_Standalone : MonoBehaviour, IEnemySpawner
     [Header("Player Detection")]
     [Tooltip("If enabled, spawns the enemy when the player comes within the detection radius. If disabled, the spawn point waits for SpawnEnemy() to be called externally.")]
     [SerializeField] private bool useRadiusDetection = false;
-    [SerializeField] private float detectionRadius = 10f;
+    [SerializeField, ShowIf("useRadiusDetection", true)] private float detectionRadius = 10f;
 
     [Header("Spawn Visuals")]
     [Tooltip("Seconds to wait before showing the spawned enemy, giving the animator time to set the spawn pose.")]
