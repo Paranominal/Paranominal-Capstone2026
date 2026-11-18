@@ -19,9 +19,11 @@ public class Enemy_BossMain : Enemy_Boss, IEnemySpawner
         [Tooltip("Attacks usable in this phase. Leave empty to allow every attack. Priority still follows the Attacks list.")]
         public EnemyAttack_Base[] allowedAttacks;
         [Tooltip("Minions summoned when this phase starts. Ignored on the first phase.")]
-        [Min(0)] public int summonsOnPhaseStart;
+        [Min(0)] public List<Enemy> summonsOnPhaseStart;
+        [Tooltip("Minions summoned when the boss becomes 'Downed'.")]
+        [Min(0)] public List<Enemy> summonsOnDowned;
         [Tooltip("Minions summoned when the boss naturally recovers from a stagger during this phase.")]
-        [Min(0)] public int summonsOnStaggerRecovery;
+        [Min(0)] public List<Enemy> summonsOnStaggerRecovery;
     }
 
     [Header("Boss")]
@@ -34,7 +36,7 @@ public class Enemy_BossMain : Enemy_Boss, IEnemySpawner
     [SerializeField] private Phase[] phases = new Phase[] { new Phase() };
 
     [Header("Minions")]
-    [SerializeField] private GameObject minionPrefab;
+    // [SerializeField] private GameObject minionPrefab;
     [Tooltip("Minions spawn at a random point within this radius around the boss.")]
     [SerializeField] private float minionSpawnRadius = 6f;
     [Tooltip("Height above the boss's pivot that minions spawn at.")]
@@ -60,7 +62,7 @@ public class Enemy_BossMain : Enemy_Boss, IEnemySpawner
     // runtime
     private int currentPhase;
     private bool endingStaggerForPhase;     // ignores the OnStaggerEnd fired by our own phase-change ForceEndStagger
-    private readonly List<Enemy> minions = new List<Enemy>();
+    // private readonly List<Enemy> minions = new List<Enemy>();
 
     // EDIT (boss-autolink): Subs linked at runtime (manual or automatic), and every active Main so late-spawned Subs can find one
     private readonly List<Enemy_BossSub> linkedSubs = new List<Enemy_BossSub>();
@@ -218,42 +220,58 @@ public class Enemy_BossMain : Enemy_Boss, IEnemySpawner
 
 
     // Minions
-    private void SummonMinions(int count)
+    private List<Enemy> activeSummons;
+    private void SummonMinions(List<Enemy> wave)
     {
-        // EDIT (minion-cap): clamp to the room left under the cap
-        if (maxActiveMinions > 0)
+        foreach (Enemy enemy in wave)
         {
-            minions.RemoveAll(m => m == null);
-            int room = Mathf.Max(0, maxActiveMinions - minions.Count);
-            if (debugMode && count > room) Debug.Log($"[{this}] Minion cap reached, summoning {room} of {count}.");
-            count = Mathf.Min(count, room);
+            // check summons
+            if (enemy == null) return;
+            if (activeSummons.Count >= maxActiveMinions) return;
+            // summon the demon
+            Enemy summonedEnemy = Instantiate(enemy, GetMinionSpawnPoint(), Quaternion.identity);
+            Debug.LogWarning($"Summoned ({summonedEnemy}) from ({enemy}.{wave})");
+            // track it
+            activeSummons.Add(summonedEnemy);
+            summonedEnemy.SetOwnerSpawner(this);
         }
 
-        if (count <= 0) return;
-        if (minionPrefab == null)
-        {
-            Debug.LogWarning($"[{this}] Missing minion prefab!", gameObject);
-            return;
-        }
 
-        if (debugMode) Debug.Log($"[{this}] Summoning {count} minions.");
+        // // EDIT (minion-cap): clamp to the room left under the cap
+        // if (maxActiveMinions > 0)
+        // {
+        //     minions.RemoveAll(m => m == null);
+        //     int room = Mathf.Max(0, maxActiveMinions - minions.Count);
+        //     if (debugMode && enemy.Length > room) Debug.Log($"[{this}] Minion cap reached, summoning {room} of {enemy}.");
+        //     enemy = Mathf.Min(enemy, room);
+        // }
 
-        for (int i = 0; i < count; i++)
-        {
-            GameObject spawned = Instantiate(minionPrefab, GetMinionSpawnPoint(), Quaternion.identity);
-            Enemy minion = spawned.GetComponent<Enemy>();
-            if (minion == null)
-            {
-                Debug.LogWarning($"[{this}] Minion prefab {minionPrefab.name} is missing an Enemy component.", gameObject);
-                continue;
-            }
+        // if (wave <= 0) return;
+        // if (minionPrefab == null)
+        // {
+        //     Debug.LogWarning($"[{this}] Missing minion prefab!", gameObject);
+        //     return;
+        // }
 
-            minion.SetOwnerSpawner(this);
-            minions.Add(minion);
-        }
+        // if (debugMode) Debug.Log($"[{this}] Summoning {wave} minions.");
+
+        // for (int i = 0; i < wave; i++)
+        // {
+        //     GameObject spawned = Instantiate(minionPrefab, GetMinionSpawnPoint(), Quaternion.identity);
+        //     Enemy minion = spawned.GetComponent<Enemy>();
+        //     if (minion == null)
+        //     {
+        //         Debug.LogWarning($"[{this}] Minion prefab {minionPrefab.name} is missing an Enemy component.", gameObject);
+        //         continue;
+        //     }
+
+        //     minion.SetOwnerSpawner(this);
+        //     minions.Add(minion);
+        // }
 
         #if UNITY_EDITOR
-        _livingMinions = minions.Count;
+        // _livingMinions = minions.Count;
+        _livingMinions = activeSummons.Count;
         #endif
     }
 
@@ -276,21 +294,21 @@ public class Enemy_BossMain : Enemy_Boss, IEnemySpawner
     private void KillMinions()
     {
         // copy first, Die() reports back through NotifyEnemyDeath and edits the list
-        List<Enemy> living = new List<Enemy>(minions);
+        List<Enemy> living = new List<Enemy>(activeSummons);
         foreach (Enemy minion in living)
         {
             if (minion != null && !minion.IsDying) minion.Die();
         }
-        minions.Clear();
+        activeSummons.Clear();
     }
 
     public void NotifyEnemyDeath(Enemy deadEnemy)
     {
         if (deadEnemy == null) return;
-        minions.Remove(deadEnemy);
+        activeSummons.Remove(deadEnemy);
 
         #if UNITY_EDITOR
-        _livingMinions = minions.Count;
+        _livingMinions = activeSummons.Count;
         #endif
     }
 
